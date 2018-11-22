@@ -21,7 +21,7 @@ namespace DataAccessLayer
         //This method will be used to configure the database properties such as Provider, Connection String(s) and more.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@"host=server;database=test;user id=postgres;");
+            optionsBuilder.UseNpgsql(@"host=localhost;database=postgres;user id=postgres;");
             base.OnConfiguring(optionsBuilder);
         }
 

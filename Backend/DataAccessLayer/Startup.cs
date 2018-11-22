@@ -16,9 +16,8 @@ namespace DataAccessLayer
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            var connection = @"Server=(localdb)\mssqllocaldb;Database=DataAccessLayer;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<DatabaseContext>
-                (options => options.UseNpgsql(connection));
+                (options => options.UseNpgsql("User ID=postgres;Password=nightwatch;Server=localhost;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
