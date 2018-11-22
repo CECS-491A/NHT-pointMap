@@ -11506,11 +11506,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ServiceLayer\\ServiceLayer.csproj",
+      "projectUniqueName": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ServiceLayer\\ServiceLayer.csproj",
       "projectName": "ServiceLayer",
-      "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ServiceLayer\\ServiceLayer.csproj",
+      "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ServiceLayer\\ServiceLayer.csproj",
       "packagesPath": "C:\\Users\\varga\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ServiceLayer\\obj\\",
+      "outputPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ServiceLayer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
