@@ -11652,11 +11652,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\DataAccessLayer\\DataAccessLayer.csproj",
+      "projectUniqueName": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\DataAccessLayer\\DataAccessLayer.csproj",
       "projectName": "DataAccessLayer",
-      "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\DataAccessLayer\\DataAccessLayer.csproj",
+      "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\DataAccessLayer\\DataAccessLayer.csproj",
       "packagesPath": "C:\\Users\\varga\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\DataAccessLayer\\obj\\",
+      "outputPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\DataAccessLayer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
