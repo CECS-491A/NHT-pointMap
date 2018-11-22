@@ -11525,11 +11525,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ManagerLayer\\ManagerLayer.csproj",
+      "projectUniqueName": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ManagerLayer\\ManagerLayer.csproj",
       "projectName": "ManagerLayer",
-      "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ManagerLayer\\ManagerLayer.csproj",
+      "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ManagerLayer\\ManagerLayer.csproj",
       "packagesPath": "C:\\Users\\varga\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ManagerLayer\\obj\\",
+      "outputPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ManagerLayer\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -11548,8 +11548,8 @@
       "frameworks": {
         "netcoreapp2.1": {
           "projectReferences": {
-            "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ServiceLayer\\ServiceLayer.csproj": {
-              "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core\\Backend\\ServiceLayer\\ServiceLayer.csproj"
+            "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ServiceLayer\\ServiceLayer.csproj": {
+              "projectPath": "C:\\Users\\varga\\Documents\\GitHub\\Senior-Project-491\\core-clean\\Backend\\ServiceLayer\\ServiceLayer.csproj"
             }
           }
         }
