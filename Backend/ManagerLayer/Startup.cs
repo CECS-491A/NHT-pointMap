@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
+using ServiceLayer;
 
 namespace ManagerLayer
 {
@@ -26,6 +29,12 @@ namespace ManagerLayer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<DatabaseContext>(
+               options => options.UseNpgsql("User ID=postgres;Password=nightwatch;Server=localhost;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;"));
+
+            // services form ServiceLayer
+            services.AddSingleton<IPasswordService, PasswordService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

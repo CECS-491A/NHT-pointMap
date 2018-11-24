@@ -1,0 +1,3 @@
+{
+  "connectionString": "User ID=postgres;Password=nightwatch;Server=localhost;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;"
+}

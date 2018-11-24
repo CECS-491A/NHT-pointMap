@@ -29,7 +29,6 @@ C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLay
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\bin\Debug\netcoreapp2.1\ServiceLayer.runtimeconfig.dev.json
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\bin\Debug\netcoreapp2.1\ServiceLayer.dll
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\bin\Debug\netcoreapp2.1\ServiceLayer.pdb
-C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.csprojAssemblyReference.cache
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.csproj.CoreCompileInputs.cache
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.RazorAssemblyInfo.cache
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.RazorAssemblyInfo.cs
@@ -38,3 +37,4 @@ C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLay
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.RazorTargetAssemblyInfo.cache
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.dll
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.pdb
+C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ServiceLayer\obj\Debug\netcoreapp2.1\ServiceLayer.csprojAssemblyReference.cache

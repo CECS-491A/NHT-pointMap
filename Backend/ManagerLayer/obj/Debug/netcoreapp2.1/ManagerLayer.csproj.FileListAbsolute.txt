@@ -32,3 +32,5 @@ C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ManagerLay
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ManagerLayer\obj\Debug\netcoreapp2.1\ManagerLayer.csproj.CopyComplete
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ManagerLayer\obj\Debug\netcoreapp2.1\ManagerLayer.dll
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ManagerLayer\obj\Debug\netcoreapp2.1\ManagerLayer.pdb
+C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ManagerLayer\bin\Debug\netcoreapp2.1\DataAccessLayer.dll
+C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\ManagerLayer\bin\Debug\netcoreapp2.1\DataAccessLayer.pdb
