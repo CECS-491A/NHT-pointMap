@@ -10,6 +10,7 @@ namespace DataAccessLayer.Models
         public static string GetTimeStampUTC()
         {
             return DateTime.Now.ToString("yyyy-MM-dd-Thh:mm:ss");
+
         }
     }
 }
