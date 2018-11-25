@@ -24,3 +24,4 @@ C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\DataAccess
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.RazorTargetAssemblyInfo.cache
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.dll
 C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.pdb
+C:\Users\varga\Documents\GitHub\Senior-Project-491\core-clean\Backend\DataAccessLayer\obj\Debug\netcoreapp2.1\DataAccessLayer.csprojAssemblyReference.cache
