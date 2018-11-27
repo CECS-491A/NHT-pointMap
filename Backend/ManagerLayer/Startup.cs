@@ -10,9 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using PointMap.Services;
+using DataAccessLayer;
+using Microsoft.EntityFrameworkCore;
+using ServiceLayer;
 
-namespace PointMap
+namespace ManagerLayer
 {
     public class Startup
     {
@@ -28,6 +30,10 @@ namespace PointMap
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddDbContext<DatabaseContext>(
+               options => options.UseNpgsql("User ID=postgres;Password=nightwatch;Server=localhost;Port=5432;Database=postgres;Integrated Security=true;Pooling=true;"));
+
+            // services form ServiceLayer
             services.AddSingleton<IPasswordService, PasswordService>();
         }
 

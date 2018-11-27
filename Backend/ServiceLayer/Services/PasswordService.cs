@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace PointMap.Services
+namespace ServiceLayer
 {
     public class PasswordService : IPasswordService
     {

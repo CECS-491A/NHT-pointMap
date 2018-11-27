@@ -1,6 +1,6 @@
 using System;
 
-namespace PointMap.Services
+namespace ServiceLayer
 {
     public interface IPasswordService
     {
