@@ -26,7 +26,7 @@ namespace DataAccessLayer
         //This method will be used to configure the database properties such as Provider, Connection String(s) and more.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@Configurations.Constants.DbConnectionString);
+            optionsBuilder.UseNpgsql(@Configurations.Constants.getDbConnectionString());
             base.OnConfiguring(optionsBuilder);
         }
 
