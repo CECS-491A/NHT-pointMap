@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj" />
-    <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj" />
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
+    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
 </Project>
