@@ -8,7 +8,7 @@ namespace ManagerLayer.User.Management
     {
         public void Create()
         {
-
+            
         }
 
         public void Read()

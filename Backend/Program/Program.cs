@@ -21,7 +21,7 @@ namespace Program
                 //_db.SaveChanges();
                 var users = _db.Users;
 
-                foreach (var user in users.ToList<User>())
+                foreach (var user in users.ToList())
                 {
                     Console.WriteLine(user.Email);
                 }

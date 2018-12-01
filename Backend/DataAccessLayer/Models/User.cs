@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,11 +9,21 @@ namespace DataAccessLayer.Models
 {
     public class User
     {
-        public long Id { get; set; }
+        public User()
+        {
+            CreatedAt = DateTime.UtcNow;
+            Sessions = new HashSet<Session>();
+        }
 
+        [Key]
+        public Guid Id { get; set; }
+
+        [Required]
         public string Email { get; set; }
 
-        public string DateOfBirth { get; set; }
+        [Required]
+        [DataType(DataType.Date)]
+        public DateTime? DateOfBirth { get; set; }
 
         public string City { get; set; }
 
@@ -23,9 +35,14 @@ namespace DataAccessLayer.Models
 
         public byte[] PasswordSalt { get; set; }
 
-        public string UpdatedAt { get; set; }
+        [Column(TypeName = "datetime2")]
+        [DataType(DataType.DateTime)]
+        [Required]
+        public DateTime UpdatedAt { get; set; }
+        [Column(TypeName = "datetime2")]
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedAt { get; set; }
 
-        public string CreatedAt { get; set; }
-
+        public ICollection<Session> Sessions { get; set; }
     }
 }
