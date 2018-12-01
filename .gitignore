@@ -34,5 +34,7 @@ msbuild.wrn
 */obj/*
 */*/obj/*
 
+Backend/packages/
+
 # Visual Studio 2015
 .vs
