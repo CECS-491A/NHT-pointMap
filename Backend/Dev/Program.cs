@@ -33,13 +33,13 @@ namespace Program
                     PasswordSalt = salt,
                     DateOfBirth = dob
                 };
-                _db.Users.Add(u);
-                _db.SaveChanges();
+                //_db.Users.Add(u);
+                //_db.SaveChanges();
                 var users = _db.Users;
 
                 foreach (var user in users.ToList())
                 {
-                    Console.WriteLine(user.Email);
+                    
                 }
                 Console.ReadKey();
             }
