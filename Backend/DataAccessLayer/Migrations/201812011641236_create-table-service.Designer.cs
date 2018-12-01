@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class InitialMigration : IMigrationMetadata
+    public sealed partial class createtableservice : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(InitialMigration));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(createtableservice));
         
         string IMigrationMetadata.Id
         {
-            get { return "201811302233048_InitialMigration"; }
+            get { return "201812011641236_create-table-service"; }
         }
         
         string IMigrationMetadata.Source
