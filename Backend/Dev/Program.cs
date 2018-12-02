@@ -1,6 +1,6 @@
-﻿using DataAccessLayer.Data;
+﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
-using ServiceLayer;
+using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
