@@ -49,19 +49,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\dbContext.cs" />
-    <Compile Include="Migrations\201811302233048_InitialMigration.cs" />
-    <Compile Include="Migrations\201811302233048_InitialMigration.Designer.cs">
-      <DependentUpon>201811302233048_InitialMigration.cs</DependentUpon>
+    <Compile Include="Migrations\201812011639187_create-table-user.cs" />
+    <Compile Include="Migrations\201812011639187_create-table-user.Designer.cs">
+      <DependentUpon>201812011639187_create-table-user.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812010608140_update-models-modify-datatypes.cs" />
-    <Compile Include="Migrations\201812010608140_update-models-modify-datatypes.Designer.cs">
-      <DependentUpon>201812010608140_update-models-modify-datatypes.cs</DependentUpon>
+    <Compile Include="Migrations\201812011641236_create-table-service.cs" />
+    <Compile Include="Migrations\201812011641236_create-table-service.Designer.cs">
+      <DependentUpon>201812011641236_create-table-service.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812011644516_create-table-claims.cs" />
+    <Compile Include="Migrations\201812011644516_create-table-claims.Designer.cs">
+      <DependentUpon>201812011644516_create-table-claims.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812011646551_create-table-session.cs" />
+    <Compile Include="Migrations\201812011646551_create-table-session.Designer.cs">
+      <DependentUpon>201812011646551_create-table-session.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Migrations\201811302311299_ChangeDateTimeToString.cs" />
-    <Compile Include="Migrations\201811302311299_ChangeDateTimeToString.Designer.cs">
-      <DependentUpon>201811302311299_ChangeDateTimeToString.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\Session.cs" />
@@ -69,22 +73,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201811302233048_InitialMigration.resx">
-      <DependentUpon>201811302233048_InitialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201811302311299_ChangeDateTimeToString.resx">
-      <DependentUpon>201811302311299_ChangeDateTimeToString.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812010608140_update-models-modify-datatypes.resx">
-      <DependentUpon>201812010608140_update-models-modify-datatypes.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201812011639187_create-table-user.resx">
+      <DependentUpon>201812011639187_create-table-user.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812011641236_create-table-service.resx">
+      <DependentUpon>201812011641236_create-table-service.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812011644516_create-table-claims.resx">
+      <DependentUpon>201812011644516_create-table-claims.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812011646551_create-table-session.resx">
+      <DependentUpon>201812011646551_create-table-session.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

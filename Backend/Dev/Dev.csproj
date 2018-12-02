@@ -7,7 +7,7 @@
     <ProjectGuid>{1057EA55-30CA-4B6D-83B5-232F2791456B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>Program</RootNamespace>
-    <AssemblyName>Program</AssemblyName>
+    <AssemblyName>Dev</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -61,6 +61,10 @@
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
       <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
       <Name>DataAccessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
+      <Project>{98446D55-4697-4C80-90D7-C9E63A34C847}</Project>
+      <Name>ServiceLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class ChangeDateTimeToString : IMigrationMetadata
+    public sealed partial class createtableuser : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(ChangeDateTimeToString));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(createtableuser));
         
         string IMigrationMetadata.Id
         {
-            get { return "201811302311299_ChangeDateTimeToString"; }
+            get { return "201812011639187_create-table-user"; }
         }
         
         string IMigrationMetadata.Source

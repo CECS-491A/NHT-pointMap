@@ -24,8 +24,10 @@ namespace ServiceLayer
             //    prf: KeyDerivationPrf.HMACSHA1,
             //    iterationCount: 10000,
             //    numBytesRequested: 256 / 8));
-
-            return "";
+            byte[] passBytes = System.Text.Encoding.ASCII.GetBytes(password);
+            Rfc2898DeriveBytes hash = new Rfc2898DeriveBytes(passBytes, salt,
+            1000);
+            return hash.GetHashCode().ToString();
         }
 
         public object CheckPasswordPwned(string password)

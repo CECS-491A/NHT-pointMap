@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class updatemodelsmodifydatatypes : IMigrationMetadata
+    public sealed partial class createtablesession : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(updatemodelsmodifydatatypes));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(createtablesession));
         
         string IMigrationMetadata.Id
         {
-            get { return "201812010608140_update-models-modify-datatypes"; }
+            get { return "201812011646551_create-table-session"; }
         }
         
         string IMigrationMetadata.Source
