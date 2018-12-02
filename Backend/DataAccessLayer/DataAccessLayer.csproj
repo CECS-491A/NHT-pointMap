@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\dbContext.cs" />
+    <Compile Include="Database\dbContext.cs" />
     <Compile Include="Migrations\201812011639187_create-table-user.cs" />
     <Compile Include="Migrations\201812011639187_create-table-user.Designer.cs">
       <DependentUpon>201812011639187_create-table-user.cs</DependentUpon>
@@ -65,6 +65,18 @@
     <Compile Include="Migrations\201812011646551_create-table-session.Designer.cs">
       <DependentUpon>201812011646551_create-table-session.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812021657569_update-claim-AddCreatedAtAddUpdateAt.cs" />
+    <Compile Include="Migrations\201812021657569_update-claim-AddCreatedAtAddUpdateAt.Designer.cs">
+      <DependentUpon>201812021657569_update-claim-AddCreatedAtAddUpdateAt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.cs" />
+    <Compile Include="Migrations\201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.Designer.cs">
+      <DependentUpon>201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.cs" />
+    <Compile Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.Designer.cs">
+      <DependentUpon>201812021719031_update-user-RemoveColumnNameUserInSession.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\Service.cs" />
@@ -73,7 +85,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -92,6 +106,21 @@
     <EmbeddedResource Include="Migrations\201812011646551_create-table-session.resx">
       <DependentUpon>201812011646551_create-table-session.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812021657569_update-claim-AddCreatedAtAddUpdateAt.resx">
+      <DependentUpon>201812021657569_update-claim-AddCreatedAtAddUpdateAt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.resx">
+      <DependentUpon>201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.resx">
+      <DependentUpon>201812021719031_update-user-RemoveColumnNameUserInSession.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
+      <Project>{98446D55-4697-4C80-90D7-C9E63A34C847}</Project>
+      <Name>ServiceLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

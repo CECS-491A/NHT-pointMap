@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServiceLayer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -13,6 +14,7 @@ namespace DataAccessLayer.Models
         {
             CreatedAt = DateTime.UtcNow;
             Sessions = new HashSet<Session>();
+            Id = Guid.NewGuid();
         }
 
         [Key]

@@ -13,17 +13,18 @@ namespace DataAccessLayer.Models
         public Session()
         {
             CreateAt = DateTime.UtcNow;
+            Id = Guid.NewGuid();
         }
 
         [Required]
         public string Token { get; set; }
         [Key]
         public Guid Id { get; set; }
-
         [Required]
         [Column(TypeName = "datetime2")]
         [DataType(DataType.DateTime)]
         public DateTime ExpiresAt { get; set; }
+
         [Required]
         [Column(TypeName = "datetime2")]
         [DataType(DataType.DateTime)]
@@ -35,7 +36,6 @@ namespace DataAccessLayer.Models
 
         [Required]
         [ForeignKey("User")]
-        [Column("UserInSession")]
         public Guid UserId { get; set; }
         public User User { get; set; }
     }

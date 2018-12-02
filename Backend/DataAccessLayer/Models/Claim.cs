@@ -10,6 +10,12 @@ namespace DataAccessLayer.Models
 {
     public class Claim
     {
+        public Claim()
+        {
+            CreateAt = DateTime.UtcNow;
+            Id = Guid.NewGuid();
+        }
+
         [Key]
         public Guid Id { get; set; }
         [Required]
@@ -20,5 +26,14 @@ namespace DataAccessLayer.Models
         [ForeignKey("Service")]
         public Guid ServiceId { get; set; }
         public Service Service { get; set; }
+
+        [Required]
+        [Column(TypeName = "datetime2")]
+        [DataType(DataType.DateTime)]
+        public DateTime UpdatedAt { get; set; }
+        [Required]
+        [Column(TypeName = "datetime2")]
+        [DataType(DataType.DateTime)]
+        public DateTime CreateAt { get; set; }
     }
 }

@@ -45,7 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="User\Management\UserManagementManager.cs" />
+    <Compile Include="User\Management\UserManagementLayer.cs" />
     <Compile Include="User\UserManager.cs" />
     <Compile Include="User\ValidationManager.cs" />
   </ItemGroup>
