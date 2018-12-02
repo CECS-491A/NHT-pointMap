@@ -1,7 +1,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace ServiceLayer
+namespace ServiceLayer.Services
 {
     public class PasswordService : IPasswordService
     {
@@ -16,10 +16,10 @@ namespace ServiceLayer
 
         public string HashPassword(string password, byte[] salt)
         {
-            byte[] passBytes = System.Text.Encoding.ASCII.GetBytes(password);
-            Rfc2898DeriveBytes hash = new Rfc2898DeriveBytes(passBytes, salt,
-            1000);
-            return hash.GetHashCode().ToString();
+            Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(password, salt);
+            rfc.IterationCount = 10000;
+            byte[] hash = rfc.GetBytes(16);
+            return Convert.ToBase64String(hash);
         }
 
         public object CheckPasswordPwned(string password)

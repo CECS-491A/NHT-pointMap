@@ -77,6 +77,14 @@
     <Compile Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.Designer.cs">
       <DependentUpon>201812021719031_update-user-RemoveColumnNameUserInSession.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812021832566_update-session-RenameDisable.cs" />
+    <Compile Include="Migrations\201812021832566_update-session-RenameDisable.Designer.cs">
+      <DependentUpon>201812021832566_update-session-RenameDisable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs" />
+    <Compile Include="Migrations\201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.Designer.cs">
+      <DependentUpon>201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\Service.cs" />
@@ -114,6 +122,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.resx">
       <DependentUpon>201812021719031_update-user-RemoveColumnNameUserInSession.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812021832566_update-session-RenameDisable.resx">
+      <DependentUpon>201812021832566_update-session-RenameDisable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.resx">
+      <DependentUpon>201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

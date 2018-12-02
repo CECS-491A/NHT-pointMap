@@ -21,7 +21,7 @@ namespace DataAccessLayer.Models
         [Required]
         public string ServiceName { get; set; }
         [Required]
-        public bool Disable { get; set; }
+        public bool Disabled { get; set; }
 
         [Required]
         [Column(TypeName = "datetime2")]

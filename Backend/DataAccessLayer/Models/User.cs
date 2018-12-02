@@ -37,6 +37,13 @@ namespace DataAccessLayer.Models
 
         public byte[] PasswordSalt { get; set; }
 
+        public string SecurityQ1 { get; set; }
+        public string SecurityQ1Answer { get; set; }
+        public string SecurityQ2 { get; set; }
+        public string SecurityQ2Answer { get; set; }
+        public string SecurityQ3 { get; set; }
+        public string SecurityQ3Answer { get; set; }
+
         [Column(TypeName = "datetime2")]
         [DataType(DataType.DateTime)]
         [Required]

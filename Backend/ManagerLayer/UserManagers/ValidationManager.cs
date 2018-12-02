@@ -1,9 +1,9 @@
-﻿using ServiceLayer;
+﻿using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ManagerLayer.User
+namespace ManagerLayer.UserManagers
 {
     public class ValidationManager
     {

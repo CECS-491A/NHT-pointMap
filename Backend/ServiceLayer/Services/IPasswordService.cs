@@ -1,6 +1,6 @@
 using System;
 
-namespace ServiceLayer
+namespace ServiceLayer.Services
 {
     public interface IPasswordService
     {
