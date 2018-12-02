@@ -1,6 +1,4 @@
-﻿using DataAccessLayer.Database;
-using DataAccessLayer.Models;
-using ServiceLayer.Services;
+﻿using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,14 +14,15 @@ namespace ManagerLayer.UserManagers.Management
         public void CreateUser()
         {
             _passwordService = new PasswordService();
-            using (var _db = new DatabaseContext())
-            {
-                DateTime dob = DateTime.Now.Date;
-                string userPassword = "testuser4password";
-                byte[] salt = _passwordService.GenerateSalt();
-                string hash = _passwordService.HashPassword(userPassword, salt);
-                Console.WriteLine(hash);
-            }
+            // this db stuff should go in user services
+            //using (var _db = new DatabaseContext())
+            //{
+            //    DateTime dob = DateTime.Now.Date;
+            //    string userPassword = "testuser4password";
+            //    byte[] salt = _passwordService.GenerateSalt();
+            //    string hash = _passwordService.HashPassword(userPassword, salt);
+            //    Console.WriteLine(hash);
+            //}
         }
 
         public void DeleteUser()

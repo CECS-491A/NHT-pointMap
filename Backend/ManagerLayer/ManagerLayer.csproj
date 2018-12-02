@@ -60,22 +60,14 @@
     <Folder Include="UserManagers\AccessControl\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
-      <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
-      <Name>DataAccessLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Dev\Dev.csproj">
-      <Project>{1057ea55-30ca-4b6d-83b5-232f2791456b}</Project>
-      <Name>Dev</Name>
-    </ProjectReference>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
       <Project>{98446D55-4697-4C80-90D7-C9E63A34C847}</Project>
       <Name>ServiceLayer</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

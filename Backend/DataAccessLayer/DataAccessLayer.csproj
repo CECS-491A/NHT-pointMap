@@ -130,11 +130,5 @@
       <DependentUpon>201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
-      <Project>{98446D55-4697-4C80-90D7-C9E63A34C847}</Project>
-      <Name>ServiceLayer</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
