@@ -13,6 +13,7 @@ namespace Program
     {
         static void Main(string[] args)
         {
+
             IPasswordService _passwordService = new PasswordService();
             Guid guid = new Guid(_passwordService.GenerateSalt());
             Console.WriteLine(guid);
@@ -24,6 +25,7 @@ namespace Program
                 string userPassword = "mypasswordisnowhashedandhidden";
                 byte[] salt = _passwordService.GenerateSalt();
                 string hash = _passwordService.HashPassword(userPassword, salt);
+                Console.WriteLine(hash);
                 var u = new User
                 {
                     Id = guid,
@@ -33,13 +35,13 @@ namespace Program
                     PasswordSalt = salt,
                     DateOfBirth = dob
                 };
-                _db.Users.Add(u);
-                _db.SaveChanges();
+                //_db.Users.Add(u);
+                //_db.SaveChanges();
                 var users = _db.Users;
 
                 foreach (var user in users.ToList())
                 {
-                    Console.WriteLine(user.Email);
+                    Console.WriteLine(user.Email, " ", user.PasswordHash.Length);
                 }
                 Console.ReadKey();
             }
