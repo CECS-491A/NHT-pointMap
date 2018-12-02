@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PasswordServiceUT.cs" />
     <Compile Include="SessionServiceUT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
