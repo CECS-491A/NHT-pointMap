@@ -11,5 +11,15 @@ namespace ServiceLayer.Services
         {
             return "foo";
         }
+
+        public Guid generateSession()
+        {
+            IPasswordService ip = new PasswordService();
+            string str = System.Text.Encoding.Default.GetString(ip.GenerateSalt());
+            Guid guid = new Guid(str);
+            Console.WriteLine("New Guid is " + guid);
+            Console.ReadLine();
+            return guid;
+        }
     }
 }
