@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.SqlServer.Server;
 
-namespace DataAccessLayer.Data
+namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {

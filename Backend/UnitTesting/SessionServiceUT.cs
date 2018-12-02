@@ -18,11 +18,11 @@ namespace UnitTesting
         public void generateSession()
         {
             //Act
-            Guid guid1 = ss.generateSession();
-            Guid guid2 = ss.generateSession();
-
+            string s1 = ss.generateSession();
+            string s2 = ss.generateSession();
             //Assert
-            StringAssert.Contains(guid1.ToString(), guid2.ToString());
+            Assert.AreEqual(16, s1.Length);
+            Assert.AreNotEqual(s1, s2);
         }
     }
 }

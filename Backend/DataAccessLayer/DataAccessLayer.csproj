@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\dbContext.cs" />
+    <Compile Include="Database\dbContext.cs" />
     <Compile Include="Migrations\201812011639187_create-table-user.cs" />
     <Compile Include="Migrations\201812011639187_create-table-user.Designer.cs">
       <DependentUpon>201812011639187_create-table-user.cs</DependentUpon>

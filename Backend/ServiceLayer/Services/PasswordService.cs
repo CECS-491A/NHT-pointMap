@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
  // will need to remove this
 
-namespace ServiceLayer
+namespace ServiceLayer.Services
 {
     public class PasswordService : IPasswordService
     {
@@ -24,10 +24,10 @@ namespace ServiceLayer
             //    prf: KeyDerivationPrf.HMACSHA1,
             //    iterationCount: 10000,
             //    numBytesRequested: 256 / 8));
-            byte[] passBytes = System.Text.Encoding.ASCII.GetBytes(password);
-            Rfc2898DeriveBytes hash = new Rfc2898DeriveBytes(passBytes, salt,
-            1000);
-            return hash.GetHashCode().ToString();
+            Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(password, salt);
+            rfc.IterationCount = 10000;
+            byte[] hash = rfc.GetBytes(16);
+            return Convert.ToBase64String(hash);
         }
 
         public object CheckPasswordPwned(string password)

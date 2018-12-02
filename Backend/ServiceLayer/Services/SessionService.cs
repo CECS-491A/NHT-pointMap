@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,14 +13,14 @@ namespace ServiceLayer.Services
             return "foo";
         }
 
-        public Guid generateSession()
+        public string generateSession()
         {
-            IPasswordService ip = new PasswordService();
-            string str = System.Text.Encoding.Default.GetString(ip.GenerateSalt());
-            Guid guid = new Guid(str);
-            Console.WriteLine("New Guid is " + guid);
-            Console.ReadLine();
-            return guid;
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            Byte[] b = new byte[64 /2];
+            provider.GetBytes(b);
+            string hex = BitConverter.ToString(b).Replace("-","");
+            return hex;
         }
+ 
     }
 }
