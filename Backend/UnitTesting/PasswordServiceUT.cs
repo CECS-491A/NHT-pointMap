@@ -12,9 +12,11 @@ namespace UnitTesting
     [TestClass]
     public class PasswordServiceUT
     {
+        PasswordService ps;
         public PasswordServiceUT()
         {
-            PasswordService ps = new PasswordService();
+            //Arrange
+            ps = new PasswordService();
         }
 
         private TestContext testContextInstance;
@@ -58,11 +60,22 @@ namespace UnitTesting
         #endregion
 
         [TestMethod]
-        public void TestMethod1()
+        public void hashPassword()
         {
-            //
-            // TODO: Add test logic here
-            //
+            //Act
+            string password = "buasd78324yas";
+            byte[] salt = ps.GenerateSalt();
+            string hash1 = ps.HashPassword(password, salt);
+            string hash2 = ps.HashPassword(password, salt);
+
+            password = "uibava97s133";
+            string hash3 = ps.HashPassword(password, salt);
+
+
+
+            //Assert
+            Assert.AreEqual(hash1, hash2);
+            Assert.AreNotEqual(hash1, hash3);
         }
     }
 }

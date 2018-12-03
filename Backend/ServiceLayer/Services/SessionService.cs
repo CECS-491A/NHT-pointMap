@@ -8,12 +8,8 @@ namespace ServiceLayer.Services
 {
     public class SessionService : ISessionService
     {
-        public string getFoo()
-        {
-            return "foo";
-        }
 
-        public string generateSession()
+        public string GenerateSession()
         {
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
             Byte[] b = new byte[64 /2];
