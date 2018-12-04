@@ -28,7 +28,7 @@ namespace ServiceLayer.Services
             }
         }
 
-        public void DeleteUserById(Guid Id)
+        public void DeleteUser(Guid Id)
         {
             using(var _db = new DatabaseContext())
             {
@@ -40,7 +40,7 @@ namespace ServiceLayer.Services
             }
         }
 
-        public User GetUserByEmail(string email)
+        public User GetUser(string email)
         {
             using(var _db = new DatabaseContext())
             {
@@ -51,7 +51,7 @@ namespace ServiceLayer.Services
             }
         }
 
-        public User GetUserById(Guid Id)
+        public User GetUser(Guid Id)
         {
             using(var _db = new DatabaseContext())
             {

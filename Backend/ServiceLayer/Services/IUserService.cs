@@ -11,10 +11,10 @@ namespace ServiceLayer.Services
     {
         // CRUD
         void CreateUser(User user);
-        User GetUserByEmail(string email);
-        User GetUserById(Guid Id);
+        User GetUser(string email);
+        User GetUser(Guid Id);
         void DeleteUser(User user);
-        void DeleteUserById(Guid Id);
+        void DeleteUser(Guid Id);
         void UpdateUser(User user);
     }
 }

@@ -40,20 +40,20 @@ namespace ManagerLayer.UserManagers.Management
         public void DeleteUser(Guid id)
         {
             _userService = new UserService();
-            _userService.DeleteUserById(id);
+            _userService.DeleteUser(id);
         }
 
         public User GetUser(Guid id)
         {
             _userService = new UserService();
-            var user = _userService.GetUserById(id);
+            var user = _userService.GetUser(id);
             return user;
         }
 
         public User GetUser(string email)
         {
             _userService = new UserService();
-            var user = _userService.GetUserByEmail(email);
+            var user = _userService.GetUser(email);
             return user;
         }
 
