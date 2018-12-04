@@ -4,22 +4,20 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccessLayer.Models
 {
-    public class Session
+    public class Service
     {
-        public Session()
+        public Service()
         {
             CreateAt = DateTime.UtcNow;
             Id = Guid.NewGuid();
         }
 
-        [Required]
-        public string Token { get; set; }
         [Key]
         public Guid Id { get; set; }
         [Required]
-        [Column(TypeName = "datetime2")]
-        [DataType(DataType.DateTime)]
-        public DateTime ExpiresAt { get; set; }
+        public string ServiceName { get; set; }
+        [Required]
+        public bool Disabled { get; set; }
 
         [Required]
         [Column(TypeName = "datetime2")]
@@ -29,10 +27,5 @@ namespace DataAccessLayer.Models
         [Column(TypeName = "datetime2")]
         [DataType(DataType.DateTime)]
         public DateTime CreateAt { get; set; }
-
-        [Required]
-        [ForeignKey("User")]
-        public Guid UserId { get; set; }
-        public User User { get; set; }
     }
 }

@@ -7,6 +7,6 @@ namespace ServiceLayer.Services
 {
     public interface ISessionService
     {
-        string getFoo();
+        string GenerateSession();
     }
 }

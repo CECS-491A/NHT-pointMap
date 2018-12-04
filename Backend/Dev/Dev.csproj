@@ -4,16 +4,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataAccessLayer</RootNamespace>
-    <AssemblyName>DataAccessLayer</AssemblyName>
+    <ProjectGuid>{1057EA55-30CA-4B6D-83B5-232F2791456B}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Program</RootNamespace>
+    <AssemblyName>Dev</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +24,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -48,52 +50,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\dbContext.cs" />
-    <Compile Include="Migrations\201812040636053_create-table-user.cs" />
-    <Compile Include="Migrations\201812040636053_create-table-user.Designer.cs">
-      <DependentUpon>201812040636053_create-table-user.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812040637147_create-table-service.cs" />
-    <Compile Include="Migrations\201812040637147_create-table-service.Designer.cs">
-      <DependentUpon>201812040637147_create-table-service.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812040639143_create-table-claim.cs" />
-    <Compile Include="Migrations\201812040639143_create-table-claim.Designer.cs">
-      <DependentUpon>201812040639143_create-table-claim.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812040642468_create-table-session.cs" />
-    <Compile Include="Migrations\201812040642468_create-table-session.Designer.cs">
-      <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Claim.cs" />
-    <Compile Include="Models\Service.cs" />
-    <Compile Include="Models\Session.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201812040636053_create-table-user.resx">
-      <DependentUpon>201812040636053_create-table-user.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812040637147_create-table-service.resx">
-      <DependentUpon>201812040637147_create-table-service.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812040639143_create-table-claim.resx">
-      <DependentUpon>201812040639143_create-table-claim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812040642468_create-table-session.resx">
-      <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
-    </EmbeddedResource>
+    <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
+      <Project>{DD7C51A6-44CD-4A05-9809-1171FE66F434}</Project>
+      <Name>ManagerLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,8 +1,7 @@
 using System;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
-namespace ServiceLayer
+namespace ServiceLayer.Services
 {
     public class PasswordService : IPasswordService
     {
@@ -12,20 +11,20 @@ namespace ServiceLayer
             {
                 rng.GetBytes(salt);
             }
-
             return salt;
         }
 
         public string HashPassword(string password, byte[] salt)
         {
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA1,
-                iterationCount: 10000,
-                numBytesRequested: 256 / 8));
+            Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(password, salt);
+            rfc.IterationCount = 10000;
+            byte[] hash = rfc.GetBytes(16);
+            return Convert.ToBase64String(hash);
+        }
 
-            return hashed;
+        public object CheckPasswordPwned(string password)
+        {
+            return null;
         }
     }
 }
