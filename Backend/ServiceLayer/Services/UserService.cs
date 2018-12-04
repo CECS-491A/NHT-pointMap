@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Text;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
@@ -9,7 +10,7 @@ namespace ServiceLayer.Services
 {
     public class UserService : IUserService
     {
-        public void Create(User user)
+        public void CreateUser(User user)
         {
             using(var _db = new DatabaseContext())
             {
@@ -18,37 +19,39 @@ namespace ServiceLayer.Services
             }
         }
 
-        public void Delete(User user)
+        public void DeleteUser(User user)
         {
             using(var _db = new DatabaseContext())
             {
-                _db.Users.Remove(user);
+                _db.Entry(user).State = EntityState.Deleted;
                 _db.SaveChanges();
             }
         }
 
-        public void DeleteById(Guid Id)
+        public void DeleteUserById(Guid Id)
         {
             using(var _db = new DatabaseContext())
             {
-                var user = _db.Users.Find(Id);
-                if (user != null)
-                {
-                    _db.Users.Remove(user);
-                    _db.SaveChanges();
-                }
+                var user = _db.Users
+                    .Where(c => c.Id == Id)
+                    .FirstOrDefault<User>();
+                _db.Entry(user).State = EntityState.Deleted;
+                _db.SaveChanges();
             }
         }
 
-        public User Get(User user)
+        public User GetUserByEmail(string email)
         {
             using(var _db = new DatabaseContext())
             {
-                return _db.Users.Find(user.Id);
+                var user = _db.Users
+                    .Where(c => c.Email == email)
+                    .FirstOrDefault<User>();
+                return user;
             }
         }
 
-        public User GetById(Guid Id)
+        public User GetUserById(Guid Id)
         {
             using(var _db = new DatabaseContext())
             {
@@ -56,8 +59,9 @@ namespace ServiceLayer.Services
             }
         }
 
-        public void Update(User user)
+        public void UpdateUser(User user)
         {
+            user.UpdatedAt = DateTime.UtcNow;
             using(var _db = new DatabaseContext())
             {
                 _db.Entry(user).State = EntityState.Modified;

@@ -28,22 +28,53 @@ namespace ManagerLayer.UserManagers.Management
                 DateOfBirth = dob,
                 UpdatedAt = timestamp
             };
-            _userService.Create(user);
+            _userService.CreateUser(user);
         }
 
-        public void DeleteUser()
+        public void DeleteUser(User user)
         {
-
+            _userService = new UserService();
+            _userService.DeleteUser(user);
         }
 
-        public void GetUser()
+        public void DeleteUser(Guid id)
         {
-
+            _userService = new UserService();
+            _userService.DeleteUserById(id);
         }
 
-        public void UpdateUser()
+        public User GetUser(Guid id)
         {
+            _userService = new UserService();
+            var user = _userService.GetUserById(id);
+            return user;
+        }
 
+        public User GetUser(string email)
+        {
+            _userService = new UserService();
+            var user = _userService.GetUserByEmail(email);
+            return user;
+        }
+
+        public void DisableUser(User user)
+        {
+            // using autho
+            user.Disabled = true;
+            _userService.UpdateUser(user);
+        }
+
+        public void EnableUser(User user)
+        {
+            // using autho
+            user.Disabled = false;
+            _userService.UpdateUser(user);
+        }
+
+        public void UpdateUser(User user)
+        {
+            // user authoriations for updates
+            _userService.UpdateUser(user);
         }
     }
 }
