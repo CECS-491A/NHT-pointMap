@@ -3,7 +3,7 @@ namespace DataAccessLayer.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class createtableclaims : DbMigration
+    public partial class createtableclaim : DbMigration
     {
         public override void Up()
         {
@@ -14,6 +14,8 @@ namespace DataAccessLayer.Migrations
                     Id = c.Guid(nullable: false),
                     UserId = c.Guid(nullable: false),
                     ServiceId = c.Guid(nullable: false),
+                    UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                    CreateAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                 })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Services", t => t.ServiceId, cascadeDelete: true)
@@ -24,10 +26,10 @@ namespace DataAccessLayer.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.Claims", "UserId", "dbo.Users");
-            DropForeignKey("dbo.Claims", "ServiceId", "dbo.Services");
             DropIndex("dbo.Claims", new[] { "ServiceId" });
             DropIndex("dbo.Claims", new[] { "UserId" });
+            DropForeignKey("dbo.Claims", "UserId", "dbo.Users");
+            DropForeignKey("dbo.Claims", "ServiceId", "dbo.Services");
             DropTable("dbo.Claims");
         }
     }

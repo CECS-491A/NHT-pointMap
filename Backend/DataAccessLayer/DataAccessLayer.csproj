@@ -49,41 +49,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\dbContext.cs" />
-    <Compile Include="Migrations\201812011639187_create-table-user.cs" />
-    <Compile Include="Migrations\201812011639187_create-table-user.Designer.cs">
-      <DependentUpon>201812011639187_create-table-user.cs</DependentUpon>
+    <Compile Include="Migrations\201812040636053_create-table-user.cs" />
+    <Compile Include="Migrations\201812040636053_create-table-user.Designer.cs">
+      <DependentUpon>201812040636053_create-table-user.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812011641236_create-table-service.cs" />
-    <Compile Include="Migrations\201812011641236_create-table-service.Designer.cs">
-      <DependentUpon>201812011641236_create-table-service.cs</DependentUpon>
+    <Compile Include="Migrations\201812040637147_create-table-service.cs" />
+    <Compile Include="Migrations\201812040637147_create-table-service.Designer.cs">
+      <DependentUpon>201812040637147_create-table-service.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812011644516_create-table-claims.cs" />
-    <Compile Include="Migrations\201812011644516_create-table-claims.Designer.cs">
-      <DependentUpon>201812011644516_create-table-claims.cs</DependentUpon>
+    <Compile Include="Migrations\201812040639143_create-table-claim.cs" />
+    <Compile Include="Migrations\201812040639143_create-table-claim.Designer.cs">
+      <DependentUpon>201812040639143_create-table-claim.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812011646551_create-table-session.cs" />
-    <Compile Include="Migrations\201812011646551_create-table-session.Designer.cs">
-      <DependentUpon>201812011646551_create-table-session.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812021657569_update-claim-AddCreatedAtAddUpdateAt.cs" />
-    <Compile Include="Migrations\201812021657569_update-claim-AddCreatedAtAddUpdateAt.Designer.cs">
-      <DependentUpon>201812021657569_update-claim-AddCreatedAtAddUpdateAt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.cs" />
-    <Compile Include="Migrations\201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.Designer.cs">
-      <DependentUpon>201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.cs" />
-    <Compile Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.Designer.cs">
-      <DependentUpon>201812021719031_update-user-RemoveColumnNameUserInSession.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812021832566_update-session-RenameDisable.cs" />
-    <Compile Include="Migrations\201812021832566_update-session-RenameDisable.Designer.cs">
-      <DependentUpon>201812021832566_update-session-RenameDisable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs" />
-    <Compile Include="Migrations\201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.Designer.cs">
-      <DependentUpon>201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs</DependentUpon>
+    <Compile Include="Migrations\201812040642468_create-table-session.cs" />
+    <Compile Include="Migrations\201812040642468_create-table-session.Designer.cs">
+      <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
@@ -102,32 +82,17 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201812011639187_create-table-user.resx">
-      <DependentUpon>201812011639187_create-table-user.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812040636053_create-table-user.resx">
+      <DependentUpon>201812040636053_create-table-user.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812011641236_create-table-service.resx">
-      <DependentUpon>201812011641236_create-table-service.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812040637147_create-table-service.resx">
+      <DependentUpon>201812040637147_create-table-service.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812011644516_create-table-claims.resx">
-      <DependentUpon>201812011644516_create-table-claims.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812040639143_create-table-claim.resx">
+      <DependentUpon>201812040639143_create-table-claim.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812011646551_create-table-session.resx">
-      <DependentUpon>201812011646551_create-table-session.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812021657569_update-claim-AddCreatedAtAddUpdateAt.resx">
-      <DependentUpon>201812021657569_update-claim-AddCreatedAtAddUpdateAt.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.resx">
-      <DependentUpon>201812021702408_update-service-AddCreateatAddUpdatedatMakeDisableRequired.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812021719031_update-user-RemoveColumnNameUserInSession.resx">
-      <DependentUpon>201812021719031_update-user-RemoveColumnNameUserInSession.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812021832566_update-session-RenameDisable.resx">
-      <DependentUpon>201812021832566_update-session-RenameDisable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.resx">
-      <DependentUpon>201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812040642468_create-table-session.resx">
+      <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -12,6 +12,7 @@ namespace DataAccessLayer.Models
             CreatedAt = DateTime.UtcNow;
             Sessions = new HashSet<Session>();
             Id = Guid.NewGuid();
+            Disabled = false;
         }
 
         [Key]
@@ -40,6 +41,8 @@ namespace DataAccessLayer.Models
         public string SecurityQ2Answer { get; set; }
         public string SecurityQ3 { get; set; }
         public string SecurityQ3Answer { get; set; }
+
+        public bool Disabled { get; set; }
 
         [Column(TypeName = "datetime2")]
         [DataType(DataType.DateTime)]

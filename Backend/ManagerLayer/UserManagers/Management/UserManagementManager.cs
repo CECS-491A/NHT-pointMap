@@ -15,6 +15,7 @@ namespace ManagerLayer.UserManagers.Management
 
         public void CreateUser(string email, string password, DateTime dob)
         {
+            DateTime timestamp = DateTime.UtcNow;
             _passwordService = new PasswordService();
             _userService = new UserService();
             byte[] salt = _passwordService.GenerateSalt();
@@ -25,6 +26,7 @@ namespace ManagerLayer.UserManagers.Management
                 PasswordHash = hash,
                 PasswordSalt = salt,
                 DateOfBirth = dob,
+                UpdatedAt = timestamp
             };
             _userService.Create(user);
         }

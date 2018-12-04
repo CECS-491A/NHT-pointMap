@@ -16,19 +16,18 @@ namespace DataAccessLayer.Migrations
                     ExpiresAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                     UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                     CreateAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    UserInSession = c.Guid(nullable: false),
+                    UserId = c.Guid(nullable: false),
                 })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Users", t => t.UserInSession, cascadeDelete: true)
-                .Index(t => t.UserInSession);
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.UserId);
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.Sessions", "UserInSession", "dbo.Users");
-            DropIndex("dbo.Sessions", new[] { "UserInSession" });
+            DropIndex("dbo.Sessions", new[] { "UserId" });
+            DropForeignKey("dbo.Sessions", "UserId", "dbo.Users");
             DropTable("dbo.Sessions");
-
         }
     }
 }

@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class updateuserAddSecQuestionsAddSecAnswersColumns : IMigrationMetadata
+    public sealed partial class createtableclaim : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(updateuserAddSecQuestionsAddSecAnswersColumns));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(createtableclaim));
         
         string IMigrationMetadata.Id
         {
-            get { return "201812021901246_update-user-AddSecQuestionsAddSecAnswersColumns"; }
+            get { return "201812040639143_create-table-claim"; }
         }
         
         string IMigrationMetadata.Source

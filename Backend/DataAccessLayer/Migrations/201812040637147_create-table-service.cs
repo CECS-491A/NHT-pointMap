@@ -13,7 +13,9 @@ namespace DataAccessLayer.Migrations
                 {
                     Id = c.Guid(nullable: false),
                     ServiceName = c.String(nullable: false),
-                    Disable = c.Boolean(nullable: false),
+                    Disabled = c.Boolean(nullable: false),
+                    UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                    CreateAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                 })
                 .PrimaryKey(t => t.Id);
         }
@@ -21,7 +23,6 @@ namespace DataAccessLayer.Migrations
         public override void Down()
         {
             DropTable("dbo.Services");
-
         }
     }
 }

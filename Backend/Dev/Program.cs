@@ -13,7 +13,7 @@ namespace Program
             //  - call services to create user and add to the database
 
             UserManagementManager umm = new UserManagementManager();
-            umm.CreateUser("tester5@mail.com", "tester5password", DateTime.Now);
+            umm.CreateUser("tester2@mail.com", "tester2password", DateTime.UtcNow);
             Console.ReadKey();
         }
     }
