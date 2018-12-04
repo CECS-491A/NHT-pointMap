@@ -16,13 +16,12 @@ namespace UnitTesting
             {
                 User u = new User
                 {
-                    Id = new Guid(),
-                    Email = new Guid() + "@" + new Guid() + ".com",
+                    Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                     DateOfBirth = DateTime.UtcNow,
                     City = "Los Angeles",
                     State = "California",
                     Country = "United States",
-                    PasswordHash = (new Guid()).ToString(),
+                    PasswordHash = (Guid.NewGuid()).ToString(),
                     PasswordSalt = new byte[128 / 8]
                 };
                 _db.Users.Add(u);
@@ -38,7 +37,6 @@ namespace UnitTesting
             {
                 Session s = new Session
                 {
-                    Id = new Guid(),
                     UserId = user.Id,
                     ExpiresAt = DateTime.UtcNow
                 };
@@ -55,7 +53,6 @@ namespace UnitTesting
             {
                 Service s = new Service
                 {
-                    Id = new Guid(),
                     ServiceName = (new Guid()).ToString(),
                     Disabled = enabled
                 };
@@ -72,7 +69,6 @@ namespace UnitTesting
             {
                 Claim c = new Claim
                 {
-                    Id = new Guid(),
                     ServiceId = service.Id,
                     UserId = user.Id
                 };
