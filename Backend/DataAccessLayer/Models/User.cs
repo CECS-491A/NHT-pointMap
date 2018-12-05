@@ -30,9 +30,9 @@ namespace DataAccessLayer.Models
         public string State { get; set; }
 
         public string Country { get; set; }
-
+        [Required]
         public string PasswordHash { get; set; }
-
+        [Required]
         public byte[] PasswordSalt { get; set; }
 
         public string SecurityQ1 { get; set; }
@@ -41,7 +41,7 @@ namespace DataAccessLayer.Models
         public string SecurityQ2Answer { get; set; }
         public string SecurityQ3 { get; set; }
         public string SecurityQ3Answer { get; set; }
-
+        [Required]
         public bool Disabled { get; set; }
 
         [Column(TypeName = "datetime2")]
