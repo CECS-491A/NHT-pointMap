@@ -15,7 +15,7 @@ namespace DataAccessLayer.Migrations
                     ServiceName = c.String(nullable: false),
                     Disabled = c.Boolean(nullable: false),
                     UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    CreateAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                    CreatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                 })
                 .PrimaryKey(t => t.Id);
         }
