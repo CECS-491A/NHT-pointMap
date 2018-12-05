@@ -22,9 +22,41 @@ namespace ServiceLayer.Services
             return Convert.ToBase64String(hash);
         }
 
-        public object CheckPasswordPwned(string password)
+        private static string HashPasswordSHA1(string password, byte[] salt)
         {
-            return null;
+            var sh = SHA1.Create();
+            byte[] byte_arr = System.Text.Encoding.ASCII.GetBytes(password);
+            byte[] hashed_bytes = sh.ComputeHash(byte_arr);
+            return BitConverter.ToString(hashed_bytes).Replace("-", "");
+        }
+
+       public int CheckPasswordPwned(string password) {
+
+            //Take user password and hash using SHA-1
+            string hashed_Password = HashPasswordSHA1(password, null);
+            //Refromat the hashed password into a prefix and suffix
+            string prefix = hashed_Password.Substring(0, 5);
+            string suffix = hashed_Password.Substring(5);
+
+            //Iterate through each line of the Api Response and compare with our hashed password suffix
+            foreach (var key in QueryPwnedApi(prefix))
+            {
+                var key_value = key.Split(':');
+                //If the strings match, return the # of times password was compromised
+                if (suffix == key_value[0])
+                {
+                    return Int32.Parse(key_value[1]);
+                }
+
+            }
+            return 0;
+        }
+
+        private static string[] QueryPwnedApi(string prefix)
+        {
+            HttpClient client = new HttpClient();
+            return (client.GetStringAsync("https://api.pwnedpasswords.com/range/" + prefix).Result).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+
         }
     }
 }
