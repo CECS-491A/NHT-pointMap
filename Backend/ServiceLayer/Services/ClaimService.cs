@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,45 +11,27 @@ namespace ServiceLayer.Services
 {
     public class ClaimService : IClaimService
     {
+        ClaimRepository _ClaimRepo;
+
+        public ClaimService()
+        {
+            _ClaimRepo = new ClaimRepository();
+        }
+
         public Service getService(string claimName)
         {
-            using (var _db = new DatabaseContext())
-            {
-                Service service = _db.Services
-                    .Where(c => c.ServiceName == claimName)
-                    .FirstOrDefault();
-
-                return service;
-            }
+            return _ClaimRepo.GetService(claimName);
         }
 
         public void addServiceToUser(User user, Service service)
         {
-            using (var _db = new DatabaseContext())
-            {
-                var u = new Claim
-                {
-                    Id = new Guid(),
-                    UserId = user.Id,
-                    ServiceId = service.Id,
-                };
-                _db.Claims.Add(u);
-                _db.SaveChanges();
-            }
+            _ClaimRepo.AddServiceToUser(user.Id, service.Id);
         }
 
         public bool userHasServiceAccess(User user, Service service)
         {
             if (service.Disabled) return false;
-            
-            using (var _db = new DatabaseContext())
-            {
-                int count = _db.Claims
-                    .Where(c => c.UserId == user.Id && c.ServiceId == service.Id)
-                    .Count();
-
-                return count > 0;
-            }
+            return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);
         }
     }
 }

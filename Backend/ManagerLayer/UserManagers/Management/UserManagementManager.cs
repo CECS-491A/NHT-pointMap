@@ -34,7 +34,7 @@ namespace ManagerLayer.UserManagers.Management
         public void DeleteUser(User user)
         {
             _userService = new UserService();
-            _userService.DeleteUser(user);
+            _userService.DeleteUser(user.Id);
         }
 
         public void DeleteUser(Guid id)

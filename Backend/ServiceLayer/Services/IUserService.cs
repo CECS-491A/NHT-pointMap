@@ -13,7 +13,6 @@ namespace ServiceLayer.Services
         void CreateUser(User user);
         User GetUser(string email);
         User GetUser(Guid Id);
-        void DeleteUser(User user);
         void DeleteUser(Guid Id);
         void UpdateUser(User user);
     }

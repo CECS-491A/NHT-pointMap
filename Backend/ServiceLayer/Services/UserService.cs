@@ -3,70 +3,68 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
-using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repositories;
 
 namespace ServiceLayer.Services
 {
     public class UserService : IUserService
     {
-        public void CreateUser(User user)
+        private UserManagementRepository _UserManagementRepo;
+
+        public UserService()
         {
-            using(var _db = new DatabaseContext())
-            {
-                _db.Users.Add(user);
-                _db.SaveChanges();
-            }
+            _UserManagementRepo = new UserManagementRepository();
         }
 
-        public void DeleteUser(User user)
+        public void CreateUser(User user)
         {
-            using(var _db = new DatabaseContext())
+            if (_UserManagementRepo.ExistingUser(user))
             {
-                _db.Entry(user).State = EntityState.Deleted;
-                _db.SaveChanges();
+                Console.WriteLine("User exists");
+                return;
             }
+            _UserManagementRepo.CreateNewUser(user);
         }
 
         public void DeleteUser(Guid Id)
         {
-            using(var _db = new DatabaseContext())
-            {
-                var user = _db.Users
-                    .Where(c => c.Id == Id)
-                    .FirstOrDefault<User>();
-                _db.Entry(user).State = EntityState.Deleted;
-                _db.SaveChanges();
-            }
+            _UserManagementRepo.DeleteUser(Id);
         }
 
         public User GetUser(string email)
         {
-            using(var _db = new DatabaseContext())
-            {
-                var user = _db.Users
-                    .Where(c => c.Email == email)
-                    .FirstOrDefault<User>();
-                return user;
-            }
+            return _UserManagementRepo.GetUser(email);
         }
 
         public User GetUser(Guid Id)
         {
-            using(var _db = new DatabaseContext())
-            {
-                return _db.Users.Find(Id);
-            }
+            return _UserManagementRepo.GetUser(Id);
         }
 
         public void UpdateUser(User user)
         {
-            user.UpdatedAt = DateTime.UtcNow;
-            using(var _db = new DatabaseContext())
+            _UserManagementRepo.UpdateUser(user);
+        }
+
+        public User Login(string email, string password)
+        {
+            UserRepository userRepo = new UserRepository();
+            PasswordService _passwordService = new PasswordService();
+            var user = _UserManagementRepo.GetUser(email);
+            if (user != null)
             {
-                _db.Entry(user).State = EntityState.Modified;
-                _db.SaveChanges();
+                string hashedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
+                if (userRepo.ValidatePassword(user, hashedPassword))
+                {
+                    Console.WriteLine("Password Correct");
+                    return user;
+                }
+                Console.WriteLine("Password Incorrect");
+                return null;
             }
+            Console.WriteLine("User does not exist");
+            return null;
         }
     }
 }
