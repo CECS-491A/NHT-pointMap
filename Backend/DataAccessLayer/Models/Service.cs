@@ -8,7 +8,7 @@ namespace DataAccessLayer.Models
     {
         public Service()
         {
-            CreateAt = DateTime.UtcNow;
+            CreatedAt = DateTime.UtcNow;
             Id = Guid.NewGuid();
         }
 
@@ -26,6 +26,6 @@ namespace DataAccessLayer.Models
         [Required]
         [Column(TypeName = "datetime2")]
         [DataType(DataType.DateTime)]
-        public DateTime CreateAt { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }

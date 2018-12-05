@@ -15,7 +15,7 @@ namespace DataAccessLayer.Migrations
                     UserId = c.Guid(nullable: false),
                     ServiceId = c.Guid(nullable: false),
                     UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
-                    CreateAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
+                    CreatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                 })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Services", t => t.ServiceId, cascadeDelete: true)
