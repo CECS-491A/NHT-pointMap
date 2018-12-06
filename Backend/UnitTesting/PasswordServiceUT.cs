@@ -77,5 +77,20 @@ namespace UnitTesting
             Assert.AreEqual(hash1, hash2);
             Assert.AreNotEqual(hash1, hash3);
         }
+
+        [TestMethod]
+        public void HashPasswordSHA1()
+        {
+            //Act
+            string password = "password";
+            string hash1 = ps.HashPasswordSHA1(password, null);
+            string hash2 = ps.HashPasswordSHA1(password, null);
+
+            string password = "12t3h0eu93h9ke";
+            string hash3 = ps.HashPasswordSHA1(password, null);
+            //Assert
+            Assert.AreEqual(hash1,hash2);
+            Assert.AreNotEqual(hash1, hash2);
+        }
     }
 }
