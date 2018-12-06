@@ -4,29 +4,26 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccessLayer.Models
 {
-    public class Session
+    public class ClientUsers
     {
-        public Session()
+        public ClientUsers()
         {
             CreatedAt = DateTime.UtcNow;
-            Id = Guid.NewGuid();
+            ClientId = Guid.NewGuid();
         }
 
-        [Required]
-        public string Token { get; set; }
-        [Key]
-        public Guid Id { get; set; }
-        [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
-        public DateTime ExpiresAt { get; set; }
+        [Key, Column(Order = 0), ForeignKey("Client")]
+        public Guid ClientId { get; set; }
+        public Client Client { get; set; }
+
+        [Key, Column(Order = 1), ForeignKey("User")]
+        public Guid UserId { get; set; }
+        public User User { get; set; }
 
         [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime UpdatedAt { get; set; }
 
         [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; }
-
-        [Required, ForeignKey("User")]
-        public Guid UserId { get; set; }
-        public User User { get; set; }
     }
 }
