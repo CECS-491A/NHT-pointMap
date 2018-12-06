@@ -17,12 +17,8 @@ namespace DataAccessLayer.Models
 
         [Required, ForeignKey("User"), Column(Order = 1)]
         public Guid UserId { get; set; }
-        public Guid UserId2 { get; set; }
+        public Guid SubjectUserId { get; set; }
         public User User { get; set; }
-
-        //[ForeignKey("User"), Column(Order = 2)]
-        //public Guid UserId2 { get; set; }
-        //public User User2 { get; set; }
 
         [Required, ForeignKey("Service")]
         public Guid ServiceId { get; set; }

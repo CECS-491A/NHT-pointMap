@@ -65,9 +65,9 @@
     <Compile Include="Migrations\201812040642468_create-table-session.Designer.cs">
       <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812060337064_add-Client-ClientUsers-modified-Claims.cs" />
-    <Compile Include="Migrations\201812060337064_add-Client-ClientUsers-modified-Claims.Designer.cs">
-      <DependentUpon>201812060337064_add-Client-ClientUsers-modified-Claims.cs</DependentUpon>
+    <Compile Include="Migrations\201812060509400_add-Client-ClientUsers-modified-Claim.cs" />
+    <Compile Include="Migrations\201812060509400_add-Client-ClientUsers-modified-Claim.Designer.cs">
+      <DependentUpon>201812060509400_add-Client-ClientUsers-modified-Claim.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
@@ -100,8 +100,8 @@
     <EmbeddedResource Include="Migrations\201812040642468_create-table-session.resx">
       <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812060337064_add-Client-ClientUsers-modified-Claims.resx">
-      <DependentUpon>201812060337064_add-Client-ClientUsers-modified-Claims.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812060509400_add-Client-ClientUsers-modified-Claim.resx">
+      <DependentUpon>201812060509400_add-Client-ClientUsers-modified-Claim.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
