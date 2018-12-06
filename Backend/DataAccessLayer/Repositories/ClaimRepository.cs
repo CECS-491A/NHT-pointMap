@@ -10,6 +10,22 @@ namespace DataAccessLayer.Repositories
 {
     public class ClaimRepository
     {
+        public int CreateClaim(Claim claim)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                claim.UpdatedAt = DateTime.UtcNow;
+                try
+                {
+                    _db.Claims.Add(claim);
+                    return _db.SaveChanges();
+                }
+                catch(Exception)
+                {
+                    return 0;
+                }
+            }
+        }
       
         public Service GetService(string claimName)
         {

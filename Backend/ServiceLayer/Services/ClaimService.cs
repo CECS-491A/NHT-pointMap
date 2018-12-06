@@ -18,6 +18,22 @@ namespace ServiceLayer.Services
             _ClaimRepo = new ClaimRepository();
         }
 
+        public int CreateClaim(Claim claim)
+        {
+            return _ClaimRepo.CreateClaim(claim);
+        }
+
+        public int CreateClaim(Guid userId, Guid serviceId)
+        {
+            Claim claim = new Claim
+            {
+                UserId = userId,
+                ServiceId = serviceId,
+                UpdatedAt = DateTime.UtcNow
+            };
+            return _ClaimRepo.CreateClaim(claim);
+        }
+
         public Service getService(string claimName)
         {
             return _ClaimRepo.GetService(claimName);

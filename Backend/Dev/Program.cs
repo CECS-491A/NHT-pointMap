@@ -1,4 +1,5 @@
-﻿using ManagerLayer.UserManagers.Management;
+﻿using ManagerLayer;
+using ManagerLayer.UserManagement;
 using System;
 
 namespace Program
@@ -13,7 +14,9 @@ namespace Program
             //  - call services to create user and add to the database
 
             UserManagementManager umm = new UserManagementManager();
-            umm.CreateUser("tester2@mail.com", "tester2password", DateTime.UtcNow);
+            Guid guid = new Guid("f8d0c634-159e-4e8a-a561-19bc118a1b49");
+            UserManager userManger = new UserManager();
+            umm.DeleteUser(guid);
             Console.ReadKey();
         }
     }
