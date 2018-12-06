@@ -35,8 +35,17 @@ namespace ServiceLayer.Services
         }
         public bool CanUserMakeActionOnUser(Service service, User user1, User user2)
         {
-            return false;
-            //TODO
+            return _ClaimRepo.CanUserMakeActionOnUser(service, user1, user2);
+        }
+
+        public void ToggleFeature(Service service, bool toggle)
+        {
+            _ClaimRepo.ToggleFeature(service, toggle);
+        }
+
+        public bool IsServiceEnabled(Service service)
+        {
+            return _ClaimRepo.IsServiceDisabled(service);
         }
     }
 }
