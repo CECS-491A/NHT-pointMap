@@ -10,20 +10,29 @@ namespace UnitTesting
 {
     public class TestingUtils
     {
+        public byte[] getRandomness()
+        {
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+            return salt;
+        }
         public User createUser()
         {
             using (var _db = new DatabaseContext())
-            {
+            { 
                 User u = new User
                 {
-                    Id = new Guid(),
+                    Id = new Guid(getRandomness()),
                     Email = new Guid() + "@" + new Guid() + ".com",
                     DateOfBirth = DateTime.UtcNow,
                     City = "Los Angeles",
                     State = "California",
                     Country = "United States",
                     PasswordHash = (new Guid()).ToString(),
-                    PasswordSalt = new byte[128 / 8]
+                    PasswordSalt = getRandomness()
                 };
                 _db.Users.Add(u);
                 _db.SaveChanges();
@@ -38,9 +47,10 @@ namespace UnitTesting
             {
                 Session s = new Session
                 {
-                    Id = new Guid(),
+                    Id = new Guid(getRandomness()),
                     UserId = user.Id,
-                    ExpiresAt = DateTime.UtcNow
+                    ExpiresAt = DateTime.UtcNow,
+                    Token = "token"
                 };
                 _db.Sessions.Add(s);
                 _db.SaveChanges();
@@ -55,8 +65,8 @@ namespace UnitTesting
             {
                 Service s = new Service
                 {
-                    Id = new Guid(),
-                    ServiceName = (new Guid()).ToString(),
+                    Id = new Guid(getRandomness()),
+                    ServiceName = (new Guid(getRandomness())).ToString(),
                     Disabled = enabled
                 };
                 _db.Services.Add(s);
@@ -72,7 +82,7 @@ namespace UnitTesting
             {
                 Claim c = new Claim
                 {
-                    Id = new Guid(),
+                    Id = new Guid(getRandomness()),
                     ServiceId = service.Id,
                     UserId = user.Id
                 };
