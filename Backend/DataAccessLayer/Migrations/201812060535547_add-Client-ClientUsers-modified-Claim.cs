@@ -49,8 +49,6 @@ namespace DataAccessLayer.Migrations
             DropIndex("dbo.ClientUsers", new[] { "UserId" });
             DropIndex("dbo.ClientUsers", new[] { "ClientId" });
             DropIndex("dbo.Claims", new[] { "ClientId" });
-            AlterColumn("dbo.Users", "PasswordSalt", c => c.Binary());
-            AlterColumn("dbo.Users", "PasswordHash", c => c.String());
             DropColumn("dbo.Claims", "ClientId");
             DropColumn("dbo.Claims", "SubjectUserId");
             DropTable("dbo.ClientUsers");
