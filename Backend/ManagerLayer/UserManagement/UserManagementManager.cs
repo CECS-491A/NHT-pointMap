@@ -13,7 +13,7 @@ namespace ManagerLayer.UserManagement
         private IPasswordService _passwordService;
         private IUserService _userService;
 
-        public void CreateUser(string email, string password, DateTime dob)
+        public int CreateUser(string email, string password, DateTime dob)
         {
             DateTime timestamp = DateTime.UtcNow;
             _passwordService = new PasswordService();
@@ -28,19 +28,19 @@ namespace ManagerLayer.UserManagement
                 DateOfBirth = dob,
                 UpdatedAt = timestamp
             };
-            _userService.CreateUser(user);
+            return _userService.CreateUser(user);
         }
 
-        public void DeleteUser(User user)
+        public int DeleteUser(User user)
         {
             _userService = new UserService();
-            _userService.DeleteUser(user.Id);
+            return _userService.DeleteUser(user.Id);
         }
 
-        public void DeleteUser(Guid id)
+        public int DeleteUser(Guid id)
         {
             _userService = new UserService();
-            Console.WriteLine(_userService.DeleteUser(id));
+            return _userService.DeleteUser(id);
         }
 
         public User GetUser(Guid id)
@@ -57,24 +57,24 @@ namespace ManagerLayer.UserManagement
             return user;
         }
 
-        public void DisableUser(User user)
+        public int DisableUser(User user)
         {
             // using autho
             user.Disabled = true;
-            _userService.UpdateUser(user);
+            return _userService.UpdateUser(user);
         }
 
-        public void EnableUser(User user)
+        public int EnableUser(User user)
         {
             // using autho
             user.Disabled = false;
-            _userService.UpdateUser(user);
+            return _userService.UpdateUser(user);
         }
 
-        public void UpdateUser(User user)
+        public int UpdateUser(User user)
         {
             // user authoriations for updates
-            _userService.UpdateUser(user);
+            return _userService.UpdateUser(user);
         }
     }
 }

@@ -7,11 +7,22 @@ namespace ManagerLayer
 {
     public class UserManager
     {
+        /// <summary>
+        ///     Not part of sprint 3
+        ///     - in development
+        /// </summary>
         public void Register()
         {
 
         }
 
+
+        /// <summary>
+        ///     Not part of spring 3
+        ///     - in development
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="password"></param>
         public void Login(string email, string password)
         {
             UserService _userService = new UserService();

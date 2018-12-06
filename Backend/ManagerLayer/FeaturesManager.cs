@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer
 {
-    class FeaturesManager
+    /// <summary>
+    ///     Not part of sprint 3
+    ///     - in development
+    /// </summary>
+    public class FeaturesManager
     {
     }
 }

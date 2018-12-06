@@ -7,6 +7,11 @@ namespace ManagerLayer
 {
     public class ValidationManager
     {
+        /// <summary>
+        ///     This is not ready for review
+        ///     Not part of our sprint 3
+        /// </summary>
+        /// <param name="password"></param>
         public void CheckPassword(string password)
         {
             IPasswordService _passwordService = new PasswordService();

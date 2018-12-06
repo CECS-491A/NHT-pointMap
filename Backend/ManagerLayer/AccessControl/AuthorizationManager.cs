@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer.AccessControl
 {
+    /// <summary>
+    ///     Not part of sprint 3
+    ///     - under development
+    /// </summary>
     class AuthorizationManager
     {
     }
