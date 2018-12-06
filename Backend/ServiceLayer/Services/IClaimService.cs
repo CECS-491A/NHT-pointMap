@@ -10,8 +10,11 @@ namespace ServiceLayer.Services
 {
     interface IClaimService
     {
-        Service getService(string claimName);
-        void addServiceToUser(User user, Service service);
-        bool userHasServiceAccess(User user, Service service);
+        Service GetService(string claimName);
+        void AddServiceToUser(User user, Service service);
+        bool UserHasServiceAccess(User user, Service service);
+        void ToggleFeature(Service service, bool toggle);
+        bool IsServiceEnabled(Service service);
+        bool CanUserMakeActionOnUser(Service service, User user1, User user2);
     }
 }

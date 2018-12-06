@@ -18,20 +18,34 @@ namespace ServiceLayer.Services
             _ClaimRepo = new ClaimRepository();
         }
 
-        public Service getService(string claimName)
+        public bool IsServiceEnabled(Service service)
+        {
+            //TODO
+            return false;
+        }
+        public void ToggleFeature(Service service, bool toggle)
+        {
+            //TODO
+        }
+        public Service GetService(string claimName)
         {
             return _ClaimRepo.GetService(claimName);
         }
 
-        public void addServiceToUser(User user, Service service)
+        public void AddServiceToUser(User user, Service service)
         {
             _ClaimRepo.AddServiceToUser(user.Id, service.Id);
         }
 
-        public bool userHasServiceAccess(User user, Service service)
+        public bool UserHasServiceAccess(User user, Service service)
         {
             if (service.Disabled) return false;
             return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);
+        }
+        public bool CanUserMakeActionOnUser(Service service, User user1, User user2)
+        {
+            return false;
+            //TODO
         }
     }
 }
