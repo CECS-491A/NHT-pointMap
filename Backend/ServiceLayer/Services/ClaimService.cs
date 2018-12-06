@@ -11,11 +11,13 @@ namespace ServiceLayer.Services
 {
     public class ClaimService : IClaimService
     {
-        ClaimRepository _ClaimRepo;
+        private ClaimRepository _ClaimRepo;
+        private ClientRepository _ClientRepo;
 
         public ClaimService()
         {
             _ClaimRepo = new ClaimRepository();
+            _ClientRepo = new ClientRepository();
         }
 
         public int CreateClaim(Claim claim)
@@ -23,12 +25,13 @@ namespace ServiceLayer.Services
             return _ClaimRepo.CreateClaim(claim);
         }
 
-        public int CreateClaim(Guid userId, Guid serviceId)
+        public int CreateClaim(Guid userId, Guid serviceId, Guid clientId)
         {
             Claim claim = new Claim
             {
                 UserId = userId,
                 ServiceId = serviceId,
+                ClientId = clientId,
                 UpdatedAt = DateTime.UtcNow
             };
             return _ClaimRepo.CreateClaim(claim);
@@ -48,6 +51,12 @@ namespace ServiceLayer.Services
         {
             if (service.Disabled) return false;
             return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);
+        }
+
+        public int CreateClient(Client client)
+        {
+            Console.WriteLine(client.Name);
+            return _ClientRepo.CreateClient(client);
         }
     }
 }

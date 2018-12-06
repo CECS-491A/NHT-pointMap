@@ -35,6 +35,19 @@ namespace UnitTesting
         }
 
         [TestMethod]
+        public void CreateClient()
+        {
+            Client newClient = new Client
+            {
+                Disabled = false,
+                Name = "" + Guid.NewGuid() + "",
+            };
+            int response = claimService.CreateClient(newClient);
+
+            Assert.IsTrue(response > 0);
+        }
+
+        [TestMethod]
         public void CreateClaim()
         {
             Claim newClaim = new Claim
@@ -44,8 +57,15 @@ namespace UnitTesting
                 UpdatedAt = DateTime.UtcNow
             };
 
+            Client newClient = new Client
+            {
+                Disabled = false,
+                Name = "" + Guid.NewGuid() + ""
+            };
+            claimService.CreateClient(newClient);
+
             // ACT
-            int response = claimService.CreateClaim(user1.Id, service1.Id);
+            int response = claimService.CreateClaim(user1.Id, service1.Id, newClient.Id);
 
             // Assert
             Assert.IsTrue(response > 0);
