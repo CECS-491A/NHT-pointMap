@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class addClientClientUsersmodifiedClaim : IMigrationMetadata
+    public sealed partial class addClientClientServicemodifiedClaim : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addClientClientUsersmodifiedClaim));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(addClientClientServicemodifiedClaim));
         
         string IMigrationMetadata.Id
         {
-            get { return "201812060535547_add-Client-ClientUsers-modified-Claim"; }
+            get { return "201812060647213_add-Client-ClientService-modified-Claim"; }
         }
         
         string IMigrationMetadata.Source

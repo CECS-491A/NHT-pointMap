@@ -15,10 +15,13 @@ namespace DataAccessLayer.Models
         [Key]
         public Guid Id { get; set; }
 
-        [Required, ForeignKey("User"), Column(Order = 1)]
+        [Required, ForeignKey("OwnerUser"), Column(Order = 1)]
         public Guid UserId { get; set; }
+        public virtual User OwnerUser { get; set; }
+
+        [ForeignKey("SubjectUser"), Column(Order = 2)]
         public Guid SubjectUserId { get; set; }
-        public User User { get; set; }
+        public virtual User SubjectUser { get; set; }
 
         [Required, ForeignKey("Service")]
         public Guid ServiceId { get; set; }
