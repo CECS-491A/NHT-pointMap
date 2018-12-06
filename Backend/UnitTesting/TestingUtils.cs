@@ -10,7 +10,7 @@ namespace UnitTesting
 {
     public class TestingUtils
     {
-        public byte[] getRandomness()
+        public byte[] GetRandomness()
         {
             byte[] salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
@@ -19,20 +19,20 @@ namespace UnitTesting
             }
             return salt;
         }
-        public User createUser()
+
+        public User CreateUser()
         {
             using (var _db = new DatabaseContext())
             { 
                 User u = new User
                 {
-                    Id = new Guid(getRandomness()),
-                    Email = new Guid() + "@" + new Guid() + ".com",
+                    Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                     DateOfBirth = DateTime.UtcNow,
                     City = "Los Angeles",
                     State = "California",
                     Country = "United States",
-                    PasswordHash = (new Guid()).ToString(),
-                    PasswordSalt = getRandomness()
+                    PasswordHash = (Guid.NewGuid()).ToString(),
+                    PasswordSalt = GetRandomness()
                 };
                 _db.Users.Add(u);
                 _db.SaveChanges();
@@ -41,13 +41,12 @@ namespace UnitTesting
             }
         }
 
-        public Session createSession(User user)
+        public Session CreateSession(User user)
         {
            using (var _db = new DatabaseContext())
             {
                 Session s = new Session
                 {
-                    Id = new Guid(getRandomness()),
                     UserId = user.Id,
                     ExpiresAt = DateTime.UtcNow,
                     Token = "token"
@@ -59,14 +58,13 @@ namespace UnitTesting
             }
         }
 
-        public Service createService(bool enabled)
+        public Service CreateService(bool enabled)
         {
             using (var _db = new DatabaseContext())
             {
                 Service s = new Service
                 {
-                    Id = new Guid(getRandomness()),
-                    ServiceName = (new Guid(getRandomness())).ToString(),
+                    ServiceName = (Guid.NewGuid()).ToString(),
                     Disabled = enabled
                 };
                 _db.Services.Add(s);
@@ -76,13 +74,12 @@ namespace UnitTesting
             }
         }
 
-        public Claim createClaim(User user, Service service)
+        public Claim CreateClaim(User user, Service service)
         {
             using (var _db = new DatabaseContext())
             {
                 Claim c = new Claim
                 {
-                    Id = new Guid(getRandomness()),
                     ServiceId = service.Id,
                     UserId = user.Id
                 };

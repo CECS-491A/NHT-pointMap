@@ -10,11 +10,10 @@ namespace ServiceLayer.Services
     public interface IUserService
     {
         // CRUD
-        void Create(User user);
-        User GetById(Guid Id);
-        User Get(User user); 
-        void Delete(User user);
-        void DeleteById(Guid Id);
-        void Update(User user);
+        int CreateUser(User user);
+        User GetUser(string email);
+        User GetUser(Guid Id);
+        int DeleteUser(Guid Id);
+        int UpdateUser(User user);
     }
 }

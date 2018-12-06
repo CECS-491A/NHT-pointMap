@@ -16,19 +16,20 @@ namespace UnitTesting
         Service service1;
         Service service2;
         Claim claim1;
+
         public ClaimServiceUT()
         {
             var testUtils = new TestingUtils();
 
             claimService = new ClaimService();
 
-            user1 = testUtils.createUser();
-            user2 = testUtils.createUser();
+            user1 = testUtils.CreateUser();
+            user2 = testUtils.CreateUser();
 
-            service1 = testUtils.createService(true);
-            service2 = testUtils.createService(true);
+            service1 = testUtils.CreateService(true);
+            service2 = testUtils.CreateService(true);
 
-            claim1 = testUtils.createClaim(user1, service1);
+            claim1 = testUtils.CreateClaim(user1, service1);
         }
 
         [TestMethod]

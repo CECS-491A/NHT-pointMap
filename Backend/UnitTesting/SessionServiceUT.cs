@@ -19,9 +19,9 @@ namespace UnitTesting
             //Arrange
             tu = new TestingUtils();
             ss = new SessionService();
-            u1 = tu.createUser();
-            u2 = tu.createUser();
-            s1 = tu.createSession(u1);
+            u1 = tu.CreateUser();
+            u2 = tu.CreateUser();
+            s1 = tu.CreateSession(u1);
         }
 
         [TestMethod]

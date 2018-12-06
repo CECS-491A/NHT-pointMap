@@ -1,68 +1,70 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Text;
-using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using DataAccessLayer.Repositories;
 
 namespace ServiceLayer.Services
 {
     public class UserService : IUserService
     {
-        public void Create(User user)
+        private UserManagementRepository _UserManagementRepo;
+
+        public UserService()
         {
-            using(var _db = new DatabaseContext())
-            {
-                _db.Users.Add(user);
-                _db.SaveChanges();
-            }
+            _UserManagementRepo = new UserManagementRepository();
         }
 
-        public void Delete(User user)
+        public int CreateUser(User user)
         {
-            using(var _db = new DatabaseContext())
+            if (_UserManagementRepo.ExistingUser(user))
             {
-                _db.Users.Remove(user);
-                _db.SaveChanges();
+                Console.WriteLine("User exists");
+                return 0;
             }
+            return _UserManagementRepo.CreateNewUser(user);
         }
 
-        public void DeleteById(Guid Id)
+        public int DeleteUser(Guid Id)
         {
-            using(var _db = new DatabaseContext())
+            return _UserManagementRepo.DeleteUser(Id);
+        }
+
+        public User GetUser(string email)
+        {
+            return _UserManagementRepo.GetUser(email);
+        }
+
+        public User GetUser(Guid Id)
+        {
+            return _UserManagementRepo.GetUser(Id);
+        }
+
+        public int UpdateUser(User user)
+        {
+            return _UserManagementRepo.UpdateUser(user);
+        }
+
+        public User Login(string email, string password)
+        {
+            UserRepository userRepo = new UserRepository();
+            PasswordService _passwordService = new PasswordService();
+            var user = _UserManagementRepo.GetUser(email);
+            if (user != null)
             {
-                var user = _db.Users.Find(Id);
-                if (user != null)
+                string hashedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
+                if (userRepo.ValidatePassword(user, hashedPassword))
                 {
-                    _db.Users.Remove(user);
-                    _db.SaveChanges();
+                    Console.WriteLine("Password Correct");
+                    return user;
                 }
+                Console.WriteLine("Password Incorrect");
+                return null;
             }
-        }
-
-        public User Get(User user)
-        {
-            using(var _db = new DatabaseContext())
-            {
-                return _db.Users.Find(user.Id);
-            }
-        }
-
-        public User GetById(Guid Id)
-        {
-            using(var _db = new DatabaseContext())
-            {
-                return _db.Users.Find(Id);
-            }
-        }
-
-        public void Update(User user)
-        {
-            using(var _db = new DatabaseContext())
-            {
-                _db.Entry(user).State = EntityState.Modified;
-                _db.SaveChanges();
-            }
+            Console.WriteLine("User does not exist");
+            return null;
         }
     }
 }

@@ -5,14 +5,17 @@ using DataAccessLayer.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DataAccessLayer.Repositories;
 
 namespace ServiceLayer.Services
 {
     public class SessionService : ISessionService
     {
+        private SessionReposity _SessionRepo;
+
         public SessionService()
         {
-
+            _SessionRepo = new SessionReposity();
         }
 
         public string GenerateSession()
@@ -26,16 +29,7 @@ namespace ServiceLayer.Services
 
         public bool ValidateSession(User user)
         {
-            using (var _db = new DatabaseContext())
-            {
-                Session session = _db.Sessions
-                    .Where(s => s.UserId == user.Id && s.ExpiresAt < DateTime.UtcNow)
-                    .FirstOrDefault();
-
-                if (session == null)
-                    return false;
-                return true;
-            }
+            return _SessionRepo.ValidateSession(user.Id);
         }
     }
 }

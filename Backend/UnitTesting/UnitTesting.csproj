@@ -61,6 +61,7 @@
     <Compile Include="PasswordServiceUT.cs" />
     <Compile Include="SessionServiceUT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserServiceUT.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">

@@ -58,6 +58,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
+      <Project>{E5F0FE7C-FD4F-4A94-B425-3F9FE7B3F2D3}</Project>
+      <Name>DataAccessLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
       <Project>{DD7C51A6-44CD-4A05-9809-1171FE66F434}</Project>
       <Name>ManagerLayer</Name>
