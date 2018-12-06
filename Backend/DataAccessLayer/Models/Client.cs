@@ -9,18 +9,18 @@ namespace DataAccessLayer.Models
         public Client()
         {
             CreatedAt = DateTime.UtcNow;
-            ClientId = Guid.NewGuid();
+            Id = Guid.NewGuid();
         }
 
 
         [Key]
-        public Guid ClientId { get; set; }
+        public Guid Id { get; set; }
         [Required]
-        public string ClientName { get; set; }
+        public string Name { get; set; }
         [Required]
         public bool Disabled { get; set; }
 
-        public string ClientAddress { get; set; }
+        public string Address { get; set; }
 
         [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime UpdatedAt { get; set; }

@@ -11,14 +11,14 @@ namespace DataAccessLayer.Migrations
                 "dbo.Clients",
                 c => new
                     {
-                        ClientId = c.Guid(nullable: false),
-                        ClientName = c.String(nullable: false),
+                        Id = c.Guid(nullable: false),
+                        Name = c.String(nullable: false),
                         Disabled = c.Boolean(nullable: false),
-                        ClientAddress = c.String(),
+                        Address = c.String(),
                         UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         CreatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                     })
-                .PrimaryKey(t => t.ClientId);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.ClientUsers",
@@ -37,10 +37,8 @@ namespace DataAccessLayer.Migrations
             
             AddColumn("dbo.Claims", "SubjectUserId", c => c.Guid(nullable: false));
             AddColumn("dbo.Claims", "ClientId", c => c.Guid(nullable: false));
-            AlterColumn("dbo.Users", "PasswordHash", c => c.String(nullable: false));
-            AlterColumn("dbo.Users", "PasswordSalt", c => c.Binary(nullable: false));
             CreateIndex("dbo.Claims", "ClientId");
-            AddForeignKey("dbo.Claims", "ClientId", "dbo.Clients", "ClientId", cascadeDelete: true);
+            AddForeignKey("dbo.Claims", "ClientId", "dbo.Clients", "Id", cascadeDelete: true);
         }
         
         public override void Down()

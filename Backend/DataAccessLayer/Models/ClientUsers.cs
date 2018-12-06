@@ -9,7 +9,6 @@ namespace DataAccessLayer.Models
         public ClientUsers()
         {
             CreatedAt = DateTime.UtcNow;
-            ClientId = Guid.NewGuid();
         }
 
         [Key, Column(Order = 0), ForeignKey("Client")]

@@ -13,7 +13,7 @@ namespace DataAccessLayer.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201812060509400_add-Client-ClientUsers-modified-Claim"; }
+            get { return "201812060535547_add-Client-ClientUsers-modified-Claim"; }
         }
         
         string IMigrationMetadata.Source
