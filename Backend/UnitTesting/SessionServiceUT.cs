@@ -1,5 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using DataAccessLayer.Database;
+using DataAccessLayer.Models;
 using ServiceLayer.Services;
 
 namespace UnitTesting
@@ -8,10 +10,18 @@ namespace UnitTesting
     public class SessionServiceUT
     {
         SessionService ss;
+        User u1;
+        User u2;
+        Session s1;
+        TestingUtils tu;
         public SessionServiceUT()
         {
             //Arrange
+            tu = new TestingUtils();
             ss = new SessionService();
+            u1 = tu.createUser();
+            u2 = tu.createUser();
+            s1 = tu.createSession(u1);
         }
 
         [TestMethod]
@@ -23,6 +33,13 @@ namespace UnitTesting
             //Assert
             Assert.AreEqual(64, s1.Length);
             Assert.AreNotEqual(s1, s2);
+        }
+
+        [TestMethod]
+        public void validateSession()
+        {
+            Assert.AreEqual(true, ss.ValidateSession(u1));
+            Assert.AreEqual(false, ss.ValidateSession(u2));
         }
     }
 }
