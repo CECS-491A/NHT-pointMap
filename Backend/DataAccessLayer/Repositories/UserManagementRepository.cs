@@ -12,33 +12,33 @@ namespace DataAccessLayer.Repositories
     public class UserManagementRepository
     {
 
-        public void CreateNewUser(User user)
+        public int CreateNewUser(User user)
         {
             using (var _db = new DatabaseContext())
             {
-                _db.Users.Add(user);
-                _db.SaveChanges();
+                try
+                {
+                    _db.Users.Add(user);
+                    return _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
             }
         }
 
-        public void DeleteUser(User user)
-        {
-            using (var _db = new DatabaseContext())
-            {
-                _db.Entry(user).State = EntityState.Deleted;
-                _db.SaveChanges();
-            }
-        }
-
-        public void DeleteUser(Guid Id)
+        public int DeleteUser(Guid Id)
         {
             using (var _db = new DatabaseContext())
             {
                 var user = _db.Users
                     .Where(c => c.Id == Id)
                     .FirstOrDefault<User>();
+                if (user == null)
+                    return 0;
                 _db.Entry(user).State = EntityState.Deleted;
-                _db.SaveChanges();
+                return _db.SaveChanges();
             }
         }
 
@@ -61,13 +61,20 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public void UpdateUser(User user)
+        public int UpdateUser(User user)
         {
             user.UpdatedAt = DateTime.UtcNow;
             using (var _db = new DatabaseContext())
             {
-                _db.Entry(user).State = EntityState.Modified;
-                _db.SaveChanges();
+                try
+                {
+                    _db.Entry(user).State = EntityState.Modified;
+                    return _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
             }
         }
 

@@ -10,10 +10,20 @@ namespace UnitTesting
 {
     public class TestingUtils
     {
-        public User createUser()
+        public byte[] GetRandomness()
+        {
+            byte[] salt = new byte[128 / 8];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+            return salt;
+        }
+
+        public User CreateUser()
         {
             using (var _db = new DatabaseContext())
-            {
+            { 
                 User u = new User
                 {
                     Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
@@ -22,7 +32,7 @@ namespace UnitTesting
                     State = "California",
                     Country = "United States",
                     PasswordHash = (Guid.NewGuid()).ToString(),
-                    PasswordSalt = new byte[128 / 8]
+                    PasswordSalt = GetRandomness()
                 };
                 _db.Users.Add(u);
                 _db.SaveChanges();
@@ -31,14 +41,15 @@ namespace UnitTesting
             }
         }
 
-        public Session createSession(User user)
+        public Session CreateSession(User user)
         {
            using (var _db = new DatabaseContext())
             {
                 Session s = new Session
                 {
                     UserId = user.Id,
-                    ExpiresAt = DateTime.UtcNow
+                    ExpiresAt = DateTime.UtcNow,
+                    Token = "token"
                 };
                 _db.Sessions.Add(s);
                 _db.SaveChanges();
@@ -47,13 +58,13 @@ namespace UnitTesting
             }
         }
 
-        public Service createService(bool enabled)
+        public Service CreateService(bool enabled)
         {
             using (var _db = new DatabaseContext())
             {
                 Service s = new Service
                 {
-                    ServiceName = (new Guid()).ToString(),
+                    ServiceName = (Guid.NewGuid()).ToString(),
                     Disabled = enabled
                 };
                 _db.Services.Add(s);
@@ -63,7 +74,7 @@ namespace UnitTesting
             }
         }
 
-        public Claim createClaim(User user, Service service)
+        public Claim CreateClaim(User user, Service service)
         {
             using (var _db = new DatabaseContext())
             {

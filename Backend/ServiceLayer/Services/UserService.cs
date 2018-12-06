@@ -17,19 +17,19 @@ namespace ServiceLayer.Services
             _UserManagementRepo = new UserManagementRepository();
         }
 
-        public void CreateUser(User user)
+        public int CreateUser(User user)
         {
             if (_UserManagementRepo.ExistingUser(user))
             {
                 Console.WriteLine("User exists");
-                return;
+                return 0;
             }
-            _UserManagementRepo.CreateNewUser(user);
+            return _UserManagementRepo.CreateNewUser(user);
         }
 
-        public void DeleteUser(Guid Id)
+        public int DeleteUser(Guid Id)
         {
-            _UserManagementRepo.DeleteUser(Id);
+            return _UserManagementRepo.DeleteUser(Id);
         }
 
         public User GetUser(string email)
@@ -42,9 +42,9 @@ namespace ServiceLayer.Services
             return _UserManagementRepo.GetUser(Id);
         }
 
-        public void UpdateUser(User user)
+        public int UpdateUser(User user)
         {
-            _UserManagementRepo.UpdateUser(user);
+            return _UserManagementRepo.UpdateUser(user);
         }
 
         public User Login(string email, string password)
