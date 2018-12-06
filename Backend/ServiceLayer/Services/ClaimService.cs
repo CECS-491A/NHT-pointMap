@@ -18,15 +18,6 @@ namespace ServiceLayer.Services
             _ClaimRepo = new ClaimRepository();
         }
 
-        public bool IsServiceEnabled(Service service)
-        {
-            //TODO
-            return false;
-        }
-        public void ToggleFeature(Service service, bool toggle)
-        {
-            //TODO
-        }
         public Service GetService(string claimName)
         {
             return _ClaimRepo.GetService(claimName);
