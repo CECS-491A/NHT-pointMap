@@ -65,12 +65,14 @@
     <Compile Include="Migrations\201812040642468_create-table-session.Designer.cs">
       <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812050951306_update-tables-columns.cs" />
-    <Compile Include="Migrations\201812050951306_update-tables-columns.Designer.cs">
-      <DependentUpon>201812050951306_update-tables-columns.cs</DependentUpon>
+    <Compile Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.cs" />
+    <Compile Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.Designer.cs">
+      <DependentUpon>201812060647213_add-Client-ClientService-modified-Claim.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
+    <Compile Include="Models\ClientUsers.cs" />
+    <Compile Include="Models\Client.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\User.cs" />
@@ -101,8 +103,8 @@
     <EmbeddedResource Include="Migrations\201812040642468_create-table-session.resx">
       <DependentUpon>201812040642468_create-table-session.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812050951306_update-tables-columns.resx">
-      <DependentUpon>201812050951306_update-tables-columns.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.resx">
+      <DependentUpon>201812060647213_add-Client-ClientService-modified-Claim.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

@@ -19,13 +19,10 @@ namespace DataAccessLayer.Models
         [Required]
         public bool Disabled { get; set; }
 
-        [Required]
-        [Column(TypeName = "datetime2")]
-        [DataType(DataType.DateTime)]
+        [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime UpdatedAt { get; set; }
-        [Required]
-        [Column(TypeName = "datetime2")]
-        [DataType(DataType.DateTime)]
+
+        [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; }
     }
 }

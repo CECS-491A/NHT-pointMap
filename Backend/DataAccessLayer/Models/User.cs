@@ -21,8 +21,7 @@ namespace DataAccessLayer.Models
         [Required]
         public string Email { get; set; }
 
-        [Required]
-        [DataType(DataType.Date)]
+        [Required, DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
 
         public string City { get; set; }
@@ -44,12 +43,10 @@ namespace DataAccessLayer.Models
         [Required]
         public bool Disabled { get; set; }
 
-        [Column(TypeName = "datetime2")]
-        [DataType(DataType.DateTime)]
-        [Required]
+        [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime UpdatedAt { get; set; }
-        [Column(TypeName = "datetime2")]
-        [DataType(DataType.DateTime)]
+
+        [Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; }
 
         public ICollection<Session> Sessions { get; set; }
