@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using System.Security.Cryptography;
 
 namespace ServiceLayer.Services
@@ -22,7 +23,7 @@ namespace ServiceLayer.Services
             return Convert.ToBase64String(hash);
         }
 
-        private static string HashPasswordSHA1(string password, byte[] salt)
+        public string HashPasswordSHA1(string password, byte[] salt)
         {
             var sh = SHA1.Create();
             byte[] byte_arr = System.Text.Encoding.ASCII.GetBytes(password);
@@ -52,7 +53,7 @@ namespace ServiceLayer.Services
             return 0;
         }
 
-        private static string[] QueryPwnedApi(string prefix)
+        public string[] QueryPwnedApi(string prefix)
         {
             HttpClient client = new HttpClient();
             return (client.GetStringAsync("https://api.pwnedpasswords.com/range/" + prefix).Result).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
