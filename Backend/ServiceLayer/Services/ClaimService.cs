@@ -42,15 +42,15 @@ namespace ServiceLayer.Services
             return _ClaimRepo.GetService(claimName);
         }
 
-        public void addServiceToUser(User user, Service service)
+        public void addServiceToUser(User user, Service service, User subjectUser)
         {
-            _ClaimRepo.AddServiceToUser(user.Id, service.Id);
+            _ClaimRepo.AddServiceToUser(user.Id, service.Id, subjectUser.Id);
         }
 
-        public bool userHasServiceAccess(User user, Service service)
+        public bool userHasServiceAccess(User user, Service service, User subjectUser)
         {
             if (service.Disabled) return false;
-            return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);
+            return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id, subjectUser.Id);
         }
 
         public int CreateClient(Client client)

@@ -74,14 +74,15 @@ namespace UnitTesting
             }
         }
 
-        public Claim CreateClaim(User user, Service service)
+        public Claim CreateClaim(User user, Service service, User subjectUser)
         {
             using (var _db = new DatabaseContext())
             {
                 Claim c = new Claim
                 {
                     ServiceId = service.Id,
-                    UserId = user.Id
+                    UserId = user.Id,
+                    SubjectUserId = subjectUser.Id
                 };
                 _db.Claims.Add(c);
                 _db.SaveChanges();

@@ -11,7 +11,7 @@ namespace ServiceLayer.Services
     interface IClaimService
     {
         Service getService(string claimName);
-        void addServiceToUser(User user, Service service);
-        bool userHasServiceAccess(User user, Service service);
+        void addServiceToUser(User user, Service service, User subjectUser);
+        bool userHasServiceAccess(User user, Service service, User subjectUser);
     }
 }
