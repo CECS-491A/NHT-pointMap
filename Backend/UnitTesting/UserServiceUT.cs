@@ -52,6 +52,52 @@ namespace UnitTesting
         }
 
         [TestMethod]
+        public void Create_User_RetrieveNew_Success()
+        {
+            User newUser = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness()
+            };
+
+            // ACT
+            var copy = newUser;
+            var response = us.CreateUser(newUser);
+            var responseUser = us.GetUser(newUser.Id);
+
+            // Assert
+            Assert.IsTrue(response > 0);
+            Assert.AreEqual(copy.Id, responseUser.Id);
+        }
+
+        [TestMethod]
+        public void Create_User_RetrieveNew_Fail()
+        {
+            User newUser = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+            };
+
+            // ACT
+            var copy = newUser;
+            var response = us.CreateUser(newUser);
+            var responseUser = us.GetUser(newUser.Id);
+
+            // Assert
+            Assert.IsTrue(response < 1);
+            Assert.IsNull(responseUser);
+        }
+
+        [TestMethod]
         public void Create_User_Fail()
         {
             // Act
