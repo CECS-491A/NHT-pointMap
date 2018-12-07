@@ -65,7 +65,7 @@ namespace UnitTesting
                 Service s = new Service
                 {
                     ServiceName = (Guid.NewGuid()).ToString(),
-                    Disabled = enabled
+                    Disabled = !enabled
                 };
                 _db.Services.Add(s);
                 _db.SaveChanges();
