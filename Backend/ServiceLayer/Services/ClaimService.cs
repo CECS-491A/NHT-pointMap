@@ -11,11 +11,30 @@ namespace ServiceLayer.Services
 {
     public class ClaimService : IClaimService
     {
-        ClaimRepository _ClaimRepo;
+        private ClaimRepository _ClaimRepo;
+        private ClientRepository _ClientRepo;
 
         public ClaimService()
         {
             _ClaimRepo = new ClaimRepository();
+            _ClientRepo = new ClientRepository();
+        }
+
+        public int CreateClaim(Claim claim)
+        {
+            return _ClaimRepo.CreateClaim(claim);
+        }
+
+        public int CreateClaim(Guid userId, Guid serviceId, Guid clientId)
+        {
+            Claim claim = new Claim
+            {
+                UserId = userId,
+                ServiceId = serviceId,
+                ClientId = clientId,
+                UpdatedAt = DateTime.UtcNow
+            };
+            return _ClaimRepo.CreateClaim(claim);
         }
 
         public Service getService(string claimName)
@@ -23,15 +42,21 @@ namespace ServiceLayer.Services
             return _ClaimRepo.GetService(claimName);
         }
 
-        public void addServiceToUser(User user, Service service)
+        public void addServiceToUser(User user, Service service, User subjectUser)
         {
-            _ClaimRepo.AddServiceToUser(user.Id, service.Id);
+            _ClaimRepo.AddServiceToUser(user.Id, service.Id, subjectUser.Id);
         }
 
-        public bool userHasServiceAccess(User user, Service service)
+        public bool userHasServiceAccess(User user, Service service, User subjectUser)
         {
             if (service.Disabled) return false;
-            return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);
+            return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id, subjectUser.Id);
+        }
+
+        public int CreateClient(Client client)
+        {
+            Console.WriteLine(client.Name);
+            return _ClientRepo.CreateClient(client);
         }
     }
 }

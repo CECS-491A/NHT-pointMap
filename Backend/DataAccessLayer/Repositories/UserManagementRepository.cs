@@ -11,7 +11,6 @@ namespace DataAccessLayer.Repositories
 {
     public class UserManagementRepository
     {
-
         public int CreateNewUser(User user)
         {
             using (var _db = new DatabaseContext())

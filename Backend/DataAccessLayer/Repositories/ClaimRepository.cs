@@ -10,6 +10,22 @@ namespace DataAccessLayer.Repositories
 {
     public class ClaimRepository
     {
+        public int CreateClaim(Claim claim)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                claim.UpdatedAt = DateTime.UtcNow;
+                try
+                {
+                    _db.Claims.Add(claim);
+                    return _db.SaveChanges();
+                }
+                catch(Exception)
+                {
+                    return 0;
+                }
+            }
+        }
       
         public Service GetService(string claimName)
         {
@@ -22,7 +38,7 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public void AddServiceToUser(Guid userId, Guid serviceId)
+        public void AddServiceToUser(Guid userId, Guid serviceId, Guid subjectUserId)
         {
             using (var _db = new DatabaseContext())
             {
@@ -30,18 +46,19 @@ namespace DataAccessLayer.Repositories
                 {
                     UserId = userId,
                     ServiceId = serviceId,
+                    SubjectUserId = subjectUserId
                 };
                 _db.Claims.Add(u);
                 _db.SaveChanges();
             }
         }
 
-        public bool UserHasServiceAccess(Guid userId, Guid serviceId)
+        public bool UserHasServiceAccess(Guid userId, Guid serviceId, Guid subjectUserId)
         {
             using (var _db = new DatabaseContext())
             {
                 int count = _db.Claims
-                    .Where(c => c.UserId == userId && c.ServiceId == serviceId)
+                    .Where(c => c.UserId == userId && c.ServiceId == serviceId && c.SubjectUserId == subjectUserId)
                     .Count();
 
                 return count > 0;

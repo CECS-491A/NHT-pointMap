@@ -35,8 +35,8 @@ namespace DataAccessLayer.Migrations
                 .Index(t => t.ClientId)
                 .Index(t => t.UserId);
             
-            AddColumn("dbo.Claims", "SubjectUserId", c => c.Guid(nullable: true));
-            AddColumn("dbo.Claims", "ClientId", c => c.Guid(nullable: true));
+            AddColumn("dbo.Claims", "SubjectUserId", c => c.Guid(nullable: true, identity: false));
+            AddColumn("dbo.Claims", "ClientId", c => c.Guid(nullable: true, identity: false));
             CreateIndex("dbo.Claims", "SubjectUserId");
             CreateIndex("dbo.Claims", "ClientId");
             AddForeignKey("dbo.Claims", "ClientId", "dbo.Clients", "Id", cascadeDelete: false);
