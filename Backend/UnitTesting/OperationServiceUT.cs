@@ -76,5 +76,19 @@ namespace UnitTesting
                 Assert.AreEqual(1, _os.enableService(service2.Id, _db));
             }
         }
+
+        [TestMethod]
+        public void deleteService()
+        {
+            service1 = _ts.CreateService(false);
+
+            using (var _db = new DatabaseContext())
+            {
+                Assert.AreEqual(1, _os.deleteService(service1.Id, _db));
+                Assert.AreEqual(1, _os.deleteService(service1.Id, _db));
+                _db.SaveChanges();
+                Assert.AreEqual(0, _os.deleteService(service1.Id, _db));
+            }
+        }
     }
 }

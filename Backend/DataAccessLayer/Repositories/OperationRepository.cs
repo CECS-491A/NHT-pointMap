@@ -79,5 +79,21 @@ namespace DataAccessLayer.Repositories
                 return 0;
             }
         }
+
+        public int deleteService(Guid id, DatabaseContext _db)
+        {
+            try
+            {
+                var service = _db.Services.Find(id);
+                if (service == null)
+                    return 0;
+                _db.Entry(service).State = EntityState.Deleted;
+                return 1;
+            }
+            catch(Exception)
+            {
+                return 0;
+            }
+        }
     }
 }

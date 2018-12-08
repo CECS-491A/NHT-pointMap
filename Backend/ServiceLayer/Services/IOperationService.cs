@@ -12,5 +12,6 @@ namespace ServiceLayer.Services
         int createService(string serviceName, DatabaseContext _db);
         int disableService(Guid serviceId, DatabaseContext _db);
         int enableService(Guid serviceId, DatabaseContext _db);
+        int deleteService(Guid serviceId, DatabaseContext _db);
     }
 }

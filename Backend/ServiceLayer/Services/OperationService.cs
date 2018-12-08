@@ -35,5 +35,10 @@ namespace ServiceLayer.Services
             return _or.enableService(serviceId, _db);
         }
         
+        public int deleteService(Guid serviceId, DatabaseContext _db)
+        {
+            OperationRepository _or = new OperationRepository();
+            return _or.deleteService(serviceId, _db);
+        }
     }
 }
