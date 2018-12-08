@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Models;
+﻿using DataAccessLayer.Database;
+using DataAccessLayer.Models;
 using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
@@ -28,53 +29,101 @@ namespace ManagerLayer.UserManagement
                 DateOfBirth = dob,
                 UpdatedAt = timestamp
             };
-            return _userService.CreateUser(user);
+
+            User responseUserService = null;
+            int responseDB = 0;
+            using (var _db = new DatabaseContext())
+            {
+                responseUserService = _userService.CreateUser(user, _db);
+                responseDB = _db.SaveChanges();
+            }
+            return responseDB;
         }
 
         public int DeleteUser(User user)
         {
             _userService = new UserService();
-            return _userService.DeleteUser(user.Id);
+            int response = 0;
+            User responseObject = null;
+            using (var _db = new DatabaseContext())
+            {
+                responseObject = _userService.DeleteUser(user.Id, _db);
+                response = _db.SaveChanges();
+            }
+            return response;
         }
 
         public int DeleteUser(Guid id)
         {
             _userService = new UserService();
-            return _userService.DeleteUser(id);
+            int response = 0;
+            User responseObject = null;
+            using (var _db = new DatabaseContext())
+            {
+                responseObject = _userService.DeleteUser(id, _db);
+                response = _db.SaveChanges();
+            }
+            return response;
         }
 
         public User GetUser(Guid id)
         {
             _userService = new UserService();
-            var user = _userService.GetUser(id);
-            return user;
+            User responseObject = null;
+            using (var _db = new DatabaseContext())
+            {
+                responseObject = _userService.GetUser(id, _db);
+            }
+            return responseObject;
         }
 
         public User GetUser(string email)
         {
             _userService = new UserService();
-            var user = _userService.GetUser(email);
-            return user;
+            User responseObject = null;
+            using (var _db = new DatabaseContext())
+            {
+                responseObject = _userService.GetUser(email, _db);
+            }
+            return responseObject;
         }
 
         public int DisableUser(User user)
         {
-            // using autho
-            user.Disabled = true;
-            return _userService.UpdateUser(user);
+            User responseObject = null;
+            int response;
+            using (var _db = new DatabaseContext())
+            {
+                user.Disabled = true;
+                responseObject = _userService.UpdateUser(user, _db);
+                response = _db.SaveChanges();
+            }
+            return response;
         }
 
         public int EnableUser(User user)
         {
-            // using autho
-            user.Disabled = false;
-            return _userService.UpdateUser(user);
+            User responseObject = null;
+            int response;
+            using (var _db = new DatabaseContext())
+            {
+                user.Disabled = false;
+                responseObject = _userService.UpdateUser(user, _db);
+                response = _db.SaveChanges();
+            }
+            return response;
         }
 
         public int UpdateUser(User user)
         {
-            // user authoriations for updates
-            return _userService.UpdateUser(user);
+            User responseObject = null;
+            int response;
+            using (var _db = new DatabaseContext())
+            {
+                responseObject = _userService.UpdateUser(user, _db);
+                response = _db.SaveChanges();
+            }
+            return response;
         }
     }
 }

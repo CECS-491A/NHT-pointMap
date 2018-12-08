@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
+using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repositories;
 
@@ -17,41 +18,41 @@ namespace ServiceLayer.Services
             _UserManagementRepo = new UserManagementRepository();
         }
 
-        public int CreateUser(User user)
+        public User CreateUser(User user, DatabaseContext _db)
         {
-            if (_UserManagementRepo.ExistingUser(user))
+            if (_UserManagementRepo.ExistingUser(user, _db))
             {
                 Console.WriteLine("User exists");
-                return 0;
+                return null;
             }
-            return _UserManagementRepo.CreateNewUser(user);
+            return _UserManagementRepo.CreateNewUser(user, _db);
         }
 
-        public int DeleteUser(Guid Id)
+        public User DeleteUser(Guid Id, DatabaseContext _db)
         {
-            return _UserManagementRepo.DeleteUser(Id);
+            return _UserManagementRepo.DeleteUser(Id, _db);
         }
 
-        public User GetUser(string email)
+        public User GetUser(string email, DatabaseContext _db)
         {
-            return _UserManagementRepo.GetUser(email);
+            return _UserManagementRepo.GetUser(email, _db);
         }
 
-        public User GetUser(Guid Id)
+        public User GetUser(Guid Id, DatabaseContext _db)
         {
-            return _UserManagementRepo.GetUser(Id);
+            return _UserManagementRepo.GetUser(Id, _db);
         }
 
-        public int UpdateUser(User user)
+        public User UpdateUser(User user, DatabaseContext _db)
         {
-            return _UserManagementRepo.UpdateUser(user);
+            return _UserManagementRepo.UpdateUser(user, _db);
         }
 
-        public User Login(string email, string password)
+        public User Login(string email, string password, DatabaseContext _db)
         {
             UserRepository userRepo = new UserRepository();
             PasswordService _passwordService = new PasswordService();
-            var user = _UserManagementRepo.GetUser(email);
+            var user = _UserManagementRepo.GetUser(email, _db);
             if (user != null)
             {
                 string hashedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
