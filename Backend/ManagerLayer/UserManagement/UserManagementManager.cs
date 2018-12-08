@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,11 @@ namespace ManagerLayer.UserManagement
     {
         private IPasswordService _passwordService;
         private IUserService _userService;
+
+        private DatabaseContext CreateDbContext()
+        {
+            return new DatabaseContext();
+        }
 
         public int CreateUser(string email, string password, DateTime dob)
         {
@@ -30,100 +36,110 @@ namespace ManagerLayer.UserManagement
                 UpdatedAt = timestamp
             };
 
-            User responseUserService = null;
-            int responseDB = 0;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
-                responseUserService = _userService.CreateUser(user, _db);
-                responseDB = _db.SaveChanges();
+                var response = _userService.CreateUser(user, _db);
+                try
+                {
+                    return _db.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    //catch error
+                    // detach user attempted to be created from the db context - rollback
+                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
+                }
             }
-            return responseDB;
+            return 0;
         }
 
         public int DeleteUser(User user)
         {
             _userService = new UserService();
-            int response = 0;
-            User responseObject = null;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
-                responseObject = _userService.DeleteUser(user.Id, _db);
-                response = _db.SaveChanges();
+                var response = _userService.DeleteUser(user.Id, _db);
+                // will return null if user does not exist
+                return _db.SaveChanges();
             }
-            return response;
         }
 
         public int DeleteUser(Guid id)
         {
             _userService = new UserService();
-            int response = 0;
-            User responseObject = null;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
-                responseObject = _userService.DeleteUser(id, _db);
-                response = _db.SaveChanges();
+                var response = _userService.DeleteUser(id, _db);
+                return _db.SaveChanges();
             }
-            return response;
         }
 
         public User GetUser(Guid id)
         {
             _userService = new UserService();
-            User responseObject = null;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
-                responseObject = _userService.GetUser(id, _db);
+                return _userService.GetUser(id, _db);
             }
-            return responseObject;
         }
 
         public User GetUser(string email)
         {
             _userService = new UserService();
-            User responseObject = null;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
-                responseObject = _userService.GetUser(email, _db);
+                return  _userService.GetUser(email, _db);
             }
-            return responseObject;
         }
 
         public int DisableUser(User user)
         {
-            User responseObject = null;
-            int response;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
                 user.Disabled = true;
-                responseObject = _userService.UpdateUser(user, _db);
-                response = _db.SaveChanges();
+                var response = _userService.UpdateUser(user, _db);
+                return _db.SaveChanges();
             }
-            return response;
         }
 
         public int EnableUser(User user)
         {
-            User responseObject = null;
-            int response;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
                 user.Disabled = false;
-                responseObject = _userService.UpdateUser(user, _db);
-                response = _db.SaveChanges();
+                var response = _userService.UpdateUser(user, _db);
+                return _db.SaveChanges();
             }
-            return response;
+        }
+
+        public int ToggleUser(User user)
+        {
+            using (var _db = CreateDbContext())
+            {
+                user.Disabled = !user.Disabled;
+                var response = _userService.UpdateUser(user, _db);
+                return _db.SaveChanges();
+            }
         }
 
         public int UpdateUser(User user)
         {
-            User responseObject = null;
-            int response;
-            using (var _db = new DatabaseContext())
+            using (var _db = CreateDbContext())
             {
-                responseObject = _userService.UpdateUser(user, _db);
-                response = _db.SaveChanges();
+                var response = _userService.UpdateUser(user, _db);
+                try
+                {
+                    return _db.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    // catch error
+                    // rollback changes
+                    _db.Entry(response).CurrentValues.SetValues(_db.Entry(response).OriginalValues);
+                    _db.Entry(response).State = System.Data.Entity.EntityState.Unchanged;
+                    return 0;
+                }
             }
-            return response;
         }
     }
 }

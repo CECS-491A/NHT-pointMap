@@ -215,7 +215,6 @@ namespace UnitTesting
                 var response = us.UpdateUser(newUser, _db);
                 try
                 {
-                    //_db.Entry(newUser).GetValidationResult();
                     _db.SaveChanges();
                 }
                 catch (DbEntityValidationException ex)
@@ -316,6 +315,36 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 newUser.Disabled = false;
+                var response = us.UpdateUser(expectedResponse, _db);
+                _db.SaveChanges();
+                var result = _db.Users.Find(newUser.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expectedResponse, response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
+        }
+
+        [TestMethod]
+        public void Toggle_User_Success()
+        {
+            // Arrange
+            User newUser;
+            using (var _db = tu.CreateDataBaseContext())
+            {
+                newUser = tu.CreateUserObject();
+                _db.Users.Add(newUser);
+                _db.SaveChanges();
+            }
+            var expectedResponse = newUser;
+            var expectedResult = true;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newUser.Disabled = !newUser.Disabled;
                 var response = us.UpdateUser(expectedResponse, _db);
                 _db.SaveChanges();
                 var result = _db.Users.Find(newUser.Id);
