@@ -31,8 +31,6 @@ namespace DataAccessLayer.Migrations
                         CreatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                     })
                 .PrimaryKey(t => t.Id);
-            
-           
         }
         
         public override void Down()

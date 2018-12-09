@@ -10,8 +10,10 @@ namespace ServiceLayer.Services
 {
     interface IClaimService
     {
+        int CreateClaim(Claim claim);
+        int CreateClaim(Guid userId, Guid serviceId);
         Service getService(string claimName);
-        void addServiceToUser(User user, Service service, User subjectUser);
-        bool userHasServiceAccess(User user, Service service, User subjectUser);
+        void addServiceToUser(User user, Service service);
+        bool userHasServiceAccess(User user, Service service);
     }
 }

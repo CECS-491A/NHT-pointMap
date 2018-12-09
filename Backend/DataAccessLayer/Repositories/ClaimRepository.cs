@@ -38,27 +38,26 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public void AddServiceToUser(Guid userId, Guid serviceId, Guid subjectUserId)
+        public void AddServiceToUser(Guid userId, Guid serviceId)
         {
             using (var _db = new DatabaseContext())
             {
                 var u = new Claim
                 {
                     UserId = userId,
-                    ServiceId = serviceId,
-                    SubjectUserId = subjectUserId
+                    ServiceId = serviceId
                 };
                 _db.Claims.Add(u);
                 _db.SaveChanges();
             }
         }
 
-        public bool UserHasServiceAccess(Guid userId, Guid serviceId, Guid subjectUserId)
+        public bool UserHasServiceAccess(Guid userId, Guid serviceId)
         {
             using (var _db = new DatabaseContext())
             {
                 int count = _db.Claims
-                    .Where(c => c.UserId == userId && c.ServiceId == serviceId && c.SubjectUserId == subjectUserId)
+                    .Where(c => c.UserId == userId && c.ServiceId == serviceId)
                     .Count();
 
                 return count > 0;

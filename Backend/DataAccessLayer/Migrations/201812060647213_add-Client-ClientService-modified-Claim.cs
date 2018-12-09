@@ -34,27 +34,14 @@ namespace DataAccessLayer.Migrations
                 .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
                 .Index(t => t.ClientId)
                 .Index(t => t.UserId);
-            
-            AddColumn("dbo.Claims", "SubjectUserId", c => c.Guid(nullable: true, identity: false));
-            AddColumn("dbo.Claims", "ClientId", c => c.Guid(nullable: true, identity: false));
-            CreateIndex("dbo.Claims", "SubjectUserId");
-            CreateIndex("dbo.Claims", "ClientId");
-            AddForeignKey("dbo.Claims", "ClientId", "dbo.Clients", "Id", cascadeDelete: false);
-            AddForeignKey("dbo.Claims", "SubjectUserId", "dbo.Users", "Id", cascadeDelete: false);
         }
         
         public override void Down()
         {
             DropForeignKey("dbo.ClientUsers", "UserId", "dbo.Users");
             DropForeignKey("dbo.ClientUsers", "ClientId", "dbo.Clients");
-            DropForeignKey("dbo.Claims", "SubjectUserId", "dbo.Users");
-            DropForeignKey("dbo.Claims", "ClientId", "dbo.Clients");
             DropIndex("dbo.ClientUsers", new[] { "UserId" });
             DropIndex("dbo.ClientUsers", new[] { "ClientId" });
-            DropIndex("dbo.Claims", new[] { "ClientId" });
-            DropIndex("dbo.Claims", new[] { "SubjectUserId" });
-            DropColumn("dbo.Claims", "ClientId");
-            DropColumn("dbo.Claims", "SubjectUserId");
             DropTable("dbo.ClientUsers");
             DropTable("dbo.Clients");
         }
