@@ -11,75 +11,46 @@ namespace DataAccessLayer.Repositories
 {
     public class UserManagementRepository
     {
-        public int CreateNewUser(User user)
+        public User CreateNewUser(DatabaseContext _db, User user)
         {
-            using (var _db = new DatabaseContext())
-            {
-                try
-                {
-                    _db.Users.Add(user);
-                    return _db.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    return 0;
-                }
-            }
+            _db.Entry(user).State = EntityState.Added;
+            return user;
         }
 
-        public int DeleteUser(Guid Id)
+        public User DeleteUser(DatabaseContext _db, Guid Id)
         {
-            using (var _db = new DatabaseContext())
-            {
-                var user = _db.Users
-                    .Where(c => c.Id == Id)
-                    .FirstOrDefault<User>();
-                if (user == null)
-                    return 0;
-                _db.Entry(user).State = EntityState.Deleted;
-                return _db.SaveChanges();
-            }
+            var user = _db.Users
+                .Where(c => c.Id == Id)
+                .FirstOrDefault<User>();
+            if (user == null)
+                return null;
+            _db.Entry(user).State = EntityState.Deleted;
+            return user;
         }
 
-        public User GetUser(string email)
+        public User GetUser(DatabaseContext _db, string email)
         {
-            using (var _db = new DatabaseContext())
-            {
-                var user = _db.Users
-                    .Where(c => c.Email == email)
-                    .FirstOrDefault<User>();
-                return user;
-            }
+            var user = _db.Users
+                .Where(c => c.Email == email)
+                .FirstOrDefault<User>();
+            return user;
         }
 
-        public User GetUser(Guid Id)
+        public User GetUser(DatabaseContext _db, Guid Id)
         {
-            using (var _db = new DatabaseContext())
-            {
-                return _db.Users.Find(Id);
-            }
+            return _db.Users.Find(Id);
         }
 
-        public int UpdateUser(User user)
+        public User UpdateUser(DatabaseContext _db, User user)
         {
             user.UpdatedAt = DateTime.UtcNow;
-            using (var _db = new DatabaseContext())
-            {
-                try
-                {
-                    _db.Entry(user).State = EntityState.Modified;
-                    return _db.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    return 0;
-                }
-            }
+            _db.Entry(user).State = EntityState.Modified;
+            return user;
         }
 
-        public bool ExistingUser(User user)
+        public bool ExistingUser(DatabaseContext _db, User user)
         {
-            var result = GetUser(user.Email);
+            var result = GetUser(_db, user.Email);
             if (result != null)
             {
                 return true;
@@ -87,9 +58,9 @@ namespace DataAccessLayer.Repositories
             return false;
         }
 
-        public bool ExistingUser(string email)
+        public bool ExistingUser(DatabaseContext _db, string email)
         {
-            var result = GetUser(email);
+            var result = GetUser(_db, email);
             if (result != null)
             {
                 return true;

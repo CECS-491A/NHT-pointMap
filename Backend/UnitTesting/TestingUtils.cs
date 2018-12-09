@@ -20,7 +20,7 @@ namespace UnitTesting
             return salt;
         }
 
-        public User CreateUser()
+        public User CreateUserInDb()
         {
             using (var _db = new DatabaseContext())
             { 
@@ -39,6 +39,21 @@ namespace UnitTesting
 
                 return u;
             }
+        }
+
+        public User CreateUserObject()
+        {
+            User user = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness()
+            };
+            return user;
         }
 
         public Session CreateSession(User user)
@@ -89,6 +104,11 @@ namespace UnitTesting
 
                 return c;
             }
+        }
+
+        public DatabaseContext CreateDataBaseContext()
+        {
+            return new DatabaseContext();
         }
     }
 }

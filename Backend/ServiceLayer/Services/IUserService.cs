@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Models;
+﻿using DataAccessLayer.Database;
+using DataAccessLayer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,10 @@ namespace ServiceLayer.Services
     public interface IUserService
     {
         // CRUD
-        int CreateUser(User user);
-        User GetUser(string email);
-        User GetUser(Guid Id);
-        int DeleteUser(Guid Id);
-        int UpdateUser(User user);
+        User CreateUser(DatabaseContext _db, User user);
+        User GetUser(DatabaseContext _db, string email);
+        User GetUser(DatabaseContext _db, Guid Id);
+        User DeleteUser(DatabaseContext _db, Guid Id);
+        User UpdateUser(DatabaseContext _db, User user);
     }
 }

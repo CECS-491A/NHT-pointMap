@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity.Validation;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,48 +13,57 @@ namespace UnitTesting
         User newUser;
         TestingUtils tu;
         UserService us;
+        DatabaseContext _db;
 
         public UserServiceUT()
         {
             us = new UserService();
             tu = new TestingUtils();
-            newUser = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
         }
 
         [TestMethod]
         public void Create_User_Success()
         {
-            // Act
-            User newUser = new User
+            // Arrange
+            User newUser = tu.CreateUserObject();
+            var expected = newUser;
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-            int response = us.CreateUser(newUser);
+                // Act
+                var response = us.CreateUser(_db, newUser);
+                _db.SaveChanges();
 
-            //Assert
-            Assert.IsTrue(response > 0);
-            if (response > 0)
-                us.DeleteUser(newUser.Id);
+                //Assert
+                Assert.IsNotNull(response);
+                Assert.AreSame(response, expected);
+            }
         }
 
         [TestMethod]
         public void Create_User_RetrieveNew_Success()
         {
+            // Arrange
+            User newUser = tu.CreateUserObject();
+            var expected = newUser;
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                // Act
+                User response = us.CreateUser(_db, newUser);
+                _db.SaveChanges();
+
+                //Assert
+                var result = _db.Users.Find(newUser.Id);
+                Assert.IsNotNull(response);
+                Assert.IsNotNull(result);
+                Assert.AreSame(result, expected);
+            }
+        }
+
+        [TestMethod]
+        public void Create_User_Fail_ExceptionThrown()
+        {
+            // Arrange
             User newUser = new User
             {
                 Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
@@ -61,200 +71,290 @@ namespace UnitTesting
                 City = "Los Angeles",
                 State = "California",
                 Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
+                
+                // missing required fields
             };
+            var expected = newUser;
 
-            // ACT
-            var copy = newUser;
-            var response = us.CreateUser(newUser);
-            var responseUser = us.GetUser(newUser.Id);
-
-            // Assert
-            Assert.IsTrue(response > 0);
-            Assert.AreEqual(copy.Id, responseUser.Id);
-        }
-
-        [TestMethod]
-        public void Create_User_RetrieveNew_Fail()
-        {
-            User newUser = new User
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-            };
+                // ACT
+                var response = us.CreateUser(_db, newUser);
+                try
+                {
+                    _db.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    //catch error
+                    // detach user attempted to be created from the db context - rollback
+                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
+                }
+                var result = _db.Users.Find(newUser.Id);
 
-            // ACT
-            var copy = newUser;
-            var response = us.CreateUser(newUser);
-            var responseUser = us.GetUser(newUser.Id);
-
-            // Assert
-            Assert.IsTrue(response < 1);
-            Assert.IsNull(responseUser);
-        }
-
-        [TestMethod]
-        public void Create_User_Fail()
-        {
-            // Act
-            User newUser = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-            int response = us.CreateUser(newUser);
-
-            //Assert
-            Assert.IsTrue(response < 1);
-            if (response > 0)
-                us.DeleteUser(newUser.Id);
+                // Assert
+                Assert.IsNull(result);
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expected, response);
+                Assert.AreNotEqual(expected, result);
+            }
         }
 
         [TestMethod]
         public void Delete_User_Success()
         {
-            // ACT
-            User newUser = new User
+            // Arrange
+            User newUser = tu.CreateUserInDb();
+
+            var expectedResponse = newUser;
+
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-            us.CreateUser(newUser);
+                // Act
+                var response = us.DeleteUser(_db, newUser.Id);
+                _db.SaveChanges();
+                var result = _db.Users.Find(expectedResponse.Id);
 
-            int response = us.DeleteUser(newUser.Id);
-
-            // Assert
-            Assert.IsTrue(response > 0);
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.IsNull(result);
+                Assert.AreEqual(response.Id, expectedResponse.Id);
+            }
         }
 
         [TestMethod]
         public void Delete_User_NonExisting()
         {
-            // ACT
-            int response = us.DeleteUser(Guid.NewGuid());
+            // Arrange
+            Guid nonExistingId = Guid.NewGuid();
 
-            // Assert
-            Assert.IsTrue(response < 1);
+            var expectedResponse = nonExistingId;
+
+            using (_db = new DatabaseContext())
+            {
+                // Act
+                var response = us.DeleteUser(_db, nonExistingId);
+                // will return null if user does not exist
+                _db.SaveChanges();
+                var result = _db.Users.Find(expectedResponse);
+
+                // Assert
+                Assert.IsNull(response);
+                Assert.IsNull(result);
+            }
         }
 
         [TestMethod]
         public void Update_User_Success()
         {
-            User newUser = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-            us.CreateUser(newUser);
+            // Arrange
+            User newUser = tu.CreateUserInDb();
+            newUser.City = "Long Beach";
+            var expectedResponse = newUser;
+            var expectedResult = newUser;
 
             // ACT
-            newUser.City = "Long Beach";
-            var copy = newUser;
-            var reponse = us.UpdateUser(newUser);
-            var responseUser = us.GetUser(newUser.Id);
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var response = us.UpdateUser(_db, newUser);
+                _db.SaveChanges();
+                var result = _db.Users.Find(expectedResult.Id);
 
-            // Assert
-            Assert.IsTrue(reponse > 0);
-            Assert.AreEqual(copy.City, responseUser.City);
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(result.Id, expectedResult.Id);
+                Assert.AreEqual(result.City, expectedResult.City);
+            }
+
         }
 
         [TestMethod]
-        public void Update_User_NonExisting()
+        public void Update_User_NonExisting_why()
         {
-            User newUser = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
+            // Arrange
+            User newUser = tu.CreateUserObject();
+            newUser.City = "Long Beach";
+            var expectedResponse = newUser;
+            var expectedResult = newUser;
 
             // ACT
-            newUser.UpdatedAt = DateTime.UtcNow;
-            var copy = newUser;
-            var response = us.UpdateUser(newUser);
-            var responseUser = us.GetUser(newUser.Id);
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var response = us.UpdateUser(_db, newUser);
+                try
+                {
+                    _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    // catch error
+                    // rollback changes
+                    _db.Entry(newUser).State = System.Data.Entity.EntityState.Detached;
+                }
+                var result = _db.Users.Find(expectedResult.Id);
 
-            // Assert
-            Assert.IsNull(responseUser);
-            Assert.IsTrue(response < 1);
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.IsNull(result);
+            }
+        }
+
+        [TestMethod]
+        public void Update_User_OnRequiredValue()
+        {
+            // Arrange
+            User newUser = tu.CreateUserInDb();
+            var expectedResult = newUser;
+            newUser.PasswordHash = null;
+            var expectedResponse = newUser;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var response = us.UpdateUser(_db, newUser);
+                try
+                {
+                    _db.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    // catch error
+                    // rollback changes
+                    _db.Entry(response).CurrentValues.SetValues(_db.Entry(response).OriginalValues);
+                    _db.Entry(response).State = System.Data.Entity.EntityState.Unchanged;
+                }
+                var result = _db.Users.Find(expectedResult.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expectedResponse, response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result);
+            }
         }
 
         [TestMethod]
         public void Get_User_Success()
         {
-            User newUser = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
+            // Arrange 
+
+            User newUser = tu.CreateUserInDb();
+            var expectedResult = newUser;
 
             // ACT
-            us.CreateUser(newUser);
-            User response = us.GetUser(newUser.Id);
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var result = us.GetUser(_db, expectedResult.Id);
 
-            // Assert
-            Assert.AreEqual(response.Id, newUser.Id);
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult.Id, result.Id);
+            }
         }
 
         [TestMethod]
         public void Get_User_NonExisting()
         {
-            // ACT
-            User nonExistingUser = us.GetUser(Guid.NewGuid());
+            // Arrange
+            Guid nonExistingUser = Guid.NewGuid();
+            User expectedResult = null;
 
-            // Assert
-            Assert.IsNull(nonExistingUser);
+            // Act
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var result = us.GetUser(_db, nonExistingUser);
+
+                // Assert
+                Assert.IsNull(result);
+                Assert.AreEqual(expectedResult, result);
+            }
         }
 
-        // disabling and enabling a user same test as update user
         [TestMethod]
         public void Disable_User_Success()
         {
-            User newUser = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-            us.CreateUser(newUser);
+            // Arrange
+            User newUser = tu.CreateUserInDb();
+            var expectedResponse = newUser;
+            var expectedResult = true;
 
             // ACT
-            newUser.Disabled = true;
-            var copy = newUser;
-            var reponse = us.UpdateUser(newUser);
-            var responseUser = us.GetUser(newUser.Id);
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newUser.Disabled = true;
+                var response = us.UpdateUser(_db, expectedResponse);
+                _db.SaveChanges();
+                var result = _db.Users.Find(newUser.Id);
 
-            // Assert
-            Assert.IsTrue(reponse > 0);
-            Assert.AreEqual(copy.Disabled, responseUser.Disabled);
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expectedResponse, response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
+
+        }
+
+        [TestMethod]
+        public void Enable_User_Success()
+        {
+            // Arrange
+            User newUser;
+            using (var _db = tu.CreateDataBaseContext())
+            {
+                newUser = tu.CreateUserObject();
+                newUser.Disabled = true;
+                _db.Users.Add(newUser);
+                _db.SaveChanges();
+            }
+            var expectedResponse = newUser;
+            var expectedResult = false;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newUser.Disabled = false;
+                var response = us.UpdateUser(_db, expectedResponse);
+                _db.SaveChanges();
+                var result = _db.Users.Find(newUser.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expectedResponse, response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
+        }
+
+        [TestMethod]
+        public void Toggle_User_Success()
+        {
+            // Arrange
+            User newUser;
+            using (var _db = tu.CreateDataBaseContext())
+            {
+                newUser = tu.CreateUserObject();
+                _db.Users.Add(newUser);
+                _db.SaveChanges();
+            }
+            var expectedResponse = newUser;
+            var expectedResult = true;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newUser.Disabled = !newUser.Disabled;
+                var response = us.UpdateUser(_db, expectedResponse);
+                _db.SaveChanges();
+                var result = _db.Users.Find(newUser.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expectedResponse, response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
         }
 
     }

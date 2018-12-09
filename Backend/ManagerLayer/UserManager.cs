@@ -25,9 +25,9 @@ namespace ManagerLayer
         /// <param name="password"></param>
         public void Login(string email, string password)
         {
-            UserService _userService = new UserService();
-            PasswordService _passwordService = new PasswordService();
-            var user = _userService.Login(email, password);
+            //UserService _userService = new UserService();
+            //PasswordService _passwordService = new PasswordService();
+            //var user = _userService.Login(email, password);
         }
     }
 }
