@@ -35,19 +35,6 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void CreateClient()
-        {
-            Client newClient = new Client
-            {
-                Disabled = false,
-                Name = "" + Guid.NewGuid() + "",
-            };
-            int response = claimService.CreateClient(newClient);
-
-            Assert.IsTrue(response > 0);
-        }
-
-        [TestMethod]
         public void CreateClaim()
         {
             Claim newClaim = new Claim
@@ -57,15 +44,8 @@ namespace UnitTesting
                 UpdatedAt = DateTime.UtcNow
             };
 
-            Client newClient = new Client
-            {
-                Disabled = false,
-                Name = "" + Guid.NewGuid() + ""
-            };
-            claimService.CreateClient(newClient);
-
             // ACT
-            int response = claimService.CreateClaim(user1.Id, service1.Id, newClient.Id);
+            int response = claimService.CreateClaim(user1.Id, service1.Id);
 
             // Assert
             Assert.IsTrue(response > 0);
@@ -82,12 +62,12 @@ namespace UnitTesting
         [TestMethod]
         public void addServiceToUser()
         {
-            claimService.addServiceToUser(user2, service2, user1);
+            claimService.addServiceToUser(user2, service2);
 
             using (var _db = new DatabaseContext())
             {
                 int count = _db.Claims
-                    .Where(c => c.UserId == user2.Id && c.ServiceId == service2.Id && c.SubjectUserId == user1.Id)
+                    .Where(c => c.UserId == user2.Id && c.ServiceId == service2.Id)
                     .Count();
                 
                 Assert.IsTrue(count > 0);
@@ -97,7 +77,7 @@ namespace UnitTesting
         [TestMethod]
         public void userHasServiceAccess()
         {
-            bool hasAccess = claimService.userHasServiceAccess(user1, service1, user2);
+            bool hasAccess = claimService.userHasServiceAccess(user1, service1);
 
             Assert.IsTrue(hasAccess);
         }

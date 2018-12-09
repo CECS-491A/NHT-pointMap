@@ -69,14 +69,6 @@
     <Compile Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.Designer.cs">
       <DependentUpon>201812060647213_add-Client-ClientService-modified-Claim.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812062309435_tester.cs" />
-    <Compile Include="Migrations\201812062309435_tester.Designer.cs">
-      <DependentUpon>201812062309435_tester.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201812062321236_update-claim-guidsubjectuser.cs" />
-    <Compile Include="Migrations\201812062321236_update-claim-guidsubjectuser.Designer.cs">
-      <DependentUpon>201812062321236_update-claim-guidsubjectuser.cs</DependentUpon>
-    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ClientUsers.cs" />
@@ -115,12 +107,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.resx">
       <DependentUpon>201812060647213_add-Client-ClientService-modified-Claim.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812062309435_tester.resx">
-      <DependentUpon>201812062309435_tester.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812062321236_update-claim-guidsubjectuser.resx">
-      <DependentUpon>201812062321236_update-claim-guidsubjectuser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
