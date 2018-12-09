@@ -16,6 +16,8 @@ namespace DataAccessLayer.Repositories
         {
             try
             {
+                if (service == null || service.Id == null || service.ServiceName == null)
+                    return -1;
                 _db.Services.Add(service);
                 return 1;
 
@@ -28,17 +30,26 @@ namespace DataAccessLayer.Repositories
 
         public int createService(string serviceName, DatabaseContext _db)
         {
+            Service service = new Service
+            {
+                ServiceName = serviceName,
+                Disabled = false
+            };
+
+            return createService(service, _db);
+        }
+
+        public int deleteService(Guid id, DatabaseContext _db)
+        {
             try
             {
-                Service service = new Service
-                {
-                    ServiceName = serviceName,
-                    Disabled = false
-                };
-
-                _db.Services.Add(service);
+                Service service = getService(id, _db);
+                if (service == null || service.Id == null || service.ServiceName == null)
+                    return -1;
+                service.Disabled = true;
+                service.UpdatedAt = DateTime.UtcNow;
+                _db.Entry(service).State = EntityState.Deleted;
                 return 1;
-
             }
             catch (Exception)
             {
@@ -46,30 +57,24 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public int disableService(Guid id, DatabaseContext _db)
-        {
-            try
-            {
-                Service service = _db.Services.Find(id);
-                //service.Disabled = true;
-                //service.UpdatedAt = DateTime.UtcNow;
-                //_db.Entry(service).State = EntityState.Modified;
-                return 1;
-            }
-            catch(Exception)
-            {
-                return 0;
-            }
-        }
-
         public int enableService(Guid id, DatabaseContext _db)
         {
+            return toggleService(id, _db, false);
+        }
+
+        public int disableService(Guid id, DatabaseContext _db)
+        {
+            return toggleService(id, _db, true);
+        }
+
+        private int toggleService(Guid id, DatabaseContext _db, bool state)
+        {
             try
             {
-                Service service = _db.Services
-                    .Where(s => s.Id == id)
-                    .FirstOrDefault();
-                service.Disabled = false;
+                Service service = getService(id, _db);
+                if (service == null)
+                    return -1;
+                service.Disabled = state;
                 service.UpdatedAt = DateTime.UtcNow;
                 _db.Entry(service).State = EntityState.Modified;
                 return 1;
@@ -80,20 +85,13 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public int deleteService(Guid id, DatabaseContext _db)
+        private Service getService(Guid id, DatabaseContext _db)
         {
-            try
-            {
-                var service = _db.Services.Find(id);
-                if (service == null)
-                    return 0;
-                _db.Entry(service).State = EntityState.Deleted;
-                return 1;
-            }
-            catch(Exception)
-            {
-                return 0;
-            }
+            Service service = _db.Services
+                    .Where(s => s.Id == id)
+                    .FirstOrDefault();
+            return service;
         }
+
     }
 }

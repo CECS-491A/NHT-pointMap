@@ -5,12 +5,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 using DataAccessLayer.Models;
 using DataAccessLayer.Database;
+using System.Data.Entity;
+using System.Linq;
 
 namespace UnitTesting
 {
-    /// <summary>
-    /// Summary description for UnitTest1
-    /// </summary>
     [TestClass]
     public class OperationServiceUT
     {
@@ -36,8 +35,11 @@ namespace UnitTesting
             };
             using (var _db = new DatabaseContext())
             {
+                //Checking if service was created
                 Assert.AreEqual(1, _os.createService(service1, _db));
-                Assert.AreEqual(0, _os.createService(service2, _db));
+                service2 = _db.Services.Find(service1.Id);
+                //Ensuring data integrity of service
+                Assert.AreEqual(service1.ServiceName, service2.ServiceName);
             }
         }
 
@@ -47,7 +49,14 @@ namespace UnitTesting
             string serviceName = "" + Guid.NewGuid();
             using (var _db = new DatabaseContext())
             {
+                //Checking if service was created
                 Assert.AreEqual(1, _os.createService(serviceName, _db));
+
+                Service service = _db.Services
+                    .Where(s => s.ServiceName == serviceName)
+                    .FirstOrDefault();
+                //Ensuring data integrity of service
+                Assert.AreEqual(serviceName, service.ServiceName);
             }
         }
 
@@ -55,25 +64,25 @@ namespace UnitTesting
         public void disableService()
         {
             service1 = _ts.CreateService(true);
-            service2 = _ts.CreateService(true);
 
             using (var _db = new DatabaseContext())
             {
+                Assert.AreEqual(false, service1.Disabled);
                 Assert.AreEqual(1, _os.disableService(service1.Id, _db));
-                Assert.AreEqual(1, _os.disableService(service2.Id, _db));
+                Assert.AreEqual(true, service1.Disabled);
             }
         }
 
         [TestMethod]
         public void enableService()
         {
-            service1 = _ts.CreateService(false);
-            service2 = _ts.CreateService(false);
-
+            Service service1 = _ts.CreateService(false);
+            
             using (var _db = new DatabaseContext())
             {
-                Assert.AreEqual(1, _os.enableService(service1.Id, _db));
-                Assert.AreEqual(1, _os.enableService(service2.Id, _db));
+                Assert.AreEqual(true, service1.Disabled);
+                Assert.AreEqual(1, _os.disableService(service1.Id, _db));
+                Assert.AreEqual(false, service1.Disabled);
             }
         }
 
@@ -84,9 +93,12 @@ namespace UnitTesting
 
             using (var _db = new DatabaseContext())
             {
+                //Operation is carried out without errors
                 Assert.AreEqual(1, _os.deleteService(service1.Id, _db));
+                //Operation does not take affect until save changes
                 Assert.AreEqual(1, _os.deleteService(service1.Id, _db));
                 _db.SaveChanges();
+                //Service could not be found
                 Assert.AreEqual(0, _os.deleteService(service1.Id, _db));
             }
         }
