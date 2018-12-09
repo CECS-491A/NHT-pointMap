@@ -30,7 +30,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = us.CreateUser(newUser, _db);
+                var response = us.CreateUser(_db, newUser);
                 _db.SaveChanges();
 
                 //Assert
@@ -49,7 +49,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                User response = us.CreateUser(newUser, _db);
+                User response = us.CreateUser(_db, newUser);
                 _db.SaveChanges();
 
                 //Assert
@@ -79,7 +79,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // ACT
-                var response = us.CreateUser(newUser, _db);
+                var response = us.CreateUser(_db, newUser);
                 try
                 {
                     _db.SaveChanges();
@@ -111,7 +111,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = us.DeleteUser(newUser.Id, _db);
+                var response = us.DeleteUser(_db, newUser.Id);
                 _db.SaveChanges();
                 var result = _db.Users.Find(expectedResponse.Id);
 
@@ -133,7 +133,7 @@ namespace UnitTesting
             using (_db = new DatabaseContext())
             {
                 // Act
-                var response = us.DeleteUser(nonExistingId, _db);
+                var response = us.DeleteUser(_db, nonExistingId);
                 // will return null if user does not exist
                 _db.SaveChanges();
                 var result = _db.Users.Find(expectedResponse);
@@ -156,7 +156,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = us.UpdateUser(newUser, _db);
+                var response = us.UpdateUser(_db, newUser);
                 _db.SaveChanges();
                 var result = _db.Users.Find(expectedResult.Id);
 
@@ -181,7 +181,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = us.UpdateUser(newUser, _db);
+                var response = us.UpdateUser(_db, newUser);
                 try
                 {
                     _db.SaveChanges();
@@ -212,7 +212,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = us.UpdateUser(newUser, _db);
+                var response = us.UpdateUser(_db, newUser);
                 try
                 {
                     _db.SaveChanges();
@@ -245,7 +245,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = us.GetUser(expectedResult.Id, _db);
+                var result = us.GetUser(_db, expectedResult.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -263,7 +263,7 @@ namespace UnitTesting
             // Act
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = us.GetUser(nonExistingUser, _db);
+                var result = us.GetUser(_db, nonExistingUser);
 
                 // Assert
                 Assert.IsNull(result);
@@ -283,7 +283,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 newUser.Disabled = true;
-                var response = us.UpdateUser(expectedResponse, _db);
+                var response = us.UpdateUser(_db, expectedResponse);
                 _db.SaveChanges();
                 var result = _db.Users.Find(newUser.Id);
 
@@ -315,7 +315,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 newUser.Disabled = false;
-                var response = us.UpdateUser(expectedResponse, _db);
+                var response = us.UpdateUser(_db, expectedResponse);
                 _db.SaveChanges();
                 var result = _db.Users.Find(newUser.Id);
 
@@ -345,7 +345,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 newUser.Disabled = !newUser.Disabled;
-                var response = us.UpdateUser(expectedResponse, _db);
+                var response = us.UpdateUser(_db, expectedResponse);
                 _db.SaveChanges();
                 var result = _db.Users.Find(newUser.Id);
 

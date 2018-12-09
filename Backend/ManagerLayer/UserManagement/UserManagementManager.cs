@@ -15,6 +15,12 @@ namespace ManagerLayer.UserManagement
         private IPasswordService _passwordService;
         private IUserService _userService;
 
+        public UserManagementManager()
+        {
+            _passwordService = new PasswordService();
+            _userService = new UserService();
+        }
+
         private DatabaseContext CreateDbContext()
         {
             return new DatabaseContext();
@@ -23,8 +29,6 @@ namespace ManagerLayer.UserManagement
         public int CreateUser(string email, string password, DateTime dob)
         {
             DateTime timestamp = DateTime.UtcNow;
-            _passwordService = new PasswordService();
-            _userService = new UserService();
             byte[] salt = _passwordService.GenerateSalt();
             string hash = _passwordService.HashPassword(password, salt);
             User user = new User
@@ -38,7 +42,7 @@ namespace ManagerLayer.UserManagement
 
             using (var _db = CreateDbContext())
             {
-                var response = _userService.CreateUser(user, _db);
+                var response = _userService.CreateUser(_db, user);
                 try
                 {
                     return _db.SaveChanges();
@@ -55,10 +59,9 @@ namespace ManagerLayer.UserManagement
 
         public int DeleteUser(User user)
         {
-            _userService = new UserService();
             using (var _db = CreateDbContext())
             {
-                var response = _userService.DeleteUser(user.Id, _db);
+                var response = _userService.DeleteUser(_db, user.Id);
                 // will return null if user does not exist
                 return _db.SaveChanges();
             }
@@ -66,29 +69,26 @@ namespace ManagerLayer.UserManagement
 
         public int DeleteUser(Guid id)
         {
-            _userService = new UserService();
             using (var _db = CreateDbContext())
             {
-                var response = _userService.DeleteUser(id, _db);
+                var response = _userService.DeleteUser(_db, id);
                 return _db.SaveChanges();
             }
         }
 
         public User GetUser(Guid id)
         {
-            _userService = new UserService();
             using (var _db = CreateDbContext())
             {
-                return _userService.GetUser(id, _db);
+                return _userService.GetUser(_db, id);
             }
         }
 
         public User GetUser(string email)
         {
-            _userService = new UserService();
             using (var _db = CreateDbContext())
             {
-                return  _userService.GetUser(email, _db);
+                return  _userService.GetUser(_db, email);
             }
         }
 
@@ -97,7 +97,7 @@ namespace ManagerLayer.UserManagement
             using (var _db = CreateDbContext())
             {
                 user.Disabled = true;
-                var response = _userService.UpdateUser(user, _db);
+                var response = _userService.UpdateUser(_db, user);
                 return _db.SaveChanges();
             }
         }
@@ -107,7 +107,7 @@ namespace ManagerLayer.UserManagement
             using (var _db = CreateDbContext())
             {
                 user.Disabled = false;
-                var response = _userService.UpdateUser(user, _db);
+                var response = _userService.UpdateUser(_db, user);
                 return _db.SaveChanges();
             }
         }
@@ -117,7 +117,7 @@ namespace ManagerLayer.UserManagement
             using (var _db = CreateDbContext())
             {
                 user.Disabled = !user.Disabled;
-                var response = _userService.UpdateUser(user, _db);
+                var response = _userService.UpdateUser(_db, user);
                 return _db.SaveChanges();
             }
         }
@@ -126,7 +126,7 @@ namespace ManagerLayer.UserManagement
         {
             using (var _db = CreateDbContext())
             {
-                var response = _userService.UpdateUser(user, _db);
+                var response = _userService.UpdateUser(_db, user);
                 try
                 {
                     return _db.SaveChanges();
