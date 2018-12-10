@@ -96,8 +96,7 @@ namespace UnitTesting
                 Claim c = new Claim
                 {
                     ServiceId = service.Id,
-                    UserId = user.Id,
-                    SubjectUserId = subjectUser.Id
+                    UserId = user.Id
                 };
                 _db.Claims.Add(c);
                 _db.SaveChanges();
