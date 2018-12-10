@@ -69,6 +69,10 @@
     <Compile Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.Designer.cs">
       <DependentUpon>201812060647213_add-Client-ClientService-modified-Claim.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201812100518074_user-add-manager.cs" />
+    <Compile Include="Migrations\201812100518074_user-add-manager.Designer.cs">
+      <DependentUpon>201812100518074_user-add-manager.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\ClientUsers.cs" />
@@ -79,6 +83,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repositories\ClaimRepository.cs" />
     <Compile Include="Repositories\ClientRepository.cs" />
+    <Compile Include="Repositories\OperationRepository.cs" />
     <Compile Include="Repositories\SessionReposity.cs" />
     <Compile Include="Repositories\UserManagementRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
@@ -107,6 +112,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812060647213_add-Client-ClientService-modified-Claim.resx">
       <DependentUpon>201812060647213_add-Client-ClientService-modified-Claim.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201812100518074_user-add-manager.resx">
+      <DependentUpon>201812100518074_user-add-manager.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
