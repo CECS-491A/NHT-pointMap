@@ -23,8 +23,8 @@ namespace UnitTesting
 
             claimService = new ClaimService();
 
-            user1 = testUtils.CreateUser();
-            user2 = testUtils.CreateUser();
+            user1 = testUtils.CreateUserInDb();
+            user2 = testUtils.CreateUserInDb();
 
             service1 = testUtils.CreateService(true);
             service2 = testUtils.CreateService(true);
