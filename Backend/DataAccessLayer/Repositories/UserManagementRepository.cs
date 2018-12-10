@@ -96,5 +96,17 @@ namespace DataAccessLayer.Repositories
             }
             return false;
         }
+
+        public bool IsManagerOf(User user, User subject)
+        {
+            if (subject == null || subject.ManagerId == null) return false;
+
+            if (subject.ManagerId == user.Id) return true;
+
+            // Check if we're a manager of the subjects manager
+            var managerOfSubject = GetUser((Guid) subject.ManagerId);
+            if (managerOfSubject == null) return false;
+            return IsManagerOf(user, managerOfSubject);
+        }
     }
 }

@@ -211,5 +211,111 @@ namespace UnitTesting
             Assert.AreEqual(copy.Disabled, responseUser.Disabled);
         }
 
+        // Check that IsUserManager returns false when checking against an unassociated user
+        [TestMethod]
+        public void Is_User_Manager_Of_Independent()
+        {
+            User unassociatedUser = tu.CreateUser();
+
+            User subject = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness()
+            };
+
+            Assert.IsFalse(us.IsManagerOf(unassociatedUser, subject));
+        }
+
+        // Check that IsUserManager returns false when checking against a user in another branch of the tree
+        [TestMethod]
+        public void Is_User_Manager_Of_Different_Branch()
+        {
+            User unassociatedUser = tu.CreateUser();
+
+            User directManager = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness()
+            };
+
+            User subject = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness(),
+                ManagerId = directManager.Id
+            };
+
+            Assert.IsFalse(us.IsManagerOf(unassociatedUser, subject));
+        }
+        
+        // Check that IsUserManager returns true when checking against a direct manager
+        [TestMethod]
+        public void Is_User_Manager_Of_Direct()
+        {
+            User directManager = tu.CreateUser();
+
+            User subject = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness(),
+                ManagerId = directManager.Id
+            };
+
+            Assert.IsTrue(us.IsManagerOf(directManager, subject));
+        }
+
+        // Check that IsUserManager returns true when checking against a indirect manager
+        [TestMethod]
+        public void Is_User_Manager_Of_Indirect()
+        {
+            User indirectManager = tu.CreateUser();
+
+            User directManager = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness(),
+                ManagerId = indirectManager.Id
+            };
+
+            User subject = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = tu.GetRandomness(),
+                ManagerId = directManager.Id
+            };
+
+            Assert.IsTrue(us.IsManagerOf(indirectManager, subject));
+        }
+
     }
 }

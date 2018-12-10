@@ -47,6 +47,11 @@ namespace ServiceLayer.Services
             return _UserManagementRepo.UpdateUser(user);
         }
 
+        public bool IsManagerOf(User user, User subject)
+        {
+            return _UserManagementRepo.IsManagerOf(user, subject);
+        }
+
         public User Login(string email, string password)
         {
             UserRepository userRepo = new UserRepository();
