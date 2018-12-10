@@ -22,22 +22,29 @@ namespace UnitTesting
 
         public User CreateUserInDb()
         {
+            
+            User u = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness()
+            };
+
+            return CreateUserInDb(u);
+        }
+
+        public User CreateUserInDb(User user)
+        {
             using (var _db = new DatabaseContext())
-            { 
-                User u = new User
-                {
-                    Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                    DateOfBirth = DateTime.UtcNow,
-                    City = "Los Angeles",
-                    State = "California",
-                    Country = "United States",
-                    PasswordHash = (Guid.NewGuid()).ToString(),
-                    PasswordSalt = GetRandomness()
-                };
-                _db.Users.Add(u);
+            {
+                _db.Users.Add(user);
                 _db.SaveChanges();
 
-                return u;
+                return user;
             }
         }
 

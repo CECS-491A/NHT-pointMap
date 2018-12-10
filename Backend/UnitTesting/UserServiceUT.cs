@@ -361,106 +361,70 @@ namespace UnitTesting
         [TestMethod]
         public void Is_User_Manager_Of_Independent()
         {
-            User unassociatedUser = tu.CreateUser();
+            User unassociatedUser = tu.CreateUserObject();
+            tu.CreateUserInDb(unassociatedUser);
 
-            User subject = new User
+            User subject = tu.CreateUserObject();
+            tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-
-            Assert.IsFalse(us.IsManagerOf(unassociatedUser, subject));
+                Assert.IsFalse(us.IsManagerOf(_db, unassociatedUser, subject));
+            }
         }
 
         // Check that IsUserManager returns false when checking against a user in another branch of the tree
         [TestMethod]
         public void Is_User_Manager_Of_Different_Branch()
         {
-            User unassociatedUser = tu.CreateUser();
+            User unassociatedUser = tu.CreateUserInDb();
 
-            User directManager = new User
+            User directManager = tu.CreateUserInDb();
+
+            User subject = tu.CreateUserObject();
+            subject.ManagerId = directManager.Id;
+            subject = tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness()
-            };
-
-            User subject = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness(),
-                ManagerId = directManager.Id
-            };
-
-            Assert.IsFalse(us.IsManagerOf(unassociatedUser, subject));
+                Assert.IsFalse(us.IsManagerOf(_db, unassociatedUser, subject));
+            }
         }
 
         // Check that IsUserManager returns true when checking against a direct manager
         [TestMethod]
         public void Is_User_Manager_Of_Direct()
         {
-            User directManager = tu.CreateUser();
+            User directManager = tu.CreateUserInDb();
 
-            User subject = new User
+            User subject = tu.CreateUserObject();
+            subject.ManagerId = directManager.Id;
+            subject = tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness(),
-                ManagerId = directManager.Id
-            };
-
-            Assert.IsTrue(us.IsManagerOf(directManager, subject));
+                Assert.IsTrue(us.IsManagerOf(_db, directManager, subject));
+            }
         }
 
         // Check that IsUserManager returns true when checking against a indirect manager
         [TestMethod]
         public void Is_User_Manager_Of_Indirect()
         {
-            User indirectManager = tu.CreateUser();
+            User indirectManager = tu.CreateUserInDb();
 
-            User directManager = new User
+            User directManager = tu.CreateUserObject();
+            directManager.ManagerId = indirectManager.Id;
+            directManager = tu.CreateUserInDb(directManager);
+
+            User subject = tu.CreateUserObject();
+            subject.ManagerId = directManager.Id;
+            subject = tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness(),
-                ManagerId = indirectManager.Id
-            };
-
-            User subject = new User
-            {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = tu.GetRandomness(),
-                ManagerId = directManager.Id
-            };
-
-            Assert.IsTrue(us.IsManagerOf(indirectManager, subject));
+                Assert.IsTrue(us.IsManagerOf(_db, indirectManager, subject));
+            }
         }
     }
 }
