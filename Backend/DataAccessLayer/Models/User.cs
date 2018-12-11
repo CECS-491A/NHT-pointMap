@@ -38,6 +38,10 @@ namespace DataAccessLayer.Models
         public Guid? ManagerId { get; set; }
         public User Manager { get; set; }
 
+        [ForeignKey("Client")]
+        public Guid? ClientId { get; set; }
+        public Client Client { get; set; }
+
         public string SecurityQ1 { get; set; }
         public string SecurityQ1Answer { get; set; }
         public string SecurityQ2 { get; set; }
