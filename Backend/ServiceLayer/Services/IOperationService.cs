@@ -8,10 +8,10 @@ namespace ServiceLayer.Services
 {
     interface IOperationService
     {
-        int createService(Service service, DatabaseContext _db);
-        int createService(string serviceName, DatabaseContext _db);
-        int disableService(Guid serviceId, DatabaseContext _db);
-        int enableService(Guid serviceId, DatabaseContext _db);
-        int deleteService(Guid serviceId, DatabaseContext _db);
+        int CreateService(DatabaseContext _db, Service service);
+        int CreateService(DatabaseContext _db, string serviceName);
+        int DisableService(DatabaseContext _db, Guid serviceId);
+        int EnableService(DatabaseContext _db, Guid serviceId);
+        int DeleteService(DatabaseContext _db, Guid serviceId);
     }
 }

@@ -25,7 +25,7 @@ namespace UnitTesting
         public void Create_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserObject();
+            newUser = tu.CreateUserObject();
             var expected = newUser;
             using (_db = tu.CreateDataBaseContext())
             {
@@ -43,7 +43,7 @@ namespace UnitTesting
         public void Create_User_RetrieveNew_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserObject();
+            newUser = tu.CreateUserObject();
             var expected = newUser;
 
             using (_db = tu.CreateDataBaseContext())
@@ -64,7 +64,7 @@ namespace UnitTesting
         public void Create_User_Fail_ExceptionThrown()
         {
             // Arrange
-            User newUser = new User
+            newUser = new User
             {
                 Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                 DateOfBirth = DateTime.UtcNow,
@@ -104,7 +104,7 @@ namespace UnitTesting
         public void Delete_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
 
             var expectedResponse = newUser;
 
@@ -148,7 +148,7 @@ namespace UnitTesting
         public void Update_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             newUser.City = "Long Beach";
             var expectedResponse = newUser;
             var expectedResult = newUser;
@@ -173,7 +173,7 @@ namespace UnitTesting
         public void Update_User_NonExisting_why()
         {
             // Arrange
-            User newUser = tu.CreateUserObject();
+            newUser = tu.CreateUserObject();
             newUser.City = "Long Beach";
             var expectedResponse = newUser;
             var expectedResult = newUser;
@@ -204,7 +204,7 @@ namespace UnitTesting
         public void Update_User_OnRequiredValue()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             var expectedResult = newUser;
             newUser.PasswordHash = null;
             var expectedResponse = newUser;
@@ -239,7 +239,7 @@ namespace UnitTesting
         {
             // Arrange 
 
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             var expectedResult = newUser;
 
             // ACT
@@ -275,7 +275,7 @@ namespace UnitTesting
         public void Disable_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             var expectedResponse = newUser;
             var expectedResult = true;
 
