@@ -12,8 +12,8 @@ namespace ServiceLayer.Services
     {
         int CreateClaim(Claim claim);
         int CreateClaim(Guid userId, Guid serviceId);
-        Service getService(string claimName);
-        void addServiceToUser(User user, Service service);
-        bool userHasServiceAccess(User user, Service service);
+        Service GetService(string claimName);
+        void AddServiceToUser(User user, Service service);
+        bool UserHasServiceAccess(User user, Service service);
     }
 }
