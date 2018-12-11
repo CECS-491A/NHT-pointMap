@@ -8,37 +8,36 @@ namespace ServiceLayer.Services
 {
     public class OperationService : IOperationService
     {
+        private readonly OperationRepository _OperationRepo;
+
         public OperationService()
-        { }
-
-        public int createService(Service service, DatabaseContext _db)
         {
-            OperationRepository _or = new OperationRepository();
-            return _or.createService(service, _db);
+            _OperationRepo = new OperationRepository();
         }
 
-        public int createService(string serviceName, DatabaseContext _db)
+        public int CreateService(DatabaseContext _db, Service service)
         {
-            OperationRepository _or = new OperationRepository();
-            return _or.createService(serviceName, _db);
+            return _OperationRepo.CreateService(_db, service);
         }
 
-        public int disableService(Guid serviceId, DatabaseContext _db)
+        public int CreateService(DatabaseContext _db, string serviceName)
         {
-            OperationRepository _or = new OperationRepository();
-            return _or.disableService(serviceId, _db);
+            return _OperationRepo.CreateService(_db, serviceName);
         }
 
-        public int enableService(Guid serviceId, DatabaseContext _db)
+        public int DisableService(DatabaseContext _db, Guid serviceId)
         {
-            OperationRepository _or = new OperationRepository();
-            return _or.enableService(serviceId, _db);
+            return _OperationRepo.DisableService(_db, serviceId);
+        }
+
+        public int EnableService(DatabaseContext _db, Guid serviceId)
+        {
+            return _OperationRepo.EnableService(_db, serviceId);
         }
         
-        public int deleteService(Guid serviceId, DatabaseContext _db)
+        public int DeleteService(DatabaseContext _db, Guid serviceId)
         {
-            OperationRepository _or = new OperationRepository();
-            return _or.deleteService(serviceId, _db);
+            return _OperationRepo.DeleteService(_db, serviceId);
         }
     }
 }

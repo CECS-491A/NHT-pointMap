@@ -12,12 +12,10 @@ namespace ServiceLayer.Services
     public class ClaimService : IClaimService
     {
         private ClaimRepository _ClaimRepo;
-        private ClientRepository _ClientRepo;
 
         public ClaimService()
         {
             _ClaimRepo = new ClaimRepository();
-            _ClientRepo = new ClientRepository();
         }
 
         public int CreateClaim(Claim claim)
@@ -36,17 +34,17 @@ namespace ServiceLayer.Services
             return _ClaimRepo.CreateClaim(claim);
         }
 
-        public Service getService(string claimName)
+        public Service GetService(string claimName)
         {
             return _ClaimRepo.GetService(claimName);
         }
 
-        public void addServiceToUser(User user, Service service)
+        public void AddServiceToUser(User user, Service service)
         {
             _ClaimRepo.AddServiceToUser(user.Id, service.Id);
         }
 
-        public bool userHasServiceAccess(User user, Service service)
+        public bool UserHasServiceAccess(User user, Service service)
         {
             if (service.Disabled) return false;
             return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);

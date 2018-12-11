@@ -54,7 +54,7 @@ namespace UnitTesting
         [TestMethod]
         public void getService()
         {
-            Service received = claimService.getService(service1.ServiceName);
+            Service received = claimService.GetService(service1.ServiceName);
 
             StringAssert.Contains(received.ServiceName, service1.ServiceName);
         }
@@ -62,7 +62,7 @@ namespace UnitTesting
         [TestMethod]
         public void addServiceToUser()
         {
-            claimService.addServiceToUser(user2, service2);
+            claimService.AddServiceToUser(user2, service2);
 
             using (var _db = new DatabaseContext())
             {
@@ -77,7 +77,7 @@ namespace UnitTesting
         [TestMethod]
         public void userHasServiceAccess()
         {
-            bool hasAccess = claimService.userHasServiceAccess(user1, service1);
+            bool hasAccess = claimService.UserHasServiceAccess(user1, service1);
 
             Assert.IsTrue(hasAccess);
         }
