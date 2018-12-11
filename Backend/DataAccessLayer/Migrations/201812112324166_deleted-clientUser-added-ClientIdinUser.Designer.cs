@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class deletedClientUsersaddedClientIdColInUser : IMigrationMetadata
+    public sealed partial class deletedclientUseraddedClientIdinUser : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(deletedClientUsersaddedClientIdColInUser));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(deletedclientUseraddedClientIdinUser));
         
         string IMigrationMetadata.Id
         {
-            get { return "201812110814344_deleted-ClientUsers-added-ClientIdColInUser"; }
+            get { return "201812112324166_deleted-clientUser-added-ClientIdinUser"; }
         }
         
         string IMigrationMetadata.Source

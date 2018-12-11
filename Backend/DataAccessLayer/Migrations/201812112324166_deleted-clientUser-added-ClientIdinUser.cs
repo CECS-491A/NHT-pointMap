@@ -3,7 +3,7 @@ namespace DataAccessLayer.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class deletedClientUsersaddedClientIdColInUser : DbMigration
+    public partial class deletedclientUseraddedClientIdinUser : DbMigration
     {
         public override void Up()
         {
@@ -11,9 +11,9 @@ namespace DataAccessLayer.Migrations
             DropForeignKey("dbo.ClientUsers", "UserId", "dbo.Users");
             DropIndex("dbo.ClientUsers", new[] { "ClientId" });
             DropIndex("dbo.ClientUsers", new[] { "UserId" });
-            AddColumn("dbo.Users", "ClientId", c => c.Guid(nullable: false));
+            AddColumn("dbo.Users", "ClientId", c => c.Guid());
             CreateIndex("dbo.Users", "ClientId");
-            AddForeignKey("dbo.Users", "ClientId", "dbo.Clients", "Id", cascadeDelete: true);
+            AddForeignKey("dbo.Users", "ClientId", "dbo.Clients", "Id");
             DropTable("dbo.ClientUsers");
         }
         

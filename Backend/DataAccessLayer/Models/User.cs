@@ -38,7 +38,7 @@ namespace DataAccessLayer.Models
         public Guid? ManagerId { get; set; }
         public User Manager { get; set; }
 
-        [Required, ForeignKey("Client")]
+        [ForeignKey("Client")]
         public Guid? ClientId { get; set; }
         public Client Client { get; set; }
 

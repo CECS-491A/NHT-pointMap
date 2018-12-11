@@ -73,9 +73,9 @@
     <Compile Include="Migrations\201812100518074_user-add-manager.Designer.cs">
       <DependentUpon>201812100518074_user-add-manager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201812110814344_deleted-ClientUsers-added-ClientIdColInUser.cs" />
-    <Compile Include="Migrations\201812110814344_deleted-ClientUsers-added-ClientIdColInUser.Designer.cs">
-      <DependentUpon>201812110814344_deleted-ClientUsers-added-ClientIdColInUser.cs</DependentUpon>
+    <Compile Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.cs" />
+    <Compile Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.Designer.cs">
+      <DependentUpon>201812112324166_deleted-clientUser-added-ClientIdinUser.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
@@ -119,8 +119,8 @@
     <EmbeddedResource Include="Migrations\201812100518074_user-add-manager.resx">
       <DependentUpon>201812100518074_user-add-manager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201812110814344_deleted-ClientUsers-added-ClientIdColInUser.resx">
-      <DependentUpon>201812110814344_deleted-ClientUsers-added-ClientIdColInUser.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.resx">
+      <DependentUpon>201812112324166_deleted-clientUser-added-ClientIdinUser.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
