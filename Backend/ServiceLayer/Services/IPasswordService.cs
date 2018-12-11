@@ -8,6 +8,6 @@ namespace ServiceLayer.Services
         string HashPassword(string password, byte[] salt);
         int CheckPasswordPwned(string password);
         string HashPasswordSHA1(string password, byte[] salt);
-        string[] QueryPwnedApi(string prefix);
+        string[] QueryPwnedApi(string prefix, string url);
     }
 }

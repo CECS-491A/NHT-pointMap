@@ -37,18 +37,22 @@ namespace UnitTesting
         [TestMethod]
         public void CreateClaim()
         {
-            Claim newClaim = new Claim
-            {
-                UserId = user1.Id,
-                ServiceId = service1.Id,
-                UpdatedAt = DateTime.UtcNow
-            };
-
+            
             // ACT
             int response = claimService.CreateClaim(user1.Id, service1.Id);
 
-            // Assert
-            Assert.IsTrue(response > 0);
+            using (var _db = new DatabaseContext()) {
+                
+
+                Claim recentclaim = _db.Claims
+                    .Where(c => c.UserId == user1.Id && c.ServiceId == service1.Id)
+                    .FirstOrDefault();
+                Assert.IsTrue(recentclaim!=null);
+            }
+
+               
+                
+                Assert.IsTrue(response > 0);
         }
 
         [TestMethod]
