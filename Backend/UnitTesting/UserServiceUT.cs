@@ -359,7 +359,7 @@ namespace UnitTesting
 
         // Check that IsUserManager returns false when checking against an unassociated user
         [TestMethod]
-        public void Is_User_Manager_Of_Independent()
+        public void Is_User_Manager_Over_Independent()
         {
             User unassociatedUser = tu.CreateUserObject();
             tu.CreateUserInDb(unassociatedUser);
@@ -369,13 +369,13 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsFalse(us.IsManagerOf(_db, unassociatedUser, subject));
+                Assert.IsFalse(us.IsManagerOver(_db, unassociatedUser, subject));
             }
         }
 
         // Check that IsUserManager returns false when checking against a user in another branch of the tree
         [TestMethod]
-        public void Is_User_Manager_Of_Different_Branch()
+        public void Is_User_Manager_Over_Different_Branch()
         {
             User unassociatedUser = tu.CreateUserInDb();
 
@@ -387,13 +387,13 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsFalse(us.IsManagerOf(_db, unassociatedUser, subject));
+                Assert.IsFalse(us.IsManagerOver(_db, unassociatedUser, subject));
             }
         }
 
         // Check that IsUserManager returns true when checking against a direct manager
         [TestMethod]
-        public void Is_User_Manager_Of_Direct()
+        public void Is_User_Manager_Over_Direct()
         {
             User directManager = tu.CreateUserInDb();
 
@@ -403,13 +403,13 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsTrue(us.IsManagerOf(_db, directManager, subject));
+                Assert.IsTrue(us.IsManagerOver(_db, directManager, subject));
             }
         }
 
         // Check that IsUserManager returns true when checking against a indirect manager
         [TestMethod]
-        public void Is_User_Manager_Of_Indirect()
+        public void Is_User_Manager_Over_Indirect()
         {
             User indirectManager = tu.CreateUserInDb();
 
@@ -423,7 +423,7 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsTrue(us.IsManagerOf(_db, indirectManager, subject));
+                Assert.IsTrue(us.IsManagerOver(_db, indirectManager, subject));
             }
         }
     }

@@ -68,7 +68,7 @@ namespace DataAccessLayer.Repositories
             return false;
         }
 
-        public bool isInManagementChainOf(DatabaseContext _db, User user, User subject)
+        public bool IsManagerOver(DatabaseContext _db, User user, User subject)
         {
             if (subject == null || subject.ManagerId == null || user == null) return false;
 
@@ -76,7 +76,7 @@ namespace DataAccessLayer.Repositories
 
             // Check if we're a manager of the subjects manager
             var managerOfSubject = GetUser(_db, (Guid) subject.ManagerId);
-            return isInManagementChainOf(_db, user, managerOfSubject);
+            return IsManagerOver(_db, user, managerOfSubject);
         }
     }
 }
