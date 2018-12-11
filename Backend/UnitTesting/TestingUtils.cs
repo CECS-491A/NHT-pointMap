@@ -22,10 +22,12 @@ namespace UnitTesting
 
         public User CreateUserInDb()
         {
+            Client c = CreateClientInDb();
             
             User u = new User
             {
                 Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                ClientId = c.Id,
                 DateOfBirth = DateTime.UtcNow,
                 City = "Los Angeles",
                 State = "California",
@@ -50,9 +52,12 @@ namespace UnitTesting
 
         public User CreateUserObject()
         {
+            Client c = CreateClientInDb();
+
             User user = new User
             {
                 Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                ClientId = c.Id,
                 DateOfBirth = DateTime.UtcNow,
                 City = "Los Angeles",
                 State = "California",

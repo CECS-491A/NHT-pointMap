@@ -16,6 +16,5 @@ namespace DataAccessLayer.Database
         public DbSet<Service> Services { get; set; }
         public DbSet<Claim> Claims { get; set; }
         public DbSet<Client> Clients { get; set; }
-        public DbSet<ClientUsers> ClientUsers { get; set; }
     }
 }
