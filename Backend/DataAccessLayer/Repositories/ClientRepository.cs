@@ -17,7 +17,8 @@ namespace DataAccessLayer.Repositories
             return client;
         }
 
-        public Client DeleteClient(DatabaseContext _db, Guid Id) {
+        public Client DeleteClient(DatabaseContext _db, Guid Id)
+        {
             var client= _db.Clients
                 .Where(c => c.Id == Id)
                 .FirstOrDefault<Client>();
@@ -28,14 +29,16 @@ namespace DataAccessLayer.Repositories
 
         }
 
-        public Client GetClient(DatabaseContext _db, Guid Id) {
+        public Client GetClient(DatabaseContext _db, Guid Id)
+        {
             var client = _db.Clients
                 .Where(c => c.Id == Id)
                 .FirstOrDefault<Client>();
             return client;
         }
 
-        public Client UpdateClient(DatabaseContext _db, Client client) {
+        public Client UpdateClient(DatabaseContext _db, Client client)
+        {
             client.UpdatedAt = DateTime.UtcNow;
             _db.Entry(client).State = EntityState.Modified;
             return client;
@@ -44,7 +47,8 @@ namespace DataAccessLayer.Repositories
         
         public bool IsClientDisabled(DatabaseContext _db, Client client)
         {
-            if (client.Disabled) {
+            var result = GetClient(_db, client.Id);
+            if (result.Disabled) {
                 return true;
             }
             return false;
