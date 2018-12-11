@@ -98,7 +98,7 @@ namespace DataAccessLayer.Repositories
         {
             var service = GetService(_db, guid);
             if (service == null)
-                return false;
+                return true; // if DNE, then service IS disabled
             return service.Disabled;
         }
     }

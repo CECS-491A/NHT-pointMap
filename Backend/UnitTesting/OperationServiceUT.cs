@@ -113,5 +113,43 @@ namespace UnitTesting
                 Assert.AreEqual(-1, _os.DeleteService(_db, service1.Id));
             }
         }
+
+        [TestMethod]
+        public void IsServiceDisabled_Sucecss()
+        {
+            service1 = _ts.CreateServiceInDb(false);
+
+            var responseExpected = true;
+            var resultExpected = true;
+
+            using (var _db = _ts.CreateDataBaseContext())
+            {
+                var response = _os.IsServiceDisabled(_db, service1.Id);
+                var result = _db.Services.Find(service1.Id);
+
+                Assert.IsNotNull(response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(responseExpected, response);
+                Assert.AreNotEqual(resultExpected, result);
+            }
+        }
+
+        [TestMethod]
+        public void IsServiceDisabled_NonExisting()
+        {
+            service1 = _ts.CreateServiceObject(false);
+
+            var responseExpected = true;
+
+            using (var _db = _ts.CreateDataBaseContext())
+            {
+                var response = _os.IsServiceDisabled(_db, service1.Id);
+                var result = _db.Services.Find(service1.Id);
+
+                Assert.IsNotNull(response);
+                Assert.IsNull(result);
+                Assert.AreEqual(responseExpected, response);
+            }
+        }
     }
 }
