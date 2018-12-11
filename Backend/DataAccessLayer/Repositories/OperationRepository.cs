@@ -33,7 +33,8 @@ namespace DataAccessLayer.Repositories
             Service service = new Service
             {
                 ServiceName = serviceName,
-                Disabled = false
+                Disabled = false,
+                UpdatedAt = DateTime.UtcNow
             };
 
             return createService(service, _db);

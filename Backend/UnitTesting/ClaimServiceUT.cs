@@ -26,8 +26,8 @@ namespace UnitTesting
             user1 = testUtils.CreateUserInDb();
             user2 = testUtils.CreateUserInDb();
 
-            service1 = testUtils.CreateService(true);
-            service2 = testUtils.CreateService(true);
+            service1 = testUtils.CreateServiceInDb(true);
+            service2 = testUtils.CreateServiceInDb(true);
 
             
 
