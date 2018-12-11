@@ -50,12 +50,14 @@ namespace UnitTesting
             using (var _db = new DatabaseContext())
             {
                 //Checking if service was created
-                Assert.AreEqual(1, _os.createService(serviceName, _db));
-
+                var response = _os.createService(serviceName, _db);
+                Assert.AreEqual(1, response);
+                _db.SaveChanges();
                 Service service = _db.Services
                     .Where(s => s.ServiceName == serviceName)
                     .FirstOrDefault();
                 //Ensuring data integrity of service
+                Assert.IsNotNull(service);
                 Assert.AreEqual(serviceName, service.ServiceName);
             }
         }
@@ -63,43 +65,52 @@ namespace UnitTesting
         [TestMethod]
         public void disableService()
         {
-            service1 = _ts.CreateService(true);
+            service1 = _ts.CreateServiceInDb(true);
 
             using (var _db = new DatabaseContext())
             {
                 Assert.AreEqual(false, service1.Disabled);
                 Assert.AreEqual(1, _os.disableService(service1.Id, _db));
-                Assert.AreEqual(true, service1.Disabled);
+                _db.SaveChanges();
+                Service service = _db.Services
+                    .Where(s => s.Id == service1.Id)
+                    .FirstOrDefault();
+                Assert.AreEqual(true, service.Disabled);
             }
         }
 
         [TestMethod]
         public void enableService()
         {
-            Service service1 = _ts.CreateService(false);
+            Service service1 = _ts.CreateServiceInDb(false);
             
             using (var _db = new DatabaseContext())
             {
                 Assert.AreEqual(true, service1.Disabled);
-                Assert.AreEqual(1, _os.disableService(service1.Id, _db));
-                Assert.AreEqual(false, service1.Disabled);
+                Assert.AreEqual(1, _os.enableService(service1.Id, _db));
+                _db.SaveChanges();
+                Service service = _db.Services
+                    .Where(s => s.Id == service1.Id)
+                    .FirstOrDefault();
+                Assert.AreEqual(false, service.Disabled);
             }
         }
 
         [TestMethod]
         public void deleteService()
         {
-            service1 = _ts.CreateService(false);
+            service1 = _ts.CreateServiceInDb(false);
 
             using (var _db = new DatabaseContext())
             {
                 //Operation is carried out without errors
-                Assert.AreEqual(1, _os.deleteService(service1.Id, _db));
+                var response = _os.deleteService(service1.Id, _db);
+                Assert.AreEqual(1, response);
                 //Operation does not take affect until save changes
                 Assert.AreEqual(1, _os.deleteService(service1.Id, _db));
                 _db.SaveChanges();
                 //Service could not be found
-                Assert.AreEqual(0, _os.deleteService(service1.Id, _db));
+                Assert.AreEqual(-1, _os.deleteService(service1.Id, _db));
             }
         }
     }

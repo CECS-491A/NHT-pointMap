@@ -80,20 +80,32 @@ namespace UnitTesting
             }
         }
 
-        public Service CreateService(bool enabled)
+        public Service CreateServiceInDb(bool enabled)
         {
             using (var _db = new DatabaseContext())
             {
                 Service s = new Service
                 {
                     ServiceName = (Guid.NewGuid()).ToString(),
-                    Disabled = !enabled
+                    Disabled = !enabled,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 _db.Services.Add(s);
                 _db.SaveChanges();
 
                 return s;
             }
+        }
+
+        public Service CreateServiceObject(bool enabled)
+        {
+            Service s = new Service
+            {
+                ServiceName = (Guid.NewGuid()).ToString(),
+                Disabled = !enabled
+            };
+
+            return s;
         }
 
         public Claim CreateClaim(User user, Service service, User subjectUser)
