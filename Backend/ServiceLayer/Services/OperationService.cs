@@ -39,5 +39,10 @@ namespace ServiceLayer.Services
         {
             return _OperationRepo.DeleteService(_db, serviceId);
         }
+
+        public bool IsServiceDisabled(DatabaseContext _db, Guid serviceId)
+        {
+            return _OperationRepo.IsServiceDisabled(_db, serviceId);
+        }
     }
 }

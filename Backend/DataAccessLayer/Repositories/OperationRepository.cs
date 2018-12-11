@@ -94,5 +94,12 @@ namespace DataAccessLayer.Repositories
             return service;
         }
 
+        public bool IsServiceDisabled(DatabaseContext _db, Guid guid)
+        {
+            var service = GetService(_db, guid);
+            if (service == null)
+                return false;
+            return service.Disabled;
+        }
     }
 }
