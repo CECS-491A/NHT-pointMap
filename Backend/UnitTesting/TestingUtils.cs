@@ -124,9 +124,55 @@ namespace UnitTesting
             }
         }
 
+        public Client CreateClientObject() {
+            Client client = new Client
+            {
+                Id = Guid.NewGuid(),
+                Disabled = false,
+                Name = Guid.NewGuid().ToString(),
+                Address = Guid.NewGuid().ToString(),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+
+            };
+            return client;
+        }
+
+        public Client CreateClientInDb()
+        {
+
+            Client client = new Client
+            {
+                Id = Guid.NewGuid(),
+                Disabled = false,
+                Name = Guid.NewGuid().ToString(),
+                Address = Guid.NewGuid().ToString(),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+
+            };
+
+            return CreateUserInDb(client);
+        }
+
+        public Client CreateUserInDb(Client client)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                _db.Clients.Add(client);
+                _db.SaveChanges();
+
+                return client;
+            }
+        }
+
         public DatabaseContext CreateDataBaseContext()
         {
             return new DatabaseContext();
         }
+
+
+
     }
+
 }
