@@ -42,7 +42,7 @@ namespace DataAccessLayer.Repositories
 
         }
         
-        public bool isClientDisabled(DatabaseContext _db, Client client)
+        public bool IsClientDisabled(DatabaseContext _db, Client client)
         {
             if (client.Disabled) {
                 return true;
