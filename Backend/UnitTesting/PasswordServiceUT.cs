@@ -7,16 +7,19 @@ using ServiceLayer.Services;
 namespace UnitTesting
 {
     /// <summary>
-    /// Summary description for PasswordServiceUT
+    /// Unit testing for Password Service.
+    /// Tests included: Hashing methods and pwned password api service
     /// </summary>
     [TestClass]
     public class PasswordServiceUT
     {
         PasswordService ps;
+        TestingUtils tu;
         public PasswordServiceUT()
         {
             //Arrange
             ps = new PasswordService();
+            tu = new TestingUtils();
         }
 
         [TestMethod]
@@ -30,7 +33,7 @@ namespace UnitTesting
 
             password = "uibava97s133";
             string hash3 = ps.HashPassword(password, salt);
-
+            
 
 
             //Assert
@@ -43,46 +46,45 @@ namespace UnitTesting
         {
             //Act
             string password = "password";
-            byte[] salt = ps.GenerateSalt();
-            string hash1 = ps.HashPasswordSHA1(password, salt);
-            string hash2 = ps.HashPasswordSHA1(password, salt);
-
+           
+            string hash1 = ps.HashPasswordSHA1(password, null);
+            string hash2 = ps.HashPasswordSHA1(password, null);
+            string hashed1 = "5BAA61E4C9B93F3F0682250B6CF8331B7EE68FD8";
             password = "12t3h0eu93h9ke";
-            salt = ps.GenerateSalt();
-            string hash3 = ps.HashPasswordSHA1(password, salt);
+            
+            string hash3 = ps.HashPasswordSHA1(password, null);
             //Assert
-            Assert.AreEqual(hash1,hash2);
+            Assert.AreEqual(hash1, hashed1);
+            Assert.AreEqual(hash1, hash2);
             Assert.AreNotEqual(hash1, hash3);
         }
 
         [TestMethod]
         public void CheckPasswordPwned()
         {
+
             Assert.AreNotEqual(0, ps.CheckPasswordPwned("password"));
             Assert.AreEqual(0, ps.CheckPasswordPwned("ASDfas!@fdasf!223gs3"));
+            
         }
 
         [TestMethod]
         public void QueryPwnedApi()
         {
+            //Act
+            string url = "https://api.pwnedpasswords.com/range/";
+            string url_broken = "";
             string prefix = ps.HashPasswordSHA1("password", null).Substring(0, 5);
             string prefix2 = ps.HashPasswordSHA1("letgooooo", null).Substring(0, 5);
 
-            Assert.AreEqual(true, isEqual(ps.QueryPwnedApi(prefix), ps.QueryPwnedApi(prefix)));
-            Assert.AreEqual(false, isEqual(ps.QueryPwnedApi(prefix), ps.QueryPwnedApi(prefix2)));
+            //Assert
+            Assert.ThrowsException<InvalidOperationException>(() => ps.QueryPwnedApi(prefix, url_broken));
+
+            Assert.AreEqual(true, tu.isEqual(ps.QueryPwnedApi(prefix, url), ps.QueryPwnedApi(prefix, url)));
+            Assert.AreEqual(false, tu.isEqual(ps.QueryPwnedApi(prefix, url), ps.QueryPwnedApi(prefix2, url)));
 
         }
 
-        private static bool isEqual(string[] arr1, string[] arr2)
-        {
-            if (arr1.Length != arr2.Length)
-                return false;
-            for(int i =0; i < arr1.Length; i++)
-            {
-                if (arr1[i] != arr2[i])
-                    return false;
-            }
-            return true;
-        }
+       
     }
 }

@@ -32,7 +32,7 @@ namespace ServiceLayer.Services
         }
 
        public int CheckPasswordPwned(string password) {
-
+            string url = "https://api.pwnedpasswords.com/range/";
             //Take user password and hash using SHA-1
             string hashed_Password = HashPasswordSHA1(password, null);
             //Refromat the hashed password into a prefix and suffix
@@ -40,7 +40,7 @@ namespace ServiceLayer.Services
             string suffix = hashed_Password.Substring(5);
 
             //Iterate through each line of the Api Response and compare with our hashed password suffix
-            foreach (var key in QueryPwnedApi(prefix))
+            foreach (var key in QueryPwnedApi(prefix, url))
             {
                 var key_value = key.Split(':');
                 //If the strings match, return the # of times password was compromised
@@ -53,10 +53,10 @@ namespace ServiceLayer.Services
             return 0;
         }
 
-        public string[] QueryPwnedApi(string prefix)
+        public string[] QueryPwnedApi(string prefix,string url)
         {
             HttpClient client = new HttpClient();
-            return (client.GetStringAsync("https://api.pwnedpasswords.com/range/" + prefix).Result).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            return (client.GetStringAsync(url + prefix).Result).Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
         }
     }

@@ -171,8 +171,17 @@ namespace UnitTesting
             return new DatabaseContext();
         }
 
-
-
+        public bool isEqual(string[] arr1, string[] arr2)
+        {
+            if (arr1.Length != arr2.Length)
+                return false;
+            for (int i = 0; i < arr1.Length; i++)
+            {
+                if (arr1[i] != arr2[i])
+                    return false;
+            }
+            return true;
+        }
     }
 
 }
