@@ -67,6 +67,10 @@
     <Compile Include="UserServiceUT.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
+      <Project>{DD7C51A6-44CD-4A05-9809-1171FE66F434}</Project>
+      <Name>ManagerLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
       <Project>{98446d55-4697-4c80-90d7-c9e63a34c847}</Project>
       <Name>ServiceLayer</Name>

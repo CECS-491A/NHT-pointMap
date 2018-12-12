@@ -2,6 +2,7 @@
 using System.Data.Entity.Validation;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using ManagerLayer.UserManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 
@@ -14,11 +15,13 @@ namespace UnitTesting
         TestingUtils tu;
         UserService us;
         DatabaseContext _db;
+        UserManagementManager _umm;
 
         public UserServiceUT()
         {
             us = new UserService();
             tu = new TestingUtils();
+            _umm = new UserManagementManager();
         }
 
         [TestMethod]
@@ -98,6 +101,39 @@ namespace UnitTesting
                 Assert.AreEqual(expected, response);
                 Assert.AreNotEqual(expected, result);
             }
+        }
+
+        [TestMethod]
+        public void Create_User_Using_Manager()
+        {
+            // Arrange
+            string email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com";
+            string password = (Guid.NewGuid()).ToString();
+            DateTime dob = DateTime.UtcNow;
+
+            // Act
+            var response =_umm.CreateUser(email, password, dob);
+            var result = _umm.GetUser(response.Id);
+
+            // Assert 
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(email, result.Email);
+        }
+
+        [TestMethod]
+        public void Create_User_Using_Manager_NotRealEmail()
+        {
+            // Arrange
+            string email = Guid.NewGuid() + ".com";
+            string password = (Guid.NewGuid()).ToString();
+            DateTime dob = DateTime.UtcNow;
+
+            // Act
+            var response = _umm.CreateUser(email, password, dob);
+
+            // Assert 
+            Assert.IsNull(response);
         }
 
         [TestMethod]
@@ -280,51 +316,31 @@ namespace UnitTesting
             var expectedResult = true;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            {
-                newUser.Disabled = true;
-                var response = us.UpdateUser(_db, expectedResponse);
-                _db.SaveChanges();
-                var result = _db.Users.Find(newUser.Id);
+            var response = _umm.DisableUser(newUser);
+            var result = _umm.GetUser(newUser.Id);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.AreEqual(expectedResponse, response);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedResult, result.Disabled);
-            }
-
+            // Assert
+            Assert.IsTrue(response == 1);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResult, result.Disabled);
         }
 
         [TestMethod]
         public void Enable_User_Success()
         {
             // Arrange
-            User newUser;
-            using (var _db = tu.CreateDataBaseContext())
-            {
-                newUser = tu.CreateUserObject();
-                newUser.Disabled = true;
-                _db.Users.Add(newUser);
-                _db.SaveChanges();
-            }
+            newUser = tu.CreateUserInDb();
             var expectedResponse = newUser;
             var expectedResult = false;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            {
-                newUser.Disabled = false;
-                var response = us.UpdateUser(_db, expectedResponse);
-                _db.SaveChanges();
-                var result = _db.Users.Find(newUser.Id);
+            var response = _umm.EnableUser(newUser);
+            var result = _umm.GetUser(newUser.Id);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.AreEqual(expectedResponse, response);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedResult, result.Disabled);
-            }
+            // Assert
+            Assert.IsTrue(response == 1);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResult, result.Disabled);
         }
 
         [TestMethod]
@@ -339,22 +355,18 @@ namespace UnitTesting
                 _db.SaveChanges();
             }
             var expectedResponse = newUser;
-            var expectedResult = true;
+            var expectedResult = newUser.Disabled;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            {
-                newUser.Disabled = !newUser.Disabled;
-                var response = us.UpdateUser(_db, expectedResponse);
-                _db.SaveChanges();
-                var result = _db.Users.Find(newUser.Id);
+            var response = _umm.ToggleUser(newUser, null);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.AreEqual(expectedResponse, response);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedResult, result.Disabled);
-            }
+            var result = _umm.GetUser(newUser.Id);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(response == 1);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResponse.Id, result.Id);
         }
 
         // Check that IsUserManager returns false when checking against an unassociated user
