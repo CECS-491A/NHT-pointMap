@@ -10,6 +10,7 @@ namespace DataAccessLayer.Models
         {
             CreatedAt = DateTime.UtcNow;
             Id = Guid.NewGuid();
+            Disabled = false;
         }
 
         [Key]

@@ -12,7 +12,7 @@ namespace DataAccessLayer.Repositories
     public class OperationRepository
     {
 
-        public int createService(Service service, DatabaseContext _db)
+        public int CreateService(DatabaseContext _db, Service service)
         {
             try
             {
@@ -28,22 +28,23 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public int createService(string serviceName, DatabaseContext _db)
+        public int CreateService(DatabaseContext _db, string serviceName)
         {
             Service service = new Service
             {
                 ServiceName = serviceName,
-                Disabled = false
+                Disabled = false,
+                UpdatedAt = DateTime.UtcNow
             };
 
-            return createService(service, _db);
+            return CreateService(_db, service);
         }
 
-        public int deleteService(Guid id, DatabaseContext _db)
+        public int DeleteService(DatabaseContext _db, Guid id)
         {
             try
             {
-                Service service = getService(id, _db);
+                Service service = GetService(_db, id);
                 if (service == null || service.Id == null || service.ServiceName == null)
                     return -1;
                 service.Disabled = true;
@@ -57,21 +58,21 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public int enableService(Guid id, DatabaseContext _db)
+        public int EnableService(DatabaseContext _db, Guid id)
         {
-            return toggleService(id, _db, false);
+            return ToggleService(_db, id, false);
         }
 
-        public int disableService(Guid id, DatabaseContext _db)
+        public int DisableService(DatabaseContext _db, Guid id)
         {
-            return toggleService(id, _db, true);
+            return ToggleService(_db, id, true);
         }
 
-        private int toggleService(Guid id, DatabaseContext _db, bool state)
+        private int ToggleService(DatabaseContext _db, Guid id, bool state)
         {
             try
             {
-                Service service = getService(id, _db);
+                Service service = GetService(_db, id);
                 if (service == null)
                     return -1;
                 service.Disabled = state;
@@ -85,7 +86,7 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        private Service getService(Guid id, DatabaseContext _db)
+        private Service GetService(DatabaseContext _db, Guid id)
         {
             Service service = _db.Services
                     .Where(s => s.Id == id)
@@ -93,5 +94,12 @@ namespace DataAccessLayer.Repositories
             return service;
         }
 
+        public bool IsServiceDisabled(DatabaseContext _db, Guid guid)
+        {
+            var service = GetService(_db, guid);
+            if (service == null)
+                return true; // if DNE, then service IS disabled
+            return service.Disabled;
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace UnitTesting
         Service createService(bool enabled);
         Claim createClaim(User user, Service service);
         bool isEqual(string[] arr1, string[] arr2);
+        Client createClientObject();
     }
 }

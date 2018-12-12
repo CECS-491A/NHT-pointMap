@@ -22,22 +22,29 @@ namespace UnitTesting
 
         public User CreateUserInDb()
         {
+            
+            User u = new User
+            {
+                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                DateOfBirth = DateTime.UtcNow,
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness()
+            };
+
+            return CreateUserInDb(u);
+        }
+
+        public User CreateUserInDb(User user)
+        {
             using (var _db = new DatabaseContext())
-            { 
-                User u = new User
-                {
-                    Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                    DateOfBirth = DateTime.UtcNow,
-                    City = "Los Angeles",
-                    State = "California",
-                    Country = "United States",
-                    PasswordHash = (Guid.NewGuid()).ToString(),
-                    PasswordSalt = GetRandomness()
-                };
-                _db.Users.Add(u);
+            {
+                _db.Users.Add(user);
                 _db.SaveChanges();
 
-                return u;
+                return user;
             }
         }
 
@@ -73,20 +80,32 @@ namespace UnitTesting
             }
         }
 
-        public Service CreateService(bool enabled)
+        public Service CreateServiceInDb(bool enabled)
         {
             using (var _db = new DatabaseContext())
             {
                 Service s = new Service
                 {
                     ServiceName = (Guid.NewGuid()).ToString(),
-                    Disabled = !enabled
+                    Disabled = !enabled,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 _db.Services.Add(s);
                 _db.SaveChanges();
 
                 return s;
             }
+        }
+
+        public Service CreateServiceObject(bool enabled)
+        {
+            Service s = new Service
+            {
+                ServiceName = (Guid.NewGuid()).ToString(),
+                Disabled = !enabled
+            };
+
+            return s;
         }
 
         public Claim CreateClaim(User user, Service service, User subjectUser)
@@ -102,6 +121,48 @@ namespace UnitTesting
                 _db.SaveChanges();
 
                 return c;
+            }
+        }
+
+        public Client CreateClientObject() {
+            Client client = new Client
+            {
+                Id = Guid.NewGuid(),
+                Disabled = false,
+                Name = Guid.NewGuid().ToString(),
+                Address = Guid.NewGuid().ToString(),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+
+            };
+            return client;
+        }
+
+        public Client CreateClientInDb()
+        {
+
+            Client client = new Client
+            {
+                Id = Guid.NewGuid(),
+                Disabled = false,
+                Name = Guid.NewGuid().ToString(),
+                Address = Guid.NewGuid().ToString(),
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+
+            };
+
+            return CreateUserInDb(client);
+        }
+
+        public Client CreateUserInDb(Client client)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                _db.Clients.Add(client);
+                _db.SaveChanges();
+
+                return client;
             }
         }
 
@@ -122,4 +183,5 @@ namespace UnitTesting
             return true;
         }
     }
+
 }

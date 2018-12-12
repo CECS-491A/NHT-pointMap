@@ -25,7 +25,7 @@ namespace UnitTesting
         public void Create_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserObject();
+            newUser = tu.CreateUserObject();
             var expected = newUser;
             using (_db = tu.CreateDataBaseContext())
             {
@@ -43,7 +43,7 @@ namespace UnitTesting
         public void Create_User_RetrieveNew_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserObject();
+            newUser = tu.CreateUserObject();
             var expected = newUser;
 
             using (_db = tu.CreateDataBaseContext())
@@ -64,7 +64,7 @@ namespace UnitTesting
         public void Create_User_Fail_ExceptionThrown()
         {
             // Arrange
-            User newUser = new User
+            newUser = new User
             {
                 Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                 DateOfBirth = DateTime.UtcNow,
@@ -104,7 +104,7 @@ namespace UnitTesting
         public void Delete_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
 
             var expectedResponse = newUser;
 
@@ -148,7 +148,7 @@ namespace UnitTesting
         public void Update_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             newUser.City = "Long Beach";
             var expectedResponse = newUser;
             var expectedResult = newUser;
@@ -173,7 +173,7 @@ namespace UnitTesting
         public void Update_User_NonExisting_why()
         {
             // Arrange
-            User newUser = tu.CreateUserObject();
+            newUser = tu.CreateUserObject();
             newUser.City = "Long Beach";
             var expectedResponse = newUser;
             var expectedResult = newUser;
@@ -204,7 +204,7 @@ namespace UnitTesting
         public void Update_User_OnRequiredValue()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             var expectedResult = newUser;
             newUser.PasswordHash = null;
             var expectedResponse = newUser;
@@ -239,7 +239,7 @@ namespace UnitTesting
         {
             // Arrange 
 
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             var expectedResult = newUser;
 
             // ACT
@@ -275,7 +275,7 @@ namespace UnitTesting
         public void Disable_User_Success()
         {
             // Arrange
-            User newUser = tu.CreateUserInDb();
+            newUser = tu.CreateUserInDb();
             var expectedResponse = newUser;
             var expectedResult = true;
 
@@ -357,5 +357,74 @@ namespace UnitTesting
             }
         }
 
+        // Check that IsUserManager returns false when checking against an unassociated user
+        [TestMethod]
+        public void Is_User_Manager_Over_Independent()
+        {
+            User unassociatedUser = tu.CreateUserObject();
+            tu.CreateUserInDb(unassociatedUser);
+
+            User subject = tu.CreateUserObject();
+            tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                Assert.IsFalse(us.IsManagerOver(_db, unassociatedUser, subject));
+            }
+        }
+
+        // Check that IsUserManager returns false when checking against a user in another branch of the tree
+        [TestMethod]
+        public void Is_User_Manager_Over_Different_Branch()
+        {
+            User unassociatedUser = tu.CreateUserInDb();
+
+            User directManager = tu.CreateUserInDb();
+
+            User subject = tu.CreateUserObject();
+            subject.ManagerId = directManager.Id;
+            subject = tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                Assert.IsFalse(us.IsManagerOver(_db, unassociatedUser, subject));
+            }
+        }
+
+        // Check that IsUserManager returns true when checking against a direct manager
+        [TestMethod]
+        public void Is_User_Manager_Over_Direct()
+        {
+            User directManager = tu.CreateUserInDb();
+
+            User subject = tu.CreateUserObject();
+            subject.ManagerId = directManager.Id;
+            subject = tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                Assert.IsTrue(us.IsManagerOver(_db, directManager, subject));
+            }
+        }
+
+        // Check that IsUserManager returns true when checking against a indirect manager
+        [TestMethod]
+        public void Is_User_Manager_Over_Indirect()
+        {
+            User indirectManager = tu.CreateUserInDb();
+
+            User directManager = tu.CreateUserObject();
+            directManager.ManagerId = indirectManager.Id;
+            directManager = tu.CreateUserInDb(directManager);
+
+            User subject = tu.CreateUserObject();
+            subject.ManagerId = directManager.Id;
+            subject = tu.CreateUserInDb(subject);
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                Assert.IsTrue(us.IsManagerOver(_db, indirectManager, subject));
+            }
+        }
     }
 }
