@@ -25,8 +25,16 @@ namespace ManagerLayer.UserManagement
             return new DatabaseContext();
         }
 
-        public int CreateUser(string email, string password, DateTime dob)
+        public User CreateUser(string email, string password, DateTime dob)
         {
+            try
+            {
+                var valid = new System.Net.Mail.MailAddress(email);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
             _passwordService = new PasswordService();
             DateTime timestamp = DateTime.UtcNow;
             byte[] salt = _passwordService.GenerateSalt();
@@ -45,7 +53,8 @@ namespace ManagerLayer.UserManagement
                 var response = _userService.CreateUser(_db, user);
                 try
                 {
-                    return _db.SaveChanges();
+                    _db.SaveChanges();
+                    return user;
                 }
                 catch (DbEntityValidationException ex)
                 {
@@ -54,7 +63,7 @@ namespace ManagerLayer.UserManagement
                     _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
                 }
             }
-            return 0;
+            return null;
         }
 
         public int DeleteUser(User user)
@@ -94,29 +103,20 @@ namespace ManagerLayer.UserManagement
 
         public int DisableUser(User user)
         {
-            using (var _db = CreateDbContext())
-            {
-                user.Disabled = true;
-                var response = _userService.UpdateUser(_db, user);
-                return _db.SaveChanges();
-            }
+            return ToggleUser(user, false);
         }
 
         public int EnableUser(User user)
         {
-            using (var _db = CreateDbContext())
-            {
-                user.Disabled = false;
-                var response = _userService.UpdateUser(_db, user);
-                return _db.SaveChanges();
-            }
+            return ToggleUser(user, true);
         }
 
-        public int ToggleUser(User user)
+        public int ToggleUser(User user, bool? enable)
         {
             using (var _db = CreateDbContext())
             {
-                user.Disabled = !user.Disabled;
+                if (enable == null) enable = !user.Disabled;
+                user.Disabled = !(bool)enable;
                 var response = _userService.UpdateUser(_db, user);
                 return _db.SaveChanges();
             }
