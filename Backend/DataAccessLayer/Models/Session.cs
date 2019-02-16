@@ -28,7 +28,7 @@ namespace DataAccessLayer.Models
         [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]
         public DateTime CreatedAt { get; set; }
 
-        [Required, ForeignKey("User")]
+        [Required, ForeignKey("UserId")]
         public Guid UserId { get; set; }
     }
 }

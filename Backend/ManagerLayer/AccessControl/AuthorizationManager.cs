@@ -43,11 +43,11 @@ namespace ManagerLayer.AccessControl
             return null;
         }
 
-        public string ValidateAndUpdateSession(string token, User user)
+        public string ValidateAndUpdateSession(string token, Guid userId)
         {
             using (var _db = CreateDbContext())
             {
-                var response = _sessionService.ValidateSession(_db, token, user);
+                var response = _sessionService.ValidateSession(_db, token, userId);
 
                 if(response != null)
                 {

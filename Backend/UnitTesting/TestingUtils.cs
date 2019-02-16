@@ -1,4 +1,5 @@
 using DataAccessLayer.Database;
+using DataAccessLayer.Repositories;
 using DataAccessLayer.Models;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -67,16 +68,22 @@ namespace UnitTesting
         {
            using (var _db = new DatabaseContext())
             {
-                Session s = new Session
-                {
-                    UserId = user.Id,
-                    ExpiresAt = DateTime.UtcNow,
-                    Token = "token"
-                };
-                _db.Sessions.Add(s);
+                Session session = new Session();
+                session.Token = (new SessionRepository()).GenerateSessionToken();
+                session.UserId = user.Id;
+
+                _db.Sessions.Add(session);
                 _db.SaveChanges();
 
-                return s;
+                return session;
+            }
+        }
+
+        public Session GetSession(User user)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                return (new SessionRepository()).GetSession(_db, user.Id);
             }
         }
 

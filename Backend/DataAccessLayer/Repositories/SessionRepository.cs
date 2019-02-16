@@ -12,13 +12,14 @@ namespace DataAccessLayer.Repositories
 {
     public class SessionRepository
     {
-        public Session CreateSession(DatabaseContext _db, Guid userId)
+        //returns null if no valid session is found in the sessions table, otherwise
+        //  returns the current session
+        public Session GetSession(DatabaseContext _db, Guid userId)
         {
-            Session session = new Session();
-            session.Token = GenerateSessionToken();
-            session.UserId = userId;
+            Session session = _db.Sessions
+                .Where(s => s.UserId == userId && s.ExpiresAt > DateTime.UtcNow)
+                .FirstOrDefault();
 
-            _db.Entry(session).State = EntityState.Added;
             return session;
         }
 
@@ -31,11 +32,35 @@ namespace DataAccessLayer.Repositories
             return hex;
         }
 
+        public Session CreateSession(DatabaseContext _db, Guid userId)
+        {
+            User userFind = _db.Users
+                .Where(u => u.Id == userId).FirstOrDefault();
+
+            Session session;
+
+            if (userFind == null)
+            {
+                return null;
+            }
+
+            session = GetSession(_db, userId);
+
+            if(session != null)
+            {
+                return session;
+            }
+            session = new Session();
+            session.Token = GenerateSessionToken();
+            session.UserId = userId;
+
+            _db.Entry(session).State = EntityState.Added;
+            return session;
+        }
+
         public Session ValidateSession(DatabaseContext _db, string token, Guid userId)
         {
-            Session session = _db.Sessions
-                .Where(s => s.UserId == userId && s.ExpiresAt < DateTime.UtcNow)
-                .FirstOrDefault();
+            Session session = GetSession(_db, userId);
 
             if (session == null || session.Token != token)
             {
@@ -62,6 +87,17 @@ namespace DataAccessLayer.Repositories
 
                 return session;
             }
+        }
+
+        public bool DeleteSession(DatabaseContext _db, Guid userId)
+        {
+            Session session = GetSession(_db, userId);
+
+            if (session != null)
+            {
+                _db.Entry(session).State = EntityState.Deleted;
+            }
+            return true;
         }
     }
 }
