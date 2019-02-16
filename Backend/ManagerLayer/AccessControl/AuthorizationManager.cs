@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using ServiceLayer.Services;
 using System;
 using System.Data.Entity.Validation;
+using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,7 @@ namespace ManagerLayer.AccessControl
     class AuthorizationManager
     {
         private ISessionService _sessionService;
+        private IUserService _userService;
 
         private DatabaseContext CreateDbContext()
         {
@@ -23,11 +25,31 @@ namespace ManagerLayer.AccessControl
         {
              _sessionService = new SessionService();
         }
-        public string GenerateSession(Guid userId)
+
+        public string GenerateSessionToken()
+        {
+            RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
+            Byte[] b = new byte[64 / 2];
+            provider.GetBytes(b);
+            string hex = BitConverter.ToString(b).Replace("-", "");
+            return hex;
+        }
+
+        public string CreateSession(User user)
         {
             using (var _db = CreateDbContext())
             {
-                var response = _sessionService.GenerateSession(_db, userId);
+                var userResponse = _userService.GetUser(_db, user.Email);
+                if(userResponse == null)
+                {
+                    return null;
+                }
+                Session session = new Session();
+                session.Token = GenerateSessionToken();
+                session.User = user;
+                session.UserId = user.Id;
+
+                var response = _sessionService.CreateSession(_db, session);
                 try
                 {
                     _db.SaveChanges();
@@ -47,7 +69,7 @@ namespace ManagerLayer.AccessControl
         {
             using (var _db = CreateDbContext())
             {
-                var response = _sessionService.ValidateSession(_db, token, userId);
+                Session response = _sessionService.ValidateSession(_db, token, userId);
 
                 if(response != null)
                 {
@@ -71,6 +93,16 @@ namespace ManagerLayer.AccessControl
                 }
             }
             return null;
+        }
+
+        public int DeleteSession(string token, Guid userId)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                Session response = _sessionService.DeleteSession(_db, token, userId);
+
+                return _db.SaveChanges();
+            }
         }
     }
 }

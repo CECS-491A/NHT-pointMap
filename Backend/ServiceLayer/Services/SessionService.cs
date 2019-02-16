@@ -1,9 +1,6 @@
 ﻿using System;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using DataAccessLayer.Repositories;
 
 namespace ServiceLayer.Services
@@ -17,9 +14,9 @@ namespace ServiceLayer.Services
             _SessionRepo = new SessionRepository();
         }
 
-        public Session GenerateSession(DatabaseContext _db, Guid userId)
+        public Session CreateSession(DatabaseContext _db, Session session)
         {
-            return _SessionRepo.CreateSession(_db, userId);
+            return _SessionRepo.CreateSession(_db, session);
         }
 
         public Session ValidateSession(DatabaseContext _db, string token, Guid userId)
@@ -32,9 +29,14 @@ namespace ServiceLayer.Services
             return _SessionRepo.UpdateSession(_db, session);
         }
 
-        public bool DeleteSession(DatabaseContext _db, Guid userId)
+        public Session DeleteSession(DatabaseContext _db, string token, Guid userId)
         {
-            return _SessionRepo.DeleteSession(_db, userId);
+            return _SessionRepo.DeleteSession(_db, token, userId);
+        }
+
+        public Session GetSession(DatabaseContext _db, string token, Guid userId)
+        {
+            return _SessionRepo.GetSession(_db, token, userId);
         }
     }
 }
