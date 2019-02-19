@@ -249,5 +249,47 @@ namespace UnitTesting
                 Assert.AreEqual(expectedResult, result);
             }
         }
+
+        [TestMethod]
+        public void Validate_Session_Success()
+        {
+            // Arrange 
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            var expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+                var result = ss.ValidateSession(_db, newSession.Token);
+
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult.Id, result.Id);
+            }
+        }
+
+        [TestMethod]
+        public void Validate_Non_Existent_Session()
+        {
+            // Arrange 
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            newSession.ExpiresAt = DateTime.UtcNow.AddMinutes(-45);
+            var expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+                var result = ss.ValidateSession(_db, newSession.Token);
+
+                // Assert
+                Assert.IsNull(result);
+            }
+        }
     }
 }
