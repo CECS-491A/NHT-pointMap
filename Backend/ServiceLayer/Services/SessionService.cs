@@ -14,14 +14,14 @@ namespace ServiceLayer.Services
             _SessionRepo = new SessionRepository();
         }
 
-        public Session CreateSession(DatabaseContext _db, Session session)
+        public Session CreateSession(DatabaseContext _db, Session session, Guid userId)
         {
-            return _SessionRepo.CreateSession(_db, session);
+            return _SessionRepo.CreateSession(_db, session, userId);
         }
 
-        public Session ValidateSession(DatabaseContext _db, string token, Guid userId)
+        public Session ValidateSession(DatabaseContext _db, string token)
         {
-            return _SessionRepo.ValidateSession(_db, token, userId);
+            return _SessionRepo.ValidateSession(_db, token);
         }
 
         public Session UpdateSession(DatabaseContext _db, Session session)
@@ -29,14 +29,14 @@ namespace ServiceLayer.Services
             return _SessionRepo.UpdateSession(_db, session);
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token, Guid userId)
+        public Session DeleteSession(DatabaseContext _db, string token)
         {
-            return _SessionRepo.DeleteSession(_db, token, userId);
+            return _SessionRepo.DeleteSession(_db, token);
         }
 
-        public Session GetSession(DatabaseContext _db, string token, Guid userId)
+        public Session GetSession(DatabaseContext _db, string token)
         {
-            return _SessionRepo.GetSession(_db, token, userId);
+            return _SessionRepo.GetSession(_db, token);
         }
     }
 }

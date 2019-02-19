@@ -33,7 +33,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = ss.CreateSession(_db, newSession);
+                var response = ss.CreateSession(_db, newSession, newUser.Id);
                 _db.SaveChanges();
 
                 //Assert
@@ -53,7 +53,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = ss.CreateSession(_db, newSession);
+                var response = ss.CreateSession(_db, newSession, newUser.Id);
                 _db.SaveChanges();
 
                 //Assert
@@ -84,7 +84,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // ACT
-                var response = ss.CreateSession(_db, newSession);
+                var response = ss.CreateSession(_db, newSession, newUser.Id);
                 try
                 {
                     _db.SaveChanges();
@@ -115,12 +115,12 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                newSession = ss.CreateSession(_db, newSession);
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
                 var expectedResponse = newSession;
 
                 _db.SaveChanges();
 
-                var response = ss.DeleteSession(_db, newSession.Token, newUser.Id);
+                var response = ss.DeleteSession(_db, newSession.Token);
                 _db.SaveChanges();
                 var result = _db.Sessions.Find(expectedResponse.Id);
 
@@ -135,18 +135,15 @@ namespace UnitTesting
         public void Delete_Session_NonExisting()
         {
             // Arrange
-            Guid nonExistingId = Guid.NewGuid();
             string nonExistingToken = Guid.NewGuid().ToString();
-
-            var expectedResponse = nonExistingId;
 
             using (_db = new DatabaseContext())
             {
                 // Act
-                var response = ss.DeleteSession(_db, nonExistingToken, nonExistingId);
+                var response = ss.DeleteSession(_db, nonExistingToken);
                 // will return null if Session does not exist
                 _db.SaveChanges();
-                var result = _db.Sessions.Find(expectedResponse);
+                var result = _db.Sessions.Find(response);
 
                 // Assert
                 Assert.IsNull(response);
@@ -166,7 +163,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             { 
-                newSession = ss.CreateSession(_db, newSession);
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
                 _db.SaveChanges();
                 newSession.CreatedAt = newSession.CreatedAt.AddYears(60);
                 var response = ss.UpdateSession(_db, newSession);
@@ -225,9 +222,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                newSession = ss.CreateSession(_db, newSession);
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
                 _db.SaveChanges();
-                var result = ss.GetSession(_db, newSession.Token, newUser.Id);
+                var result = ss.GetSession(_db, newSession.Token);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -239,14 +236,13 @@ namespace UnitTesting
         public void Get_Session_NonExisting()
         {
             // Arrange
-            Guid nonExistingSession = Guid.NewGuid();
             string nonExistingToken = Guid.NewGuid().ToString();
             Session expectedResult = null;
 
             // Act
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = ss.GetSession(_db, nonExistingToken, nonExistingSession);
+                var result = ss.GetSession(_db, nonExistingToken);
 
                 // Assert
                 Assert.IsNull(result);

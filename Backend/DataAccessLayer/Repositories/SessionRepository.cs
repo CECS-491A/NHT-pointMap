@@ -10,24 +10,25 @@ namespace DataAccessLayer.Repositories
     {
         //returns null if no valid session is found in the sessions table, otherwise
         //  returns the current session
-        public Session GetSession(DatabaseContext _db, string token, Guid userId)
+        public Session GetSession(DatabaseContext _db, string token)
         {
             var session = _db.Sessions
-                .Where(s => s.Token == token && s.UserId == userId)
+                .Where(s => s.Token == token)
                 .FirstOrDefault<Session>();
 
             return session;
         }
         
-        public Session CreateSession(DatabaseContext _db, Session session)
+        public Session CreateSession(DatabaseContext _db, Session session, Guid userId)
         {
+            session.UserId = userId;
             _db.Entry(session).State = EntityState.Added;
             return session;
         }
 
-        public Session ValidateSession(DatabaseContext _db, string token, Guid userId)
+        public Session ValidateSession(DatabaseContext _db, string token)
         {
-            Session session = GetSession(_db, token, userId);
+            var session = GetSession(_db, token);
 
             if (session == null || session.Token != token)
             {
@@ -35,7 +36,7 @@ namespace DataAccessLayer.Repositories
             }
             else if (session.ExpiresAt < DateTime.UtcNow)
             {
-                DeleteSession(_db, token, userId);
+                DeleteSession(_db, token);
                 return null;
             }
             else
@@ -52,11 +53,9 @@ namespace DataAccessLayer.Repositories
             return session;
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token, Guid userId)
+        public Session DeleteSession(DatabaseContext _db, string token)
         {
-            var session = _db.Sessions
-                .Where(s => s.Token == token && s.UserId == userId)
-                .FirstOrDefault<Session>();
+            var session = GetSession(_db, token);
             if (session == null)
                 return null;
             _db.Entry(session).State = EntityState.Deleted;

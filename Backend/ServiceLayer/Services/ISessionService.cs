@@ -9,9 +9,9 @@ namespace ServiceLayer.Services
 {
     public interface ISessionService
     {
-        Session CreateSession(DatabaseContext _db, Session session);
-        Session ValidateSession(DatabaseContext _db, string token, Guid userId);
+        Session CreateSession(DatabaseContext _db, Session session, Guid userId);
+        Session ValidateSession(DatabaseContext _db, string token);
         Session UpdateSession(DatabaseContext _db, Session session);
-        Session DeleteSession(DatabaseContext _db, string  token, Guid userId);
+        Session DeleteSession(DatabaseContext _db, string  token);
     }
 }

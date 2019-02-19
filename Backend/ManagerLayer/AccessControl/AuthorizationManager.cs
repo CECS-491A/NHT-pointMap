@@ -47,9 +47,8 @@ namespace ManagerLayer.AccessControl
                 Session session = new Session();
                 session.Token = GenerateSessionToken();
                 session.User = user;
-                session.UserId = user.Id;
 
-                var response = _sessionService.CreateSession(_db, session);
+                var response = _sessionService.CreateSession(_db, session, user.Id);
                 try
                 {
                     _db.SaveChanges();
@@ -69,7 +68,7 @@ namespace ManagerLayer.AccessControl
         {
             using (var _db = CreateDbContext())
             {
-                Session response = _sessionService.ValidateSession(_db, token, userId);
+                Session response = _sessionService.ValidateSession(_db, token);
 
                 if(response != null)
                 {
@@ -99,7 +98,7 @@ namespace ManagerLayer.AccessControl
         {
             using (var _db = new DatabaseContext())
             {
-                Session response = _sessionService.DeleteSession(_db, token, userId);
+                Session response = _sessionService.DeleteSession(_db, token);
 
                 return _db.SaveChanges();
             }
