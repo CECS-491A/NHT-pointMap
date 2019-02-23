@@ -17,7 +17,7 @@ namespace WebApi_PointMap.Controllers
         [HttpGet]
         [Route("api/user")]
         public IHttpActionResult Get()
-        {
+        { 
             // return OK with JSON
             var tester = new { name = "alfredo", vargas = "asdf"};
             return Ok(tester);

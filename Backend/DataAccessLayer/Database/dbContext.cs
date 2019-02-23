@@ -11,6 +11,11 @@ namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {
+        public DatabaseContext()
+        {
+            this.Database.Connection.ConnectionString = "Data Source=localhost;Initial Catalog=NightWatchDB;Integrated Security=True";
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Service> Services { get; set; }
