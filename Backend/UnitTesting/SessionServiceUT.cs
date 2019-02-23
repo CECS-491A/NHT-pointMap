@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity.Validation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
@@ -9,37 +10,286 @@ namespace UnitTesting
     [TestClass]
     public class SessionServiceUT
     {
+        DatabaseContext _db;
         SessionService ss;
-        User u1;
-        User u2;
-        Session s1;
+        User newUser;
+        Session newSession;
         TestingUtils tu;
         public SessionServiceUT()
         {
             //Arrange
+            _db = new DatabaseContext();
             tu = new TestingUtils();
             ss = new SessionService();
-            u1 = tu.CreateUserInDb();
-            u2 = tu.CreateUserInDb();
-            s1 = tu.CreateSession(u1);
         }
 
         [TestMethod]
-        public void generateSession()
+        public void Create_Session_Success()
         {
-            //Act
-            string s1 = ss.GenerateSession();
-            string s2 = ss.GenerateSession();
-            //Assert
-            Assert.AreEqual(64, s1.Length);
-            Assert.AreNotEqual(s1, s2);
+            // Arrange
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            var expected = newSession;
+            using (_db = tu.CreateDataBaseContext())
+            {
+                // Act
+                var response = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+
+                //Assert
+                Assert.IsNotNull(response);
+                Assert.AreEqual(response.Id, expected.Id);
+            }
         }
 
         [TestMethod]
-        public void validateSession()
+        public void Create_Session_RetrieveNew_Success()
         {
-            Assert.AreEqual(true, ss.ValidateSession(u1));
-            Assert.AreEqual(false, ss.ValidateSession(u2));
+            // Arrange
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            var expected = newSession;
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                // Act
+                var response = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+
+                //Assert
+                var result = _db.Sessions.Find(newSession.Id);
+                Assert.IsNotNull(response);
+                Assert.IsNotNull(result);
+                Assert.AreSame(result, expected);
+            }
+        }
+
+        [TestMethod]
+        public void Create_Session_Fail_ExceptionThrown()
+        {
+            newUser = tu.CreateUserObject();
+
+            // Arrange
+            newSession = new Session
+            {
+                ExpiresAt = DateTime.UtcNow.AddMinutes(Session.MINUTES_UNTIL_EXPIRATION),
+                CreatedAt = DateTime.UtcNow,
+                User = newUser,
+                UserId = newUser.Id
+
+                //missing required fields
+            };
+            var expected = newSession;
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                // ACT
+                var response = ss.CreateSession(_db, newSession, newUser.Id);
+                try
+                {
+                    _db.SaveChanges();
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    //catch error
+                    // detach Session attempted to be created from the db context - rollback
+                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
+                }
+                var result = _db.Sessions.Find(newSession.Id);
+
+                // Assert
+                Assert.IsNull(result);
+                Assert.IsNotNull(response);
+                Assert.AreEqual(expected, response);
+                Assert.AreNotEqual(expected, result);
+            }
+        }
+
+        [TestMethod]
+        public void Delete_Session_Success()
+        {
+            // Arrange
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+
+            using (_db = tu.CreateDataBaseContext())
+            {
+                // Act
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                var expectedResponse = newSession;
+
+                _db.SaveChanges();
+
+                var response = ss.DeleteSession(_db, newSession.Token);
+                _db.SaveChanges();
+                var result = _db.Sessions.Find(expectedResponse.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.IsNull(result);
+                Assert.AreEqual(response.Id, expectedResponse.Id);
+            }
+        }
+
+        [TestMethod]
+        public void Delete_Session_NonExisting()
+        {
+            // Arrange
+            string nonExistingToken = Guid.NewGuid().ToString();
+
+            using (_db = new DatabaseContext())
+            {
+                // Act
+                var response = ss.DeleteSession(_db, nonExistingToken);
+                // will return null if Session does not exist
+                _db.SaveChanges();
+                var result = _db.Sessions.Find(response);
+
+                // Assert
+                Assert.IsNull(response);
+                Assert.IsNull(result);
+            }
+        }
+
+        [TestMethod]
+        public void Update_Session_Success()
+        {
+            // Arrange
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            var expectedResultTime = newSession.CreatedAt;
+            var expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            { 
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+                newSession.CreatedAt = newSession.CreatedAt.AddYears(60);
+                var response = ss.UpdateSession(_db, newSession);
+                _db.SaveChanges();
+                var result = _db.Sessions.Find(expectedResult.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(result.Id, expectedResult.Id);
+                Assert.AreEqual(result.UpdatedAt, expectedResult.UpdatedAt);
+                Assert.AreEqual(result.ExpiresAt, expectedResult.ExpiresAt);
+                Assert.AreNotEqual(result.CreatedAt, expectedResultTime);
+            }
+
+        }
+
+        [TestMethod]
+        public void Update_Session_NonExisting()
+        {
+            // Arrange
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            Session expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var response = ss.UpdateSession(_db, newSession);
+                try
+                {
+                    _db.SaveChanges();
+                }
+                catch (Exception)
+                {
+                    // catch error
+                    // rollback changes
+                    _db.Entry(newSession).State = System.Data.Entity.EntityState.Detached;
+                }
+                var result = _db.Sessions.Find(expectedResult.Id);
+
+                // Assert
+                Assert.IsNotNull(response);
+                Assert.IsNull(result);
+            }
+        }
+
+        [TestMethod]
+        public void Get_Session_Success()
+        {
+            // Arrange 
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            var expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+                var result = ss.GetSession(_db, newSession.Token);
+
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult.Id, result.Id);
+            }
+        }
+
+        [TestMethod]
+        public void Get_Session_NonExisting()
+        {
+            // Arrange
+            string nonExistingToken = Guid.NewGuid().ToString();
+            Session expectedResult = null;
+
+            // Act
+            using (_db = tu.CreateDataBaseContext())
+            {
+                var result = ss.GetSession(_db, nonExistingToken);
+
+                // Assert
+                Assert.IsNull(result);
+                Assert.AreEqual(expectedResult, result);
+            }
+        }
+
+        [TestMethod]
+        public void Validate_Session_Success()
+        {
+            // Arrange 
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            var expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+                var result = ss.ValidateSession(_db, newSession.Token);
+
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult.Id, result.Id);
+            }
+        }
+
+        [TestMethod]
+        public void Validate_Non_Existent_Session()
+        {
+            // Arrange 
+            newUser = tu.CreateUserObject();
+            newSession = tu.CreateSessionObject(newUser);
+            newSession.ExpiresAt = DateTime.UtcNow.AddMinutes(-45);
+            var expectedResult = newSession;
+
+            // ACT
+            using (_db = tu.CreateDataBaseContext())
+            {
+                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                _db.SaveChanges();
+                var result = ss.ValidateSession(_db, newSession.Token);
+
+                // Assert
+                Assert.IsNull(result);
+            }
         }
     }
 }
