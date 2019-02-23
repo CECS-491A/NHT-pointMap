@@ -12,20 +12,37 @@ namespace UnitTesting
     public class UserControllerUT
     {
         [TestMethod]
-        public void GetUser()
+        public void PostUser_ReturnOkAndUser()
         {
             // Arrange
             var controller = new UserController();
-            controller.Request = new HttpRequestMessage();
-            controller.Configuration = new HttpConfiguration();
 
             // Act
-            var response = controller.Get(10);
+            UserPOST post = new UserPOST { Username = "alfredo@mail.com", Password = "vargas" };
+            var actionResult = controller.Post(post);
+            var contentResult = actionResult as OkNegotiatedContentResult<UserPOST>;
 
             // Assert
-            var expectedResult = "alfredo";
-            var result = controller.Get() as OkNegotiatedContentResult<string>;
-            //Assert.AreEqual(expectedResult, result.Content.);
+            Assert.IsNotNull(contentResult);
+            Assert.IsInstanceOfType(actionResult, typeof(OkNegotiatedContentResult<UserPOST>));
+            Assert.IsNotNull(contentResult.Content);
+            Assert.AreEqual(post.Username, contentResult.Content.Username);
+        }
+
+        [TestMethod]
+        public void PostUser_ReturnErrorWhenNull()
+        {
+            // Arrange
+            var controller = new UserController();
+
+            // Act
+            UserPOST post = null;
+            var actionResult = controller.Post(post);
+            var contentResult = actionResult as NotFoundResult;
+
+            // Assert
+            Assert.IsNotNull(contentResult);
+            Assert.IsInstanceOfType(actionResult, typeof(NotFoundResult));
         }
     }
 }
