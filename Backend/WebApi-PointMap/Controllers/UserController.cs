@@ -32,9 +32,15 @@ namespace WebApi_PointMap.Controllers
         }
 
         // POST api/User
-        public IHttpActionResult Post(UserPOST value) //using a POCO to represent request
+        [HttpPost]
+        [Route("api/user")]
+        public IHttpActionResult Post([FromBody] UserPOST value) //using a POCO to represent request
         {
             var response = value;
+            if (response == null)
+            {
+                return NotFound();
+            }
             return Ok(response);
         }
 
