@@ -1,14 +1,13 @@
 <template>
   <div id="app">
-    <img id="image" src="./assets/logo.png">
+    <img src="./assets/logo.png">
     <router-view/>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'app'
+  name: 'App'
 }
 </script>
 
@@ -20,10 +19,5 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
-}
-
-#image {
-  width: 100%;
-  max-width: 400px;
 }
 </style>
