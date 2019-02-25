@@ -9,5 +9,6 @@ namespace WebApi_PointMap.Controllers
 {
     public class SessionController : ApiController
     {
+
     }
 }

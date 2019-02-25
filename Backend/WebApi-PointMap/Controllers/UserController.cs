@@ -19,7 +19,13 @@ namespace WebApi_PointMap.Controllers
         public IHttpActionResult Get()
         { 
             // return OK with JSON
-            var tester = new { name = "alfredo", vargas = "asdf"};
+            ResponsePOCO tester = new ResponsePOCO{
+                Data = new {
+                    name = "alfredo",
+                    vargas = "asdf"
+                },
+                Timestamp = DateTime.UtcNow
+            };
             return Ok(tester);
         }
 
@@ -36,11 +42,11 @@ namespace WebApi_PointMap.Controllers
         [Route("api/user")]
         public IHttpActionResult Post([FromBody] UserPOST value) //using a POCO to represent request
         {
-            var response = value;
-            if (response == null)
+            if (value == null)
             {
                 return NotFound();
             }
+            ResponsePOCO response = new ResponsePOCO{ Data = value, Timestamp = DateTime.UtcNow };
             return Ok(response);
         }
 

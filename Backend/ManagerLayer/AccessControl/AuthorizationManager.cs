@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer.AccessControl
 {
-    class AuthorizationManager
+    public class AuthorizationManager
     {
         private ISessionService _sessionService;
         private IUserService _userService;
@@ -37,6 +37,7 @@ namespace ManagerLayer.AccessControl
 
         public string CreateSession(User user)
         {
+            _userService = new UserService();
             using (var _db = CreateDbContext())
             {
                 var userResponse = _userService.GetUser(_db, user.Email);
@@ -46,9 +47,7 @@ namespace ManagerLayer.AccessControl
                 }
                 Session session = new Session();
                 session.Token = GenerateSessionToken();
-                session.User = user;
-
-                var response = _sessionService.CreateSession(_db, session, user.Id);
+                var response = _sessionService.CreateSession(_db, session, userResponse.Id);
                 try
                 {
                     _db.SaveChanges();
@@ -92,6 +91,15 @@ namespace ManagerLayer.AccessControl
                 }
             }
             return null;
+        }
+
+        public Session ExistingSession(User user)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                Session session = _db.Sessions.Find(user.Id);
+                return session;
+            }
         }
 
         public int DeleteSession(string token, Guid userId)
