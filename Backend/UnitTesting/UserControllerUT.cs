@@ -20,13 +20,13 @@ namespace UnitTesting
             // Act
             UserPOST post = new UserPOST { Username = "alfredo@mail.com", Password = "vargas" };
             var actionResult = controller.Post(post);
-            var contentResult = actionResult as OkNegotiatedContentResult<UserPOST>;
+            var contentResult = actionResult as OkNegotiatedContentResult<ResponsePOCO>;
 
             // Assert
             Assert.IsNotNull(contentResult);
-            Assert.IsInstanceOfType(actionResult, typeof(OkNegotiatedContentResult<UserPOST>));
+            Assert.IsInstanceOfType(actionResult, typeof(OkNegotiatedContentResult<ResponsePOCO>));
             Assert.IsNotNull(contentResult.Content);
-            Assert.AreEqual(post.Username, contentResult.Content.Username);
+            Assert.AreEqual(post, contentResult.Content.Data);
         }
 
         [TestMethod]
