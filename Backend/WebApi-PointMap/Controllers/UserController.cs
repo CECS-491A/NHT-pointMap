@@ -4,10 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
 
 namespace WebApi_PointMap.Controllers
 {
+    [EnableCors(origins: "http://localhost:8080", headers: "*", methods: "*")]
     public class UserController : ApiController
     {
         // standard route is /api/user
@@ -27,6 +29,13 @@ namespace WebApi_PointMap.Controllers
                 Timestamp = DateTime.UtcNow
             };
             return Ok(tester);
+        }
+
+        [HttpGet]
+        [Route("api/helloworld")]
+        public IHttpActionResult HelloWorld()
+        {
+            return Ok("Hello World, from NightWatch");
         }
 
         // GET api/User/5

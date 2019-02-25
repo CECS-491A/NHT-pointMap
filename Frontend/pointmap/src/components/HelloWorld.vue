@@ -1,7 +1,7 @@
 <template>
   <div class='HelloWorld'>
     <h1>{{msg}}</h1>
-    </div>
+  </div>
 </template>
 
 <script>
@@ -16,8 +16,9 @@ export default {
   },
   mounted () {
     axios
-      .get('http://localhost:58896/api/user')
-      .then(response => (this.msg = response))
+      .get('http://localhost:58896/api/helloworld')
+      // .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      .then(response => (this.msg = response.data))
   }
 }
 </script>
