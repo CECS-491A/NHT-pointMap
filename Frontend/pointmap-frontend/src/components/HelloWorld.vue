@@ -16,8 +16,7 @@ export default {
   },
   mounted () {
     axios
-      .get('http://localhost:58896/api/helloworld')
-      // .get('https://api.coindesk.com/v1/bpi/currentprice.json')
+      .get('http://pointmap.julianjp.com/api/helloworld')
       .then(response => (this.msg = response.data))
   }
 }
