@@ -31,13 +31,6 @@ namespace WebApi_PointMap.Controllers
             return Ok(tester);
         }
 
-        [HttpGet]
-        [Route("api/helloworld")]
-        public IHttpActionResult HelloWorld()
-        {
-            return Ok("Hello World, from NightWatch");
-        }
-
         // GET api/User/5
         [HttpGet]
         [Route("api/user/{id}")] //route specific
