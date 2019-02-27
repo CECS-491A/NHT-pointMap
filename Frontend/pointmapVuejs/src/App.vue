@@ -1,14 +1,18 @@
 <template>
   <div id="app">
-    <img id="image" src="./assets/logo.png">
-    <router-view/>
+    <img src="./assets/logo.png" id='logo'>
+    <HelloWorld/>
   </div>
 </template>
 
 <script>
+import HelloWorld from './components/HelloWorld'
 
 export default {
-  name: 'app'
+  name: 'App',
+  components: {
+    HelloWorld
+  }
 }
 </script>
 
@@ -22,8 +26,8 @@ export default {
   margin-top: 60px;
 }
 
-#image {
-  width: 100%;
-  max-width: 400px;
+#logo{
+  width: 30%;
+  height: 30%
 }
 </style>
