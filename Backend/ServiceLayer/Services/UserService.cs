@@ -53,24 +53,5 @@ namespace ServiceLayer.Services
             return _UserManagementRepo.IsManagerOver(_db, user, subject);
         }
 
-        public User Login(DatabaseContext _db, string email, string password)
-        {
-            UserRepository userRepo = new UserRepository();
-            PasswordService _passwordService = new PasswordService();
-            var user = _UserManagementRepo.GetUser(_db, email);
-            if (user != null)
-            {
-                string hashedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
-                if (userRepo.ValidatePassword(user, hashedPassword))
-                {
-                    Console.WriteLine("Password Correct");
-                    return user;
-                }
-                Console.WriteLine("Password Incorrect");
-                return null;
-            }
-            Console.WriteLine("User does not exist");
-            return null;
-        }
     }
 }
