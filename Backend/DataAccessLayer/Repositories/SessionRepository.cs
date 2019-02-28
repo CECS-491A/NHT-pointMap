@@ -36,7 +36,6 @@ namespace DataAccessLayer.Repositories
             }
             else if (session.ExpiresAt < DateTime.UtcNow)
             {
-                DeleteSession(_db, token);
                 return null;
             }
             else
@@ -53,12 +52,15 @@ namespace DataAccessLayer.Repositories
             return session;
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token)
+        public Session ExpireSession(DatabaseContext _db, string token)
         {
             var session = GetSession(_db, token);
             if (session == null)
                 return null;
-            _db.Entry(session).State = EntityState.Deleted;
+
+            session.UpdatedAt = DateTime.UtcNow;
+            session.ExpiresAt = DateTime.UtcNow;
+            _db.Entry(session).State = EntityState.Modified;
             return session;
         }
     }
