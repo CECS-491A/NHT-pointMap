@@ -9,13 +9,13 @@ using WebApi_PointMap.Models;
 namespace UnitTesting
 {
     [TestClass]
-    public class UserControllerUT
+    public class TesterControllerUT
     {
         [TestMethod]
         public void PostUser_ReturnOkAndUser()
         {
             // Arrange
-            var controller = new UserController();
+            var controller = new TesterController();
 
             // Act
             UserPOST post = new UserPOST { Username = "alfredo@mail.com", Password = "vargas" };
@@ -33,7 +33,7 @@ namespace UnitTesting
         public void PostUser_ReturnErrorWhenNull()
         {
             // Arrange
-            var controller = new UserController();
+            var controller = new TesterController();
 
             // Act
             UserPOST post = null;
