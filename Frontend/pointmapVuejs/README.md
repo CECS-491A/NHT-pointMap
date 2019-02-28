@@ -1,4 +1,4 @@
-# pointmap-frontend
+# pointmap-vue
 
 > A Vue.js project
 

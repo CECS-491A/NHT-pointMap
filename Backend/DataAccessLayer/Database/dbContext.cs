@@ -11,9 +11,14 @@ namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {
+        const string LOCAL_SQL_SERVER = "localhost";
+        const string LOCAL_DB_NAME = "NightWatchDB";
         public DatabaseContext()
         {
-            this.Database.Connection.ConnectionString = "Data Source=AV-XPS;Initial Catalog=PointmapDB;Integrated Security=True";
+            this.Database.Connection.ConnectionString = string.Format(
+                "Data Source={0};Initial Catalog={1};Integrated Security=True",
+                LOCAL_SQL_SERVER, LOCAL_DB_NAME
+                );
         }
 
         public DbSet<User> Users { get; set; }

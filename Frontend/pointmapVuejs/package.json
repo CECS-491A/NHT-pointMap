@@ -1,5 +1,5 @@
 {
-  "name": "pointmap-frontend",
+  "name": "pointmap-vue",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "ChrisMeyer7088 <chris_meyer_2@hotmail.com>",
@@ -10,8 +10,8 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "axios": "^0.18.0",
-    "express": "^4.16.4",
     "moment": "^2.24.0",
     "vue": "^2.5.2",
     "vuex": "^3.1.0"

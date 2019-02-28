@@ -1,10 +1,11 @@
 <template>
   <div class='HelloWorld'>
-    <h1>{{msg}</h1>
+    <h1>{{msg}}</h1>
   </div>
 </template>
 
 <script>
+import "@babel/polyfill";
 import axios from 'axios'
 
 export default {
@@ -16,7 +17,7 @@ export default {
   },
   mounted () {
     axios
-      .get('http://pointmap.julianjp.com/api/helloworld')
+      .get('http://localhost:8080/api/helloworld')
       .then(response => (this.msg = response.data))
   }
 }
