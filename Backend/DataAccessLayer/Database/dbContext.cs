@@ -13,7 +13,7 @@ namespace DataAccessLayer.Database
     {
         public DatabaseContext()
         {
-            this.Database.Connection.ConnectionString = "Data Source=AV-XPS;Initial Catalog=PointmapDB;Integrated Security=True";
+            this.Database.Connection.ConnectionString = "Data Source=localhost;Initial Catalog=NightWatchDB;Integrated Security=True";
         }
 
         public DbSet<User> Users { get; set; }
