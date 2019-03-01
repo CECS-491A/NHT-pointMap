@@ -9,7 +9,7 @@ using WebApi_PointMap.Models;
 
 namespace WebApi_PointMap.Controllers
 {
-    [EnableCors(origins: "http://pointmap.me:80", headers: "*", methods: "*")]
+    [EnableCors(origins: "http://localhost:8080, http://pointmap.me:80", headers: " * ", methods: "*")]
     public class TesterController : ApiController
     {
         // standard route is /api/user
@@ -19,7 +19,7 @@ namespace WebApi_PointMap.Controllers
         [Route("api/helloworld")]
         public IHttpActionResult HelloWorld()
         {
-            return Ok("Hello World, from NightWatch" + DateTime.Now.ToString());
+            return Ok("Hello World, from NightWatch " + DateTime.Now.ToString());
         }
 
         // standard route is /api/user

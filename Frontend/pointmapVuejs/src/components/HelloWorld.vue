@@ -1,23 +1,30 @@
 <template>
   <div class='HelloWorld'>
-    <h1>{{msg}}</h1>
+  <h1 v-if="msg != null">{{msg}}</h1>
+  <div id="loader" v-else> 
+    <BeatLoader/>
+  </div>
   </div>
 </template>
 
 <script>
-import "@babel/polyfill";
+import '@babel/polyfill'
+import { BeatLoader } from '@saeris/vue-spinners'
 import axios from 'axios'
 
 export default {
   name: 'HelloWorld',
+  components: {
+    BeatLoader
+  },
   data() {
     return {
-      msg: 'Hellow'
+      msg: null
     }
   },
   mounted () {
     axios
-      .get('http://localhost:8080/api/helloworld')
+      .get('http://localhost:58896/api/helloworld')
       .then(response => (this.msg = response.data))
   }
 }
@@ -38,6 +45,10 @@ li {
 }
 a {
   color: #42b983;
+}
+
+#loader {
+  padding: 25px;
 }
 </style>
  

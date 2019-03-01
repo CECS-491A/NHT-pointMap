@@ -11,8 +11,8 @@ namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {
-        const string LOCAL_SQL_SERVER = "localhost";
-        const string LOCAL_DB_NAME = "NightWatchDB";
+        const string LOCAL_SQL_SERVER = "localdb";
+        const string LOCAL_DB_NAME = "PointMapDB";
         public DatabaseContext()
         {
             this.Database.Connection.ConnectionString = string.Format(
