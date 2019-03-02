@@ -11,8 +11,10 @@ namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {
-        const string LOCAL_SQL_SERVER = "localdb";
-        const string LOCAL_DB_NAME = "PointMapDB";
+        // TODO: turn into enviornmental variables for dev and deploy
+        const string LOCAL_SQL_SERVER = "(localdb)\\MSSQLLocalDB";
+        const string LOCAL_DB_NAME = "NightWatchDB";
+
         public DatabaseContext()
         {
             this.Database.Connection.ConnectionString = string.Format(

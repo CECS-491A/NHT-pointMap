@@ -93,20 +93,11 @@ namespace ManagerLayer.AccessControl
             return null;
         }
 
-        public Session ExistingSession(User user)
+        public int ExpireSession(string token, Guid userId)
         {
             using (var _db = new DatabaseContext())
             {
-                Session session = _db.Sessions.Find(user.Id);
-                return session;
-            }
-        }
-
-        public int DeleteSession(string token, Guid userId)
-        {
-            using (var _db = new DatabaseContext())
-            {
-                Session response = _sessionService.DeleteSession(_db, token);
+                Session response = _sessionService.ExpireSession(_db, token);
 
                 return _db.SaveChanges();
             }

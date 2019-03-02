@@ -14,8 +14,6 @@ namespace WebApi_PointMap.Controllers
 {
     public class ApplicationLaunchFromSS0Controller : ApiController
     {
-        UserManagementManager _umm;
-        AuthorizationManager _am;
         UserLoginManager _userLoginManager;
 
         // POST api/ssolaunch/user/login

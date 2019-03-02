@@ -106,7 +106,7 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void Delete_Session_Success()
+        public void Expire_Session_Success()
         {
             // Arrange
             newUser = tu.CreateUserObject();
@@ -120,19 +120,19 @@ namespace UnitTesting
 
                 _db.SaveChanges();
 
-                var response = ss.DeleteSession(_db, newSession.Token);
+                var response = ss.ExpireSession(_db, newSession.Token);
                 _db.SaveChanges();
                 var result = _db.Sessions.Find(expectedResponse.Id);
 
                 // Assert
                 Assert.IsNotNull(response);
-                Assert.IsNull(result);
+                Assert.IsTrue(result.ExpiresAt < DateTime.UtcNow);
                 Assert.AreEqual(response.Id, expectedResponse.Id);
             }
         }
 
         [TestMethod]
-        public void Delete_Session_NonExisting()
+        public void Expire_Session_NonExisting()
         {
             // Arrange
             string nonExistingToken = Guid.NewGuid().ToString();
@@ -140,7 +140,7 @@ namespace UnitTesting
             using (_db = new DatabaseContext())
             {
                 // Act
-                var response = ss.DeleteSession(_db, nonExistingToken);
+                var response = ss.ExpireSession(_db, nonExistingToken);
                 // will return null if Session does not exist
                 _db.SaveChanges();
                 var result = _db.Sessions.Find(response);
