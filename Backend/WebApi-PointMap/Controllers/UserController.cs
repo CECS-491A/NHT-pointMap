@@ -9,7 +9,6 @@ using WebApi_PointMap.Models;
 
 namespace WebApi_PointMap.Controllers
 {
-    [EnableCors(origins: "http://pointmap.me:80", headers: "*", methods: "*")]
     public class UserController : ApiController
     {
 
