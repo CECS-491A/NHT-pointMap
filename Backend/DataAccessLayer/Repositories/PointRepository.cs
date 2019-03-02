@@ -10,31 +10,36 @@ namespace DataAccessLayer.Repositories
 {
     public class PointRepository
     {
-        public int CreatePoint(Point point)
+        public int CreatePoint(DatabaseContext _db, Point point)
         {
-            using (var _db = new DatabaseContext())
+            point.UpdatedAt = DateTime.UtcNow;
+            try
             {
-                point.UpdatedAt = DateTime.UtcNow;
-                try
-                {
-                    _db.Points.Add(point);
-                    return _db.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    return 0;
-                }
+                _db.Points.Add(point);
+                return _db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                return 0;
             }
         }
 
-        public Service GetService(string pointName)
+        public Point GetPoint(string pointName)
         {
             using (var _db = new DatabaseContext())
             {
-                Service service = _db.Services
-                    .Where(c => c.ServiceName == pointName)
+                Point point = _db.Points
+                    .Where(p => p.Name == pointName)
                     .FirstOrDefault();
-                return service;
+                return point;
+            }
+        }
+
+        public Point UpdatePoint(Point point)
+        {
+            using (var _db = new DatabaseContext())
+            {
+
             }
         }
     }

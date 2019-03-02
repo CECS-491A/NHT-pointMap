@@ -16,6 +16,9 @@ namespace DataAccessLayer.Models
         [Key]
         public Guid Id { get; set; }
         [Required]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        [Required]
         public float Longitude { get; set; }
         [Required]
         public float Latitude { get; set; }
