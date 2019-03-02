@@ -9,7 +9,6 @@ using WebApi_PointMap.Models;
 
 namespace WebApi_PointMap.Controllers
 {
-    [EnableCors(origins: "http://localhost:8080, http://pointmap.me:80", headers: " * ", methods: "*")]
     public class TesterController : ApiController
     {
         // standard route is /api/user
