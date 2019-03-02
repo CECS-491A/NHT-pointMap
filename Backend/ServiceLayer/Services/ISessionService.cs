@@ -12,6 +12,6 @@ namespace ServiceLayer.Services
         Session CreateSession(DatabaseContext _db, Session session, Guid userId);
         Session ValidateSession(DatabaseContext _db, string token);
         Session UpdateSession(DatabaseContext _db, Session session);
-        Session DeleteSession(DatabaseContext _db, string  token);
+        Session ExpireSession(DatabaseContext _db, string  token);
     }
 }
