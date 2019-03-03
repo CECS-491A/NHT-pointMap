@@ -8,12 +8,12 @@ namespace DataAccessLayer.Repositories
 {
     public class PointRepository
     {
-        private Point CheckPointLimits(Point point)
+        private bool ValidateLongLat(Point point)
         {
             if (point.Longitude > 180 || point.Longitude < -180 ||
                 point.Latitude > 90 || point.Latitude < -90)
-                return null;
-            return point;
+                return false; //TODO: add error throw
+            return true;
         }
 
         public bool ExistingPoint(DatabaseContext _db, Point point)
@@ -27,7 +27,7 @@ namespace DataAccessLayer.Repositories
         }
         public Point CreatePoint(DatabaseContext _db, Point point)
         {
-            if (CheckPointLimits(point) == null)
+            if (!ValidateLongLat(point))
                 return null;
             point.UpdatedAt = DateTime.UtcNow;
                 _db.Points.Add(point);
@@ -49,8 +49,8 @@ namespace DataAccessLayer.Repositories
 
         public Point UpdatePoint(DatabaseContext _db, Point point)
         {
-            if (CheckPointLimits(point) == null)
-                return null;
+            if (!ValidateLongLat(point))
+                return null; //TODO: add error throw
 
             point.UpdatedAt = DateTime.UtcNow;
             _db.Entry(point).State = EntityState.Modified;

@@ -19,8 +19,10 @@ namespace DataAccessLayer.Models
         public string Name { get; set; }
         public string Description { get; set; }
         [Required]
+        [Index("PointLocation", 1)]
         public float Longitude { get; set; }
         [Required]
+        [Index("PointLocation", 2)]
         public float Latitude { get; set; }
 
         [Required, Column(TypeName = "datetime2"), DataType(DataType.DateTime)]

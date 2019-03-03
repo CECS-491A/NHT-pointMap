@@ -16,11 +16,6 @@ namespace ServiceLayer.Services
 
         public Point CreatePoint(DatabaseContext _db, Point point)
         {
-            if (_PointRepo.ExistingPoint(_db, point))
-            {
-                Console.WriteLine("Point exists");
-                return null;
-            }
             return _PointRepo.CreatePoint(_db, point);
         }
 
