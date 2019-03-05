@@ -18,6 +18,9 @@ namespace DataAccessLayer.Models
         public Guid Id { get; set; }
 
         [Required]
+        public Guid SSOId { get; set; }
+
+        [Required]
         public string Email { get; set; }
 
         [Required, DataType(DataType.Date)]
@@ -28,8 +31,10 @@ namespace DataAccessLayer.Models
         public string State { get; set; }
 
         public string Country { get; set; }
+
         [Required]
         public string PasswordHash { get; set; }
+
         [Required]
         public byte[] PasswordSalt { get; set; }
 
@@ -41,12 +46,6 @@ namespace DataAccessLayer.Models
         public Guid? ClientId { get; set; }
         public Client Client { get; set; }
 
-        public string SecurityQ1 { get; set; }
-        public string SecurityQ1Answer { get; set; }
-        public string SecurityQ2 { get; set; }
-        public string SecurityQ2Answer { get; set; }
-        public string SecurityQ3 { get; set; }
-        public string SecurityQ3Answer { get; set; }
         [Required]
         public bool Disabled { get; set; }
 

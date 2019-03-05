@@ -14,60 +14,59 @@ namespace ManagerLayer.Login
 {
     public class UserLoginManager
     {
-        IPasswordService _passwordService;
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
 
-        public LoginManagerResponsePOCO Login(string username, string password)
-        {
-            LoginManagerResponsePOCO response;
-            _userManagementManager = new UserManagementManager();
-            _passwordService = new PasswordService();
-            var user = _userManagementManager.GetUser(username);
-            if (user == null)
-            {
-                response = new LoginManagerResponsePOCO
-                {
-                    Data = null,
-                    Message = "User does not exist",
-                    Timestamp = DateTime.UtcNow
-                };
-                return response;
-            }
-            var StoredPassword = user.PasswordHash;
-            var AttemptedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
-            if (StoredPassword == AttemptedPassword)
-            {
-                string token = _authorizationManager.CreateSession(user);
-                return new LoginManagerResponsePOCO
-                {
-                    Data = token,
-                    Message = "Login Successful",
-                    Timestamp = DateTime.UtcNow
-                };
-            }
-            return new LoginManagerResponsePOCO
-            {
-                Data = null,
-                Message = "Invalid password entered",
-                Timestamp = DateTime.UtcNow
-            };
-        }
+        //public LoginManagerResponsePOCO Login(string username, string password)
+        //{
+        //    LoginManagerResponsePOCO response;
+        //    _userManagementManager = new UserManagementManager();
+        //    _passwordService = new PasswordService();
+        //    var user = _userManagementManager.GetUser(username);
+        //    if (user == null)
+        //    {
+        //        response = new LoginManagerResponsePOCO
+        //        {
+        //            Data = null,
+        //            Message = "User does not exist",
+        //            Timestamp = DateTime.UtcNow
+        //        };
+        //        return response;
+        //    }
+        //    var StoredPassword = user.PasswordHash;
+        //    var AttemptedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
+        //    if (StoredPassword == AttemptedPassword)
+        //    {
+        //        string token = _authorizationManager.CreateSession(user);
+        //        return new LoginManagerResponsePOCO
+        //        {
+        //            Data = token,
+        //            Message = "Login Successful",
+        //            Timestamp = DateTime.UtcNow
+        //        };
+        //    }
+        //    return new LoginManagerResponsePOCO
+        //    {
+        //        Data = null,
+        //        Message = "Invalid password entered",
+        //        Timestamp = DateTime.UtcNow
+        //    };
+        //}
 
-        public LoginManagerResponsePOCO LoginFromSSO(string username, string ssoID)
+        public LoginManagerResponseDTO LoginFromSSO(string username, Guid ssoID)
         {
-            LoginManagerResponsePOCO response;
+            LoginManagerResponseDTO response;
             _userManagementManager = new UserManagementManager();
             _authorizationManager = new AuthorizationManager();
-            var user = _userManagementManager.GetUser(username);
+            var user = _userManagementManager.GetUserBySSOID(ssoID);
             // check if user does not exist
             if (user == null)
             {
                 // create new user
-                user = _userManagementManager.CreateUser(username, ssoID, DateTime.UtcNow);
+                user = _userManagementManager.CreateUser(username, ssoID);
                 if (user == null)
                 {
-                    response =  new LoginManagerResponsePOCO
+                    response =  new LoginManagerResponseDTO
                     {
                         Data = null,
                         Message = "User can not be created",
@@ -77,15 +76,15 @@ namespace ManagerLayer.Login
                 }
             }
             string token = _authorizationManager.CreateSession(user);
-            response =  new LoginManagerResponsePOCO
+            response =  new LoginManagerResponseDTO
             {
                 Data = new {
                     token = token,
                     user = new
                     {
                         id = user.Id,
-                        username = username,
-                        ssoID = ssoID
+                        username = user.Email,
+                        ssoID = user.SSOId
                     }
                 },
                 Message = "Login Successful",

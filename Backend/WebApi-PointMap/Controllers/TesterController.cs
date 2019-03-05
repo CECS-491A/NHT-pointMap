@@ -30,7 +30,7 @@ namespace WebApi_PointMap.Controllers
         public IHttpActionResult Get()
         {
             // return OK with JSON
-            ResponsePOCO tester = new ResponsePOCO
+            ResponseDTO tester = new ResponseDTO
             {
                 Data = new
                 {
@@ -53,13 +53,13 @@ namespace WebApi_PointMap.Controllers
         // POST api/User
         [HttpPost]
         [Route("api/user")]
-        public IHttpActionResult Post([FromBody] UserPOST value) //using a POCO to represent request
+        public IHttpActionResult Post([FromBody] UserPOSTDTO value) //using a POCO to represent request
         {
             if (value == null)
             {
                 return NotFound();
             }
-            ResponsePOCO response = new ResponsePOCO { Data = value, Timestamp = DateTime.UtcNow };
+            ResponseDTO response = new ResponseDTO { Data = value, Timestamp = DateTime.UtcNow };
             return Ok(response);
         }
 
@@ -77,7 +77,7 @@ namespace WebApi_PointMap.Controllers
         }
 
         // DELETE api/User
-        public IHttpActionResult Delete(UserPOST user)
+        public IHttpActionResult Delete(UserPOSTDTO user)
         {
             var response = new { id = user.Username };
             return Ok(response);

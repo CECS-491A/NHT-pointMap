@@ -14,6 +14,7 @@ namespace ServiceLayer.Services
         User CreateUser(DatabaseContext _db, User user);
         User GetUser(DatabaseContext _db, string email);
         User GetUser(DatabaseContext _db, Guid Id);
+        User GetUserBySSOID(DatabaseContext _db, Guid SSOID);
         User DeleteUser(DatabaseContext _db, Guid Id);
         User UpdateUser(DatabaseContext _db, User user);
         bool IsManagerOver(DatabaseContext _db, User user, User subject);

@@ -18,13 +18,13 @@ namespace UnitTesting
             var controller = new TesterController();
 
             // Act
-            UserPOST post = new UserPOST { Username = "alfredo@mail.com", Password = "vargas" };
+            UserPOSTDTO post = new UserPOSTDTO { Username = "alfredo@mail.com", Password = "vargas" };
             var actionResult = controller.Post(post);
-            var contentResult = actionResult as OkNegotiatedContentResult<ResponsePOCO>;
+            var contentResult = actionResult as OkNegotiatedContentResult<ResponseDTO>;
 
             // Assert
             Assert.IsNotNull(contentResult);
-            Assert.IsInstanceOfType(actionResult, typeof(OkNegotiatedContentResult<ResponsePOCO>));
+            Assert.IsInstanceOfType(actionResult, typeof(OkNegotiatedContentResult<ResponseDTO>));
             Assert.IsNotNull(contentResult.Content);
             Assert.AreEqual(post, contentResult.Content.Data);
         }
@@ -36,7 +36,7 @@ namespace UnitTesting
             var controller = new TesterController();
 
             // Act
-            UserPOST post = null;
+            UserPOSTDTO post = null;
             var actionResult = controller.Post(post);
             var contentResult = actionResult as NotFoundResult;
 

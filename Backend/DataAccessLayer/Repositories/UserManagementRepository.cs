@@ -41,6 +41,14 @@ namespace DataAccessLayer.Repositories
             return _db.Users.Find(Id);
         }
 
+        public User GetUserBySSOID(DatabaseContext _db, Guid SSOID)
+        {
+            var user = _db.Users
+                .Where(c => c.SSOId == SSOID)
+                .FirstOrDefault<User>();
+            return user;
+        }
+
         public User UpdateUser(DatabaseContext _db, User user)
         {
             user.UpdatedAt = DateTime.UtcNow;

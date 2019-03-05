@@ -43,6 +43,11 @@ namespace ServiceLayer.Services
             return _UserManagementRepo.GetUser(_db, Id);
         }
 
+        public User GetUserBySSOID(DatabaseContext _db, Guid SSOID)
+        {
+            return _UserManagementRepo.GetUserBySSOID(_db, SSOID);
+        }
+
         public User UpdateUser(DatabaseContext _db, User user)
         {
             return _UserManagementRepo.UpdateUser(_db, user);

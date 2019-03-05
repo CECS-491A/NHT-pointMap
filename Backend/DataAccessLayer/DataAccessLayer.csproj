@@ -77,6 +77,14 @@
     <Compile Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.Designer.cs">
       <DependentUpon>201812112324166_deleted-clientUser-added-ClientIdinUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903050919147_update-table-user-addCol-SSOID.cs" />
+    <Compile Include="Migrations\201903050919147_update-table-user-addCol-SSOID.Designer.cs">
+      <DependentUpon>201903050919147_update-table-user-addCol-SSOID.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201903050923446_update-table-user-dropcol-securityquestions.cs" />
+    <Compile Include="Migrations\201903050923446_update-table-user-dropcol-securityquestions.Designer.cs">
+      <DependentUpon>201903050923446_update-table-user-dropcol-securityquestions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\Client.cs" />
@@ -121,6 +129,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.resx">
       <DependentUpon>201812112324166_deleted-clientUser-added-ClientIdinUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903050919147_update-table-user-addCol-SSOID.resx">
+      <DependentUpon>201903050919147_update-table-user-addCol-SSOID.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903050923446_update-table-user-dropcol-securityquestions.resx">
+      <DependentUpon>201903050923446_update-table-user-dropcol-securityquestions.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

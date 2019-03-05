@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer.Models
 {
-    public class LoginManagerPOCOS
+    public class LoginManagerDTOs
     {
         
     }
 
-    public class LoginManagerResponsePOCO
+    public class LoginManagerResponseDTO
     {
         public Object Data { get; set; }
         public string Message { get; set; }

@@ -66,6 +66,48 @@ namespace ManagerLayer.UserManagement
             return null;
         }
 
+        public User CreateUser(string email, Guid SSOID)
+        {
+            try
+            {
+                var valid = new System.Net.Mail.MailAddress(email);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+            _passwordService = new PasswordService();
+            DateTime timestamp = DateTime.UtcNow;
+            byte[] salt = _passwordService.GenerateSalt();
+            string hash = _passwordService.HashPassword(timestamp.ToString(), salt);
+            User user = new User
+            {
+                Email = email,
+                PasswordHash = hash,
+                PasswordSalt = salt,
+                DateOfBirth = timestamp,
+                UpdatedAt = timestamp,
+                SSOId = SSOID
+            };
+
+            using (var _db = CreateDbContext())
+            {
+                var response = _userService.CreateUser(_db, user);
+                try
+                {
+                    _db.SaveChanges();
+                    return user;
+                }
+                catch (DbEntityValidationException ex)
+                {
+                    //catch error
+                    // detach user attempted to be created from the db context - rollback
+                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
+                }
+            }
+            return null;
+        }
+
         public int DeleteUser(User user)
         {
             using (var _db = CreateDbContext())
@@ -98,6 +140,14 @@ namespace ManagerLayer.UserManagement
             using (var _db = CreateDbContext())
             {
                 return  _userService.GetUser(_db, email);
+            }
+        }
+
+        public User GetUserBySSOID(Guid SSOID)
+        {
+            using (var _db = CreateDbContext())
+            {
+                return _userService.GetUserBySSOID(_db, SSOID);
             }
         }
 
