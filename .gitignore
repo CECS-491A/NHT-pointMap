@@ -4,6 +4,9 @@ project.lock.json
 .DS_Store
 *.pyc
 
+# Frontend Dir
+!frontend/pointmapVuejs/build
+
 # Visual Studio Code
 .vscode
 
