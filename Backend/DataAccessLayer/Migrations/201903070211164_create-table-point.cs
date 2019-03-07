@@ -19,12 +19,14 @@ namespace DataAccessLayer.Migrations
                         UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         CreatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                     })
-                .PrimaryKey(t => t.Id);
+                .PrimaryKey(t => t.Id)
+                .Index(t => new { t.Longitude, t.Latitude }, name: "PointLocation");
             
         }
         
         public override void Down()
         {
+            DropIndex("dbo.Points", "PointLocation");
             DropTable("dbo.Points");
         }
     }

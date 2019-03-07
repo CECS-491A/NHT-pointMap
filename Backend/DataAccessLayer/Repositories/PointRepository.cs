@@ -12,19 +12,10 @@ namespace DataAccessLayer.Repositories
         {
             if (point.Longitude > 180 || point.Longitude < -180 ||
                 point.Latitude > 90 || point.Latitude < -90)
-                return false; //TODO: add error throw
+                throw new ArgumentOutOfRangeException("Longitude/Latitude value out of range.");
             return true;
         }
 
-        public bool ExistingPoint(DatabaseContext _db, Point point)
-        {
-            var result = GetPoint(_db, point.Id);
-            if (result != null)
-            {
-                return true;
-            }
-            return false;
-        }
         public Point CreatePoint(DatabaseContext _db, Point point)
         {
             if (!ValidateLongLat(point))
@@ -49,8 +40,7 @@ namespace DataAccessLayer.Repositories
 
         public Point UpdatePoint(DatabaseContext _db, Point point)
         {
-            if (!ValidateLongLat(point))
-                return null; //TODO: add error throw
+            ValidateLongLat(point);
 
             point.UpdatedAt = DateTime.UtcNow;
             _db.Entry(point).State = EntityState.Modified;
