@@ -36,20 +36,16 @@ namespace UnitTesting
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
-            result = ps.CreatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
-            result = ps.CreatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
-            result = ps.CreatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
-            result = ps.CreatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
         }
 
         [TestMethod]
@@ -70,20 +66,16 @@ namespace UnitTesting
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
-            result = ps.UpdatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
-            result = ps.UpdatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
-            result = ps.UpdatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
-            result = ps.UpdatePoint(_db, newPoint);
-            Assert.IsNull(result);
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
         }
 
         [TestMethod]
