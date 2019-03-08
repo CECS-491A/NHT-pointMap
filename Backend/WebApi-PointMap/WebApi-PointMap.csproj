@@ -91,6 +91,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\PointControllerPOCO.cs" />
     <Compile Include="Models\UserControllerPOCOS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -107,6 +108,10 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
+      <Project>{f4772f25-0116-413b-bc7f-43eff8a04f2e}</Project>
+      <Name>DataAccessLayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
       <Project>{dd7c51a6-44cd-4a05-9809-1171fe66f434}</Project>
       <Name>ManagerLayer</Name>

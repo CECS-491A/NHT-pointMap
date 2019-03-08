@@ -8,8 +8,6 @@ namespace DataAccessLayer.Models
     {
         public Point()
         {
-            CreatedAt = DateTime.UtcNow;
-            UpdatedAt = DateTime.UtcNow;
             Id = Guid.NewGuid();
         }
 

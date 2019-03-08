@@ -1,10 +1,11 @@
 ﻿using ServiceLayer.Services;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using System;
 
 namespace ManagerLayer
 {
-    class PointManager
+    public class PointManager
     {
         DatabaseContext _db;
         PointService _ps;
@@ -15,29 +16,49 @@ namespace ManagerLayer
             _ps = new PointService();
         }
 
-        public Point CreatePoint(float longitude, float latitude, string description)
+        public Point CreatePoint(float longitude, float latitude, string description, string name)
         {
             Point point = new Point();
             point.Description = description;
             point.Longitude = longitude;
             point.Latitude = latitude;
+            point.Name = name;
 
-            return _ps.CreatePoint(_db, point);
+            point = _ps.CreatePoint(_db, point);
+            _db.SaveChanges();
+
+            return point;
         }
 
-        public Point GetPoint(Point point)
+        public Point GetPoint(Guid pointId)
         {
-            return _ps.GetPoint(_db, point.Id);
+            return _ps.GetPoint(_db, pointId);
         }
 
-        public Point UpdatePoint(Point point)
+        public Point UpdatePoint(Guid pointId, float longitude, float latitude, 
+                                string description, string name, DateTime createdAt)
         {
-            return _ps.UpdatePoint(_db, point);
+            Point point = new Point
+            {
+                CreatedAt = createdAt,
+                Id = pointId,
+                Longitude = longitude,
+                Latitude = latitude,
+                Description = description,
+                Name = name
+            };
+
+            point = _ps.UpdatePoint(_db, point);
+            _db.SaveChanges();
+            return point;
         }
 
-        public Point DeletePoint(Point point)
+        public Point DeletePoint(Guid pointId)
         {
-            return _ps.DeletePoint(_db, point.Id);
+            _db = new DatabaseContext();
+            Point point = _ps.DeletePoint(_db, pointId);
+            _db.SaveChanges();
+            return point;
         }
     }
 }

@@ -20,6 +20,7 @@ namespace DataAccessLayer.Repositories
         {
             if (!ValidateLongLat(point))
                 return null;
+            point.CreatedAt = DateTime.UtcNow;
             point.UpdatedAt = DateTime.UtcNow;
                 _db.Points.Add(point);
             return point;
@@ -54,6 +55,7 @@ namespace DataAccessLayer.Repositories
                 .FirstOrDefault<Point>();
             if (point == null)
                 return null;
+            point.UpdatedAt = DateTime.UtcNow;
             _db.Entry(point).State = EntityState.Deleted;
             return point;
         }
