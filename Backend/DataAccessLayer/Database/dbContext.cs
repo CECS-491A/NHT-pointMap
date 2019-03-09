@@ -12,7 +12,7 @@ namespace DataAccessLayer.Database
     public class DatabaseContext : DbContext
     {
         // TODO: turn into enviornmental variables for dev and deploy
-        const string LOCAL_SQL_SERVER = "(localdb)\\MSSQLLocalDB";
+        const string LOCAL_SQL_SERVER = "LAPTOP";
         const string LOCAL_DB_NAME = "NightWatchDB";
 
         public DatabaseContext()

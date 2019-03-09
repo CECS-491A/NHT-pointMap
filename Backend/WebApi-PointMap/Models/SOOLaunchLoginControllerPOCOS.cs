@@ -21,4 +21,8 @@ namespace WebApi_PointMap.Models
         public Object Data { get; set; }
         public DateTime Timestamp { get; set; }
     }
+
+   
+        
+    
 }
