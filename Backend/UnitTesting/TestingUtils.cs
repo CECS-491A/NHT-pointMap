@@ -20,6 +20,65 @@ namespace UnitTesting
             return salt;
         }
 
+        public Point CreatePointObject(float longitude, float latitude)
+        {
+            Random rand = new Random();
+            Point p = new Point
+            {
+                Id = Guid.NewGuid(),
+                Name = Guid.NewGuid() + " ",
+                Longitude = longitude,
+                Latitude = latitude,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            return p;
+        }
+
+        public Point CreatePointObject()
+        {
+            Random rand = new Random();
+            Point p = new Point
+            {
+                Id = Guid.NewGuid(),
+                Name = Guid.NewGuid() + " ",
+                Longitude = (float)rand.NextDouble()*360 - 180,
+                Latitude = (float)rand.NextDouble()*180 - 90,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            return p;
+        }
+
+        public Point CreatePointInDb()
+        {
+            Random rand = new Random();
+            Point p = new Point
+            {
+                Id = Guid.NewGuid(),
+                Name = Guid.NewGuid() + " ",
+                Longitude = (float)rand.NextDouble()*360 - 180,
+                Latitude = (float)rand.NextDouble()*180 - 90,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
+
+            return CreatePointInDb(p);
+        }
+
+        public Point CreatePointInDb(Point point)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                _db.Entry(point).State = System.Data.Entity.EntityState.Added;
+                _db.SaveChanges();
+
+                return point;
+            }
+        }
+
         public User CreateUserInDb()
         {
 

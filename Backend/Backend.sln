@@ -14,6 +14,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dev", "Dev\Dev.csproj", "{1057EA55-30CA-4B6D-83B5-232F2791456B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi-PointMap", "WebApi-PointMap\WebApi-PointMap.csproj", "{7060A7DF-4960-4194-9CD2-2641EAD3EFDF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DD7C51A6-44CD-4A05-9809-1171FE66F434} = {DD7C51A6-44CD-4A05-9809-1171FE66F434}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

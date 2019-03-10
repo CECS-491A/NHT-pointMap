@@ -53,6 +53,7 @@
     <Compile Include="Services\ClientService.cs" />
     <Compile Include="Services\IDataSerializer.cs" />
     <Compile Include="Services\IOperationService.cs" />
+    <Compile Include="Services\IPointService.cs" />
     <Compile Include="Services\OperationService.cs" />
     <Compile Include="Services\IPasswordService.cs" />
     <Compile Include="Services\ISessionService.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="Services\IClaimService.cs" />
     <Compile Include="Services\ClaimService.cs" />
     <Compile Include="Services\PasswordService.cs" />
+    <Compile Include="Services\PointService.cs" />
     <Compile Include="Services\SessionService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>
