@@ -29,9 +29,9 @@ namespace ServiceLayer.Services
             return _SessionRepo.UpdateSession(_db, session);
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token)
+        public Session ExpireSession(DatabaseContext _db, string token)
         {
-            return _SessionRepo.DeleteSession(_db, token);
+            return _SessionRepo.ExpireSession(_db, token);
         }
 
         public Session GetSession(DatabaseContext _db, string token)

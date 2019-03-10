@@ -37,7 +37,6 @@ namespace UnitTesting
         [TestMethod]
         public void CreateClaim()
         {
-            
             // ACT
             int response = claimService.CreateClaim(user1.Id, service1.Id);
 
