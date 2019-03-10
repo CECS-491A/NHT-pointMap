@@ -50,9 +50,9 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("api/point/{guid}")]
-        public IHttpActionResult Post(string guid, [FromBody] PointPOST pointPost)
+        public IHttpActionResult Put(string guid, [FromBody] PointPOST pointPost)
         {
             Guid id = new Guid(guid);
             try
