@@ -18,7 +18,15 @@ namespace DataAccessLayer.Repositories
 
             return session;
         }
-        
+
+        public Session GetSession(DatabaseContext _db, User user)
+        {
+            var session = _db.Sessions
+                          .Where(s => s.UserId == user.Id)
+                          .FirstOrDefault<Session>();
+            return session;
+        }
+
         public Session CreateSession(DatabaseContext _db, Session session, Guid userId)
         {
             session.UserId = userId;
@@ -63,5 +71,12 @@ namespace DataAccessLayer.Repositories
             _db.Entry(session).State = EntityState.Modified;
             return session;
         }
+
+        public Guid GetSessionGuid(DatabaseContext _db, string token)
+        {
+            return GetSession(_db, token).Id;
+        }
+
+       
     }
 }

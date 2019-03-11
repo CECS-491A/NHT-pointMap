@@ -45,5 +45,17 @@ namespace WebApi_PointMap.Controllers
             };
             return Ok(response);
         }
+        [HttpPost]
+        [Route("api/sso/user/logout")]
+        public IHttpActionResult LogoutFromSSO([FromBody] LoginPOCO value)
+        {
+            ResponsePOCO response;
+            response = new ResponsePOCO
+            {
+                Data = "test"
+            };
+            return Ok(response);
+
+        }
     }
 }

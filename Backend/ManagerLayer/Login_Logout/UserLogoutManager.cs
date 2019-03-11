@@ -17,20 +17,18 @@ namespace ManagerLayer.Login
         AuthorizationManager _authorizationManager;
         UserManagementManager _userManagementManager;
 
-        public LogoutManagerResponsePOCO Logout(Guid id, string token)
+        public LogoutManagerResponsePOCO Logout( string token)
         {
             LogoutManagerResponsePOCO response;
-
-            var user = _userManagementManager.GetUser(id);
             
             
-            var result = _authorizationManager.ExpireSession(token, id);
+            var result = _authorizationManager.ExpireSession(token);
 
             if (result == 1)
             {
                 response = new LogoutManagerResponsePOCO
                 {
-                    id = id,
+                    data = token,
                     message = "You have been logged out",
                     Timestamp = DateTime.UtcNow
 
@@ -41,7 +39,7 @@ namespace ManagerLayer.Login
 
                 response = new LogoutManagerResponsePOCO
                 {
-                    id = id,
+                    data = token,
                     message = "Error: You have not been logged out",
                     Timestamp = DateTime.UtcNow
 
@@ -52,10 +50,36 @@ namespace ManagerLayer.Login
 
 
         }
-        public LogoutManagerResponsePOCO LogoutFromSSO(string ssoID)
+        public LogoutManagerResponsePOCO LogoutFromSSO(string token, string username)
         {
-            return response = new LogoutManagerResponsePoco
+            LogoutManagerResponsePOCO response;
+            _authorizationManager = new AuthorizationManager();
+           
 
+
+            var session = _authorizationManager.ExpireSession(token);
+
+            if (session == null)
+            {
+                response = new LogoutManagerResponsePOCO
+                {
+                    data = token,
+                    message = "No session was found.",
+                    Timestamp = DateTime.UtcNow
+                };
+                return response;
+            }
+            response = new LogoutManagerResponsePOCO
+            {
+                data = new { token = token },
+                message = "User has been logged out.",
+                Timestamp = DateTime.UtcNow
+
+            };
+            return response;
+
+
+           
         }
         
 

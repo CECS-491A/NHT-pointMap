@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer.Models
 {
-    class LogoutManagerPOCOS
+    public class LogoutManagerPOCOS
     {
         
 
@@ -14,7 +14,7 @@ namespace ManagerLayer.Models
 
     public class LogoutManagerResponsePOCO
     {
-        public Guid id { get; set; }
+        public Object data { get; set; }
         public string message { get; set; }
         public DateTime Timestamp { get; set; }
 

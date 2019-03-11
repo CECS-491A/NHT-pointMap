@@ -93,7 +93,7 @@ namespace ManagerLayer.AccessControl
             return null;
         }
 
-        public int ExpireSession(string token, Guid userId)
+        public int ExpireSession(string token)
         {
             using (var _db = new DatabaseContext())
             {
