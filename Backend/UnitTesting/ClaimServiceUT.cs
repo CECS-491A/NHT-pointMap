@@ -16,10 +16,12 @@ namespace UnitTesting
         Service service1;
         Service service2;
         Claim claim1;
+        DatabaseContext _db;
 
         public ClaimServiceUT()
         {
             var testUtils = new TestingUtils();
+            _db = new DatabaseContext();
 
             claimService = new ClaimService();
 
@@ -29,8 +31,6 @@ namespace UnitTesting
             service1 = testUtils.CreateServiceInDb(true);
             service2 = testUtils.CreateServiceInDb(true);
 
-            
-
             claim1 = testUtils.CreateClaim(user1, service1, user2);
         }
 
@@ -38,57 +38,51 @@ namespace UnitTesting
         public void CreateClaim()
         {
             // ACT
-            int response = claimService.CreateClaim(user1.Id, service1.Id);
+            var response = claimService.CreateClaim(_db, user1.Id, service1.Id);
 
-            using (var _db = new DatabaseContext()) {
-                
-
-                Claim recentclaim = _db.Claims
-                    .Where(c => c.UserId == user1.Id && c.ServiceId == service1.Id)
-                    .FirstOrDefault();
-                Assert.IsTrue(recentclaim!=null);
-            }
-
-               
-                
-                Assert.IsTrue(response > 0);
+            Claim recentclaim = _db.Claims
+                .Where(c => c.UserId == user1.Id && c.ServiceId == service1.Id)
+                .FirstOrDefault();
+            Assert.IsTrue(recentclaim!=null);
+            
+            Assert.IsNotNull(response);
+            Assert.AreEqual(user1.Id, response.UserId);
+            Assert.AreEqual(service1.Id, response.ServiceId);
         }
 
         [TestMethod]
-        public void getService()
+        public void GetService()
         {
-            Service received = claimService.GetService(service1.ServiceName);
+            Service received = claimService.GetService(_db, service1.ServiceName);
 
             StringAssert.Contains(received.ServiceName, service1.ServiceName);
         }
 
         [TestMethod]
-        public void addServiceToUser()
+        public void AddServiceToUser()
         {
-            claimService.AddServiceToUser(user2, service2);
+            claimService.AddServiceToUser(_db, user2, service2);
+            _db.SaveChanges();
 
-            using (var _db = new DatabaseContext())
-            {
-                int count = _db.Claims
-                    .Where(c => c.UserId == user2.Id && c.ServiceId == service2.Id)
-                    .Count();
+            int count = _db.Claims
+                .Where(c => c.UserId == user2.Id && c.ServiceId == service2.Id)
+                .Count();
                 
-                Assert.IsTrue(count > 0);
-            }
+            Assert.IsTrue(count > 0);
         }
 
         [TestMethod]
-        public void userHasServiceAccess()
+        public void UserHasServiceAccess()
         {
-            bool hasAccess = claimService.UserHasServiceAccess(user1, service1);
+            bool hasAccess = claimService.UserHasServiceAccess(_db, user1, service1);
 
             Assert.IsTrue(hasAccess);
         }
 
         [TestMethod]
-        public void userHasNoServiceAccess()
+        public void UserHasNoServiceAccess()
         {
-            bool hasAccess = claimService.UserHasServiceAccess(user1, service2);
+            bool hasAccess = claimService.UserHasServiceAccess(_db, user1, service2);
 
             Assert.IsFalse(hasAccess);
         }
