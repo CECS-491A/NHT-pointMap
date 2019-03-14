@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.Login
 {
@@ -17,42 +18,40 @@ namespace ManagerLayer.Login
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
 
-        public LoginManagerResponseDTO LoginFromSSO(string username, Guid ssoID)
+        public LoginManagerResponseDTO LoginFromSSO(DatabaseContext _db,  string username, Guid ssoID)
         {
             LoginManagerResponseDTO response;
             _userManagementManager = new UserManagementManager();
-            _authorizationManager = new AuthorizationManager();
             var user = _userManagementManager.GetUserBySSOID(ssoID);
             // check if user does not exist
             if (user == null)
             {
                 // create new user
-                user = _userManagementManager.CreateUser(username, ssoID);
-                if (user == null)
+                try
                 {
-                    response =  new LoginManagerResponseDTO
-                    {
-                        Data = null,
-                        Message = "User can not be created",
-                        Timestamp = DateTime.UtcNow
-                    };
-                    return response;
+                    user = _userManagementManager.CreateUser(_db, username, ssoID);
+                }
+                catch (InvalidEmailException ex)
+                {
+                    throw new InvalidEmailException(ex.Message);
                 }
             }
-            string token = _authorizationManager.CreateSession(user);
+            _authorizationManager = new AuthorizationManager();
+            Session session = _authorizationManager.CreateSession(_db, user);
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch (Exception)
+            {
+                _db.Entry(user).State = System.Data.Entity.EntityState.Detached;
+                _db.Entry(session).State = System.Data.Entity.EntityState.Detached;
+                throw new InvalidDbOperationException();
+            }
             response =  new LoginManagerResponseDTO
             {
-                Data = new {
-                    token = token,
-                    user = new
-                    {
-                        id = user.Id,
-                        username = user.Email,
-                        ssoID = user.SSOId
-                    }
-                },
-                Message = "Login Successful",
-                Timestamp = DateTime.UtcNow
+                userid = user.Id,
+                token = session.Token
             };
             return response;
         }

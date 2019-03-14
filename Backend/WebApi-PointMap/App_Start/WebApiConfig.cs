@@ -12,7 +12,7 @@ namespace WebApi_PointMap
         public static void Register(HttpConfiguration config)
         {
             // Enable CORS globaly across all controllers
-            var cors = new EnableCorsAttribute(origins: "http://localhost:8080, http://pointmap.me:80", headers: " * ", methods: "*");
+            var cors = new EnableCorsAttribute(origins: "http://localhost:8080, http://pointmap.me:80", headers: "*", methods: "*");
 
 
             // Web API configuration and services

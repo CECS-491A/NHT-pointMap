@@ -1,11 +1,12 @@
-﻿using System;
+﻿using DataAccessLayer.Database;
+using DataAccessLayer.Models;
+using DataAccessLayer.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
-using DataAccessLayer.Database;
-using DataAccessLayer.Models;
-using DataAccessLayer.Repositories;
+
 
 namespace ServiceLayer.Services
 {

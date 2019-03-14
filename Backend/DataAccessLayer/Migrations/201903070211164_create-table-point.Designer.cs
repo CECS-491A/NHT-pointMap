@@ -7,13 +7,13 @@ namespace DataAccessLayer.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class updatetableuserdropcolsecurityquestions : IMigrationMetadata
+    public sealed partial class createtablepoint : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(updatetableuserdropcolsecurityquestions));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(createtablepoint));
         
         string IMigrationMetadata.Id
         {
-            get { return "201903050923446_update-table-user-dropcol-securityquestions"; }
+            get { return "201903070211164_create-table-point"; }
         }
         
         string IMigrationMetadata.Source

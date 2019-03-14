@@ -13,6 +13,7 @@ namespace DataAccessLayer.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
+                        SSOId = c.Guid(nullable: false),
                         Email = c.String(nullable: false),
                         DateOfBirth = c.DateTime(nullable: false),
                         City = c.String(),
@@ -20,12 +21,6 @@ namespace DataAccessLayer.Migrations
                         Country = c.String(),
                         PasswordHash = c.String(nullable: false),
                         PasswordSalt = c.Binary(nullable: false),
-                        SecurityQ1 = c.String(),
-                        SecurityQ1Answer = c.String(),
-                        SecurityQ2 = c.String(),
-                        SecurityQ2Answer = c.String(),
-                        SecurityQ3 = c.String(),
-                        SecurityQ3Answer = c.String(),
                         Disabled = c.Boolean(nullable: false),
                         UpdatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),
                         CreatedAt = c.DateTime(nullable: false, precision: 7, storeType: "datetime2"),

@@ -1,12 +1,16 @@
-﻿using ManagerLayer.Login;
+﻿using DataAccessLayer.Database;
+using ManagerLayer.Login;
+using ManagerLayer.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -17,47 +21,45 @@ namespace WebApi_PointMap.Controllers
         // POST api/ssolaunch/user/login
         [HttpPost]
         [Route("api/sso/user/login")]
-        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO payload) //using a POCO to represent request
+        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO request)
         {
-            _userLoginManager = new UserLoginManager();
-            ResponseDTO response;
-            if (payload == null)
+            if (!ModelState.IsValid || request == null)
             {
-                response = new ResponseDTO { Data = null, Timestamp = DateTime.UtcNow };
-                return Ok(response);
+                return Content((HttpStatusCode)412, ModelState);
             }
+            _userLoginManager = new UserLoginManager();
             Guid userSSOID;
             try
             {
-                userSSOID = Guid.Parse(payload.SSOUserId);
+                // check if valid SSO ID format
+                userSSOID = Guid.Parse(request.SSOUserId);
             }
             catch (Exception)
             {
-                response = new ResponseDTO
+                return Content((HttpStatusCode)400, "Invalid SSO ID");
+            }
+            using (var _db = new DatabaseContext())
+            {
+                LoginManagerResponseDTO loginAttempt;
+                try
                 {
-                    Data = new {
-                        message = "Invalid format for SSO ID"
-                    },
-                    Timestamp = DateTime.UtcNow
+                    loginAttempt = _userLoginManager.LoginFromSSO(_db, request.Email, userSSOID);
+                }
+                catch (InvalidDbOperationException ex)
+                {
+                    return Content((HttpStatusCode)500, ex.Message);
+                }
+                catch (InvalidEmailException ex)
+                {
+                    return Content((HttpStatusCode)400, ex.Message);
+                }
+                LoginResponseDTO response = new LoginResponseDTO
+                {
+                    token = loginAttempt.token,
+                    userId = loginAttempt.userid
                 };
                 return Ok(response);
             }
-            var loginAttempt = _userLoginManager.LoginFromSSO(payload.Email, userSSOID);
-            if (loginAttempt.Data == null)
-            {
-                response = new ResponseDTO
-                {
-                    Data = loginAttempt.Message,
-                    Timestamp = DateTime.UtcNow
-                };
-                return Ok(response);
-            }
-            response = new ResponseDTO
-            {
-                Data = loginAttempt.Data,
-                Timestamp = DateTime.UtcNow
-            };
-            return Ok(response);
         }
     }
 }

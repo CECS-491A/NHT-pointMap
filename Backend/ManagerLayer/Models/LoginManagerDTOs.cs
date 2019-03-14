@@ -13,8 +13,7 @@ namespace ManagerLayer.Models
 
     public class LoginManagerResponseDTO
     {
-        public Object Data { get; set; }
-        public string Message { get; set; }
-        public DateTime Timestamp { get; set; }
+        public Guid userid { get; set; }
+        public string token { get; set; }
     }
 }

@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
 namespace WebApi_PointMap.Models
 {
-    // poco class for request object
-    public class UserPOSTDTO
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
-
     public class LoginDTO
     {
+        [Required]
         public string SSOUserId { get; set; }
+        [Required]
         public string Email { get; set; }
+        [Required]
         public string Name { get; set; }
     }
 
-    public class ResponseDTO
+    public class LoginResponseDTO
     {
-        public Object Data { get; set; }
-        public DateTime Timestamp { get; set; }
+        public string token { get; set; }
+        public Guid userId { get; set; }
     }
 }

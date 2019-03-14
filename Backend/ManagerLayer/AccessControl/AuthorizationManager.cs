@@ -35,32 +35,19 @@ namespace ManagerLayer.AccessControl
             return hex;
         }
 
-        public string CreateSession(User user)
+        public Session CreateSession(DatabaseContext _db, User user)
         {
             _userService = new UserService();
-            using (var _db = CreateDbContext())
+            //check if user exist
+            var userResponse = _userService.GetUser(_db, user.Email);
+            if(userResponse == null)
             {
-                var userResponse = _userService.GetUser(_db, user.Email);
-                if(userResponse == null)
-                {
-                    return null;
-                }
-                Session session = new Session();
-                session.Token = GenerateSessionToken();
-                var response = _sessionService.CreateSession(_db, session, userResponse.Id);
-                try
-                {
-                    _db.SaveChanges();
-                    return response.Token;
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    //catch error
-                    // detach session attempted to be created from the db context - rollback
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
-                }
+                return null;
             }
-            return null;
+            Session session = new Session();
+            session.Token = GenerateSessionToken();
+            return _sessionService.CreateSession(_db, session, userResponse.Id);
+           
         }
 
         public string ValidateAndUpdateSession(string token, Guid userId)
