@@ -17,42 +17,6 @@ namespace ManagerLayer.Login
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
 
-        //public LoginManagerResponsePOCO Login(string username, string password)
-        //{
-        //    LoginManagerResponsePOCO response;
-        //    _userManagementManager = new UserManagementManager();
-        //    _passwordService = new PasswordService();
-        //    var user = _userManagementManager.GetUser(username);
-        //    if (user == null)
-        //    {
-        //        response = new LoginManagerResponsePOCO
-        //        {
-        //            Data = null,
-        //            Message = "User does not exist",
-        //            Timestamp = DateTime.UtcNow
-        //        };
-        //        return response;
-        //    }
-        //    var StoredPassword = user.PasswordHash;
-        //    var AttemptedPassword = _passwordService.HashPassword(password, user.PasswordSalt);
-        //    if (StoredPassword == AttemptedPassword)
-        //    {
-        //        string token = _authorizationManager.CreateSession(user);
-        //        return new LoginManagerResponsePOCO
-        //        {
-        //            Data = token,
-        //            Message = "Login Successful",
-        //            Timestamp = DateTime.UtcNow
-        //        };
-        //    }
-        //    return new LoginManagerResponsePOCO
-        //    {
-        //        Data = null,
-        //        Message = "Invalid password entered",
-        //        Timestamp = DateTime.UtcNow
-        //    };
-        //}
-
         public LoginManagerResponseDTO LoginFromSSO(string username, Guid ssoID)
         {
             LoginManagerResponseDTO response;
