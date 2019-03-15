@@ -61,6 +61,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ITestingUtils.cs" />
+    <Compile Include="UserControllerUT.cs" />
+    <Compile Include="UserLoginManagerUT.cs" />
     <Compile Include="PointServiceUT.cs" />
     <Compile Include="TestingUtils.cs" />
     <Compile Include="ClaimServiceUT.cs" />

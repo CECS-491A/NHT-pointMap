@@ -108,6 +108,20 @@ namespace UnitTesting
             }
         }
 
+        public User CreateSSOUserInDb()
+        {
+            User user = new User
+            {
+                Email = Guid.NewGuid() + "@mail.com",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness(),
+                DateOfBirth = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                SSOId = Guid.NewGuid()
+            };
+            return CreateUserInDb(user);
+        }
+
         public User CreateUserObject()
         {
             User user = new User

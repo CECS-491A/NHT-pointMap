@@ -30,10 +30,16 @@ namespace ManagerLayer.Login
                 try
                 {
                     user = _userManagementManager.CreateUser(_db, username, ssoID);
+                    _db.SaveChanges();
                 }
                 catch (InvalidEmailException ex)
                 {
                     throw new InvalidEmailException(ex.Message);
+                }
+                catch (InvalidDbOperationException)
+                {
+                    _db.Entry(user).State = System.Data.Entity.EntityState.Detached;
+                    throw new InvalidDbOperationException("User was not created");
                 }
             }
             _authorizationManager = new AuthorizationManager();
@@ -44,9 +50,8 @@ namespace ManagerLayer.Login
             }
             catch (Exception)
             {
-                _db.Entry(user).State = System.Data.Entity.EntityState.Detached;
                 _db.Entry(session).State = System.Data.Entity.EntityState.Detached;
-                throw new InvalidDbOperationException();
+                throw new InvalidDbOperationException("Session was not created");
             }
             response =  new LoginManagerResponseDTO
             {
