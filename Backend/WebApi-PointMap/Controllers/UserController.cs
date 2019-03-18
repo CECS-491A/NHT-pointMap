@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
+using System.Web.Http.Controllers;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
@@ -62,10 +63,14 @@ namespace WebApi_PointMap.Controllers
                 {
                     return Content((HttpStatusCode)400, ex.Message);
                 }
+
+                String referrerHomeUrl = Request.Headers.Referrer?.GetLeftPart(UriPartial.Authority);
+
                 LoginResponseDTO response = new LoginResponseDTO
                 {
-                    RedirectURI = "home" + loginAttempt.Token
+                    RedirectURI = referrerHomeUrl + "/#/Dashboard/token?=" + loginAttempt.Token
                 };
+
                 return Ok(response);
             }
         }
