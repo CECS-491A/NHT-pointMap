@@ -1,67 +1,73 @@
-﻿using System;
+﻿using DataAccessLayer.Database;
+using ManagerLayer.Login;
+using ManagerLayer.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
 {
     public class UserController : ApiController
     {
-        // standard route is /api/user
-        //  - verbs called on route determine the route pinged
+        UserLoginManager _userLoginManager;
 
-        // GET api/User
-        [HttpGet]
-        [Route("api/user")]
-        public IHttpActionResult Get()
-        { 
-            // return OK with JSON
-            var tester = new { name = "alfredo", vargas = "asdf"};
-            return Ok(tester);
-        }
-
-        // GET api/User/5
-        [HttpGet]
-        [Route("api/user/{id}")] //route specific
-        public IHttpActionResult Get(int id)
-        {
-            return Ok(new { id = id });
-        }
-
-        // POST api/User
+        // POST api/user/login
         [HttpPost]
-        [Route("api/user")]
-        public IHttpActionResult Post([FromBody] UserPOST value) //using a POCO to represent request
+        [Route("api/user/login")]
+        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO requestPayload)
         {
-            var response = value;
-            if (response == null)
+            if (!ModelState.IsValid || requestPayload == null)
             {
-                return NotFound();
+                return Content((HttpStatusCode)412, ModelState);
             }
-            return Ok(response);
-        }
-
-        // PUT api/User/5
-        public void Put(int id, [FromBody]string value)
-        {
-            
-        }
-
-        // DELETE api/User/5
-        public IHttpActionResult Delete(int id)
-        {
-            var response = new { id = id };
-            return Ok(response);
-        }
-
-        // DELETE api/User
-        public IHttpActionResult Delete(UserPOST user)
-        {
-            var response = new { id = user.Username };
-            return Ok(response);
+            _userLoginManager = new UserLoginManager();
+            Guid userSSOID;
+            try
+            {
+                // check if valid SSO ID format
+                userSSOID = Guid.Parse(requestPayload.SSOUserId);
+            }
+            catch (Exception)
+            {
+                return Content((HttpStatusCode)400, "Invalid SSO ID");
+            }
+            using (var _db = new DatabaseContext())
+            {
+                LoginManagerResponseDTO loginAttempt;
+                try
+                {
+                    loginAttempt = _userLoginManager.LoginFromSSO(
+                        _db,
+                        requestPayload.Email,
+                        userSSOID,
+                        requestPayload.Signature,
+                        requestPayload.PreSignatureString());
+                }
+                catch (InvalidTokenSignatureException ex)
+                {
+                    return Content((HttpStatusCode)401, ex.Message);
+                }
+                catch (InvalidDbOperationException ex)
+                {
+                    return Content((HttpStatusCode)500, ex.Message);
+                }
+                catch (InvalidEmailException ex)
+                {
+                    return Content((HttpStatusCode)400, ex.Message);
+                }
+                LoginResponseDTO response = new LoginResponseDTO
+                {
+                    RedirectURI = "home" + loginAttempt.Token
+                };
+                return Ok(response);
+            }
         }
     }
 }

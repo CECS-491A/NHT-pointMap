@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer.AccessControl
 {
-    class AuthorizationManager
+    public class AuthorizationManager
     {
         private ISessionService _sessionService;
         private IUserService _userService;
@@ -35,33 +35,19 @@ namespace ManagerLayer.AccessControl
             return hex;
         }
 
-        public string CreateSession(User user)
+        public Session CreateSession(DatabaseContext _db, User user)
         {
-            using (var _db = CreateDbContext())
+            _userService = new UserService();
+            //check if user exist
+            var userResponse = _userService.GetUser(_db, user.Username);
+            if(userResponse == null)
             {
-                var userResponse = _userService.GetUser(_db, user.Email);
-                if(userResponse == null)
-                {
-                    return null;
-                }
-                Session session = new Session();
-                session.Token = GenerateSessionToken();
-                session.User = user;
-
-                var response = _sessionService.CreateSession(_db, session, user.Id);
-                try
-                {
-                    _db.SaveChanges();
-                    return response.Token;
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    //catch error
-                    // detach session attempted to be created from the db context - rollback
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
-                }
+                return null;
             }
-            return null;
+            Session session = new Session();
+            session.Token = GenerateSessionToken();
+            return _sessionService.CreateSession(_db, session, userResponse.Id);
+           
         }
 
         public string ValidateAndUpdateSession(string token, Guid userId)
