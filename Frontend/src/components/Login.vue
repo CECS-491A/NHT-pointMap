@@ -15,7 +15,7 @@ import axios from 'axios'
         },
         mounted () {
             axios
-                .get('http://localhost:58896/api/user/login')
+                .post('http://localhost:58896/api/user/login')
                 .then(response => (console.log(response)))
         }
     }
