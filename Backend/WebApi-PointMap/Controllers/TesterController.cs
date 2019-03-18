@@ -20,5 +20,12 @@ namespace WebApi_PointMap.Controllers
         {
             return Ok("Hello World, from NightWatch " + DateTime.Now.ToString());
         }
+
+        [HttpGet]
+        [Route("api/helloworld")]
+        public IHttpActionResult HelloWorld(string token)
+        {
+            return Ok("Hello World, from NightWatch " + DateTime.Now.ToString() + "\nShh... " + token);
+        }
     }
 }
