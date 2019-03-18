@@ -31,7 +31,7 @@ namespace DataAccessLayer.Repositories
         public User GetUser(DatabaseContext _db, string email)
         {
             var user = _db.Users
-                .Where(c => c.Email == email)
+                .Where(c => c.Username == email)
                 .FirstOrDefault<User>();
             return user;
         }
@@ -44,7 +44,7 @@ namespace DataAccessLayer.Repositories
         public User GetUserBySSOID(DatabaseContext _db, Guid SSOID)
         {
             var user = _db.Users
-                .Where(c => c.SSOId == SSOID)
+                .Where(c => c.Id == SSOID)
                 .FirstOrDefault<User>();
             return user;
         }
@@ -58,7 +58,7 @@ namespace DataAccessLayer.Repositories
 
         public bool ExistingUser(DatabaseContext _db, User user)
         {
-            var result = GetUser(_db, user.Email);
+            var result = GetUser(_db, user.Username);
             if (result != null)
             {
                 return true;

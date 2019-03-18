@@ -42,12 +42,11 @@ namespace ManagerLayer.UserManagement
             string hash = _passwordService.HashPassword(timestamp.ToString(), salt);
             User user = new User
             {
-                Email = email,
+                Username = email,
                 PasswordHash = hash,
                 PasswordSalt = salt,
-                DateOfBirth = timestamp,
                 UpdatedAt = timestamp,
-                SSOId = SSOID
+                Id = SSOID
             };
             try
             {
@@ -92,14 +91,6 @@ namespace ManagerLayer.UserManagement
             using (var _db = CreateDbContext())
             {
                 return  _userService.GetUser(_db, email);
-            }
-        }
-
-        public User GetUserBySSOID(Guid SSOID)
-        {
-            using (var _db = CreateDbContext())
-            {
-                return _userService.GetUserBySSOID(_db, SSOID);
             }
         }
 

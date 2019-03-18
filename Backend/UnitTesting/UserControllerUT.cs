@@ -7,6 +7,7 @@ using WebApi_PointMap.Models;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
+using static UnitTesting.TestingUtils;
 
 namespace UnitTesting
 {
@@ -29,15 +30,22 @@ namespace UnitTesting
         {
             var controller = new UserController();
             var valid_username = Guid.NewGuid() + "@mail.com";
-            var valid_ssoID = Guid.NewGuid().ToString();
-            var valid_name = Guid.NewGuid().ToString();
-            var endpoint = API_ROUTE_LOCAL + "/api/sso/user/login";
+            var valid_ssoID = Guid.NewGuid();
+            var timestamp = 12312445;
+            MockLoginPayload mock_payload = new MockLoginPayload
+            {
+                ssoUserId = valid_ssoID,
+                email = valid_username,
+                timestamp = timestamp
+            };
+            var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
             LoginDTO payload = new LoginDTO
             {
                 Email = valid_username,
-                SSOUserId = valid_ssoID,
-                Name = valid_name
+                SSOUserId = mock_payload.ssoUserId.ToString(),
+                Timestamp = mock_payload.timestamp,
+                Signature = mock_payload.Signature(),
             };
 
             controller.Request = new HttpRequestMessage
@@ -54,17 +62,25 @@ namespace UnitTesting
         {
             var controller = new UserController();
             var existing_user = ut.CreateSSOUserInDb();
-            var existing_username = existing_user.Email;
-            var existing_ssoID = existing_user.SSOId;
-            var existing_name = Guid.NewGuid().ToString();
-           
-            var endpoint = API_ROUTE_LOCAL + "/api/sso/user/login";
+            var existing_username = existing_user.Username;
+            var existing_ssoID = existing_user.Id;
+            var timestamp = 23454252;
+
+            MockLoginPayload mock_payload = new MockLoginPayload
+            {
+                ssoUserId = existing_ssoID,
+                email = existing_username,
+                timestamp = timestamp
+            };
+
+            var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
             LoginDTO payload = new LoginDTO
             {
                 Email = existing_username,
-                SSOUserId = existing_ssoID.ToString(),
-                Name = existing_name
+                SSOUserId = mock_payload.ssoUserId.ToString(),
+                Timestamp = mock_payload.timestamp,
+                Signature = mock_payload.Signature(),
             };
 
             controller.Request = new HttpRequestMessage
@@ -75,7 +91,6 @@ namespace UnitTesting
             Assert.IsInstanceOfType(actionresult, typeof(OkNegotiatedContentResult<LoginResponseDTO>));
             var contentresult = actionresult as OkNegotiatedContentResult<LoginResponseDTO>;
             Assert.IsNotNull(contentresult);
-            Assert.AreEqual(existing_user.Id, contentresult.Content.userId);
         }
     }
 }

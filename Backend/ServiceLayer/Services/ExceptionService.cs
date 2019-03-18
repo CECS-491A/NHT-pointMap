@@ -19,5 +19,11 @@ namespace ServiceLayer.Services
             public InvalidDbOperationException() { }
             public InvalidDbOperationException(string message) : base (message) { }
         }
+
+        public class InvalidTokenSignatureException : Exception
+        {
+            public InvalidTokenSignatureException() { }
+            public InvalidTokenSignatureException(string message) : base (message) { }
+        }
     }
 }

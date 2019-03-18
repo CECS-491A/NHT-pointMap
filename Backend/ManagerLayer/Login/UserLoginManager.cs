@@ -17,19 +17,30 @@ namespace ManagerLayer.Login
     {
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
+        TokenService _tokenService;
 
-        public LoginManagerResponseDTO LoginFromSSO(DatabaseContext _db,  string username, Guid ssoID)
+        public LoginManagerResponseDTO LoginFromSSO(
+            DatabaseContext _db, string Username, Guid ssoID, string Signature, string PreSignatureString)
         {
-            LoginManagerResponseDTO response;
+            ////////////////////////////////////////
+            /// User oAuth at the indivudal application level
+            // verify if the login payload is valid via its signature
+            _tokenService = new TokenService();
+            if (!_tokenService.isValidSignature(PreSignatureString, Signature))
+            {
+                throw new InvalidTokenSignatureException("Session is not valid.");
+            }
+            ////////////////////////////////////////
+            
             _userManagementManager = new UserManagementManager();
-            var user = _userManagementManager.GetUserBySSOID(ssoID);
+            var user = _userManagementManager.GetUser(ssoID);
             // check if user does not exist
             if (user == null)
             {
                 // create new user
                 try
                 {
-                    user = _userManagementManager.CreateUser(_db, username, ssoID);
+                    user = _userManagementManager.CreateUser(_db, Username, ssoID);
                     _db.SaveChanges();
                 }
                 catch (InvalidEmailException ex)
@@ -53,10 +64,10 @@ namespace ManagerLayer.Login
                 _db.Entry(session).State = System.Data.Entity.EntityState.Detached;
                 throw new InvalidDbOperationException("Session was not created");
             }
-            response =  new LoginManagerResponseDTO
+            LoginManagerResponseDTO response;
+            response = new LoginManagerResponseDTO
             {
-                userid = user.Id,
-                token = session.Token
+                Token = session.Token
             };
             return response;
         }

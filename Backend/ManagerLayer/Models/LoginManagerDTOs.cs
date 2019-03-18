@@ -13,7 +13,6 @@ namespace ManagerLayer.Models
 
     public class LoginManagerResponseDTO
     {
-        public Guid userid { get; set; }
-        public string token { get; set; }
+        public string Token { get; set; }
     }
 }

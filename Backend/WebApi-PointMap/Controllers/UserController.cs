@@ -18,12 +18,12 @@ namespace WebApi_PointMap.Controllers
     {
         UserLoginManager _userLoginManager;
 
-        // POST api/ssolaunch/user/login
+        // POST api/user/login
         [HttpPost]
-        [Route("api/sso/user/login")]
-        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO request)
+        [Route("api/user/login")]
+        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO requestPayload)
         {
-            if (!ModelState.IsValid || request == null)
+            if (!ModelState.IsValid || requestPayload == null)
             {
                 return Content((HttpStatusCode)412, ModelState);
             }
@@ -32,7 +32,7 @@ namespace WebApi_PointMap.Controllers
             try
             {
                 // check if valid SSO ID format
-                userSSOID = Guid.Parse(request.SSOUserId);
+                userSSOID = Guid.Parse(requestPayload.SSOUserId);
             }
             catch (Exception)
             {
@@ -43,7 +43,16 @@ namespace WebApi_PointMap.Controllers
                 LoginManagerResponseDTO loginAttempt;
                 try
                 {
-                    loginAttempt = _userLoginManager.LoginFromSSO(_db, request.Email, userSSOID);
+                    loginAttempt = _userLoginManager.LoginFromSSO(
+                        _db,
+                        requestPayload.Email,
+                        userSSOID,
+                        requestPayload.Signature,
+                        requestPayload.PreSignatureString());
+                }
+                catch (InvalidTokenSignatureException ex)
+                {
+                    return Content((HttpStatusCode)401, ex.Message);
                 }
                 catch (InvalidDbOperationException ex)
                 {
@@ -55,8 +64,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 LoginResponseDTO response = new LoginResponseDTO
                 {
-                    token = loginAttempt.token,
-                    userId = loginAttempt.userid
+                    RedirectURI = "home" + loginAttempt.Token
                 };
                 return Ok(response);
             }

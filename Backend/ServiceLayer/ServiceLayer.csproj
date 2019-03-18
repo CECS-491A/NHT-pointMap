@@ -64,6 +64,7 @@
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\PointService.cs" />
     <Compile Include="Services\SessionService.cs" />
+    <Compile Include="Services\TokenService.cs" />
     <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -13,12 +13,22 @@ namespace WebApi_PointMap.Models
         [Required]
         public string Email { get; set; }
         [Required]
-        public string Name { get; set; }
+        public long Timestamp { get; set; }
+        [Required]
+        public string Signature { get; set; }
+        
+        public string PreSignatureString()
+        {
+            string acc = "";
+            acc += "ssoUserId=" + SSOUserId + ";";
+            acc += "email=" + Email + ";";
+            acc += "timestamp=" + Timestamp + ";";
+            return acc;
+        }
     }
 
     public class LoginResponseDTO
     {
-        public string token { get; set; }
-        public Guid userId { get; set; }
+        public string RedirectURI { get; set; }
     }
 }

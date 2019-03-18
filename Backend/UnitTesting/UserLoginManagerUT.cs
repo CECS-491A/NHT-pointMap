@@ -6,6 +6,7 @@ using static ServiceLayer.Services.ExceptionService;
 using ManagerLayer.Login;
 using ManagerLayer.AccessControl;
 using DataAccessLayer.Models;
+using static UnitTesting.TestingUtils;
 
 namespace UnitTesting
 {
@@ -32,10 +33,13 @@ namespace UnitTesting
         {
             var invalid_username = Guid.NewGuid() + ".com";
             var valid_ssoID = Guid.NewGuid();
+            var timestamp = 8283752242;
+            string preSignatureString = ut.GeneratePreSignatureString(valid_ssoID, invalid_username, timestamp);
+            string Signature = ut.GenerateTokenSignature(valid_ssoID, invalid_username, 8283752242);
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                _loginManager.LoginFromSSO(_db, invalid_username, valid_ssoID);
+                _loginManager.LoginFromSSO(_db, invalid_username, valid_ssoID, Signature, preSignatureString);
             }
 
             //Assert - catch exception
@@ -46,10 +50,17 @@ namespace UnitTesting
         {
             var valid_username = Guid.NewGuid() + "@mail.com";
             var valid_ssoID = Guid.NewGuid();
+            var timestamp = 8283752242;
+            MockLoginPayload mock_payload = new MockLoginPayload
+            {
+                email = valid_username,
+                ssoUserId = valid_ssoID,
+                timestamp = timestamp
+            };
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                var response = _loginManager.LoginFromSSO(_db, valid_username, valid_ssoID);
+                var response = _loginManager.LoginFromSSO(_db, valid_username, valid_ssoID, mock_payload.Signature(), mock_payload.PreSignatureString());
                 Assert.IsNotNull(response);
             }
         }
@@ -58,14 +69,15 @@ namespace UnitTesting
         public void Login_ExistingUser_Success()
         {
             var existing_user = ut.CreateSSOUserInDb();
-            var existing_username = existing_user.Email;
-            var existing_ssoID = existing_user.SSOId;
+            var existing_username = existing_user.Username;
+            var existing_ssoID = existing_user.Id;
+            var timestamp = 12312312;
+            var mock_payload = ut.GenerateLoginPayloadWithSignature(existing_ssoID, existing_username, timestamp);
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                var response = _loginManager.LoginFromSSO(_db, existing_username, existing_ssoID);
+                var response = _loginManager.LoginFromSSO(_db, existing_username, existing_ssoID, mock_payload.Signature(), mock_payload.PreSignatureString());
                 Assert.IsNotNull(response);
-                Assert.AreEqual(existing_user.Id, response.userid);
             }
         }
     }

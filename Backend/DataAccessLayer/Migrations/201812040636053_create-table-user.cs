@@ -13,9 +13,7 @@ namespace DataAccessLayer.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        SSOId = c.Guid(nullable: false),
-                        Email = c.String(nullable: false),
-                        DateOfBirth = c.DateTime(nullable: false),
+                        Username = c.String(nullable: false),
                         City = c.String(),
                         State = c.String(),
                         Country = c.String(),
