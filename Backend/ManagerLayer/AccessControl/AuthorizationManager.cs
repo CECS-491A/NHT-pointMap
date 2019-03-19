@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ManagerLayer.AccessControl
 {
-    class AuthorizationManager
+    public class AuthorizationManager
     {
         private ISessionService _sessionService;
         private IUserService _userService;
@@ -36,20 +36,21 @@ namespace ManagerLayer.AccessControl
             return hex;
         }
 
-        public Session CreateSession(DatabaseContext _db, string userEmail)
+
+        public Session CreateSession(DatabaseContext _db, User user)
         {
-            var userResponse = _userService.GetUser(_db, userEmail);
+            _userService = new UserService();
+            //check if user exist
+            var userResponse = _userService.GetUser(_db, user.Username);
+
             if(userResponse == null)
             {
                 return null;
             }
             Session session = new Session();
             session.Token = GenerateSessionToken();
-            session.User = userResponse;
 
-            var response = _sessionService.CreateSession(_db, session, userResponse.Id);
-
-            return response;
+            return _sessionService.CreateSession(_db, session, userResponse.Id);
         }
 
         public Session ValidateAndUpdateSession(DatabaseContext _db, string token)

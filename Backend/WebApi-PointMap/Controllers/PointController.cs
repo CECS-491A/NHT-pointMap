@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ManagerLayer;
+using System;
 using System.Web.Http;
-using ManagerLayer;
 using WebApi_PointMap.Models;
 
 namespace WebApi_PointMap.Controllers

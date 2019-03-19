@@ -5,11 +5,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 
 using System.Security.Cryptography;
+using System.Text;
 
 namespace UnitTesting
 {
     public class TestingUtils
     {
+        public string Mock_APISecret = "D078F2AFC7E59885F3B6D5196CE9DB716ED459467182A19E04B6261BBC8E36EE";
+
         public byte[] GetRandomness()
         {
             byte[] salt = new byte[128 / 8];
@@ -43,8 +46,8 @@ namespace UnitTesting
             {
                 Id = Guid.NewGuid(),
                 Name = Guid.NewGuid() + " ",
-                Longitude = (float)rand.NextDouble()*360 - 180,
-                Latitude = (float)rand.NextDouble()*180 - 90,
+                Longitude = (float)rand.NextDouble() * 360 - 180,
+                Latitude = (float)rand.NextDouble() * 180 - 90,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -59,8 +62,8 @@ namespace UnitTesting
             {
                 Id = Guid.NewGuid(),
                 Name = Guid.NewGuid() + " ",
-                Longitude = (float)rand.NextDouble()*360 - 180,
-                Latitude = (float)rand.NextDouble()*180 - 90,
+                Longitude = (float)rand.NextDouble() * 360 - 180,
+                Latitude = (float)rand.NextDouble() * 180 - 90,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -85,8 +88,7 @@ namespace UnitTesting
             User u = new User
             {
                 Id = Guid.NewGuid(),
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
+                Username = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                 City = "Los Angeles",
                 State = "California",
                 Country = "United States",
@@ -108,13 +110,90 @@ namespace UnitTesting
             }
         }
 
+        public string GenerateTokenSignature(Guid ssoUserId, string email, long timestamp)
+        {
+            string preSignatureString = "";
+            preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+            preSignatureString += "email=" + email + ";";
+            preSignatureString += "timestamp=" + timestamp + ";";
+
+            HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(Mock_APISecret));
+            byte[] launchPayloadBuffer = Encoding.ASCII.GetBytes(preSignatureString);
+            byte[] signatureBytes = hmacsha1.ComputeHash(launchPayloadBuffer);
+            string signature = Convert.ToBase64String(signatureBytes);
+            return signature;
+        }
+
+        public class MockLoginPayload
+        {
+            public string Mock_APISecret = "D078F2AFC7E59885F3B6D5196CE9DB716ED459467182A19E04B6261BBC8E36EE";
+
+            public Guid ssoUserId { get; set; }
+            public string email { get; set; }
+            public long timestamp { get; set; }
+
+            public string Signature()
+            {
+                string preSignatureString = "";
+                preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+                preSignatureString += "email=" + email + ";";
+                preSignatureString += "timestamp=" + timestamp + ";";
+
+                HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(Mock_APISecret));
+                byte[] launchPayloadBuffer = Encoding.ASCII.GetBytes(preSignatureString);
+                byte[] signatureBytes = hmacsha1.ComputeHash(launchPayloadBuffer);
+                string signature = Convert.ToBase64String(signatureBytes);
+                return signature;
+            }
+
+            public string PreSignatureString()
+            {
+                string preSignatureString = "";
+                preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+                preSignatureString += "email=" + email + ";";
+                preSignatureString += "timestamp=" + timestamp + ";";
+                return preSignatureString;
+            }
+
+        }
+
+        public MockLoginPayload GenerateLoginPayloadWithSignature(Guid ssoUserId, string email, long timestamp)
+        {
+            MockLoginPayload mock_payload = new MockLoginPayload();
+            mock_payload.ssoUserId = ssoUserId;
+            mock_payload.email = email;
+            mock_payload.timestamp = timestamp;
+            return mock_payload;
+        }
+
+        public string GeneratePreSignatureString(Guid ssoUserId, string email, long timestamp)
+        {
+            string preSignatureString = "";
+            preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+            preSignatureString += "email=" + email + ";";
+            preSignatureString += "timestamp=" + timestamp + ";";
+            return preSignatureString;
+        }
+
+        public User CreateSSOUserInDb()
+        {
+            User user = new User
+            {
+                Username = Guid.NewGuid() + "@mail.com",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness(),
+                UpdatedAt = DateTime.UtcNow,
+                Id = Guid.NewGuid()
+            };
+            return CreateUserInDb(user);
+        }
+
         public User CreateUserObject()
         {
             User user = new User
             {
                 Id = Guid.NewGuid(),
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
+                Username = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                 City = "Los Angeles",
                 State = "California",
                 Country = "United States",
