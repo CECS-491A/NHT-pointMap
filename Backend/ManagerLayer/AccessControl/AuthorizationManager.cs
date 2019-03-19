@@ -23,7 +23,8 @@ namespace ManagerLayer.AccessControl
 
         public AuthorizationManager()
         {
-             _sessionService = new SessionService();
+            _sessionService = new SessionService();
+            _userService = new UserService();
         }
 
         public string GenerateSessionToken()
@@ -35,59 +36,41 @@ namespace ManagerLayer.AccessControl
             return hex;
         }
 
+
         public Session CreateSession(DatabaseContext _db, User user)
         {
             _userService = new UserService();
             //check if user exist
             var userResponse = _userService.GetUser(_db, user.Username);
+
             if(userResponse == null)
             {
                 return null;
             }
             Session session = new Session();
             session.Token = GenerateSessionToken();
+
             return _sessionService.CreateSession(_db, session, userResponse.Id);
-           
         }
 
-        public string ValidateAndUpdateSession(string token, Guid userId)
+        public Session ValidateAndUpdateSession(DatabaseContext _db, string token)
         {
-            using (var _db = CreateDbContext())
+            var response = _sessionService.ValidateSession(_db, token);
+
+            if(response != null)
             {
-                Session response = _sessionService.ValidateSession(_db, token);
-
-                if(response != null)
-                {
-                    response = _sessionService.UpdateSession(_db, response);
-                }
-                else
-                {
-                    return null;
-                }
-
-                try
-                {
-                    _db.SaveChanges();
-                    return response.Token;
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    //catch error
-                    // detach session attempted to be created from the db context - rollback
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
-                }
+                response = _sessionService.UpdateSession(_db, response);
             }
-            return null;
+            else
+            {
+                return null;
+            }
+            return response;
         }
 
-        public int ExpireSession(string token, Guid userId)
+        public Session ExpireSession(DatabaseContext _db, string token)
         {
-            using (var _db = new DatabaseContext())
-            {
-                Session response = _sessionService.ExpireSession(_db, token);
-
-                return _db.SaveChanges();
-            }
+            return _sessionService.ExpireSession(_db, token);
         }
     }
 }
