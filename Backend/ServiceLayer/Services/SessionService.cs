@@ -1,7 +1,7 @@
-﻿using System;
-using DataAccessLayer.Database;
+﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repositories;
+using System;
 
 namespace ServiceLayer.Services
 {
