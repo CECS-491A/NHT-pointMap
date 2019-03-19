@@ -5,6 +5,7 @@ using DataAccessLayer.Models;
 using ManagerLayer.UserManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace UnitTesting
 {
@@ -69,8 +70,7 @@ namespace UnitTesting
             // Arrange
             newUser = new User
             {
-                Email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                DateOfBirth = DateTime.UtcNow,
+                Username = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
                 City = "Los Angeles",
                 State = "California",
                 Country = "United States",
@@ -107,21 +107,26 @@ namespace UnitTesting
         public void Create_User_Using_Manager()
         {
             // Arrange
-            string email = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com";
+            string Username = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com";
             string password = (Guid.NewGuid()).ToString();
             DateTime dob = DateTime.UtcNow;
 
             // Act
-            var response =_umm.CreateUser(email, password, dob);
-            var result = _umm.GetUser(response.Id);
+            using (var _db = tu.CreateDataBaseContext())
+            {
+                var response = _umm.CreateUser(_db, Username, Guid.NewGuid());
+                _db.SaveChanges();
+                var result = _umm.GetUser(response.Id);
 
-            // Assert 
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(email, result.Email);
+                // Assert 
+                Assert.IsNotNull(response);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(Username, result.Username);
+            } 
         }
 
         [TestMethod]
+        [ExpectedException(typeof(InvalidEmailException))]
         public void Create_User_Using_Manager_NotRealEmail()
         {
             // Arrange
@@ -130,10 +135,14 @@ namespace UnitTesting
             DateTime dob = DateTime.UtcNow;
 
             // Act
-            var response = _umm.CreateUser(email, password, dob);
+            using (var _db = tu.CreateDataBaseContext())
+            {
+                var response = _umm.CreateUser(_db, email, Guid.NewGuid());
 
-            // Assert 
-            Assert.IsNull(response);
+                // Assert 
+                //expects exception
+            }
+           
         }
 
         [TestMethod]
