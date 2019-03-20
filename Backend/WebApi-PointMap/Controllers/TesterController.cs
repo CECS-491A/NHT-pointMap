@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
@@ -16,9 +17,12 @@ namespace WebApi_PointMap.Controllers
 
         [HttpGet]
         [Route("api/helloworld")]
-        public IHttpActionResult HelloWorld()
+        public HttpResponseMessage HelloWorld()
         {
-            return Ok("Hello World, from NightWatch " + DateTime.Now.ToString());
+            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, "value");
+            response.Content = new StringContent("Hello World, from NightWatch " + DateTime.Now.ToString(), 
+                Encoding.Unicode);
+            return response;
         }
 
         [HttpGet]
