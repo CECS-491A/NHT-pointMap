@@ -22,9 +22,7 @@ namespace WebApi_PointMap.Controllers
             HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, "value");
             response.Content = new StringContent("Hello World, from NightWatch " + DateTime.Now.ToString(), 
                 Encoding.Unicode);
-            //response.Headers.Add("Access-Control-Allow-Origin", "*");
             return response;
-            //return Ok("Hello World, from NightWatch " + DateTime.Now.ToString());
         }
 
         [HttpGet]
