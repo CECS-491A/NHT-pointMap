@@ -16,5 +16,6 @@ namespace UnitTesting
         Claim createClaim(User user, Service service);
         bool isEqual(string[] arr1, string[] arr2);
         Client createClientObject();
+        Point createPoint(string pointName, float longitude, float latitude);
     }
 }

@@ -10,26 +10,24 @@ namespace DataAccessLayer.Models
         public User()
         {
             CreatedAt = DateTime.UtcNow;
-            Id = Guid.NewGuid();
             Disabled = false;
         }
 
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id{ get; set; }
 
         [Required]
-        public string Email { get; set; }
-
-        [Required, DataType(DataType.Date)]
-        public DateTime? DateOfBirth { get; set; }
+        public string Username { get; set; }
 
         public string City { get; set; }
 
         public string State { get; set; }
 
         public string Country { get; set; }
+
         [Required]
         public string PasswordHash { get; set; }
+
         [Required]
         public byte[] PasswordSalt { get; set; }
 
@@ -37,16 +35,6 @@ namespace DataAccessLayer.Models
         public Guid? ManagerId { get; set; }
         public User Manager { get; set; }
 
-        [ForeignKey("Client")]
-        public Guid? ClientId { get; set; }
-        public Client Client { get; set; }
-
-        public string SecurityQ1 { get; set; }
-        public string SecurityQ1Answer { get; set; }
-        public string SecurityQ2 { get; set; }
-        public string SecurityQ2Answer { get; set; }
-        public string SecurityQ3 { get; set; }
-        public string SecurityQ3Answer { get; set; }
         [Required]
         public bool Disabled { get; set; }
 

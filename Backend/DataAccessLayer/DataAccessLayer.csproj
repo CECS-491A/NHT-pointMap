@@ -77,9 +77,14 @@
     <Compile Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.Designer.cs">
       <DependentUpon>201812112324166_deleted-clientUser-added-ClientIdinUser.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201903070211164_create-table-point.cs" />
+    <Compile Include="Migrations\201903070211164_create-table-point.Designer.cs">
+      <DependentUpon>201903070211164_create-table-point.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\Client.cs" />
+    <Compile Include="Models\Point.cs" />
     <Compile Include="Models\Service.cs" />
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\User.cs" />
@@ -87,6 +92,7 @@
     <Compile Include="Repositories\ClaimRepository.cs" />
     <Compile Include="Repositories\ClientRepository.cs" />
     <Compile Include="Repositories\OperationRepository.cs" />
+    <Compile Include="Repositories\PointRepository.cs" />
     <Compile Include="Repositories\SessionRepository.cs" />
     <Compile Include="Repositories\UserManagementRepository.cs" />
     <Compile Include="Repositories\UserRepository.cs" />
@@ -121,6 +127,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201812112324166_deleted-clientUser-added-ClientIdinUser.resx">
       <DependentUpon>201812112324166_deleted-clientUser-added-ClientIdinUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201903070211164_create-table-point.resx">
+      <DependentUpon>201903070211164_create-table-point.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

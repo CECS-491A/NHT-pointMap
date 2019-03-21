@@ -7,6 +7,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.UserManagement
 {
@@ -25,45 +26,37 @@ namespace ManagerLayer.UserManagement
             return new DatabaseContext();
         }
 
-        public User CreateUser(string email, string password, DateTime dob)
+        public User CreateUser(DatabaseContext _db, string email, Guid SSOID)
         {
             try
             {
-                var valid = new System.Net.Mail.MailAddress(email);
+                var useremail = new System.Net.Mail.MailAddress(email);
             }
             catch (Exception)
             {
-                return null;
+                throw new InvalidEmailException("Invalid Email");
             }
             _passwordService = new PasswordService();
             DateTime timestamp = DateTime.UtcNow;
             byte[] salt = _passwordService.GenerateSalt();
-            string hash = _passwordService.HashPassword(password, salt);
+            string hash = _passwordService.HashPassword(timestamp.ToString(), salt);
             User user = new User
             {
-                Email = email,
+                Username = email,
                 PasswordHash = hash,
                 PasswordSalt = salt,
-                DateOfBirth = dob,
-                UpdatedAt = timestamp
+                UpdatedAt = timestamp,
+                Id = SSOID
             };
-
-            using (var _db = CreateDbContext())
+            try
             {
-                var response = _userService.CreateUser(_db, user);
-                try
-                {
-                    _db.SaveChanges();
-                    return user;
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    //catch error
-                    // detach user attempted to be created from the db context - rollback
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
-                }
+                _userService.CreateUser(_db, user);
             }
-            return null;
+            catch (Exception)
+            {
+                throw new InvalidDbOperationException();
+            }
+            return user;
         }
 
         public int DeleteUser(User user)

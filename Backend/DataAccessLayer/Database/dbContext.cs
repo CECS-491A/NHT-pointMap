@@ -11,9 +11,16 @@ namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {
+        // TODO: turn into enviornmental variables for dev and deploy
+        const string LOCAL_SQL_SERVER = "(localdb)";
+        const string LOCAL_DB_NAME = "NightWatchDB";
+
         public DatabaseContext()
         {
-            this.Database.Connection.ConnectionString = "Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = NightWatchDB; Integrated Security = True";
+            this.Database.Connection.ConnectionString = string.Format(
+                "Data Source={0};Initial Catalog={1};Integrated Security=True",
+                LOCAL_SQL_SERVER, LOCAL_DB_NAME
+                );
         }
 
         public DbSet<User> Users { get; set; }
@@ -21,5 +28,6 @@ namespace DataAccessLayer.Database
         public DbSet<Service> Services { get; set; }
         public DbSet<Claim> Claims { get; set; }
         public DbSet<Client> Clients { get; set; }
+        public DbSet<Point> Points { get; set; }
     }
 }
