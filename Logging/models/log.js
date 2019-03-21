@@ -13,14 +13,24 @@ let logSchema = mongoose.Schema({
         type: String,
         required: false
     },
-    CreatedAt: {
+    CreatedDate: {
+        type: Date,
+        required: true
+    },
+    RecievedDate:{
+        type: Date,
+        required: true
+    },
+    StoredDate:{
         type: Date,
         required: true
     }
+
 });
 
 let Log = module.exports = mongoose.model('Log', logSchema);
 
 module.exports.saveLog = function(newLog, callback){
+    newLog.StoredDate = new Date;
     newLog.save(callback);
 }
