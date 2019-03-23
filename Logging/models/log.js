@@ -14,7 +14,7 @@ let logSchema = mongoose.Schema({
         required: false
     },
     CreatedDate: {
-        type: Date,
+        type: String,
         required: true
     },
     RecievedDate:{

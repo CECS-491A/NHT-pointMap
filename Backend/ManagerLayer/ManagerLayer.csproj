@@ -51,6 +51,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logging\LoggingManager.cs" />
+    <Compile Include="Models\LogRequestDTO.cs" />
     <Compile Include="PointManager.cs" />
     <Compile Include="Models\LoginManagerDTOs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

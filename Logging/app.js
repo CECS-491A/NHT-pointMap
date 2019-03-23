@@ -13,12 +13,13 @@ let connectionString = 'mongodb://localhost/log'
 let sharedSecret = "D078F2AFC7E59885F3B6D5196CE9DB716ED459467182A19E04B6261BBC8E36EE"
 
 mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
-    console.log('Connected to database: '. connectionString);
+    console.log('Connected to database: ', connectionString);
 },err => {
     console.log('Error connecting to db');
 });
 
 app.post('/', (req, res) => {
+    console.log(req.body);
     if(!req.body.signature || !req.body.timestamp || !req.body.ssoUserId || !req.body.email){
         res.status(400).send({'Error': 'Unauthorized Request'});
         return;          
