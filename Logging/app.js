@@ -21,7 +21,7 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
 app.post('/', (req, res) => {
     console.log(req.body);
     if(!req.body.signature || !req.body.timestamp || !req.body.ssoUserId || !req.body.email){
-        res.status(400).send({'Error': 'Unauthorized Request'});
+        res.status(401).send({'Error': 'Unauthorized Request'});
         return;          
     }
         
@@ -35,7 +35,7 @@ app.post('/', (req, res) => {
     var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
 
     if(givenSignature != hashInBase64){
-        res.status(400).send({'Error': 'Unauthorized Request'});
+        res.status(401).send({'Error': 'Unauthorized Request'});
         return;
     }
     if(!req.body.user || !req.body.source || !req.body.desc || !req.body.createdDate){

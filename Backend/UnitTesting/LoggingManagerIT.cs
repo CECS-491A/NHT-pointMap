@@ -22,7 +22,7 @@ namespace UnitTesting
         
 
         [TestMethod]
-        public void successfulLog()
+        public void request200Log()
         {
             newLog = new LogRequestDTO();
             newLog.email = "julianpoyo+22@gmail.com";
@@ -39,7 +39,7 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void unSuccessfulLog()
+        public void request401Log()
         {
             newLog = new LogRequestDTO();
             newLog.email = "asd";
@@ -52,7 +52,24 @@ namespace UnitTesting
 
             System.Net.Http.HttpResponseMessage response = LoggingManager.sendLogAsync(newLog);
             Console.WriteLine(response);
-            Assert.IsTrue(!response.IsSuccessStatusCode);
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public void request400Log()
+        {
+            newLog = new LogRequestDTO();
+            newLog.email = "julianpoyo+22@gmail.com";
+            newLog.signature = "4T5Csu2U9OozqN66Us+pEc5ODcBwPs1ldaq2fmBqtfo=";
+            newLog.ssoUserId = "0743cd2c-fec3-4b79-a5b6-a6c52a752c71";
+            newLog.timestamp = "1552766624957";
+            newLog.source = "";
+            newLog.user = "";
+            newLog.desc = "Testing description";
+
+            System.Net.Http.HttpResponseMessage response = LoggingManager.sendLogAsync(newLog);
+            Console.WriteLine(response);
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.BadRequest);
         }
     }
 }

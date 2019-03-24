@@ -49,6 +49,7 @@ namespace WebApi_PointMap.Controllers
                         requestPayload.Email,
                         userSSOID,
                         requestPayload.Signature,
+                        requestPayload.Timestamp.ToString(),
                         requestPayload.PreSignatureString());
                 }
                 catch (InvalidTokenSignatureException ex)

@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using ManagerLayer.AccessControl;
 using ManagerLayer.Models;
 using ManagerLayer.UserManagement;
+using ManagerLayer.Logging;
 using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace ManagerLayer.Login
         TokenService _tokenService;
 
         public LoginManagerResponseDTO LoginFromSSO(
-            DatabaseContext _db, string Username, Guid ssoID, string Signature, string PreSignatureString)
+            DatabaseContext _db, string Username, Guid ssoID, string Signature, string Timestamp, string PreSignatureString)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
@@ -42,6 +43,10 @@ namespace ManagerLayer.Login
                 {
                     user = _userManagementManager.CreateUser(_db, Username, ssoID);
                     _db.SaveChanges();
+                    LogRequestDTO newUserLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
+                        "Login/Registration API", user.Username, "Successful creation of user");
+                    LoggingManager.sendLogAsync(newUserLog);
+
                 }
                 catch (InvalidEmailException ex)
                 {
@@ -69,6 +74,9 @@ namespace ManagerLayer.Login
             {
                 Token = session.Token
             };
+            LogRequestDTO newLoginLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
+                        "Login/Registration API", user.Username, "Successful Login");
+            LoggingManager.sendLogAsync(newLoginLog);
             return response;
         }
     }
