@@ -25,16 +25,12 @@ app.post('/', (req, res) => {
         return;          
     }
         
-    let givenSignature = req.body.signature;
-    let timeStamp = req.body.timestamp;
-    let ssoUserId = req.body.ssoUserId;
-    let email = req.body.email;
-    let testString = "ssoUserId=" + ssoUserId + ";email=" + email + ";timestamp=" + timeStamp + ";"
+    let testString = "ssoUserId=" + req.body.ssoUserId + ";email=" + req.body.email + ";timestamp=" + req.body.timestamp + ";"
 
     var hash = CryptoJS.HmacSHA256(testString, sharedSecret);
     var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
 
-    if(givenSignature != hashInBase64){
+    if(req.body.signature != hashInBase64){
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;
     }

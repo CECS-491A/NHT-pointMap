@@ -19,6 +19,7 @@ namespace ManagerLayer.Login
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
         TokenService _tokenService;
+        LogRequestDTO newLog;
 
         public LoginManagerResponseDTO LoginFromSSO(
             DatabaseContext _db, string Username, Guid ssoID, string Signature, string Timestamp, string PreSignatureString)
@@ -43,9 +44,9 @@ namespace ManagerLayer.Login
                 {
                     user = _userManagementManager.CreateUser(_db, Username, ssoID);
                     _db.SaveChanges();
-                    LogRequestDTO newUserLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
+                    newLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
                         "Login/Registration API", user.Username, "Successful creation of user");
-                    LoggingManager.sendLogAsync(newUserLog);
+                    LoggingManager.sendLogAsync(newLog);
 
                 }
                 catch (InvalidEmailException ex)
@@ -74,9 +75,9 @@ namespace ManagerLayer.Login
             {
                 Token = session.Token
             };
-            LogRequestDTO newLoginLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
+            newLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
                         "Login/Registration API", user.Username, "Successful Login");
-            LoggingManager.sendLogAsync(newLoginLog);
+            LoggingManager.sendLogAsync(newLog);
             return response;
         }
     }
