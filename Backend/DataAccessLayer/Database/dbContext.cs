@@ -6,31 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.SqlServer.Server;
+using System.Configuration;
 
 namespace DataAccessLayer.Database
 {
     public class DatabaseContext : DbContext
     {
-        // TODO: turn into enviornmental variables for dev and deploy
-        const string LOCAL_SQL_SERVER = "AV-XPS";
-        const string LOCAL_DB_NAME = "NightWatchDB";
-
-        string username = "Administrator";
-        string password = "";
-        string hostname = "pointmapdbinstance.cqugps36mcx5.us-east-2.rds.amazonaws.com";
-        string port = "1433";
-        string dbname = "pointmapdbinstance";
-
         public DatabaseContext()
         {
-            //dev
-            //this.Database.Connection.ConnectionString = string.Format(
-            //    "Data Source={0};Initial Catalog={1};Integrated Security=True",
-            //    LOCAL_SQL_SERVER, LOCAL_DB_NAME
-            //    );
-
-            //release
-            this.Database.Connection.ConnectionString = "Data Source=" + hostname + ";Initial Catalog=" + dbname + ";User ID=" + username + ";Password=" + password + ";";
+            var connectionString = ConfigurationManager.ConnectionStrings["Dev_PointMapDB"].ConnectionString;
+            this.Database.Connection.ConnectionString = connectionString;
         }
 
         public DbSet<User> Users { get; set; }
