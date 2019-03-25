@@ -17,12 +17,9 @@ namespace WebApi_PointMap.Controllers
 
         [HttpGet]
         [Route("api/helloworld")]
-        public HttpResponseMessage HelloWorld()
+        public IHttpActionResult HelloWorld()
         {
-            HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.OK, "value");
-            response.Content = new StringContent("Hello World, from NightWatch " + DateTime.Now.ToString(), 
-                Encoding.Unicode);
-            return response;
+            return Ok("Hello World, from NightWatch " + DateTime.Now.ToString());
         }
 
         [HttpGet]
