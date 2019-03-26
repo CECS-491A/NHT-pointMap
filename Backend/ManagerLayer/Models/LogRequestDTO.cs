@@ -13,10 +13,6 @@ namespace ManagerLayer.Models
         public string ssoUserId { get; set; }
         [Required]
         public string email { get; set; }
-        [Required]
-        public string timestamp { get; set; }
-        [Required]
-        public string signature { get; set; }
 
         [Required]
         public string source { get; set; }
@@ -25,13 +21,10 @@ namespace ManagerLayer.Models
         [Required]
         public string desc { get; set; }
 
-        public LogRequestDTO(string ssoUserId, string email, string timestamp, string signature, string source,
-            string user, string desc)
+        public LogRequestDTO(string ssoUserId, string email, string source, string user, string desc)
         {
             this.ssoUserId = ssoUserId;
             this.email = email;
-            this.timestamp = timestamp;
-            this.signature = signature;
             this.source = source;
             this.user = user;
             this.desc = desc;

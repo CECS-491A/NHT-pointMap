@@ -19,15 +19,13 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
 });
 
 app.post('/', (req, res) => {
-    console.log(req.body);
     if(!req.body.signature || !req.body.timestamp || !req.body.ssoUserId || !req.body.email){
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;          
     }
         
-    let testString = "ssoUserId=" + req.body.ssoUserId + ";email=" + req.body.email + ";timestamp=" + req.body.timestamp + ";"
-
-    var hash = CryptoJS.HmacSHA256(testString, sharedSecret);
+    let plaintext = "ssoUserId=" + req.body.ssoUserId + ";email=" + req.body.email + ";timestamp=" + req.body.timestamp + ";"
+    var hash = CryptoJS.HmacSHA256(plaintext, sharedSecret);
     var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
 
     if(req.body.signature != hashInBase64){

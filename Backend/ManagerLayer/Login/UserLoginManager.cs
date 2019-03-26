@@ -5,6 +5,7 @@ using ManagerLayer.Models;
 using ManagerLayer.UserManagement;
 using ManagerLayer.Logging;
 using ServiceLayer.Services;
+using System.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,10 @@ namespace ManagerLayer.Login
         AuthorizationManager _authorizationManager;
         TokenService _tokenService;
         LogRequestDTO newLog;
+        FormUrlEncodedContent logContent;
 
         public LoginManagerResponseDTO LoginFromSSO(
-            DatabaseContext _db, string Username, Guid ssoID, string Signature, string Timestamp, string PreSignatureString)
+            DatabaseContext _db, string Username, Guid ssoID, string Signature, string PreSignatureString)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
@@ -44,9 +46,10 @@ namespace ManagerLayer.Login
                 {
                     user = _userManagementManager.CreateUser(_db, Username, ssoID);
                     _db.SaveChanges();
-                    newLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
+                    newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", user.Username, "Successful creation of user");
-                    LoggingManager.sendLogAsync(newLog);
+                    logContent = LoggingManager.getLogContent(newLog);
+                    LoggingManager.sendLogAsync(logContent);
 
                 }
                 catch (InvalidEmailException ex)
@@ -75,9 +78,11 @@ namespace ManagerLayer.Login
             {
                 Token = session.Token
             };
-            newLog = new LogRequestDTO(ssoID.ToString(), Username, Timestamp, Signature,
+            newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", user.Username, "Successful Login");
-            LoggingManager.sendLogAsync(newLog);
+            logContent = LoggingManager.getLogContent(newLog);
+            LoggingManager.sendLogAsync(logContent);
+
             return response;
         }
     }
