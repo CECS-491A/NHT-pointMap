@@ -3,7 +3,6 @@ using ManagerLayer.UserManagement;
 using System;
 using ManagerLayer.Logging;
 using System.Threading.Tasks;
-using ManagerLayer.Models;
 using System.Net.Http;
 
 namespace Program

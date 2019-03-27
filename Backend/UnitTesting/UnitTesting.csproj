@@ -61,7 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ITestingUtils.cs" />
-    <Compile Include="LoggingManagerIT.cs" />
+    <Compile Include="LoggingServicesIT.cs" />
     <Compile Include="UserControllerUT.cs" />
     <Compile Include="UserLoginManagerUT.cs" />
     <Compile Include="PointServiceUT.cs" />
@@ -75,6 +75,10 @@
     <Compile Include="UserServiceUT.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DTO\DTO.csproj">
+      <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
+      <Name>DTO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
       <Project>{DD7C51A6-44CD-4A05-9809-1171FE66F434}</Project>
       <Name>ManagerLayer</Name>

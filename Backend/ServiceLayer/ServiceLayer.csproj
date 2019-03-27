@@ -47,19 +47,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\ILoggingService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\DataSerializer.cs" />
     <Compile Include="Services\ExceptionService.cs" />
-    <Compile Include="Services\IClientService.cs" />
+    <Compile Include="Interfaces\IClientService.cs" />
     <Compile Include="Services\ClientService.cs" />
-    <Compile Include="Services\IDataSerializer.cs" />
-    <Compile Include="Services\IOperationService.cs" />
-    <Compile Include="Services\IPointService.cs" />
+    <Compile Include="Interfaces\IDataSerializer.cs" />
+    <Compile Include="Interfaces\IOperationService.cs" />
+    <Compile Include="Interfaces\IPointService.cs" />
+    <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\OperationService.cs" />
-    <Compile Include="Services\IPasswordService.cs" />
-    <Compile Include="Services\ISessionService.cs" />
-    <Compile Include="Services\IUserService.cs" />
-    <Compile Include="Services\IClaimService.cs" />
+    <Compile Include="Interfaces\IPasswordService.cs" />
+    <Compile Include="Interfaces\ISessionService.cs" />
+    <Compile Include="Interfaces\IUserService.cs" />
+    <Compile Include="Interfaces\IClaimService.cs" />
     <Compile Include="Services\ClaimService.cs" />
     <Compile Include="Services\PasswordService.cs" />
     <Compile Include="Services\PointService.cs" />
@@ -71,6 +73,10 @@
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
       <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
       <Name>DataAccessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DTO\DTO.csproj">
+      <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
+      <Name>DTO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

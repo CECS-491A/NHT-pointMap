@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 
-namespace ManagerLayer.Models
+namespace DTO
 {
     public class LogRequestDTO
     {
@@ -20,14 +20,18 @@ namespace ManagerLayer.Models
         public string user { get; set; }
         [Required]
         public string desc { get; set; }
+        [Required]
+        public string details { get; set; }
 
-        public LogRequestDTO(string ssoUserId, string email, string source, string user, string desc)
+        public LogRequestDTO(string ssoUserId, string email, string source, string user, 
+            string desc, string details)
         {
             this.ssoUserId = ssoUserId;
             this.email = email;
             this.source = source;
             this.user = user;
             this.desc = desc;
+            this.details = details;
         }
 
         public LogRequestDTO() { }

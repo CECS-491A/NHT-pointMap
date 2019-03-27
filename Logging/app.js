@@ -19,9 +19,13 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
 });
 
 app.post('/', (req, res) => {
+    if(!req.body){
+        res.status(400).send({'Error': 'Invalid request format'});
+        return
+    }
     if(!req.body.signature || !req.body.timestamp || !req.body.ssoUserId || !req.body.email){
         res.status(401).send({'Error': 'Unauthorized Request'});
-        return;          
+        return;         
     }
         
     let plaintext = "ssoUserId=" + req.body.ssoUserId + ";email=" + req.body.email + ";timestamp=" + req.body.timestamp + ";"
@@ -32,29 +36,29 @@ app.post('/', (req, res) => {
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;
     }
-    if(!req.body.user || !req.body.source || !req.body.desc || !req.body.createdDate){
+    if(!req.body.user || !req.body.source || !req.body.desc || !req.body.createdDate || !req.body.details){
         res.status(400).send({'Error': 'Invalid request format'});
         return
     }
-    
-    let log = new Log();
-    log.Source = req.body.source;
-    log.AssociatedUser = req.body.user;
-    log.Description = req.body.desc;
-    log.CreatedDate = req.body.createdDate;
-    log.RecievedDate = new Date;
+    let newLog = new Log();
+    newLog.Source = req.body.source;
+    newLog.AssociatedUser = req.body.user;
+    newLog.Description = req.body.desc;
+    newLog.Details = req.body.details;
+    newLog.CreatedDate = req.body.createdDate;
+    newLog.RecievedDate = new Date;
 
-    Log.saveLog(log, (err, newLog) => {
+
+    Log.saveLog(newLog, (err, newLog) => {
         if(err) {
             res.status(500).send({'Error': 'Something went wrong'});
-            console.log(err);
-            return
+            return;
         } else {
-            res.status(200).send(newLog)
-            return
+            console.log(newLog)
+            res.status(200).send(newLog);
+            return; 
         }
     });
-    
 });
 
 app.listen(port, () => {

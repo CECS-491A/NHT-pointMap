@@ -1,7 +1,7 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using ManagerLayer.AccessControl;
-using ManagerLayer.Models;
+using DTO;
 using ManagerLayer.UserManagement;
 using ManagerLayer.Logging;
 using ServiceLayer.Services;
@@ -22,6 +22,7 @@ namespace ManagerLayer.Login
         TokenService _tokenService;
         LogRequestDTO newLog;
         FormUrlEncodedContent logContent;
+        LoggingManager loggingManager;
 
         public LoginManagerResponseDTO LoginFromSSO(
             DatabaseContext _db, string Username, Guid ssoID, string Signature, string PreSignatureString)
@@ -30,8 +31,14 @@ namespace ManagerLayer.Login
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
             _tokenService = new TokenService();
+            loggingManager = new LoggingManager();
             if (!_tokenService.isValidSignature(PreSignatureString, Signature))
             {
+                newLog = new LogRequestDTO(ssoID.ToString(), Username,
+                        "Login/Registration API", Username, "Invalid signing attempt",
+                        "Line 35 UserLoginManager in ManagerLayer\n" +
+                        "Route Reference UserController in WebApi-PointMap");
+                loggingManager.sendLogSync(newLog);
                 throw new InvalidTokenSignatureException("Session is not valid.");
             }
             ////////////////////////////////////////
@@ -47,9 +54,10 @@ namespace ManagerLayer.Login
                     user = _userManagementManager.CreateUser(_db, Username, ssoID);
                     _db.SaveChanges();
                     newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", user.Username, "Successful creation of user");
-                    logContent = LoggingManager.getLogContent(newLog);
-                    LoggingManager.sendLogAsync(logContent);
+                        "Login/Registration API", user.Username, "Successful registration of new User", 
+                        "Line 54 UserLoginManager in ManagerLayer\n" +
+                        "Route Reference UserController in WebApi-PointMap");
+                    loggingManager.sendLogSync(newLog);
 
                 }
                 catch (InvalidEmailException ex)
@@ -79,9 +87,10 @@ namespace ManagerLayer.Login
                 Token = session.Token
             };
             newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", user.Username, "Successful Login");
-            logContent = LoggingManager.getLogContent(newLog);
-            LoggingManager.sendLogAsync(logContent);
+                        "Login/Registration API", user.Username, "Successful login of user",
+                        "Line 85 UserLoginManager in ManagerLayer\n" +
+                        "Route Reference UserController in WebApi-PointMap");
+            loggingManager.sendLogSync(newLog);
 
             return response;
         }
