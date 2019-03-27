@@ -2,7 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '../components/HelloWorld'
 import Login from '../components/Login'
-import Dashboard from '../components/Dashboard'
+import Dashboard from '../views/Dashboard'
+import AdminDashboard from '../views/AdminDashboard'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard
+    },
+    {
+      path: '/admindashboard',
+      name: 'AdminDashboard',
+      component: AdminDashboard
     }
   ]
 })

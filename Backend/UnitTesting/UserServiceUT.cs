@@ -447,5 +447,11 @@ namespace UnitTesting
                 Assert.IsTrue(us.IsManagerOver(_db, indirectManager, subject));
             }
         }
+
+        [TestMethod]
+        public void Get_All_Users_Success()
+        {
+            
+        }
     }
 }
