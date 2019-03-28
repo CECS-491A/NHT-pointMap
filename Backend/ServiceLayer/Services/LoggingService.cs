@@ -11,7 +11,7 @@ namespace ServiceLayer.Services
 {
     public class LoggingService : ILoggingService
     {
-        private const string LOG_SERVER_URL = "http://localhost:3000";
+        private const string LOG_SERVER_URL = "https://julianjp.com:3000/";
 
         public System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog, string signature, string timestamp)
         {
