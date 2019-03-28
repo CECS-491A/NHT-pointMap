@@ -22,12 +22,15 @@ namespace ServiceLayer.Services
 
         public bool isValidSignature(string presignuatureString, string signature)
         {
+            return GenerateSignature(presignuatureString) == signature;
+        }
+
+        public string GenerateSignature(string plaintext)
+        {
             HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(APISecret));
-            // genereate signature using the payload information to get an attempted signature
-            byte[] SignatureBuffer = Encoding.ASCII.GetBytes(presignuatureString);
+            byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);
             byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
-            string resultSignature = Convert.ToBase64String(signatureBytes);
-            return resultSignature == signature;
+            return Convert.ToBase64String(signatureBytes);
         }
 
     }

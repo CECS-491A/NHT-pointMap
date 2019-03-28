@@ -1,0 +1,16 @@
+{
+  "name": "logging",
+  "version": "1.0.0",
+  "description": "Logging Server",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Chris Meyer",
+  "license": "MIT",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.4",
+    "mongoose": "^5.4.18"
+  }
+}
