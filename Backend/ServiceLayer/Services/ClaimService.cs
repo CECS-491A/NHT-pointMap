@@ -18,12 +18,12 @@ namespace ServiceLayer.Services
             _ClaimRepo = new ClaimRepository();
         }
 
-        public int CreateClaim(Claim claim)
+        public Claim CreateClaim(DatabaseContext _db, Claim claim)
         {
-            return _ClaimRepo.CreateClaim(claim);
+            return _ClaimRepo.CreateClaim(_db, claim);
         }
 
-        public int CreateClaim(Guid userId, Guid serviceId)
+        public Claim CreateClaim(DatabaseContext _db, Guid userId, Guid serviceId)
         {
             Claim claim = new Claim
             {
@@ -31,23 +31,23 @@ namespace ServiceLayer.Services
                 ServiceId = serviceId,
                 UpdatedAt = DateTime.UtcNow
             };
-            return _ClaimRepo.CreateClaim(claim);
+            return _ClaimRepo.CreateClaim(_db, claim);
         }
 
-        public Service GetService(string claimName)
+        public Service GetService(DatabaseContext _db, string claimName)
         {
-            return _ClaimRepo.GetService(claimName);
+            return _ClaimRepo.GetService(_db, claimName);
         }
 
-        public void AddServiceToUser(User user, Service service)
+        public void AddServiceToUser(DatabaseContext _db, User user, Service service)
         {
-            _ClaimRepo.AddServiceToUser(user.Id, service.Id);
+            _ClaimRepo.AddServiceToUser(_db, user.Id, service.Id);
         }
 
-        public bool UserHasServiceAccess(User user, Service service)
+        public bool UserHasServiceAccess(DatabaseContext _db, User user, Service service)
         {
             if (service.Disabled) return false;
-            return _ClaimRepo.UserHasServiceAccess(user.Id, service.Id);
+            return _ClaimRepo.UserHasServiceAccess(_db, user.Id, service.Id);
         }
     }
 }

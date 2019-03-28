@@ -4,12 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{41ADE765-973A-4155-B3D6-2C24648CBC7A}</ProjectGuid>
+    <ProjectGuid>{FECAA139-B3BB-4A0D-9AC7-A85499739670}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ServiceLayer</RootNamespace>
-    <AssemblyName>ServiceLayer</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <RootNamespace>DTO</RootNamespace>
+    <AssemblyName>DTO</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -38,6 +38,7 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,37 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\ILoggingService.cs" />
+    <Compile Include="DTO\LoginManagerDTOs.cs" />
+    <Compile Include="DTO\LogRequestDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DataSerializer.cs" />
-    <Compile Include="Services\ExceptionService.cs" />
-    <Compile Include="Interfaces\IClientService.cs" />
-    <Compile Include="Services\ClientService.cs" />
-    <Compile Include="Interfaces\IDataSerializer.cs" />
-    <Compile Include="Interfaces\IOperationService.cs" />
-    <Compile Include="Interfaces\IPointService.cs" />
-    <Compile Include="Services\LoggingService.cs" />
-    <Compile Include="Services\OperationService.cs" />
-    <Compile Include="Interfaces\IPasswordService.cs" />
-    <Compile Include="Interfaces\ISessionService.cs" />
-    <Compile Include="Interfaces\IUserService.cs" />
-    <Compile Include="Interfaces\IClaimService.cs" />
-    <Compile Include="Services\ClaimService.cs" />
-    <Compile Include="Services\PasswordService.cs" />
-    <Compile Include="Services\PointService.cs" />
-    <Compile Include="Services\SessionService.cs" />
-    <Compile Include="Services\TokenService.cs" />
-    <Compile Include="Services\UserService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
-      <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
-      <Name>DataAccessLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DTO\DTO.csproj">
-      <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
-      <Name>DTO</Name>
-    </ProjectReference>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

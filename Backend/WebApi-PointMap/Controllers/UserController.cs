@@ -1,6 +1,6 @@
 ﻿using DataAccessLayer.Database;
 using ManagerLayer.Login;
-using ManagerLayer.Models;
+using DTO;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Validation;
