@@ -16,6 +16,7 @@ namespace UnitTesting
         Service service1;
         Service service2;
         Claim claim1;
+        DatabaseContext _db;
 
         public ClaimServiceUT()
         {
@@ -29,7 +30,7 @@ namespace UnitTesting
             service1 = testUtils.CreateServiceInDb(true);
             service2 = testUtils.CreateServiceInDb(true);
 
-            
+            _db = new DatabaseContext();
 
             claim1 = testUtils.CreateClaim(user1, service1, user2);
         }
@@ -38,7 +39,7 @@ namespace UnitTesting
         public void CreateClaim()
         {
             // ACT
-            int response = claimService.CreateClaim(user1.Id, service1.Id);
+            var response = claimService.CreateClaim(_db, user1.Id, service1.Id);
 
             using (var _db = new DatabaseContext()) {
                 
@@ -48,25 +49,24 @@ namespace UnitTesting
                     .FirstOrDefault();
                 Assert.IsTrue(recentclaim!=null);
             }
-
-               
-                
-                Assert.IsTrue(response > 0);
+    
+            Assert.IsNotNull(response);
         }
 
         [TestMethod]
-        public void getService()
+        public void GetService()
         {
-            Service received = claimService.GetService(service1.ServiceName);
+            Service received = claimService.GetService(_db, service1.ServiceName);
 
             StringAssert.Contains(received.ServiceName, service1.ServiceName);
         }
 
         [TestMethod]
-        public void addServiceToUser()
+        public void AddServiceToUser()
         {
-            claimService.AddServiceToUser(user2, service2);
+            claimService.AddServiceToUser(_db, user2, service2);
 
+            _db.SaveChanges();
             using (var _db = new DatabaseContext())
             {
                 int count = _db.Claims
@@ -78,17 +78,17 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void userHasServiceAccess()
+        public void UserHasServiceAccess()
         {
-            bool hasAccess = claimService.UserHasServiceAccess(user1, service1);
+            bool hasAccess = claimService.UserHasServiceAccess(_db, user1, service1);
 
             Assert.IsTrue(hasAccess);
         }
 
         [TestMethod]
-        public void userHasNoServiceAccess()
+        public void UserHasNoServiceAccess()
         {
-            bool hasAccess = claimService.UserHasServiceAccess(user1, service2);
+            bool hasAccess = claimService.UserHasServiceAccess(_db, user1, service2);
 
             Assert.IsFalse(hasAccess);
         }
