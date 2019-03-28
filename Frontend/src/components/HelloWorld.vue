@@ -23,9 +23,13 @@ export default {
     }
   },
   mounted () {
+
     axios
-      .get('http://localhost:58896/api/helloworld')
-      .then(response => (this.msg = response.data))
+      .get('http://pointmap.me:8080/api/helloworld')
+      .then((response) => {
+          let res = response.data.toString();
+          this.msg = res
+        })
   }
 }
 </script>
