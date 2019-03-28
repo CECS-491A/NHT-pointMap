@@ -57,7 +57,6 @@
     <Compile Include="AccessControl\AuthorizationManager.cs" />
     <Compile Include="Login\UserLoginManager.cs" />
     <Compile Include="UserManagement\UserManagementManager.cs" />
-    <Compile Include="ValidationManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
