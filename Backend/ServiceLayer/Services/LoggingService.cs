@@ -11,52 +11,57 @@ namespace ServiceLayer.Services
 {
     public class LoggingService : ILoggingService
     {
-        private const string LOG_SERVER_URL = "https://julianjp.com:3000/";
+        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
 
         public System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog, string signature, string timestamp)
         {
-            using (var client = new HttpClient())
+            try
             {
-                Console.WriteLine("Made it here 0");
-
-                var result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
-                int attempt = 1;
-                while (!result.IsSuccessStatusCode)
-                {
-                    //content = backupContent;
-
-                    Console.WriteLine("Made it here "+ attempt);
-
-                    result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
-                    Console.WriteLine("Made it here ," + attempt);
-
-                    attempt++;
-                    if(attempt >= 100)
+                using (var client = new HttpClient())
+                { 
+                    var result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
+                    int attempt = 1;
+                    while (!result.IsSuccessStatusCode)
                     {
-                        return result.StatusCode;
+                        result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
+                        attempt++;
+                        if (attempt >= 100)
+                        {
+                            return result.StatusCode;
+                        }
                     }
+                    return result.StatusCode;
                 }
-                return result.StatusCode;
+            }
+            catch (System.AggregateException ex)
+            {
+                return System.Net.HttpStatusCode.InternalServerError;
             }
         }
 
         public async Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog, string signature, string timestamp)
-        { 
-            using (var client = new HttpClient())
+        {
+            try
             {
-                var result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).ConfigureAwait(false);
-                int attempt = 1;
-                Console.WriteLine(result.IsSuccessStatusCode);
-                while (!result.IsSuccessStatusCode)
+                using (var client = new HttpClient())
                 {
-                    result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
-                    attempt++;
-                    if (attempt >= 100)
+                    var result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).ConfigureAwait(false);
+                    int attempt = 1;
+                    while (!result.IsSuccessStatusCode)
                     {
-                        return result.StatusCode;
+                        result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
+                        attempt++;
+                        if (attempt >= 100)
+                        {
+                            return result.StatusCode;
+                        }
                     }
+                    return result.StatusCode;
                 }
-                return result.StatusCode;
+            }
+            catch (System.AggregateException ex)
+            {
+                return System.Net.HttpStatusCode.InternalServerError;
             }
         }
 

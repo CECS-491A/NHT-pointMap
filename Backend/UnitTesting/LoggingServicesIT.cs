@@ -64,11 +64,12 @@ namespace UnitTesting
             newLog.user = "test123";
             newLog.desc = "Testing description";
             newLog.details = "testing stacktrace";
-            var responseStatus = _ls.sendLogSync(newLog, "abscu",
-                "1552766624957");
 
+            var responseStatus = _ls.sendLogSync(newLog, "abscu",
+            "1552766624957");
             Console.WriteLine(responseStatus);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.Unauthorized);
+            
         }
 
         [TestMethod]

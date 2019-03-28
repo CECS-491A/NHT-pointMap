@@ -8,7 +8,7 @@ var CryptoJS = require("crypto-js");
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-let port = 3000;
+let port = process.env.PORT || 3000;
 let connectionString = 'mongodb://localhost/log'
 let sharedSecret = "D078F2AFC7E59885F3B6D5196CE9DB716ED459467182A19E04B6261BBC8E36EE"
 
