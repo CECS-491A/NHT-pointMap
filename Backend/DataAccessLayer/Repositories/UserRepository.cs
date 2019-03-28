@@ -11,17 +11,14 @@ namespace DataAccessLayer.Repositories
     public class UserRepository
     {
 
-        public bool ValidatePassword(User user, string passwordSubmittedHash)
+        public bool ValidatePassword(DatabaseContext _db, User user, string passwordSubmittedHash)
         {
-            using (var _db = new DatabaseContext())
+            var storedHash = _db.Users.Find(user.Id).PasswordHash;
+            if (storedHash == passwordSubmittedHash)
             {
-                var storedHash = _db.Users.Find(user.Id).PasswordHash;
-                if (storedHash == passwordSubmittedHash)
-                {
-                    return true;
-                }
-                return false;
+                return true;
             }
+            return false;
         }
     }
 }
