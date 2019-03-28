@@ -135,6 +135,10 @@
       <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
       <Name>DataAccessLayer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DTO\DTO.csproj">
+      <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
+      <Name>DTO</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
       <Project>{dd7c51a6-44cd-4a05-9809-1171fe66f434}</Project>
       <Name>ManagerLayer</Name>
