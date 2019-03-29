@@ -30,7 +30,7 @@ namespace WebApi_PointMap.Controllers
                         manager = u.ManagerId,
                         city = u.City,
                         state = u.State,
-                        countty = u.Country,
+                        country = u.Country,
                         disabled = u.Disabled
                     }).ToList();
                     return Ok(users);
