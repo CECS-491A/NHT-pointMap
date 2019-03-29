@@ -11,7 +11,7 @@ namespace ManagerLayer.Logging
 {
     public class LoggingManager
     {
-        private const string LOG_SERVER_URL = "http://localhost:3000";
+        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
         private readonly HttpClient client;
         private TokenService _ts;
         private LoggingService _ls;
@@ -28,7 +28,7 @@ namespace ManagerLayer.Logging
             string[] content = getContent(newLog);
             var responseStatusCode = _ls.sendLogSync(newLog, content[0],
                 content[1]);
-            notifyAdmin(responseStatusCode);
+            _ls.notifyAdmin(responseStatusCode, _ls.getLogContent(newLog, content[0], content[1]));
         }
 
         public async Task sendLogAsync(LogRequestDTO newLog)
@@ -36,15 +36,7 @@ namespace ManagerLayer.Logging
             string[] content = getContent(newLog);
             var responseStatusCode = await _ls.sendLogAsync(newLog, content[0],
                 content[1]);
-            notifyAdmin(responseStatusCode);
-        }
-
-        private void notifyAdmin(System.Net.HttpStatusCode notify)
-        {
-            if (notify != System.Net.HttpStatusCode.OK)
-            {
-                //TODO if notify is true notify system admin of failed log
-            }
+            _ls.notifyAdmin(responseStatusCode, _ls.getLogContent(newLog, content[0], content[1]));
         }
 
         private string[] getContent(LogRequestDTO newLog)
