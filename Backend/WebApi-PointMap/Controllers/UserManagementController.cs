@@ -129,7 +129,7 @@ namespace WebApi_PointMap.Controllers
             try
             {
                 // check if valid SSO ID format
-                UserId = Guid.Parse(payload.UserId);
+                UserId = Guid.Parse(payload.id);
             }
             catch (Exception)
             {
@@ -143,11 +143,11 @@ namespace WebApi_PointMap.Controllers
                 {
                     return Content(HttpStatusCode.NotFound, "User does not exist.");
                 }
-                user.City = payload.City;
-                user.State = payload.State;
-                user.Country = payload.Country;
-                user.Disabled = payload.Disabled;
-                user.ManagerId = payload.ManagerId;
+                user.City = payload.city;
+                user.State = payload.state;
+                user.Country = payload.country;
+                user.Disabled = payload.disabled;
+                user.ManagerId = payload.manager;
                 try
                 {
                     _userManager.UpdateUser(user);
@@ -166,17 +166,17 @@ namespace WebApi_PointMap.Controllers
         public class UpdateUserRequestDTO
         {
             [Required]
-            public string UserId { get; set; }
+            public string id { get; set; }
             [Required]
-            public string City { get; set; }
+            public string city { get; set; }
             [Required]
-            public string State { get; set; }
+            public string state { get; set; }
             [Required]
-            public string Country { get; set; }
+            public string country { get; set; }
             [Required]
-            public Guid ManagerId { get; set; }
+            public Guid manager { get; set; }
             [Required]
-            public bool Disabled { get; set; }
+            public bool disabled { get; set; }
         }
 
     }

@@ -20,20 +20,20 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.username" label="Dessert name"></v-text-field>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field v-model="editedItem.id" label="Manager ID"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
+                  <v-text-field v-model="editedItem.city" label="City"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
+                  <v-text-field v-model="editedItem.state" label="State"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
+                  <v-text-field v-model="editedItem.country" label="Country"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
+                  <v-checkbox v-model="editedItem.disabled" label="Disabled"/>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -53,14 +53,13 @@
       class="elevation-1"
     >
       <template v-slot:items="props">
-        <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.id }}</td>
-        <td class="text-xs-right">{{ props.item.username }}</td>
-        <td class="text-xs-right">{{ props.item.manager }}</td>
-        <td class="text-xs-right">{{ props.item.disabled }}</td>
-        <td class="text-xs-right">{{ props.item.city }}</td>
-        <td class="text-xs-right">{{ props.item.state }}</td>
-        <td class="text-xs-right">{{ props.item.country }}</td>
+        <td class="text-xs-left">{{ props.item.id }}</td>
+        <td class="text-xs-left">{{ props.item.username }}</td>
+        <td class="text-xs-left">{{ props.item.manager }}</td>
+        <td class="text-xs-center">{{ props.item.disabled }}</td>
+        <td class="text-xs-left">{{ props.item.city }}</td>
+        <td class="text-xs-left">{{ props.item.state }}</td>
+        <td class="text-xs-left">{{ props.item.country }}</td>
         <td class="justify-center layout px-0">
           <v-icon
             small
@@ -78,6 +77,7 @@
         </td>
       </template>
       <template v-slot:no-data>
+        <h2> {{ StatusOfData }} </h2>
         <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
     </v-data-table>
@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { GetUsers } from '@/services/userManagementServices';
+import { GetUsers, UpdateUser, DeleteUser } from '@/services/userManagementServices';
   export default {
       name: 'UserManagement',
       data: () => ({
@@ -108,7 +108,7 @@ import { GetUsers } from '@/services/userManagementServices';
         users: [],
         editedIndex: -1,
         editedItem: {
-          userId: '',
+          id: '',
           city: '',
           state: '',
           country: '',
@@ -122,7 +122,8 @@ import { GetUsers } from '@/services/userManagementServices';
           country: '',
           managerId: '',
           disabled: false
-        }
+        },
+        StatusOfData: 'No Data'
     }),
 
     computed: {
@@ -145,22 +146,30 @@ import { GetUsers } from '@/services/userManagementServices';
     methods: {
       initialize () {
         this.users = []
+        this.StatusOfData = 'Loading Data...'
         GetUsers().then(
           response => {
-            console.log(response);
+            this.users = response;
           }
         )
+        .catch(this.StatusOfData = 'No Data Found.')
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.users.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        const index = this.users.indexOf(item)
+        if (confirm('Are you sure you want to delete this item?') && this.users.splice(index, 1)){
+          DeleteUser(item.id)
+            .then(console.log(response))
+            .catch(err => {
+              console.log(err.response.status);
+            });
+        }
       },
 
       close () {
@@ -173,7 +182,10 @@ import { GetUsers } from '@/services/userManagementServices';
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          console.log(this.editedItem);
+          UpdateUser(this.editedItem)
+            .catch(console.log(response))
+          Object.assign(this.users[this.editedIndex], this.editedItem)
         } else {
           this.desserts.push(this.editedItem)
         }

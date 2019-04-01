@@ -9,9 +9,35 @@ const GetUsers = () =>
             console.log(response);
             return response.data;
         })
+        
+}
+
+const UpdateUser = (user) =>
+{
+    return axios.put(`${api_url}/user/update`)
+        .then(response =>
+        {
+            console.log(response);
+            return response;
+        })
+}
+
+const DeleteUser = (userId) =>
+{
+    return axios.delete(`${api_url}/user/delete/${userId}`)
+        .then(response =>
+        {
+            return response;
+        })
+        .catch(Error =>
+        {
+            Error.response.status
+        })
 }
 
 export
 {
-    GetUsers
+    GetUsers,
+    UpdateUser,
+    DeleteUser
 }
