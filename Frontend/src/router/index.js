@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '../components/HelloWorld'
 import Login from '../components/Login'
 import Dashboard from '../components/Dashboard'
+import MapView from '../components/MapView'
 
 Vue.use(Router)
 
@@ -22,6 +23,11 @@ export default new Router({
       path: '/dashboard',
       name: 'Dashboard',
       component: Dashboard
+    },
+    {
+      path: '/mapview',
+      name: 'MapView',
+      component: MapView
     }
   ]
 })
