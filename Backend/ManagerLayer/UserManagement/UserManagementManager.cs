@@ -78,12 +78,12 @@ namespace ManagerLayer.UserManagement
 
         public void DisableUser(User user)
         {
-            ToggleUser(user, false);
+            ToggleUser(user, true);
         }
 
         public void EnableUser(User user)
         {
-            ToggleUser(user, true);
+            ToggleUser(user, false);
         }
 
         public void ToggleUser(User user, bool? disable)
