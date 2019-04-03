@@ -14,10 +14,9 @@ const GetUsers = () =>
 
 const UpdateUser = (user) =>
 {
-    return axios.put(`${api_url}/user/update`)
+    return axios.put(`${api_url}/user/update`, user)
         .then(response =>
         {
-            console.log(response);
             return response;
         })
 }

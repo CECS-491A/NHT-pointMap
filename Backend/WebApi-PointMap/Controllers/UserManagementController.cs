@@ -147,18 +147,26 @@ namespace WebApi_PointMap.Controllers
                 user.State = payload.state;
                 user.Country = payload.country;
                 user.Disabled = payload.disabled;
-                user.ManagerId = payload.manager;
+                try
+                {
+                    var ManagerId = Guid.Parse(payload.manager);
+                    user.ManagerId = ManagerId;
+                }
+                catch (Exception)
+                {
+                    user.ManagerId = null;
+                }
                 try
                 {
                     _userManager.UpdateUser(user);
                     _db.SaveChanges();
                     return Content(HttpStatusCode.OK, "User updated");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     _db.Entry(user).CurrentValues.SetValues(_db.Entry(user).OriginalValues);
                     _db.Entry(user).State = System.Data.Entity.EntityState.Unchanged;
-                    return Content(HttpStatusCode.InternalServerError, "User was not updated");
+                    return Content(HttpStatusCode.InternalServerError, ex);
                 }
             }
         }
@@ -167,14 +175,10 @@ namespace WebApi_PointMap.Controllers
         {
             [Required]
             public string id { get; set; }
-            [Required]
             public string city { get; set; }
-            [Required]
             public string state { get; set; }
-            [Required]
             public string country { get; set; }
-            [Required]
-            public Guid manager { get; set; }
+            public string manager { get; set; }
             [Required]
             public bool disabled { get; set; }
         }
