@@ -2,6 +2,7 @@
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using DataAccessLayer.Repositories;
+using System.Collections.Generic;
 
 namespace ServiceLayer.Services
 {
@@ -37,6 +38,11 @@ namespace ServiceLayer.Services
         public Point UpdatePoint(DatabaseContext _db, Point point)
         {
             return _PointRepo.UpdatePoint(_db, point);
+        }
+
+        public List<Point> getAllPoints(DatabaseContext _db, float minLat, float minLng, float maxLat, float maxLng)
+        {
+            return _PointRepo.GetAllPoints(_db, minLat, minLng, maxLat, maxLng);
         }
     }
 }

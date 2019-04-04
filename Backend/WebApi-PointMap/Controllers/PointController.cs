@@ -2,16 +2,24 @@
 using System;
 using System.Web.Http;
 using WebApi_PointMap.Models;
+using System.Linq;
+using System.Net.Http;
+using System.Net;
+using System.Text;
+using ManagerLayer.AccessControl;
+using Newtonsoft.Json;
 
 namespace WebApi_PointMap.Controllers
 {
     public class PointController : ApiController
     {
         PointManager _pm;
+        AuthorizationManager _am;
 
         public PointController()
         {
             _pm = new PointManager();
+            _am = new AuthorizationManager();
         }
         // GET api/point/get
         [HttpGet]
@@ -88,6 +96,71 @@ namespace WebApi_PointMap.Controllers
             {
                 return Ok(e.StackTrace);
             }
+        }
+
+        [HttpGet]
+        [Route("api/points/")]
+        public HttpResponseMessage getPoints()
+        {
+            HttpResponseMessage response;
+            var re = Request;
+            var headers = re.Headers;
+            if (headers.Contains("token"))
+            {
+                string token = headers.GetValues("token").First();
+                string managerResponse = _am.ValidateAndUpdateSession(token);
+                if(managerResponse == null)
+                {
+                    response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+                    response.Content = new StringContent("Request unauthorized",
+                    Encoding.Unicode);
+                }
+                else
+                {
+                    if(headers.Contains("minLng") && headers.Contains("maxLng") && 
+                        headers.Contains("minLat") && headers.Contains("maxLat"))
+                    {
+                        try
+                        {
+                            float minLng = float.Parse(headers.GetValues("minLng").First());
+                            float minLat = float.Parse(headers.GetValues("minLat").First());
+                            float maxLng = float.Parse(headers.GetValues("maxLng").First());
+                            float maxLat = float.Parse(headers.GetValues("maxLat").First());
+                            var pointList = _pm.getAllPoints(minLat, minLng, maxLat, maxLng);
+                            response = Request.CreateResponse(HttpStatusCode.OK);
+                            if (pointList != null)
+                            {
+                                var jsonContent = JsonConvert.SerializeObject(pointList);
+                                Console.WriteLine("Points as Json String:\t", jsonContent.ToString());
+                                response.Content = new StringContent(jsonContent.ToString(), Encoding.UTF8, "application/json");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Error in conversion \n", e);
+                            response = Request.CreateResponse(HttpStatusCode.BadRequest);
+                            response.Content = new StringContent("Invalid field formatting",
+                            Encoding.Unicode);
+                        }
+                    }
+                    else
+                    {
+                        response = Request.CreateResponse(HttpStatusCode.BadRequest);
+                        response.Content = new StringContent("Request Missing Required Fields",
+                        Encoding.Unicode);
+                    }
+                    
+                }
+            }
+            else
+            {
+                response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+                response.Content = new StringContent("Request unauthorized",
+                Encoding.Unicode);
+            }
+            
+            return response;
+
         }
     }
 }
