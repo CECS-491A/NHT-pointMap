@@ -48,6 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DTO\RecoverableErrorDTO.cs" />
     <Compile Include="DTO\LoginManagerDTOs.cs" />
     <Compile Include="DTO\LogRequestDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

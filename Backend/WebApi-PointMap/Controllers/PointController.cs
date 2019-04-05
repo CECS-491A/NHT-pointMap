@@ -2,31 +2,39 @@
 using System;
 using System.Web.Http;
 using WebApi_PointMap.Models;
+using DataAccessLayer.Database;
+using WebApi_PointMap.ErrorHandling;
 
 namespace WebApi_PointMap.Controllers
 {
     public class PointController : ApiController
     {
         PointManager _pm;
+        DatabaseContext _db;
 
         public PointController()
         {
             _pm = new PointManager();
+            _db = new DatabaseContext();
         }
+
         // GET api/point/get
         [HttpGet]
         [Route("api/point/{guid}")]
         public IHttpActionResult Get(string guid)
         {
             Guid id = new Guid(guid);
+
             try
             {
-                var point = _pm.GetPoint(id);
+                var point = _pm.GetPoint(_db, id);
+
+                _db.SaveChanges();
                 return Ok(point);
             }
             catch(Exception e)
             {
-                return Ok(e.StackTrace);
+                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
             }
         }
 
@@ -37,16 +45,15 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
+                var point = _pm.CreatePoint(_db, pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
+
+                _db.SaveChanges();
+
                 return Ok(point);
-            }
-            catch(ArgumentOutOfRangeException e)
-            {
-                return BadRequest(e.ParamName);
             }
             catch(Exception e)
             {
-                return Ok(e.StackTrace);
+                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
             }
         }
 
@@ -55,22 +62,20 @@ namespace WebApi_PointMap.Controllers
         public IHttpActionResult Put(string guid, [FromBody] PointPOST pointPost)
         {
             Guid id = new Guid(guid);
+            pointPost.Id = id;
+
             try
             {
-                pointPost.Id = id;
-                var point = _pm.UpdatePoint(id, pointPost.Longitude, pointPost.Latitude,
-                                                pointPost.Description, pointPost.Name, 
-                                                pointPost.CreatedAt);
+                var point = _pm.UpdatePoint(_db, id, pointPost.Longitude, pointPost.Latitude,
+                                            pointPost.Description, pointPost.Name,
+                                            pointPost.CreatedAt);
+                _db.SaveChanges();
 
                 return Ok(point);
             }
-            catch (ArgumentOutOfRangeException e)
-            {
-                return BadRequest(e.ParamName);
-            }
             catch (Exception e)
             {
-                return Ok(e);
+                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
             }
         }
 
@@ -79,14 +84,17 @@ namespace WebApi_PointMap.Controllers
         public IHttpActionResult Delete(string guid)
         {
             Guid id = new Guid(guid);
+
             try
             {
-                _pm.DeletePoint(id);
-                return Ok();
+                var point = _pm.DeletePoint(_db, id);
+                _db.SaveChanges();
+
+                return Ok(point);
             }
             catch (Exception e)
             {
-                return Ok(e.StackTrace);
+                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
             }
         }
     }
