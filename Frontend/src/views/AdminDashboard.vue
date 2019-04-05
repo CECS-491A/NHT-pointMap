@@ -42,7 +42,7 @@ import axios from 'axios'
 import UserManagement from '@/components/UserManagement.vue'
 
     export default {
-        name: 'Dashboard',
+        name: 'AdminDashboard',
         components: {
           UserManagement
         },

@@ -31,7 +31,8 @@ namespace WebApi_PointMap.Controllers
                         city = u.City,
                         state = u.State,
                         country = u.Country,
-                        disabled = u.Disabled
+                        disabled = u.Disabled,
+                        isAdmin = u.IsAdministrator
                     }).ToList();
                     return Ok(users);
                 }
@@ -72,7 +73,8 @@ namespace WebApi_PointMap.Controllers
                             city = u.City,
                             state = u.State,
                             country = u.Country,
-                            disabled = u.Disabled
+                            disabled = u.Disabled,
+                            isAdmin = u.IsAdministrator
                         }).ToList();
                     return Content((HttpStatusCode)200, users);
                 }
@@ -80,6 +82,42 @@ namespace WebApi_PointMap.Controllers
                 {
                     return InternalServerError();
                 }
+            }
+        }
+
+        [HttpGet]
+        [Route("user/{token}")]
+        public IHttpActionResult GetUser(string token)
+        {
+            if (token == null || token == "")
+            {
+                return BadRequest("Invalid Session.");
+            }
+            using (var _db = new DatabaseContext())
+            {
+                SessionService _sessionService = new SessionService();
+                try
+                {
+                    var session = _sessionService.ValidateSession(_db, token);
+                    if (session == null)
+                    {
+                        return Content(HttpStatusCode.NotFound, "Session is no longer available.");
+                    }
+                    UserManagementManager _userManager = new UserManagementManager(_db);
+                    var user = _userManager.GetUser(session.UserId);
+                    return Ok(new
+                    {
+                        id = user.Id,
+                        username = user.Username,
+                        disabled = user.Disabled,
+                        isAdmin = user.IsAdministrator
+                    });
+                }
+                catch (Exception ex)
+                {
+                    return Content(HttpStatusCode.InternalServerError, ex);
+                }
+
             }
         }
 
@@ -147,6 +185,7 @@ namespace WebApi_PointMap.Controllers
                 user.State = payload.state;
                 user.Country = payload.country;
                 user.Disabled = payload.disabled;
+                user.IsAdministrator = payload.isAdmin;
                 try
                 {
                     var ManagerId = Guid.Parse(payload.manager);
@@ -179,6 +218,8 @@ namespace WebApi_PointMap.Controllers
             public string state { get; set; }
             public string country { get; set; }
             public string manager { get; set; }
+            [Required]
+            public bool isAdmin { get; set; }
             [Required]
             public bool disabled { get; set; }
         }

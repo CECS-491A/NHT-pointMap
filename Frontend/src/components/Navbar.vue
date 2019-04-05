@@ -62,7 +62,7 @@ export default {
   name: 'Navbar',
   data: () => ({
       ApplicationMenuItems: [
-        { title: 'Admin Dashboard', link: "/AdminDashboard" }
+        { title: 'Admin Dashboard', link: "/admindashboard" }
       ],
       UserMenuItems: [
           {

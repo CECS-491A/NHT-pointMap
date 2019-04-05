@@ -34,9 +34,19 @@ const DeleteUser = (userId) =>
         })
 }
 
+const GetUser = (token) =>
+{
+    return axios.get(`${api_url}/user/${token}`)
+        .then(response =>
+        {
+            return response;
+        })
+}
+
 export
 {
     GetUsers,
     UpdateUser,
-    DeleteUser
+    DeleteUser,
+    GetUser
 }

@@ -34,6 +34,9 @@
                 <v-flex xs12 sm6 md4>
                   <v-checkbox v-model="editedItem.disabled" label="Disabled"/>
                 </v-flex>
+                <v-flex xs12 sm6 md4>
+                  <v-checkbox v-model="editedItem.isAdmin" label="Administrator"/>
+                </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
@@ -56,6 +59,7 @@
         <td class="text-xs-left">{{ props.item.username }}</td>
         <td class="text-xs-left">{{ props.item.manager }}</td>
         <td class="text-xs-center">{{ props.item.disabled }}</td>
+        <td class="text-xs-center">{{ props.item.isAdmin }}</td>
         <td class="text-xs-left">{{ props.item.city }}</td>
         <td class="text-xs-left">{{ props.item.state }}</td>
         <td class="text-xs-left">{{ props.item.country }}</td>
@@ -133,6 +137,7 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         { text: 'Username', value: 'username' },
         { text: 'Manager', value: 'manager' },
         { text: 'Disabled', value: 'disabled' },
+        { text: 'Admin', value: 'isAdmin'},
         { text: 'City', value: 'city' },
         { text: 'State', value: 'state'},
         { text: 'Country', value: 'country'},
@@ -146,7 +151,8 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         state: '',
         country: '',
         managerId: '',
-        disabled: false
+        disabled: false,
+        isAdmin: false
       },
       defaultItem: {
         userId: '',
@@ -154,7 +160,8 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         state: '',
         country: '',
         managerId: '',
-        disabled: false
+        disabled: false,
+        isAdmin: false
       },
       StatusOfData: 'No Data'
     }),

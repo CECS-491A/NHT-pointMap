@@ -81,6 +81,10 @@
     <Compile Include="Migrations\201903070211164_create-table-point.Designer.cs">
       <DependentUpon>201903070211164_create-table-point.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201904051008017_update-table-users-addedcol-isadmin.cs" />
+    <Compile Include="Migrations\201904051008017_update-table-users-addedcol-isadmin.Designer.cs">
+      <DependentUpon>201904051008017_update-table-users-addedcol-isadmin.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Claim.cs" />
     <Compile Include="Models\Client.cs" />
@@ -130,6 +134,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201903070211164_create-table-point.resx">
       <DependentUpon>201903070211164_create-table-point.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201904051008017_update-table-users-addedcol-isadmin.resx">
+      <DependentUpon>201904051008017_update-table-users-addedcol-isadmin.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
