@@ -105,7 +105,6 @@ namespace UnitTesting
             {
                 _db.Entry(user).State = System.Data.Entity.EntityState.Added;
                 _db.SaveChanges();
-
                 return user;
             }
         }
@@ -222,7 +221,7 @@ namespace UnitTesting
         {
             using (var _db = new DatabaseContext())
             {
-                _db.Sessions.Add(session);
+                _db.Entry(session).State = System.Data.Entity.EntityState.Added;
                 _db.SaveChanges();
 
                 return session;
@@ -301,10 +300,10 @@ namespace UnitTesting
 
             };
 
-            return CreateUserInDb(client);
+            return CreateClientInDb(client);
         }
 
-        public Client CreateUserInDb(Client client)
+        public Client CreateClientInDb(Client client)
         {
             using (var _db = new DatabaseContext())
             {

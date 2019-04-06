@@ -27,6 +27,8 @@
 
 
 <script>
+import pointService from '../services/pointServices'
+
 export default {
   name: "MapView",
   data() {
@@ -60,6 +62,9 @@ export default {
         this.center = marker;
         this.currentPlace = null;
       }
+    },
+    getPoints(){
+        let points = pointService.getPoints(10,11,-11,-10)
     },
     geolocate: function() {
       navigator.geolocation.getCurrentPosition(position => {

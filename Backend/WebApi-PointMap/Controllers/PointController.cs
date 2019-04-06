@@ -7,7 +7,8 @@ using System.Net.Http;
 using System.Net;
 using System.Text;
 using ManagerLayer.AccessControl;
-using Newtonsoft.Json;
+using System.Web.Script.Serialization;
+using DataAccessLayer.Models;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -127,17 +128,18 @@ namespace WebApi_PointMap.Controllers
                             float maxLng = float.Parse(headers.GetValues("maxLng").First());
                             float maxLat = float.Parse(headers.GetValues("maxLat").First());
                             var pointList = _pm.getAllPoints(minLat, minLng, maxLat, maxLng);
+                            
                             response = Request.CreateResponse(HttpStatusCode.OK);
                             if (pointList != null)
                             {
-                                var jsonContent = JsonConvert.SerializeObject(pointList);
-                                Console.WriteLine("Points as Json String:\t", jsonContent.ToString());
-                                response.Content = new StringContent(jsonContent.ToString(), Encoding.UTF8, "application/json");
+                                var jsonContent = new JavaScriptSerializer().Serialize(pointList);
+                                //Console.WriteLine("Points as Json String:\t", jsonContent.ToString());
+                                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
                             }
                         }
                         catch (Exception e)
                         {
-                            Console.WriteLine("Error in conversion \n", e);
+                            Console.WriteLine(e);
                             response = Request.CreateResponse(HttpStatusCode.BadRequest);
                             response.Content = new StringContent("Invalid field formatting",
                             Encoding.Unicode);
@@ -149,7 +151,6 @@ namespace WebApi_PointMap.Controllers
                         response.Content = new StringContent("Request Missing Required Fields",
                         Encoding.Unicode);
                     }
-                    
                 }
             }
             else
