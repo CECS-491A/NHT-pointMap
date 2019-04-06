@@ -31,6 +31,7 @@
         <UserManagement 
           v-if="this.$data.selectedItem === 'User Management'" 
           id="UserManagement"/>
+        <AppPublish v-if="this.$data.selectedItem === 'App Publish'"/>
       </v-flex>
     </v-layout>
 
@@ -40,17 +41,20 @@
 <script>
 import axios from 'axios'
 import UserManagement from '@/components/UserManagement.vue'
+import AppPublish from '@/components/AppPublish'
 
     export default {
         name: 'AdminDashboard',
         components: {
-          UserManagement
+          UserManagement,
+          AppPublish
         },
         data: () => ({
           selectedItem: 'User Management',
           DashboardMenuItems: [
               {title: 'User Management', icon: 'account_box'},
-              {title: 'Analytics', icon: 'timeline'}
+              {title: 'Analytics', icon: 'timeline'},
+              {title: 'App Publish', icon: 'build'}
           ]
         }),
         methods: {

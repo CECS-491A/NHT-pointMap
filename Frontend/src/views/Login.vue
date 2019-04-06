@@ -5,23 +5,30 @@
      <div v-if="loading">
       <Loading :dialog="loading" :text="loadingText"/>
     </div>
+    <div v-if="!validSession">
+      <PopupDialog :dialog="!validSession" :text="popupMessage" redirect=true redirectUrl="https://kfc-sso.com"/>
+    </div>
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import Loading from '@/components/dialogs/Loading'
+import PopupDialog from '@/components/dialogs/PopupDialog'
 import { GetUser } from '@/services/userManagementServices'
 
 export default {
   name: 'Login',
   components: {
-    Loading
+    Loading,
+    PopupDialog
   },
   data: () => ({
     token: '',
     loading: false,
-    loadingText: ''
+    loadingText: '',
+    validSession: true,
+    popupMessage: ''
   }),
   created() {
     this.token = this.$route.query.token;
@@ -43,15 +50,22 @@ export default {
               if (user.isAdmin){
                 this.$router.push('/admindashboard');
               }
-              break;
             default:
           }
         })
         .catch( err => {
           this.loading = false;
           this.loadingText = '';
+          switch(err.response.status){
+            case 404:
+              this.loading = false;
+              this.popupMessage = 'The session has expired...';
+              this.validSession = false;
+              break;
+            default:
+          }
         })
     }
   }
-  }
+}
 </script>
