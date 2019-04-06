@@ -18,19 +18,17 @@ export default {
   data: () => ({
     thisDialog: false,
     redirectOnClick: false,
-    redirectUrl: '',
   }),
   props: ["dialog", "text", "redirect", "redirectUrl"],
   created() {
     this.thisDialog = this.$props.dialog;
     this.redirectOnClick = this.$props.redirect;
-    this.redirectUrl = this.$props.redirectUrl;
   },
   methods: {
     HandleDialog(){
       this.thisDialog = false;
       if (this.redirectOnClick){
-        window.location.href = decodeURIComponent(this.redirectUrl);
+        window.location.href = decodeURIComponent(this.$props.redirectUrl);
       }
     }
   },
