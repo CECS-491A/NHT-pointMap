@@ -4,7 +4,7 @@
         bottom 
         offset-y
         transition="slide-x-transition">
-        <template v-slot:activator="{ on }">
+        <template v-if="false" v-slot:activator="{ on }">
             <v-btn
                 dark
                 icon
@@ -12,7 +12,7 @@
               >
             <v-icon>apps</v-icon>
             </v-btn>
-        </template>
+        </template> 
         <v-list>
             <v-list-tile
                 v-for="(item, i) in this.ApplicationMenuItems"
