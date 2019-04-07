@@ -7,6 +7,7 @@ using ManagerLayer.UserManagement;
 using ManagerLayer.AccessControl;
 using ServiceLayer.Services;
 using DTO;
+using ManagerLayer.Logging;
 using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using static ServiceLayer.Services.ExceptionService;
@@ -18,18 +19,22 @@ namespace ManagerLayer.Login_Logout
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
         TokenService _tokenService;
+        LoggingManager _loggingManager;
+        LogRequestDTO newLog;
+        SessionService _sessionService;
 
-        public LogoutManagerResponseDTO LogoutFromSSO(DatabaseContext _db, string email, string token)
+        public LogoutManagerResponseDTO LogoutFromSSO(DatabaseContext _db, string token)
         {
 
             _authorizationManager = new AuthorizationManager();
+            _sessionService = new SessionService();
 
-            Guid userID = _userManagementManager.GetUser(email).Id;
-            Session session = _authorizationManager.ExpireSession(_db, token);
 
+            Session session = _sessionService.GetSession(_db, token);
+            
             try
             {
-
+                session = _authorizationManager.ExpireSession(_db, token);
                 _db.SaveChanges();
             }
             catch (Exception)
@@ -37,11 +42,16 @@ namespace ManagerLayer.Login_Logout
                 _db.Entry(session).State = System.Data.Entity.EntityState.Detached;
                 throw new InvalidDbOperationException("Session was not found");
             }
+
             LogoutManagerResponseDTO response;
             response = new LogoutManagerResponseDTO
             {
                 Token = session.Token
             };
+
+
+            newLog = new LogRequestDTO("", "", DateTime.UtcNow.ToString(),"","","" );
+            _loggingManager.sendLogSync(newLog);
             return response;
         }
     }

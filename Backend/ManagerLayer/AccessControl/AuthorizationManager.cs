@@ -89,5 +89,10 @@ namespace ManagerLayer.AccessControl
                 return _db.SaveChanges();
             }
         }
+        public Session ExpireSession(DatabaseContext _db, string token) {
+
+            return _sessionService.ExpireSession(_db, token);
+
+        }
     }
 }

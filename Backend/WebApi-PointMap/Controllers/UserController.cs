@@ -18,6 +18,7 @@ namespace WebApi_PointMap.Controllers
     public class UserController : ApiController
     {
         UserLoginManager _userLoginManager;
+        UserLogoutManager _userLogoutManager;
 
         // POST api/user/login
         [HttpPost]
@@ -74,12 +75,13 @@ namespace WebApi_PointMap.Controllers
                 return Ok(response);
             }
         }
+
+        //POST api/user/logout
         [HttpPost]
         [Route("api/user/logout")]
         public IHttpActionResult LogoutFromSSO([FromBody] LogoutDTO requestPayload)
         {
-
-
+          
             using (var _db = new DatabaseContext())
             {
                 LogoutManagerResponseDTO logoutAttempt;
