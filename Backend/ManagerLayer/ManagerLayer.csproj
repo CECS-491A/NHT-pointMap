@@ -52,10 +52,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logging\LoggingManager.cs" />
+    <Compile Include="Login_Logout\UserLogoutManager.cs" />
     <Compile Include="PointManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccessControl\AuthorizationManager.cs" />
-    <Compile Include="Login\UserLoginManager.cs" />
+    <Compile Include="Login_Logout\UserLoginManager.cs" />
     <Compile Include="UserManagement\UserManagementManager.cs" />
   </ItemGroup>
   <ItemGroup />
