@@ -1,5 +1,5 @@
 ﻿using DataAccessLayer.Database;
-using ManagerLayer.Login;
+using ManagerLayer.Login_Logout;
 using DTO;
 using System;
 using System.Collections.Generic;
@@ -69,6 +69,41 @@ namespace WebApi_PointMap.Controllers
                 LoginResponseDTO response = new LoginResponseDTO
                 {
                     RedirectURI = referrerHomeUrl + "/#/dashboard/token?=" + loginAttempt.Token
+                };
+
+                return Ok(response);
+            }
+        }
+        [HttpPost]
+        [Route("api/user/logout")]
+        public IHttpActionResult LogoutFromSSO([FromBody] LogoutDTO requestPayload)
+        {
+
+
+            using (var _db = new DatabaseContext())
+            {
+                LogoutManagerResponseDTO logoutAttempt;
+                try
+                {
+                    logoutAttempt = _userLogoutManager.LogoutFromSSO(
+                        _db,
+                        requestPayload.Email,
+                        requestPayload.token);
+
+                }
+                catch (InvalidTokenSignatureException ex)
+                {
+                    return Content((HttpStatusCode)401, ex.Message);
+                }
+                catch (InvalidDbOperationException ex)
+                {
+                    return Content((HttpStatusCode)500, ex.Message);
+                }
+
+                String referrerHomeUrl = Request.Headers.Referrer?.GetLeftPart(UriPartial.Authority);
+                LogoutResponseDTO response = new LogoutResponseDTO
+                {
+                    RedirectURI = referrerHomeUrl + "/#/login"
                 };
 
                 return Ok(response);
