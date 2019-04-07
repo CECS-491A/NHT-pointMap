@@ -18,23 +18,40 @@ namespace WebApi_PointMap.Controllers
         [Route("users")]
         public IHttpActionResult GetAllUsers()
         {
+            var token = GetHeader(Request, "Token");
+            if (token.Length < 1)
+            {
+                return Content(HttpStatusCode.Unauthorized, "No token provided.");
+            }
             using (var _db = new DatabaseContext())
             {
                 try
                 {
-                    var users = _db.Users
-                    .Select(u => new
+                    SessionService _sessionService = new SessionService();
+                    var session = _sessionService.ValidateSession(_db, token);
+                    if (session == null)
                     {
-                        id = u.Id,
-                        username = u.Username,
-                        manager = u.ManagerId,
-                        city = u.City,
-                        state = u.State,
-                        country = u.Country,
-                        disabled = u.Disabled,
-                        isAdmin = u.IsAdministrator
-                    }).ToList();
-                    return Ok(users);
+                        return Content(HttpStatusCode.NotFound, "Session is no longer available.");
+                    }
+                    UserManagementManager _userManager = new UserManagementManager(_db);
+                    var user = _userManager.GetUser(session.UserId);
+                    if (user.IsAdministrator)
+                    {
+                        var users = _db.Users
+                        .Select(u => new
+                        {
+                            id = u.Id,
+                            username = u.Username,
+                            manager = u.ManagerId,
+                            city = u.City,
+                            state = u.State,
+                            country = u.Country,
+                            disabled = u.Disabled,
+                            isAdmin = u.IsAdministrator
+                        }).ToList();
+                            return Ok(users);
+                    }
+                    return Content(HttpStatusCode.Unauthorized, user);
                 }
                 catch (Exception)
                 {
@@ -86,12 +103,13 @@ namespace WebApi_PointMap.Controllers
         }
 
         [HttpGet]
-        [Route("user/{token}")]
-        public IHttpActionResult GetUser(string token)
+        [Route("user")]
+        public IHttpActionResult GetUser()
         {
-            if (token == null || token == "")
+            var token = GetHeader(Request, "Token");
+            if (token.Length < 1)
             {
-                return BadRequest("Invalid Session.");
+                return Content(HttpStatusCode.Unauthorized, "No token provided.");
             }
             using (var _db = new DatabaseContext())
             {
@@ -117,7 +135,6 @@ namespace WebApi_PointMap.Controllers
                 {
                     return Content(HttpStatusCode.InternalServerError, ex);
                 }
-
             }
         }
 
@@ -125,6 +142,11 @@ namespace WebApi_PointMap.Controllers
         [Route("user/delete/{userId}")]
         public IHttpActionResult DeleteUser(string userId)
         {
+            var token = GetHeader(Request, "Token");
+            if (token.Length < 1)
+            {
+                return Content(HttpStatusCode.Unauthorized, "No token provided.");
+            }
             if (userId == null)
             {
                 return Content((HttpStatusCode)412, "Invalid payload.");
@@ -141,12 +163,23 @@ namespace WebApi_PointMap.Controllers
             }
             using(var _db = new DatabaseContext())
             {
-                UserManagementManager _userManager = new UserManagementManager(_db);
                 try
                 {
-                    _userManager.DeleteUser(UserId);
-                    _db.SaveChanges();
-                    return Ok("User was deleted");
+                    SessionService _sessionService = new SessionService();
+                    var session = _sessionService.ValidateSession(_db, token);
+                    if (session == null)
+                    {
+                        return Content(HttpStatusCode.NotFound, "Session is no longer available.");
+                    }
+                    UserManagementManager _userManager = new UserManagementManager(_db);
+                    var user = _userManager.GetUser(session.UserId);
+                    if (user.IsAdministrator)
+                    {
+                        _userManager.DeleteUser(UserId);
+                        _db.SaveChanges();
+                        return Ok("User was deleted");
+                    }
+                    return Unauthorized();
                 }
                 catch (Exception ex)
                 {
@@ -159,6 +192,11 @@ namespace WebApi_PointMap.Controllers
         [Route("user/update")]
         public IHttpActionResult UpdateUser([FromBody] UpdateUserRequestDTO payload)
         {
+            var token = GetHeader(Request, "Token");
+            if (token.Length < 1)
+            {
+                return Content(HttpStatusCode.Unauthorized, "No token provided.");
+            }
             if (!ModelState.IsValid || payload == null)
             {
                 return Content((HttpStatusCode)412, ModelState);
@@ -175,39 +213,61 @@ namespace WebApi_PointMap.Controllers
             }
             using (var _db = new DatabaseContext())
             {
+                SessionService _sessionService = new SessionService();
+                var session = _sessionService.ValidateSession(_db, token);
+                if (session == null)
+                {
+                    return Content(HttpStatusCode.NotFound, "Session is no longer available.");
+                }
                 UserManagementManager _userManager = new UserManagementManager(_db);
-                var user = _userManager.GetUser(UserId);
-                if (user == null)
+                var byUser = _userManager.GetUser(session.UserId);
+                if (byUser.IsAdministrator)
                 {
-                    return Content(HttpStatusCode.NotFound, "User does not exist.");
+                    var user = _userManager.GetUser(UserId);
+                    if (user == null)
+                    {
+                        return Content(HttpStatusCode.NotFound, "User does not exist.");
+                    }
+                    user.City = payload.city;
+                    user.State = payload.state;
+                    user.Country = payload.country;
+                    user.Disabled = payload.disabled;
+                    user.IsAdministrator = payload.isAdmin;
+                    try
+                    {
+                        var ManagerId = Guid.Parse(payload.manager);
+                        user.ManagerId = ManagerId;
+                    }
+                    catch (Exception)
+                    {
+                        user.ManagerId = null;
+                    }
+                    try
+                    {
+                        _userManager.UpdateUser(user);
+                        _db.SaveChanges();
+                        return Content(HttpStatusCode.OK, "User updated");
+                    }
+                    catch (Exception ex)
+                    {
+                        _db.Entry(user).CurrentValues.SetValues(_db.Entry(user).OriginalValues);
+                        _db.Entry(user).State = System.Data.Entity.EntityState.Unchanged;
+                        return Content(HttpStatusCode.InternalServerError, ex);
+                    }
                 }
-                user.City = payload.city;
-                user.State = payload.state;
-                user.Country = payload.country;
-                user.Disabled = payload.disabled;
-                user.IsAdministrator = payload.isAdmin;
-                try
-                {
-                    var ManagerId = Guid.Parse(payload.manager);
-                    user.ManagerId = ManagerId;
-                }
-                catch (Exception)
-                {
-                    user.ManagerId = null;
-                }
-                try
-                {
-                    _userManager.UpdateUser(user);
-                    _db.SaveChanges();
-                    return Content(HttpStatusCode.OK, "User updated");
-                }
-                catch (Exception ex)
-                {
-                    _db.Entry(user).CurrentValues.SetValues(_db.Entry(user).OriginalValues);
-                    _db.Entry(user).State = System.Data.Entity.EntityState.Unchanged;
-                    return Content(HttpStatusCode.InternalServerError, ex);
-                }
+                return Unauthorized();
             }
+        }
+
+        public string GetHeader(object request, string header)
+        {
+            IEnumerable<string> headerValues;
+            var nameFilter = string.Empty;
+            if (Request.Headers.TryGetValues(header, out headerValues))
+            {
+                nameFilter = headerValues.FirstOrDefault();
+            }
+            return nameFilter;
         }
 
         public class UpdateUserRequestDTO

@@ -31,13 +31,14 @@ export default {
   }),
   created() {
     this.token = this.$route.query.token;
+    localStorage.setItem('token', this.token);
     this.CheckUser(this.token);
   },
   methods: {
     CheckUser(token) {
       this.loading = true;
       this.loadingText = 'Logging In...';
-      GetUser(token)
+      GetUser()
         .then( response => {
           switch(response.status){
             case 200:
@@ -47,6 +48,9 @@ export default {
               this.loadingText = '';
               if (user.isAdmin){
                 this.$router.push('/admindashboard');
+              }
+              else{
+                this.$router.push('/mapview');
               }
             default:
           }
