@@ -15,18 +15,20 @@ namespace ManagerLayer.UserManagement
     {
         private IPasswordService _passwordService;
         private IUserService _userService;
+        private readonly DatabaseContext _db;
 
         public UserManagementManager()
         {
             _userService = new UserService();
         }
 
-        private DatabaseContext CreateDbContext()
+        public UserManagementManager(DatabaseContext db)
         {
-            return new DatabaseContext();
+            _db = db;
+            _userService = new UserService();
         }
 
-        public User CreateUser(DatabaseContext _db, string email, Guid SSOID)
+        public User CreateUser(string email, Guid SSOID)
         {
             try
             {
@@ -59,80 +61,44 @@ namespace ManagerLayer.UserManagement
             return user;
         }
 
-        public int DeleteUser(User user)
+        public void DeleteUser(Guid id)
         {
-            using (var _db = CreateDbContext())
-            {
-                var response = _userService.DeleteUser(_db, user.Id);
-                // will return null if user does not exist
-                return _db.SaveChanges();
-            }
-        }
-
-        public int DeleteUser(Guid id)
-        {
-            using (var _db = CreateDbContext())
-            {
-                var response = _userService.DeleteUser(_db, id);
-                return _db.SaveChanges();
-            }
+            _userService.DeleteUser(_db, id);
         }
 
         public User GetUser(Guid id)
         {
-            using (var _db = CreateDbContext())
-            {
-                return _userService.GetUser(_db, id);
-            }
+            return _userService.GetUser(_db, id); 
         }
 
         public User GetUser(string email)
         {
-            using (var _db = CreateDbContext())
+            return _userService.GetUser(_db, email);
+        }
+
+        public void DisableUser(User user)
+        {
+            ToggleUser(user, true);
+        }
+
+        public void EnableUser(User user)
+        {
+            ToggleUser(user, false);
+        }
+
+        public void ToggleUser(User user, bool? disable)
+        {
+            if (disable == null)
             {
-                return  _userService.GetUser(_db, email);
+                disable = !user.Disabled;
             }
+            user.Disabled = (bool)disable;
+            _userService.UpdateUser(_db, user);
         }
 
-        public int DisableUser(User user)
+        public void UpdateUser(User user)
         {
-            return ToggleUser(user, false);
-        }
-
-        public int EnableUser(User user)
-        {
-            return ToggleUser(user, true);
-        }
-
-        public int ToggleUser(User user, bool? enable)
-        {
-            using (var _db = CreateDbContext())
-            {
-                if (enable == null) enable = !user.Disabled;
-                user.Disabled = !(bool)enable;
-                var response = _userService.UpdateUser(_db, user);
-                return _db.SaveChanges();
-            }
-        }
-
-        public int UpdateUser(User user)
-        {
-            using (var _db = CreateDbContext())
-            {
-                var response = _userService.UpdateUser(_db, user);
-                try
-                {
-                    return _db.SaveChanges();
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    // catch error
-                    // rollback changes
-                    _db.Entry(response).CurrentValues.SetValues(_db.Entry(response).OriginalValues);
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Unchanged;
-                    return 0;
-                }
-            }
+            _userService.UpdateUser(_db, user);
         }
     }
 }

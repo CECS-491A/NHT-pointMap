@@ -76,6 +76,11 @@ namespace DataAccessLayer.Repositories
             return false;
         }
 
+        public IEnumerable<User> GetAllUsers(DatabaseContext _db)
+        {
+            return _db.Users.ToList<User>();
+        }
+
         public bool IsManagerOver(DatabaseContext _db, User user, User subject)
         {
             if (subject == null || subject.ManagerId == null || user == null) return false;

@@ -1,9 +1,10 @@
 <template>
-  <div class='HelloWorld'>
-  <h1 v-if="msg != null">{{msg}}</h1>
-  <div id="loader" v-else> 
-    <BeatLoader/>
-  </div>
+  <div class='HelloWorld'> 
+    <img src="../assets/logo.png" id='logo'>
+    <h1 v-if="msg != null">{{msg}}</h1>
+      <div id="loader" v-else> 
+        <BeatLoader/>
+      </div>
   </div>
 </template>
 
@@ -25,7 +26,7 @@ export default {
   mounted () {
 
     axios
-      .get('http://pointmap.me:8080/api/helloworld')
+      .get('https://api.pointmap.net/api/helloworld')
       .then((response) => {
           let res = response.data.toString();
           this.msg = res
@@ -36,6 +37,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+#logo{
+  width: 30%;
+  height: 30%
+}
+
 h3 {
   margin: 40px 0 0;
 }

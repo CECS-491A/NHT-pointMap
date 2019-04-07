@@ -54,6 +54,11 @@ namespace ServiceLayer.Services
             return _UserManagementRepo.UpdateUser(_db, user);
         }
 
+        public IEnumerable<User> GetAllUsers(DatabaseContext _db)
+        {
+            return _UserManagementRepo.GetAllUsers(_db);
+        }
+
         public bool IsManagerOver(DatabaseContext _db, User user, User subject)
         {
             return _UserManagementRepo.IsManagerOver(_db, user, subject);
