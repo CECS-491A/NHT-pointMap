@@ -31,4 +31,21 @@ namespace WebApi_PointMap.Models
     {
         public string RedirectURI { get; set; }
     }
+
+    public class LogoutDTO
+    {
+        [Required]
+        public string token { get; set; }
+        [Required]
+        public string Email { get; set; }
+        [Required]
+        public long Timestamp { get; set; }
+
+
+    }
+
+    public class LogoutResponseDTO
+    {
+        public string RedirectURI { get; set; }
+    }
 }
