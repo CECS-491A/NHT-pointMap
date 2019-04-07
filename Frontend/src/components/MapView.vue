@@ -27,7 +27,7 @@
 
 
 <script>
-import pointService from '../services/pointServices'
+import {getPoints} from '../services/pointServices'
 
 export default {
   name: "MapView",
@@ -44,12 +44,16 @@ export default {
 
   mounted() {
     this.geolocate();
+    this.getToken();
   },
 
   methods: {
     // receives a place object via the autocomplete component
     setPlace(place) {
       this.currentPlace = place;
+    },
+    getToken(){
+        localStorage.setItem('token', this.$route.query.token);
     },
     addMarker() {
       if (this.currentPlace) {
@@ -64,7 +68,7 @@ export default {
       }
     },
     getPoints(){
-        let points = pointService.getPoints(10,11,-11,-10)
+        let points = pointService.getPoints(token, 10,11,-11,-10)
     },
     geolocate: function() {
       navigator.geolocation.getCurrentPosition(position => {

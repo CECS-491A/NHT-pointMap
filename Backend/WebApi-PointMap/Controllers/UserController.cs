@@ -12,12 +12,14 @@ using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
 using System.Web.Http.Controllers;
 using static ServiceLayer.Services.ExceptionService;
+using ManagerLayer.UserManagement;
 
 namespace WebApi_PointMap.Controllers
 {
     public class UserController : ApiController
     {
         UserLoginManager _userLoginManager;
+        UserManagementManager _userManagementManager;
 
         // POST api/user/login
         [HttpPost]
@@ -64,11 +66,9 @@ namespace WebApi_PointMap.Controllers
                     return Content((HttpStatusCode)400, ex.Message);
                 }
 
-                String referrerHomeUrl = Request.Headers.Referrer?.GetLeftPart(UriPartial.Authority);
-
                 LoginResponseDTO response = new LoginResponseDTO
                 {
-                    RedirectURI = referrerHomeUrl + "/#/dashboard/token?=" + loginAttempt.Token
+                    RedirectURI = "https://pointmap.net/#/mapview/token?=" + loginAttempt.Token
                 };
 
                 return Ok(response);

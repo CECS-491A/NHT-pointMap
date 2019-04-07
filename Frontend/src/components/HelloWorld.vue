@@ -25,7 +25,7 @@ export default {
   mounted () {
 
     axios
-      .get('http://pointmap.me:8080/api/helloworld')
+      .get('https://api.pointmap.net/api/helloworld')
       .then((response) => {
           let res = response.data.toString();
           this.msg = res
