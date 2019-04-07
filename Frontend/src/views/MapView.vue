@@ -1,12 +1,12 @@
 <template>
   <div>
     <div>
-      <label>
+      <label style="margin-top: 20px;margin-left:20px;border: 1px solid #ccc;">
         <gmap-autocomplete
           @place_changed="setPlace">
         </gmap-autocomplete>
-        <button @click="addMarker">Search</button>
       </label>
+      <button style="margin-top: 20px;background-color:#e7e7e7;padding:0px 25px"  @click="addMarker">Search</button>
       <br/>
     </div>
     <br>
@@ -85,5 +85,9 @@ export default {
 <style>
     #map{
         margin-bottom: 20px;
+    },
+    .search{
+      text-align: center;
+      margin-top: 50%;
     }
 </style>

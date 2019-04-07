@@ -11,6 +11,7 @@ namespace Program
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(Environment.GetEnvironmentVariable("NW_POINTMAP_DEV_DATABASE", EnvironmentVariableTarget.User));
             Console.ReadKey();
         }
     }
