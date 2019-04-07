@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ManagerLayer.UserManagement;
 using ManagerLayer.AccessControl;
 using ServiceLayer.Services;
-using ManagerLayer.Models;
+using DTO;
 using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using static ServiceLayer.Services.ExceptionService;
