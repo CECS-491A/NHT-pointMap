@@ -4,7 +4,7 @@
         bottom 
         offset-y
         transition="slide-x-transition">
-        <template v-if="false" v-slot:activator="{ on }">
+        <template v-if="true" v-slot:activator="{ on }">
             <v-btn
                 dark
                 icon
@@ -55,18 +55,16 @@ export default {
   name: 'Navbar',
   data: () => ({
       ApplicationMenuItems: [
-        { title: 'Admin Dashboard', link: "/admindashboard" }
+        {title: 'Map View', link: "/mapview"}
       ],
       UserMenuItems: [
-          {
-              title: 'Logout'
-          }
+          { title: 'Logout', link: "/logout" }
       ]
   })
 }
 </script>
 
-<style>
+<style scoped>
 .v-btn { 
     height: 40px;
     width: 40px
