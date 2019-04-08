@@ -110,10 +110,10 @@ namespace WebApi_PointMap.Controllers
             {
                 string token = headers.GetValues("token").First();
                 string managerResponse = _am.ValidateAndUpdateSession(token);
-                if(false)
+                if(managerResponse == null)
                 {
                     response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-                    response.Content = new StringContent("Request unauthorized",
+                    response.Content = new StringContent("https://kfc-sso.com/#/login",
                     Encoding.Unicode);
                 }
                 else
@@ -156,7 +156,7 @@ namespace WebApi_PointMap.Controllers
             else
             {
                 response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-                response.Content = new StringContent("Request unauthorized",
+                response.Content = new StringContent("https://kfc-sso.com/#/login",
                 Encoding.Unicode);
             }
             

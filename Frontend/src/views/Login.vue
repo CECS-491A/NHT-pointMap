@@ -29,7 +29,7 @@ export default {
     popupMessage: '',
     redirectUrl: 'https://kfc-sso.com'
   }),
-  created() {
+  mounted() {
     this.token = this.$route.query.token;
     localStorage.setItem('token', this.token);
     this.CheckUser(this.token);

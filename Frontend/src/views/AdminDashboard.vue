@@ -42,12 +42,16 @@
 import axios from 'axios'
 import UserManagement from '@/components/UserManagement.vue'
 import AppPublish from '@/components/AppPublish'
+import {checkSession} from '../services/authorizationService'
 
     export default {
         name: 'AdminDashboard',
         components: {
           UserManagement,
           AppPublish
+        },
+        mounted(){
+          checkSession();
         },
         data: () => ({
           selectedItem: 'User Management',

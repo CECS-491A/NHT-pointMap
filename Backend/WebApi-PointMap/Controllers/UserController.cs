@@ -68,7 +68,7 @@ namespace WebApi_PointMap.Controllers
 
                 LoginResponseDTO response = new LoginResponseDTO
                 {
-                    redirectURL = "https://pointmap.net/#/login/token?=" + loginAttempt.Token
+                    redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token
                 };
 
                 return Ok(response);

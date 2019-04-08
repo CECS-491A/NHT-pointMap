@@ -12,7 +12,6 @@ const GetUsers = () =>
     return axios.get(`${api_url}/users`,config)
         .then(response =>
         {
-            console.log(response);
             return response.data;
         })
         

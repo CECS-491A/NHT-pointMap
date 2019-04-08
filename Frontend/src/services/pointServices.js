@@ -11,6 +11,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
             'token': localStorage.getItem('token')
         }
     }
+
     let arr = []
     axios.get(urlString, content).then((response) => {
         let data = response.data
@@ -25,7 +26,14 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
             });
         }
         return callback(arr);
+    }).catch((err) => {
+        console.log(err);
+        if(err.response.status == 401){
+            localStorage.removeItem('token');
+            window.location.href = 'https://kfc-sso.com/#/login';
+        }
     })
+    return null;
 };
 
 export{
