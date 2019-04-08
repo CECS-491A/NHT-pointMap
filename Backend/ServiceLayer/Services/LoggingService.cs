@@ -5,6 +5,8 @@ using System.Text;
 using ServiceLayer.Interfaces;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Net.Mail;
+using System.Net;
 using DTO;
 
 namespace ServiceLayer.Services
@@ -49,7 +51,7 @@ namespace ServiceLayer.Services
                     int attempt = 1;
                     while (!result.IsSuccessStatusCode)
                     {
-                        result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
+                        result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).ConfigureAwait(false);
                         attempt++;
                         if (attempt >= 100)
                         {
@@ -65,7 +67,7 @@ namespace ServiceLayer.Services
             }
         }
 
-        private FormUrlEncodedContent getLogContent(LogRequestDTO newLog, string signature, string timestamp)
+        public FormUrlEncodedContent getLogContent(LogRequestDTO newLog, string signature, string timestamp)
         {
             var content = new FormUrlEncodedContent(new[]
                 {
@@ -81,6 +83,44 @@ namespace ServiceLayer.Services
             });
 
             return content;
+        }
+
+        public bool notifyAdmin(System.Net.HttpStatusCode notify, FormUrlEncodedContent content)
+        {
+            if (notify != System.Net.HttpStatusCode.OK)
+            {
+                var fromAddress = new MailAddress("nightwatch491@gmail.com", "Night Watch");
+                var toAddress = new MailAddress("nightwatch491@gmail.com", "Night Watch");
+                const string password = "NightWatch_123";
+                const string subject = "System Admin Logging Notification";
+                string body = "PointMap Logging Notification: \n\nStatus Code:\n" + notify +"\n\nLog Content:\n" + System.Text.Encoding.Default.GetString(content.ReadAsByteArrayAsync().Result);
+
+                SmtpClient smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    EnableSsl = true,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, password)
+                };
+                using(var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                try
+                {
+                    smtp.Send(message);
+                    return true;
+                }catch(Exception e)
+                {
+                    Console.WriteLine("Error notifying system admin due to exception {0}",
+                        e.ToString());
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
