@@ -37,9 +37,7 @@ namespace WebApi_PointMap.Models
         [Required]
         public string token { get; set; }
         [Required]
-        public string Email { get; set; }
-        [Required]
-        public long Timestamp { get; set; }
+        public string Timestamp { get; set; }
 
 
     }

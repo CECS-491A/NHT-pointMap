@@ -81,16 +81,18 @@ namespace WebApi_PointMap.Controllers
         [Route("api/user/logout")]
         public IHttpActionResult LogoutFromSSO([FromBody] LogoutDTO requestPayload)
         {
+            _userLogoutManager = new UserLogoutManager();
           
             using (var _db = new DatabaseContext())
             {
                 LogoutManagerResponseDTO logoutAttempt;
                 try
                 {
-                    logoutAttempt = _userLogoutManager.LogoutFromSSO(
+                    logoutAttempt = _userLogoutManager.LogoutFromSSO
+                    (
                         _db,
-                        requestPayload.Email,
-                        requestPayload.token);
+                        requestPayload.token
+                    );
 
                 }
                 catch (InvalidTokenSignatureException ex)

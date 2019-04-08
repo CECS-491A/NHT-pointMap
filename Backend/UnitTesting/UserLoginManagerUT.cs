@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ServiceLayer.Services.ExceptionService;
-using ManagerLayer.Login;
+using ManagerLayer.Login_Logout;
 using ManagerLayer.AccessControl;
 using DataAccessLayer.Models;
 using static UnitTesting.TestingUtils;

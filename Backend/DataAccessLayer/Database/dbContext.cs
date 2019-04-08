@@ -13,11 +13,17 @@ namespace DataAccessLayer.Database
     {
         // TODO: turn into enviornmental variables for dev and deploy
 
+        const string LOCAL_SQL_SERVER = "LAPTOP";
+        const string LOCAL_DB_NAME = "NightWatchDB";
+
         public DatabaseContext()
         {
-            var connectionString = Environment.GetEnvironmentVariable("NW_POINTMAP_DEV_DATABASE", EnvironmentVariableTarget.User);
-            this.Database.Connection.ConnectionString = connectionString;
+            this.Database.Connection.ConnectionString = string.Format(
+                "Data Source={0};Initial Catalog={1};Integrated Security=True",
+                LOCAL_SQL_SERVER, LOCAL_DB_NAME
+                );
         }
+
 
         public DbSet<User> Users { get; set; }
         public DbSet<Session> Sessions { get; set; }

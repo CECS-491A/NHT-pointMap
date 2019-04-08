@@ -92,5 +92,32 @@ namespace UnitTesting
             var contentresult = actionresult as OkNegotiatedContentResult<LoginResponseDTO>;
             Assert.IsNotNull(contentresult);
         }
+        [TestMethod]
+        public void Logout_ExistingUser()
+        {
+            var controller = new UserController();
+            var existing_user = ut.CreateUserObject();
+            var session = ut.CreateSessionObject(existing_user);
+            
+            session = ut.CreateSessionInDb(session);
+           
+
+            var endpoint = API_ROUTE_LOCAL + "/#/login";
+
+            LogoutDTO payload = new LogoutDTO
+            {
+                token = session.Token,
+                Timestamp = DateTime.UtcNow.ToString()
+            };
+
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+            IHttpActionResult actionresult = controller.LogoutFromSSO(payload);
+            Assert.IsInstanceOfType(actionresult, typeof(OkNegotiatedContentResult<LogoutResponseDTO>));
+            var contentresult = actionresult as OkNegotiatedContentResult<LogoutResponseDTO>;
+            Assert.IsNotNull(contentresult);
+        }
     }
 }
