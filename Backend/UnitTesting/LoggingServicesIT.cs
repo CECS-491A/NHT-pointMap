@@ -19,8 +19,21 @@ namespace UnitTesting
         {
             _ls = new LoggingService();
         }
-
-
+        
+        [TestMethod]
+        public void notifySystemAdminPass()
+        {
+            newLog = new LogRequestDTO();
+            newLog.email = "julianpoyo+22@gmail.com";
+            newLog.ssoUserId = "0743cd2c-fec3-4b79-a5b6-a6c52a752c71";
+            newLog.source = "testingClass";
+            newLog.user = "test123";
+            newLog.desc = "";
+            newLog.details = "testing stacktrace";
+            var content = _ls.getLogContent(newLog, "testsig", "128423");
+            bool adminNotified = _ls.notifyAdmin(System.Net.HttpStatusCode.Unauthorized, content);
+            Assert.IsTrue(adminNotified);
+        }
 
         [TestMethod]
         public void LogSyncResponse200()

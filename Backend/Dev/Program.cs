@@ -4,6 +4,8 @@ using System;
 using ManagerLayer.Logging;
 using System.Threading.Tasks;
 using System.Net.Http;
+using DataAccessLayer.Models;
+using UnitTesting;
 
 namespace Program
 {
