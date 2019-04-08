@@ -8,7 +8,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
             'maxLng': maxLng,
             'minLat': minLat,
             'maxLat': maxLat,
-            'token': localStorage.getItem('token') || 'something'
+            'token': localStorage.getItem('token')
         }
     }
     let arr = []

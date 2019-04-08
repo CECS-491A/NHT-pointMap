@@ -33,6 +33,10 @@ export default new Router({
     {
       path: '*',
       component: HelloWorld
+    },
+    {
+      path: '/login',
+      component: Login
     }
   ]
 })

@@ -71,7 +71,6 @@ export default {
     });
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
-    this.getToken();
   },
   methods:{
     geolocate: function() {
@@ -85,9 +84,6 @@ export default {
     },
     setPlace(place) {
     this.currentPlace = place;
-    },
-    getToken(){
-      localStorage.setItem('token', this.$route.query.token);
     },
     goTo() {
       if (this.currentPlace) {
