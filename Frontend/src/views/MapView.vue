@@ -1,40 +1,5 @@
 <template>
-  <!-- <div>
-    <div>
-      <label style="margin-top: 20px;margin-left:20px;border: 1px solid #ccc;">
-        <gmap-autocomplete
-          @place_changed="setPlace">
-        </gmap-autocomplete>
-      </label>
-      <button style="margin-top: 20px;background-color:#e7e7e7;padding:0px 25px"  @click="addMarker">Search</button>
-      <br/>
-    </div>
-    <br>
-    <gmap-map id="map"
-      :center="center"
-      :zoom="currentZoom"
-      @click="setZoom"
-      style="width:100%;  height: 600px;"
-    >
-      <gmap-marker
-        :key="index"
-        v-for="(m, index) in markers"
-        :position="m.position"
-        @click="center=m.position"
-      ></gmap-marker>
-    </gmap-map>
-  </div> -->
   <div>
-    <!-- <div>
-      <label style="margin-top: 20px;margin-left:20px;border: 1px solid #ccc;">
-        <gmap-autocomplete
-          @place_changed="setPlace">
-        </gmap-autocomplete>
-      </label>
-      <button style="margin-top: 20px;background-color:#e7e7e7;padding:0px 25px"  @click="goTo">Search</button>
-      <br/>
-    </div>
-    <br> -->
     <div v-on:click="requestPoints" id="map"></div>
   </div>
 </template>
