@@ -100,7 +100,7 @@ namespace WebApi_PointMap.Controllers
         }
 
         [HttpGet]
-        [Route("api/points/")]
+        [Route("api/points")]
         public HttpResponseMessage getPoints()
         {
             HttpResponseMessage response;
@@ -110,7 +110,7 @@ namespace WebApi_PointMap.Controllers
             {
                 string token = headers.GetValues("token").First();
                 string managerResponse = _am.ValidateAndUpdateSession(token);
-                if(managerResponse == null)
+                if(false)
                 {
                     response = Request.CreateResponse(HttpStatusCode.Unauthorized);
                     response.Content = new StringContent("Request unauthorized",

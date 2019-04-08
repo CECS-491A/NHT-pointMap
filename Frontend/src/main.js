@@ -7,12 +7,12 @@ import router from './router'
 
 import * as VueGoogleMaps from 'vue2-google-maps'
  
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: 'AIzaSyCFA_lSzhEva-DPU_OAVGEgQpku6DrZbps',
-    libraries: 'places',
-  },
-})
+// Vue.use(VueGoogleMaps, {
+//   load: {
+//     key: 'AIzaSyCFA_lSzhEva-DPU_OAVGEgQpku6DrZbps',
+//     libraries: 'places',
+//   },
+// })
 
 
 Vue.config.productionTip = false
