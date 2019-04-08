@@ -39,7 +39,6 @@ export default {
     });
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
-    checkSession()
   },
   methods:{
     geolocate: function() {
