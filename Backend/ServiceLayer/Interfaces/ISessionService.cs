@@ -13,5 +13,6 @@ namespace ServiceLayer.Services
         Session ValidateSession(DatabaseContext _db, string token);
         Session UpdateSession(DatabaseContext _db, Session session);
         Session ExpireSession(DatabaseContext _db, string  token);
+        Session DeleteSession(DatabaseContext _db, string token);
     }
 }
