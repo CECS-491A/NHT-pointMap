@@ -2,6 +2,7 @@
 using DataAccessLayer.Models;
 using DataAccessLayer.Repositories;
 using System;
+using System.Collections.Generic;
 
 namespace ServiceLayer.Services
 {
@@ -34,9 +35,19 @@ namespace ServiceLayer.Services
             return _SessionRepo.ExpireSession(_db, token);
         }
 
+        public Session DeleteSession(DatabaseContext _db, string token)
+        {
+            return _SessionRepo.DeleteSession(_db, token);
+        }
+
         public Session GetSession(DatabaseContext _db, string token)
         {
             return _SessionRepo.GetSession(_db, token);
+        }
+
+        public List<Session> GetSessions(DatabaseContext _db, Guid userId)
+        {
+            return _SessionRepo.GetSessions(_db, userId);
         }
     }
 }
