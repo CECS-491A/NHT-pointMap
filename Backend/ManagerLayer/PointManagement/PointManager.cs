@@ -2,6 +2,7 @@
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using System;
+using System.Collections.Generic;
 
 namespace ManagerLayer
 {
@@ -12,7 +13,6 @@ namespace ManagerLayer
 
         public PointManager()
         {
-            _db = new DatabaseContext();
             _ps = new PointService();
         }
 
@@ -59,6 +59,12 @@ namespace ManagerLayer
             Point point = _ps.DeletePoint(_db, pointId);
             _db.SaveChanges();
             return point;
+        }
+
+        public List<Point> getAllPoints(float minLat, float minLng, float maxLat, float maxLng)
+        {
+            _db = new DatabaseContext();
+            return _ps.getAllPoints(_db, minLat, minLng, maxLat, maxLng);
         }
     }
 }

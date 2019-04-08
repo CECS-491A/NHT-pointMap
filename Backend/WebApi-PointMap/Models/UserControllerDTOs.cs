@@ -29,6 +29,6 @@ namespace WebApi_PointMap.Models
 
     public class LoginResponseDTO
     {
-        public string RedirectURI { get; set; }
+        public string redirectURL { get; set; }
     }
 }

@@ -4,6 +4,7 @@ import HelloWorld from '../components/HelloWorld'
 import Login from '@/views/Login'
 import Dashboard from '../views/Dashboard'
 import AdminDashboard from '../views/AdminDashboard'
+import MapView from '../views/MapView'
 
 Vue.use(Router)
 
@@ -13,11 +14,6 @@ export default new Router({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
-    },
-    {
-        path: '/login',
-        name: 'Login',
-        component: Login
     },
     {
       path: '/dashboard',
@@ -30,8 +26,18 @@ export default new Router({
       component: AdminDashboard
     },
     {
+      path: '/mapview',
+      name: 'MapView',
+      component: MapView
+    },
+    {
       path: '*',
       component: HelloWorld
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })

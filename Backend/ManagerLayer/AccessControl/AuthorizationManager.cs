@@ -50,7 +50,7 @@ namespace ManagerLayer.AccessControl
            
         }
 
-        public string ValidateAndUpdateSession(string token, Guid userId)
+        public string ValidateAndUpdateSession(string token)
         {
             using (var _db = CreateDbContext())
             {
