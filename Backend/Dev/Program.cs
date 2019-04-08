@@ -4,6 +4,8 @@ using System;
 using ManagerLayer.Logging;
 using System.Threading.Tasks;
 using System.Net.Http;
+using DataAccessLayer.Models;
+using UnitTesting;
 
 namespace Program
 {
@@ -11,7 +13,6 @@ namespace Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Environment.GetEnvironmentVariable("NW_POINTMAP_DEV_DATABASE", EnvironmentVariableTarget.User));
             Console.ReadKey();
         }
     }

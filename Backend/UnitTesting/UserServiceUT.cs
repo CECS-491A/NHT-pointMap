@@ -30,7 +30,6 @@ namespace UnitTesting
         {
             // Arrange
             newUser = tu.CreateUserObject();
-            Console.WriteLine(newUser.Id);
             var expected = newUser;
             using (_db = tu.CreateDataBaseContext())
             {
