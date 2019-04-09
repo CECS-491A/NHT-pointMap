@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Cors;
+using System.Web.Http.ExceptionHandling;
+using WebApi_PointMap.ErrorHandling;
+using WebApi_PointMap.Filters;
 
 namespace WebApi_PointMap
 {
@@ -27,6 +27,10 @@ namespace WebApi_PointMap
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Filters.Add(new GlobalExceptionFilter());
+
+            config.Services.Add(typeof(IExceptionLogger), new GlobalErrorLogger());
         }
     }
 }

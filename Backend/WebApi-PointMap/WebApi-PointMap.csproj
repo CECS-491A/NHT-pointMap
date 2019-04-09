@@ -110,6 +110,9 @@
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Controllers\TesterController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="ErrorHandling\GlobalErrorLogger.cs" />
+    <Compile Include="ErrorHandling\LocalErrorHandler.cs" />
+    <Compile Include="Filters\GlobalExceptionFilter.cs" />
     <Compile Include="Controllers\UserManagementController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
