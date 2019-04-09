@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DataAccessLayer.Repositories
 {
@@ -58,6 +59,16 @@ namespace DataAccessLayer.Repositories
             point.UpdatedAt = DateTime.UtcNow;
             _db.Entry(point).State = EntityState.Deleted;
             return point;
+        }
+
+        public List<Point> GetAllPoints(DatabaseContext _db, float minLat, float minLng, float maxLat, float maxLng)
+        {
+            List<Point> points = _db.Points
+                .Where(p => (p.Latitude >= minLat && p.Latitude <= maxLat &&
+                p.Longitude >= minLng && p.Longitude <= maxLng)).ToList();
+            if (points == null)
+                return null;
+            return points;
         }
     }
 }

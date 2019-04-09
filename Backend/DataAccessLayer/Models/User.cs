@@ -11,6 +11,7 @@ namespace DataAccessLayer.Models
         {
             CreatedAt = DateTime.UtcNow;
             Disabled = false;
+            IsAdministrator = false;
         }
 
         [Key]
@@ -34,6 +35,9 @@ namespace DataAccessLayer.Models
         [ForeignKey("Manager")]
         public Guid? ManagerId { get; set; }
         public User Manager { get; set; }
+
+        [Required]
+        public bool IsAdministrator { get; set; }
 
         [Required]
         public bool Disabled { get; set; }

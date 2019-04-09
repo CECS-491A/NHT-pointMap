@@ -2,6 +2,13 @@
 using System;
 using System.Web.Http;
 using WebApi_PointMap.Models;
+using System.Linq;
+using System.Net.Http;
+using System.Net;
+using System.Text;
+using ManagerLayer.AccessControl;
+using System.Web.Script.Serialization;
+using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
 
@@ -10,12 +17,14 @@ namespace WebApi_PointMap.Controllers
     public class PointController : ApiController
     {
         PointManager _pm;
-        DatabaseContext _db;
+	    DatabaseContext _db;
+        AuthorizationManager _am;
 
         public PointController()
         {
             _pm = new PointManager();
-            _db = new DatabaseContext();
+            _am = new AuthorizationManager();
+	        _db = new DatabaseContext();
         }
 
         // GET api/point/get
@@ -96,6 +105,71 @@ namespace WebApi_PointMap.Controllers
             {
                 return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
             }
+        }
+
+        [HttpGet]
+        [Route("api/points")]
+        public HttpResponseMessage GetPoints()
+        {
+            HttpResponseMessage response;
+            var re = Request;
+            var headers = re.Headers;
+            if (headers.Contains("token"))
+            {
+                string token = headers.GetValues("token").First();
+                string managerResponse = _am.ValidateAndUpdateSession(token);
+                if(managerResponse == null)
+                {
+                    response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+                    response.Content = new StringContent("https://kfc-sso.com/#/login",
+                    Encoding.Unicode);
+                }
+                else
+                {
+                    if(headers.Contains("minLng") && headers.Contains("maxLng") && 
+                        headers.Contains("minLat") && headers.Contains("maxLat"))
+                    {
+                        try
+                        {
+                            float minLng = float.Parse(headers.GetValues("minLng").First());
+                            float minLat = float.Parse(headers.GetValues("minLat").First());
+                            float maxLng = float.Parse(headers.GetValues("maxLng").First());
+                            float maxLat = float.Parse(headers.GetValues("maxLat").First());
+                            var pointList = _pm.GetAllPoints(_db, minLat, minLng, maxLat, maxLng);
+                            
+                            response = Request.CreateResponse(HttpStatusCode.OK);
+                            if (pointList != null)
+                            {
+                                var jsonContent = new JavaScriptSerializer().Serialize(pointList);
+                                //Console.WriteLine("Points as Json String:\t", jsonContent.ToString());
+                                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            response = Request.CreateResponse(HttpStatusCode.BadRequest);
+                            response.Content = new StringContent("Invalid field formatting",
+                            Encoding.Unicode);
+                        }
+                    }
+                    else
+                    {
+                        response = Request.CreateResponse(HttpStatusCode.BadRequest);
+                        response.Content = new StringContent("Request Missing Required Fields",
+                        Encoding.Unicode);
+                    }
+                }
+            }
+            else
+            {
+                response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+                response.Content = new StringContent("https://kfc-sso.com/#/login",
+                Encoding.Unicode);
+            }
+            
+            return response;
+
         }
     }
 }

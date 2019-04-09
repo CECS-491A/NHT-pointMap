@@ -14,9 +14,16 @@
     "@saeris/vue-spinners": "^1.0.8",
     "axios": "^0.18.0",
     "moment": "^2.24.0",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
     "vue": "^2.5.2",
+    "vue-cli-plugin-vuetify": "^0.5.0",
     "vue-router": "^3.0.2",
-    "vuex": "^3.1.0"
+    "vue2-google-maps": "^0.10.6",
+    "vuex": "^3.1.0",
+    "vue-template-compiler": "^2.5.21",
+    "vuetify": "^1.5.7",
+    "vuetify-loader": "^1.0.5"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

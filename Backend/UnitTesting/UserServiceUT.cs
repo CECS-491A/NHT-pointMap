@@ -114,7 +114,8 @@ namespace UnitTesting
             // Act
             using (var _db = tu.CreateDataBaseContext())
             {
-                var response = _umm.CreateUser(_db, Username, Guid.NewGuid());
+                _umm = new UserManagementManager(_db);
+                var response = _umm.CreateUser(Username, Guid.NewGuid());
                 _db.SaveChanges();
                 var result = _umm.GetUser(response.Id);
 
@@ -137,7 +138,8 @@ namespace UnitTesting
             // Act
             using (var _db = tu.CreateDataBaseContext())
             {
-                var response = _umm.CreateUser(_db, email, Guid.NewGuid());
+                _umm = new UserManagementManager(_db);
+                var response = _umm.CreateUser(email, Guid.NewGuid());
 
                 // Assert 
                 //expects exception
@@ -325,13 +327,18 @@ namespace UnitTesting
             var expectedResult = true;
 
             // ACT
-            var response = _umm.DisableUser(newUser);
-            var result = _umm.GetUser(newUser.Id);
+            using (var _db = new DatabaseContext())
+            {
+                _umm = new UserManagementManager(_db);
+                _umm.DisableUser(newUser);
+                _db.SaveChanges();
+                var result = _umm.GetUser(newUser.Id);
 
-            // Assert
-            Assert.IsTrue(response == 1);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedResult, result.Disabled);
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
+           
         }
 
         [TestMethod]
@@ -343,39 +350,38 @@ namespace UnitTesting
             var expectedResult = false;
 
             // ACT
-            var response = _umm.EnableUser(newUser);
-            var result = _umm.GetUser(newUser.Id);
+            using (var _db = new DatabaseContext())
+            {
+                _umm = new UserManagementManager(_db);
+                _umm.EnableUser(newUser);
+                _db.SaveChanges();
+                var result = _umm.GetUser(newUser.Id);
 
-            // Assert
-            Assert.IsTrue(response == 1);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedResult, result.Disabled);
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
         }
 
         [TestMethod]
         public void Toggle_User_Success()
         {
             // Arrange
-            User newUser;
-            using (var _db = tu.CreateDataBaseContext())
-            {
-                newUser = tu.CreateUserObject();
-                _db.Users.Add(newUser);
-                _db.SaveChanges();
-            }
-            var expectedResponse = newUser;
-            var expectedResult = newUser.Disabled;
+            newUser = tu.CreateUserInDb();
+            var expectedResult = !newUser.Disabled;
 
             // ACT
-            var response = _umm.ToggleUser(newUser, null);
+            using (var _db = new DatabaseContext())
+            {
+                _umm = new UserManagementManager(_db);
+                _umm.ToggleUser(newUser, true);
+                _db.SaveChanges();
+                var result = _umm.GetUser(newUser.Id);
 
-            var result = _umm.GetUser(newUser.Id);
-
-            // Assert
-            Assert.IsNotNull(response);
-            Assert.IsTrue(response == 1);
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedResponse.Id, result.Id);
+                // Assert
+                Assert.IsNotNull(result);
+                Assert.AreEqual(expectedResult, result.Disabled);
+            }
         }
 
         // Check that IsUserManager returns false when checking against an unassociated user
@@ -446,6 +452,12 @@ namespace UnitTesting
             {
                 Assert.IsTrue(us.IsManagerOver(_db, indirectManager, subject));
             }
+        }
+
+        [TestMethod]
+        public void Get_All_Users_Success()
+        {
+            
         }
     }
 }

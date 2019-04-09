@@ -11,7 +11,7 @@ namespace UnitTesting
 {
     public class TestingUtils
     {
-        public string Mock_APISecret = "D078F2AFC7E59885F3B6D5196CE9DB716ED459467182A19E04B6261BBC8E36EE";
+        public string Mock_APISecret = TokenService.APISecret;
 
         public byte[] GetRandomness()
         {
@@ -105,7 +105,6 @@ namespace UnitTesting
             {
                 _db.Entry(user).State = System.Data.Entity.EntityState.Added;
                 _db.SaveChanges();
-
                 return user;
             }
         }
@@ -116,7 +115,6 @@ namespace UnitTesting
             preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
             preSignatureString += "email=" + email + ";";
             preSignatureString += "timestamp=" + timestamp + ";";
-
             HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(Mock_APISecret));
             byte[] launchPayloadBuffer = Encoding.ASCII.GetBytes(preSignatureString);
             byte[] signatureBytes = hmacsha1.ComputeHash(launchPayloadBuffer);
@@ -126,7 +124,7 @@ namespace UnitTesting
 
         public class MockLoginPayload
         {
-            public string Mock_APISecret = "D078F2AFC7E59885F3B6D5196CE9DB716ED459467182A19E04B6261BBC8E36EE";
+            public string Mock_APISecret = TokenService.APISecret;
 
             public Guid ssoUserId { get; set; }
             public string email { get; set; }
@@ -222,7 +220,7 @@ namespace UnitTesting
         {
             using (var _db = new DatabaseContext())
             {
-                _db.Sessions.Add(session);
+                _db.Entry(session).State = System.Data.Entity.EntityState.Added;
                 _db.SaveChanges();
 
                 return session;
@@ -301,10 +299,10 @@ namespace UnitTesting
 
             };
 
-            return CreateUserInDb(client);
+            return CreateClientInDb(client);
         }
 
-        public Client CreateUserInDb(Client client)
+        public Client CreateClientInDb(Client client)
         {
             using (var _db = new DatabaseContext())
             {

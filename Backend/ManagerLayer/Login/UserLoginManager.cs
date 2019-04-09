@@ -43,7 +43,7 @@ namespace ManagerLayer.Login
             }
             ////////////////////////////////////////
             
-            _userManagementManager = new UserManagementManager();
+            _userManagementManager = new UserManagementManager(_db);
             var user = _userManagementManager.GetUser(ssoID);
             // check if user does not exist
             if (user == null)
@@ -51,7 +51,7 @@ namespace ManagerLayer.Login
                 // create new user
                 try
                 {
-                    user = _userManagementManager.CreateUser(_db, Username, ssoID);
+                    user = _userManagementManager.CreateUser(Username, ssoID);
                     _db.SaveChanges();
                     newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", user.Username, "Successful registration of new User", 
