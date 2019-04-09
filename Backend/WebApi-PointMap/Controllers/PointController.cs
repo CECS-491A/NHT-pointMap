@@ -117,7 +117,7 @@ namespace WebApi_PointMap.Controllers
             if (headers.Contains("token"))
             {
                 string token = headers.GetValues("token").First();
-                string managerResponse = _am.ValidateAndUpdateSession(token);
+                string managerResponse = _am.ValidateAndUpdateSession(_db, token);
                 if(managerResponse == null)
                 {
                     response = Request.CreateResponse(HttpStatusCode.Unauthorized);

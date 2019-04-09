@@ -6,16 +6,20 @@ using System.Net.Http;
 using System.Web.Http;
 using ManagerLayer.AccessControl;
 using System.Text;
+using DataAccessLayer.Database;
+using WebApi_PointMap.ErrorHandling;
 
 namespace WebApi_PointMap.Controllers
 {
     public class SessionController : ApiController
     {
         AuthorizationManager _am;
+        DatabaseContext _db;
 
         public SessionController()
         {
             _am = new AuthorizationManager();
+            _db = new DatabaseContext();
         }
 
         [HttpGet]
@@ -27,69 +31,62 @@ namespace WebApi_PointMap.Controllers
             var headers = re.Headers;
             if (headers.Contains("token"))
             {
-                string token = headers.GetValues("token").First();
-                string managerResponse = _am.ValidateAndUpdateSession(token);
-                if (managerResponse == null)
+                try
                 {
-                    response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-                    response.Content = new StringContent("https://kfc-sso.com/#/login",
-                    Encoding.Unicode);
-                }
-                else
-                {
+                    string token = headers.GetValues("token").First();
+                    string managerResponse = _am.ValidateAndUpdateSession(_db, token);
+                    //TODO: handle null response
+                    _db.SaveChanges();
                     response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(token,
                     Encoding.Unicode);
                 }
+                catch(Exception e)
+                {
+                    return LocalErrorHandler.HandleDatabaseException(e, _db);
+                }
             }
-            else
-            {
-                response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-                response.Content = new StringContent("https://kfc-sso.com/#/login",
-                Encoding.Unicode);
-            }
+            response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+            response.Content = new StringContent("https://kfc-sso.com/#/login",
+            Encoding.Unicode);
             return response;
         }
 
         [HttpGet]
         [Route("api/logout/session")]
-        public HttpResponseMessage deleteSession()
+        public HttpResponseMessage DeleteSession()
         {
             HttpResponseMessage response;
             var re = Request;
             var headers = re.Headers;
             if (headers.Contains("token"))
             {
-                string token = headers.GetValues("token").First();
-                string managerResponse = _am.ValidateAndUpdateSession(token);
-                if (managerResponse == null)
+                try
                 {
-                    response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-                    response.Content = new StringContent("https://kfc-sso.com/#/login",
+                    string token = headers.GetValues("token").First();
+                    string managerResponse = _am.ValidateAndUpdateSession(_db, token);
+                    if (managerResponse == null)
+                    {
+                        //return 404? (no session found)
+                    }
+                    _am.DeleteSession(_db, token);
+                    _db.SaveChanges();
+
+                    token = _am.DeleteSession(_db, token);
+                    //TODO: handle null response
+                    response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Content = new StringContent(token,
                     Encoding.Unicode);
                 }
-                else
+                catch (Exception e)
                 {
-                    try
-                    {
-                        response = Request.CreateResponse(HttpStatusCode.OK);
-                        token = _am.DeleteSession(token);
-                        response.Content = new StringContent(token,
-                        Encoding.Unicode);
-                    }catch(Exception e)
-                    {
-                        response = Request.CreateResponse(HttpStatusCode.BadRequest);
-                        response.Content = new StringContent("Invalid operation",
-                        Encoding.Unicode);
-                    }
+                    return LocalErrorHandler.HandleDatabaseException(e, _db);
                 }
             }
-            else
-            {
-                response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-                response.Content = new StringContent("https://kfc-sso.com/#/login",
-                Encoding.Unicode);
-            }
+
+            response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+            response.Content = new StringContent("https://kfc-sso.com/#/login",
+            Encoding.Unicode);
             return response;
         }
     }

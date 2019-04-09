@@ -3,8 +3,8 @@ using System;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
-using DTO.DTO;
 using System.Net.Http;
+using System.Net;
 
 namespace WebApi_PointMap.ErrorHandling
 {
@@ -12,38 +12,26 @@ namespace WebApi_PointMap.ErrorHandling
     {
         public static HttpResponseMessage HandleDatabaseException(Exception e, DatabaseContext _db)
         {
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
             if (e is DbUpdateException || e is DbEntityValidationException)
             {
                 RevertDatabaseChanges(_db);
 
-                var messageDTO = new RecoverableErrorDTO
-                {
-                    Message = "The database operation failed."
-                };
-
-                HttpResponseMessage httpResponse = new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError);
-                httpResponse.Content = new StringContent(messageDTO.Message);
-
-                return httpResponse;
+                httpResponse.StatusCode = HttpStatusCode.InternalServerError;
+                httpResponse.Content = new StringContent("The database operation failed.");
             }
             else if( e is ArgumentOutOfRangeException)
             {
                 RevertDatabaseChanges(_db);
 
-                var messageDTO = new RecoverableErrorDTO
-                {
-                    Message = "Longitude/Latitude value invalid."
-                };
-
-                HttpResponseMessage httpResponse = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest);
-                httpResponse.Content = new StringContent(messageDTO.Message);
-
-                return httpResponse;
+                httpResponse.StatusCode = HttpStatusCode.BadRequest;
+                httpResponse.Content = new StringContent("Longitude/Latitude value invalid.");
             }
             else
             {
                 throw new Exception("An unknown error occured", e);
             }
+            return httpResponse;
         }
 
         private static void RevertDatabaseChanges(DatabaseContext _db)

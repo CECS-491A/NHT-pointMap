@@ -50,56 +50,38 @@ namespace ManagerLayer.AccessControl
            
         }
 
-        public string ValidateAndUpdateSession(string token)
+        public string ValidateAndUpdateSession(DatabaseContext _db, string token)
         {
-            using (var _db = CreateDbContext())
+            Session response = _sessionService.ValidateSession(_db, token);
+
+            if(response != null)
             {
-                Session response = _sessionService.ValidateSession(_db, token);
+                response = _sessionService.UpdateSession(_db, response);
+            }
 
-                if(response != null)
-                {
-                    response = _sessionService.UpdateSession(_db, response);
-                }
-                else
-                {
-                    return null;
-                }
+            return null;
+        }
 
-                try
-                {
-                    _db.SaveChanges();
-                    return response.Token;
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    //catch error
-                    // detach session attempted to be created from the db context - rollback
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Detached;
-                }
+        public string ExpireSession(DatabaseContext _db, string token)
+        {
+            Session response = _sessionService.ExpireSession(_db, token);
+
+            if(response != null)
+            {
+                return response.Token;
             }
             return null;
         }
 
-        public string ExpireSession(string token)
+        public string DeleteSession(DatabaseContext _db, string token)
         {
-            using (var _db = new DatabaseContext())
-            {
-                Session response = _sessionService.ExpireSession(_db, token);
+            Session response = _sessionService.DeleteSession(_db, token);
 
-                _db.SaveChanges();
+            if (response != null)
+            {
                 return response.Token;
             }
-        }
-
-        public string DeleteSession(string token)
-        {
-            using (var _db = new DatabaseContext())
-            {
-                Session response = _sessionService.DeleteSession(_db, token);
-
-                _db.SaveChanges();
-                return response.Token;
-            }
+            return null;
         }
     }
 }

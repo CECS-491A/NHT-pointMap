@@ -16,6 +16,10 @@ namespace WebApi_PointMap.Controllers
 {
     public class UserManagementController : ApiController
     {
+        DatabaseContext _db;
+        SessionService _sessionService;
+        UserManagementManager _userManager;
+
         [HttpGet]
         [Route("users")]
         public IHttpActionResult GetAllUsers()
@@ -25,40 +29,38 @@ namespace WebApi_PointMap.Controllers
             {
                 return Content(HttpStatusCode.Unauthorized, "No token provided.");
             }
-            using (var _db = new DatabaseContext())
+            _db = new DatabaseContext();
+            try
             {
-                try
+                _sessionService = new SessionService();
+                var session = _sessionService.ValidateSession(_db, token);
+                if (session == null)
                 {
-                    SessionService _sessionService = new SessionService();
-                    var session = _sessionService.ValidateSession(_db, token);
-                    if (session == null)
-                    {
-                        return Content(HttpStatusCode.NotFound, "Session is no longer available.");
-                    }
-                    UserManagementManager _userManager = new UserManagementManager(_db);
-                    var user = _userManager.GetUser(session.UserId);
-                    if (user.IsAdministrator)
-                    {
-                        var users = _db.Users
-                        .Select(u => new
-                        {
-                            id = u.Id,
-                            username = u.Username,
-                            manager = u.ManagerId,
-                            city = u.City,
-                            state = u.State,
-                            country = u.Country,
-                            disabled = u.Disabled,
-                            isAdmin = u.IsAdministrator
-                        }).ToList();
-                            return Ok(users);
-                    }
-                    return Content(HttpStatusCode.Unauthorized, user);
+                    return Content(HttpStatusCode.NotFound, "Session is no longer available.");
                 }
-                catch (Exception)
+                _userManager = new UserManagementManager(_db);
+                var user = _userManager.GetUser(session.UserId);
+                if (user.IsAdministrator)
                 {
-                    return InternalServerError();
+                    var users = _db.Users
+                    .Select(u => new
+                    {
+                        id = u.Id,
+                        username = u.Username,
+                        manager = u.ManagerId,
+                        city = u.City,
+                        state = u.State,
+                        country = u.Country,
+                        disabled = u.Disabled,
+                        isAdmin = u.IsAdministrator
+                    }).ToList();
+                    return Ok(users);
                 }
+                return Content(HttpStatusCode.Unauthorized, user);
+            }
+            catch (Exception)
+            {
+                return InternalServerError();
             }
         }
 

@@ -2,17 +2,11 @@
 using ManagerLayer.Login;
 using DTO;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using System.Web.Http.Cors;
 using WebApi_PointMap.Models;
-using System.Web.Http.Controllers;
-using static ServiceLayer.Services.ExceptionService;
 using ManagerLayer.UserManagement;
+using WebApi_PointMap.ErrorHandling;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -20,6 +14,7 @@ namespace WebApi_PointMap.Controllers
     {
         UserLoginManager _userLoginManager;
         UserManagementManager _userManagementManager;
+        DatabaseContext _db;
 
         // POST api/user/login
         [HttpPost]
@@ -36,35 +31,15 @@ namespace WebApi_PointMap.Controllers
             {
                 // check if valid SSO ID format
                 userSSOID = Guid.Parse(requestPayload.SSOUserId);
-            }
-            catch (Exception)
-            {
-                return Content((HttpStatusCode)400, "Invalid SSO ID");
-            }
-            using (var _db = new DatabaseContext())
-            {
+                _db = new DatabaseContext();
+
                 LoginManagerResponseDTO loginAttempt;
-                try
-                {
-                    loginAttempt = _userLoginManager.LoginFromSSO(
-                        _db,
-                        requestPayload.Email,
-                        userSSOID,
-                        requestPayload.Signature,
-                        requestPayload.PreSignatureString());
-                }
-                catch (InvalidTokenSignatureException ex)
-                {
-                    return Content((HttpStatusCode)401, ex.Message);
-                }
-                catch (InvalidDbOperationException ex)
-                {
-                    return Content((HttpStatusCode)500, ex.Message);
-                }
-                catch (InvalidEmailException ex)
-                {
-                    return Content((HttpStatusCode)400, ex.Message);
-                }
+                loginAttempt = _userLoginManager.LoginFromSSO(
+                    _db,
+                    requestPayload.Email,
+                    userSSOID,
+                    requestPayload.Signature,
+                    requestPayload.PreSignatureString());
 
                 LoginResponseDTO response = new LoginResponseDTO
                 {
@@ -72,6 +47,10 @@ namespace WebApi_PointMap.Controllers
                 };
 
                 return Ok(response);
+            }
+            catch (Exception e)
+            {
+                return ResponseMessage(LoginErrorHandler.HandleDatabaseException(e, _db));
             }
         }
     }
