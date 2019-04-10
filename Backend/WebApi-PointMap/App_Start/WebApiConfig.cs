@@ -15,7 +15,6 @@ namespace WebApi_PointMap
             EnableCorsAttribute cors = new EnableCorsAttribute(origins: "*", headers: "*", methods: "*");
 
             // Web API configuration and services
-            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
             config.EnableCors(cors);
 
 
