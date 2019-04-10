@@ -25,5 +25,11 @@ namespace ServiceLayer.Services
             public InvalidTokenSignatureException() { }
             public InvalidTokenSignatureException(string message) : base (message) { }
         }
+
+        public class KFCSSOAPIRequestException : Exception
+        {
+            public KFCSSOAPIRequestException() { }
+            public KFCSSOAPIRequestException(string message) : base (message) { }
+        }
     }
 }

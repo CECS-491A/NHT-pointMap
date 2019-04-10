@@ -3,8 +3,10 @@ using DataAccessLayer.Models;
 using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Validation;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using static ServiceLayer.Services.ExceptionService;
@@ -100,5 +102,7 @@ namespace ManagerLayer.UserManagement
         {
             _userService.UpdateUser(_db, user);
         }
+
+       
     }
 }

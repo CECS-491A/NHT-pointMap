@@ -42,6 +42,7 @@
                 v-for="(item, i) in this.UserMenuItems"
                 :key="i"
                 v-on:click="item.action"
+                :to="{path: `${item.link}`}"
               >
                 <button>{{item.title}}</button>
             </v-list-tile>
@@ -60,7 +61,8 @@ export default {
         {title: 'Map View', link: "/mapview"}
       ],
       UserMenuItems: [
-          { title: 'Logout', action: deleteSession }
+          { title: 'Account', link: '/account'},
+          { title: 'Logout', action: deleteSession, link: '/' }
       ]
   }),
   methods:{
