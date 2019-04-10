@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using DTO.DTO;
 using ManagerLayer.AccessControl;
 using ManagerLayer.UserManagement;
 using ServiceLayer.Services;
@@ -26,10 +27,9 @@ namespace WebApi_PointMap.Controllers
         [Route("users")]
         public IHttpActionResult GetAllUsers()
         {
-            var token = GetAndCheckToken(Request, "Token");
-
             try
             {
+                var token = GetAndCheckToken(Request, "Token");
                 _db = new DatabaseContext();
 
                 var session = ValidateAndUpdateSession(_db, token);
@@ -66,17 +66,17 @@ namespace WebApi_PointMap.Controllers
         [Route("users/{managerId}")]
         public IHttpActionResult GetUsersUnderManager(string managerId)
         {
-            if (managerId == null)
-            {
-                throw new FormatException("Invalid payload.");
-            }
-
-            var ManagerId = ParseAndCheckId(managerId);
-
-            _db = new DatabaseContext();
-
             try
             {
+                if (managerId == null)
+                {
+                    throw new FormatException("Invalid payload.");
+                }
+
+                var ManagerId = ParseAndCheckId(managerId);
+
+                _db = new DatabaseContext();
+
                 var users = _db.Users
                     .Where(u => u.Manager.Id == ManagerId)
                     .Select(u => new {
@@ -101,10 +101,10 @@ namespace WebApi_PointMap.Controllers
         [Route("user")]
         public IHttpActionResult GetUser()
         {
-            var token = GetAndCheckToken(Request, "Token");
-
             try
             {
+                var token = GetAndCheckToken(Request, "Token");
+
                 _db = new DatabaseContext();
 
                 var session = ValidateAndUpdateSession(_db, token);
@@ -130,20 +130,19 @@ namespace WebApi_PointMap.Controllers
         [Route("user/delete/{userId}")]
         public IHttpActionResult DeleteUser(string userId)
         {
-            var token = GetAndCheckToken(Request, "Token");
-
             try
             {
+                var token = GetAndCheckToken(Request, "Token");
+                _db = new DatabaseContext();
+
+                var session = ValidateAndUpdateSession(_db, token);
+
                 if (userId == null)
                 {
                     throw new FormatException("Invalid payload.");
                 }
 
                 var UserId = ParseAndCheckId(userId);
-
-                _db = new DatabaseContext();
-
-                var session = ValidateAndUpdateSession(_db, token);
 
                 UserManagementManager _userManager = new UserManagementManager(_db);
                 var user = _userManager.GetUser(session.UserId);
@@ -216,17 +215,16 @@ namespace WebApi_PointMap.Controllers
         [Route("user/update")]
         public IHttpActionResult UpdateUser([FromBody] UpdateUserRequestDTO payload)
         {
-            var token = GetAndCheckToken(Request, "Token");
-            if (!ModelState.IsValid || payload == null)
-            {
-                return Content((HttpStatusCode)412, ModelState);
-            }
-
             try
             {
+                var token = GetAndCheckToken(Request, "Token");
+                if (!ModelState.IsValid || payload == null)
+                {
+                    return Content((HttpStatusCode)412, ModelState);
+                }
                 _db = new DatabaseContext();
 
-                var UserId = ParseAndCheckId(payload.id);
+                var UserId = ParseAndCheckId(payload.Id);
 
                 var session = ValidateAndUpdateSession(_db, token);
 
@@ -239,18 +237,17 @@ namespace WebApi_PointMap.Controllers
                     {
                         throw new NullReferenceException("User does not exist.");
                     }
-                    user.City = payload.city;
-                    user.State = payload.state;
-                    user.Country = payload.country;
-                    user.Disabled = payload.disabled;
-                    user.IsAdministrator = payload.isAdmin;
+                    user.City = payload.City;
+                    user.State = payload.State;
+                    user.Country = payload.Country;
+                    user.Disabled = payload.Disabled;
+                    user.IsAdministrator = payload.IsAdmin;
                     user.ManagerId = null;
-                    if (payload.manager != null)
+                    if (payload.Manager != null)
                     {
-                        var ManagerId = Guid.Parse(payload.manager);
+                        var ManagerId = Guid.Parse(payload.Manager);
                         user.ManagerId = ManagerId;
                     }
-
 
                     _userManager.UpdateUser(user);
                     _db.SaveChanges();
@@ -285,20 +282,6 @@ namespace WebApi_PointMap.Controllers
                 nameFilter = headerValues.FirstOrDefault();
             }
             return nameFilter;
-        }
-
-        public class UpdateUserRequestDTO
-        {
-            [Required]
-            public string id { get; set; }
-            public string city { get; set; }
-            public string state { get; set; }
-            public string country { get; set; }
-            public string manager { get; set; }
-            [Required]
-            public bool isAdmin { get; set; }
-            [Required]
-            public bool disabled { get; set; }
         }
 
         private Guid ParseAndCheckId(string id)

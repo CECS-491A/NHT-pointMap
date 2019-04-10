@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Database;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -34,7 +35,14 @@ namespace WebApi_PointMap.ErrorHandling
             }
             else if (e is NullReferenceException)
             {
-                httpResponse.StatusCode = HttpStatusCode.NotFound;
+                if(string.Equals(e.Message, "User does not exist."))
+                {
+                    httpResponse.StatusCode = HttpStatusCode.NotFound;
+                }
+                else
+                {
+                    httpResponse.StatusCode = HttpStatusCode.Unauthorized;
+                }
                 httpResponse.Content = new StringContent(e.Message);
             }
             else if (e is InvalidTokenSignatureException)

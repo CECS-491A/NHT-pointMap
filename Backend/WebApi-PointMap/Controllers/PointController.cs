@@ -49,7 +49,7 @@ namespace WebApi_PointMap.Controllers
 
         //Post api/point
         [HttpPost]
-        [Route("api/point/")]
+        [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointPOST pointPost)
         {
             try
