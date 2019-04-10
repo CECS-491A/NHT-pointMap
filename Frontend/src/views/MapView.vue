@@ -7,6 +7,8 @@
 <script>
 import {getPoints} from '../services/pointServices'
 import {gmapApi} from 'vue2-google-maps'
+import {checkSession} from '../services/authorizationService'
+
 
 export default {
   name: "MapView",
@@ -30,6 +32,7 @@ export default {
     }
   },
   mounted: function () {
+    checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom
@@ -81,20 +84,22 @@ export default {
       }
 
       this.points = getPoints(this.mapBorder.minLng, this.mapBorder.maxLng, this.mapBorder.minLat, this.mapBorder.maxLat, (arr) => {
-        this.markers = []
-        this.points = arr
-        this.points.forEach(point => {
-          this.marker = new google.maps.Marker({
-            position: 
-            {
-              lat: point.Latitude, 
-              lng: point.Longitude
-            },
-            map: this.map,
-            title: point.Id
-          });
-          this.markers.push(this.marker)
-        })
+        if(arr != null){
+          this.markers = []
+          this.points = arr
+          this.points.forEach(point => {
+            this.marker = new google.maps.Marker({
+              position: 
+              {
+                lat: point.Latitude, 
+                lng: point.Longitude
+              },
+              map: this.map,
+              title: point.Id
+            });
+            this.markers.push(this.marker)
+          })
+        }
       });
     }
   }  

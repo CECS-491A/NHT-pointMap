@@ -41,9 +41,9 @@
             <v-list-tile
                 v-for="(item, i) in this.UserMenuItems"
                 :key="i"
-                @click=""
+                v-on:click="item.action"
               >
-                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                <button>{{item.title}}</button>
             </v-list-tile>
         </v-list>
     </v-menu>
@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import {deleteSession} from '../services/authorizationService'
+
 export default {
   name: 'Navbar',
   data: () => ({
@@ -58,9 +60,14 @@ export default {
         {title: 'Map View', link: "/mapview"}
       ],
       UserMenuItems: [
-          { title: 'Logout', link: "/logout" }
+          { title: 'Logout', action: deleteSession }
       ]
-  })
+  }),
+  methods:{
+    logout(){
+      deleteSession()
+    }
+  }
 }
 </script>
 

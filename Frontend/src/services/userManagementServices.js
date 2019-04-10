@@ -1,7 +1,7 @@
 import axios from "axios";
 import { api_url } from "@/const.js";
 
-const config = {
+let config = {
   headers: {
     Token: localStorage.getItem("token")
   }
@@ -9,10 +9,10 @@ const config = {
 
 const GetUsers = () =>
 {
+    config.headers.Token = localStorage.getItem("token");
     return axios.get(`${api_url}/users`,config)
         .then(response =>
         {
-            console.log(response);
             return response.data;
         })
         
@@ -20,6 +20,7 @@ const GetUsers = () =>
 
 const UpdateUser = (user) =>
 {
+    config.headers.Token = localStorage.getItem("token");
     return axios.put(`${api_url}/user/update`, user, config)
         .then(response =>
         {
@@ -29,6 +30,7 @@ const UpdateUser = (user) =>
 
 const DeleteUser = (userId) =>
 {
+    config.headers.Token = localStorage.getItem("token");
     return axios.delete(`${api_url}/user/delete/${userId}`, config)
         .then(response =>
         {
@@ -42,6 +44,7 @@ const DeleteUser = (userId) =>
 
 const GetUser = () =>
 {
+    config.headers.Token = localStorage.getItem("token");
     return axios.get(`${api_url}/user`, config)
         .then(response =>
         {

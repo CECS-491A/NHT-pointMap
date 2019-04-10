@@ -3,6 +3,7 @@ using DataAccessLayer.Database;
 using System;
 using System.Data.Entity;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace DataAccessLayer.Repositories
 {
@@ -44,6 +45,17 @@ namespace DataAccessLayer.Repositories
             }
         }
 
+        public Session DeleteSession(DatabaseContext _db, string token)
+        {
+            var session = _db.Sessions
+                .Where(s => s.Token == token)
+                .FirstOrDefault<Session>();
+            if (session == null)
+                return null;
+            _db.Entry(session).State = EntityState.Deleted;
+            return session;
+        }
+
         public Session UpdateSession(DatabaseContext _db, Session session)
         {
             session.UpdatedAt = DateTime.UtcNow;
@@ -62,6 +74,14 @@ namespace DataAccessLayer.Repositories
             session.ExpiresAt = DateTime.UtcNow;
             _db.Entry(session).State = EntityState.Modified;
             return session;
+        }
+
+        public List<Session> GetSessions(DatabaseContext _db, Guid userId)
+        {
+            var sessions = _db.Sessions
+                .Where(s => s.UserId == userId)
+                .ToList();
+            return sessions;
         }
     }
 }

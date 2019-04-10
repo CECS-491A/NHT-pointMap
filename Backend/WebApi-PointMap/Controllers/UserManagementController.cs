@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Database;
+using DataAccessLayer.Models;
 using ManagerLayer.UserManagement;
 using ServiceLayer.Services;
 using System;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using WebApi_PointMap.Models;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
@@ -180,6 +182,76 @@ namespace WebApi_PointMap.Controllers
                         return Ok("User was deleted");
                     }
                     return Unauthorized();
+                }
+                catch (Exception ex)
+                {
+                    return Content((HttpStatusCode)500, ex.Message);
+                }
+            }
+        }
+
+        [HttpPost]
+        [Route("sso/user/delete")]
+        public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
+        {
+            if (!ModelState.IsValid || requestPayload == null)
+            {
+                return Content((HttpStatusCode)412, ModelState);
+            }
+            Guid userSSOID;
+            try
+            {
+                // check if valid SSO ID format
+                userSSOID = Guid.Parse(requestPayload.SSOUserId);
+                // check valid signature
+                TokenService _tokenService = new TokenService();
+                if (!_tokenService.isValidSignature(requestPayload.PreSignatureString(), requestPayload.Signature))
+                {
+                    throw new InvalidTokenSignatureException("Session is not valid.");
+                }
+            }
+            catch (InvalidTokenSignatureException ex)
+            {
+                return Content((HttpStatusCode)401, ex.Message);
+            }
+            catch (Exception)
+            {
+                return Content((HttpStatusCode)400, "Invalid SSO ID");
+            }
+            using (var _db = new DatabaseContext())
+            {
+                List<Session> sessions = null;
+                User user = null;
+                try
+                {
+                    var _userManagementManager = new UserManagementManager(_db);
+                    user = _userManagementManager.GetUser(userSSOID);
+                    if (user == null)
+                    {
+                        return Ok("User was never registered.");
+                    }
+                    var _sessionService = new SessionService();
+                    sessions = _sessionService.GetSessions(_db, userSSOID);
+                    if (sessions != null)
+                    {
+                        foreach (var sess in sessions)
+                        {
+                            _sessionService.DeleteSession(_db, sess.Token);
+                        }
+                    }
+                    UserManagementManager _userManager = new UserManagementManager(_db);
+                    _userManager.DeleteUser(userSSOID);
+                    _db.SaveChanges();
+                    return Ok("User was deleted");
+                }
+                catch (InvalidDbOperationException)
+                {
+                    _db.Entry(user).State = System.Data.Entity.EntityState.Detached;
+                    if (sessions != null)
+                    {
+                        _db.Entry(sessions).State = System.Data.Entity.EntityState.Detached;
+                    }
+                    return Content(HttpStatusCode.InternalServerError, "Internal Server Error");
                 }
                 catch (Exception ex)
                 {
