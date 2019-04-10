@@ -117,8 +117,8 @@ namespace WebApi_PointMap.Controllers
             if (headers.Contains("token"))
             {
                 string token = headers.GetValues("token").First();
-                string managerResponse = _am.ValidateAndUpdateSession(_db, token);
-                if(managerResponse == null)
+                var session = _am.ValidateAndUpdateSession(_db, token);
+                if(session == null)
                 {
                     response = Request.CreateResponse(HttpStatusCode.Unauthorized);
                     response.Content = new StringContent("https://kfc-sso.com/#/login",

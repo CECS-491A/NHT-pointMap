@@ -60,7 +60,7 @@ namespace UnitTesting
 
             controller.Request = request;
 
-            var response = controller.getPoints();
+            var response = controller.GetPoints();
             Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
         }
     }

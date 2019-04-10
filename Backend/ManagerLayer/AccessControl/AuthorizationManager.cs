@@ -16,14 +16,17 @@ namespace ManagerLayer.AccessControl
         private ISessionService _sessionService;
         private IUserService _userService;
 
-        private DatabaseContext CreateDbContext()
-        {
-            return new DatabaseContext();
-        }
+        private DatabaseContext _db;
 
         public AuthorizationManager()
         {
              _sessionService = new SessionService();
+        }
+
+        public AuthorizationManager(DatabaseContext _dbc)
+        {
+            _db = _dbc;
+            _sessionService = new SessionService();
         }
 
         public string GenerateSessionToken()
@@ -50,13 +53,14 @@ namespace ManagerLayer.AccessControl
            
         }
 
-        public string ValidateAndUpdateSession(DatabaseContext _db, string token)
+        public Session ValidateAndUpdateSession(DatabaseContext _db, string token)
         {
             Session response = _sessionService.ValidateSession(_db, token);
 
             if(response != null)
             {
                 response = _sessionService.UpdateSession(_db, response);
+                return response;
             }
 
             return null;

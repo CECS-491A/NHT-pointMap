@@ -24,7 +24,7 @@ namespace WebApi_PointMap.Controllers
 
         [HttpGet]
         [Route("api/session")]
-        public HttpResponseMessage validateSession()
+        public HttpResponseMessage ValidateSession()
         {
             HttpResponseMessage response;
             var re = Request;
@@ -34,12 +34,13 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     string token = headers.GetValues("token").First();
-                    string managerResponse = _am.ValidateAndUpdateSession(_db, token);
-                    //TODO: handle null response
+                    var session = _am.ValidateAndUpdateSession(_db, token);
+                    //TODO: deal with null session
                     _db.SaveChanges();
                     response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(token,
                     Encoding.Unicode);
+                    return response;
                 }
                 catch(Exception e)
                 {
@@ -64,8 +65,8 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     string token = headers.GetValues("token").First();
-                    string managerResponse = _am.ValidateAndUpdateSession(_db, token);
-                    if (managerResponse == null)
+                    var session = _am.ValidateAndUpdateSession(_db, token);
+                    if (session == null)
                     {
                         //return 404? (no session found)
                     }
