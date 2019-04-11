@@ -8,7 +8,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
             'maxLng': maxLng,
             'minLat': minLat,
             'maxLat': maxLat,
-            'token': 'A5D010EB0EB20E6EC842067715775D44E365EAE91D7284F8F0F8D69AF4C3B092'
+            'token': localStorage.getItem('token')
         }
     }
 
