@@ -55,6 +55,7 @@
 <script>
 
 import {getPoint} from '../services/pointServices'
+import { checkSession } from '../services/authorizationService';
 
 export default {
   name: 'PointDetails',
@@ -92,6 +93,7 @@ export default {
      },
   },
    beforeMount: function() {
+      checkSession()
       this.getPointDetails()
   }
 }

@@ -36,7 +36,7 @@ export default {
     }
   },
   mounted: function () {
-    //checkSession()
+    checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom
