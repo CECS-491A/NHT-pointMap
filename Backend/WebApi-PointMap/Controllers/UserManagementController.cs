@@ -58,7 +58,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(AuthorizationErrorHandler.HandleException(e, _db));
+                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -93,7 +93,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(AuthorizationErrorHandler.HandleException(e, _db));
+                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -122,7 +122,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(AuthorizationErrorHandler.HandleException(e, _db));
+                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -157,7 +157,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(AuthorizationErrorHandler.HandleException(e, _db));
+                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -207,7 +207,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(AuthorizationErrorHandler.HandleException(e, _db));
+                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -258,7 +258,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(AuthorizationErrorHandler.HandleException(e, _db));
+                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
         }
 

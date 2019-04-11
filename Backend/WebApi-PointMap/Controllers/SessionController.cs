@@ -44,7 +44,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch(Exception e)
                 {
-                    return LocalErrorHandler.HandleDatabaseException(e, _db);
+                    return DatabaseErrorHandler.HandleException(e, _db);
                 }
             }
             response = Request.CreateResponse(HttpStatusCode.Unauthorized);
@@ -81,7 +81,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    return LocalErrorHandler.HandleDatabaseException(e, _db);
+                    return DatabaseErrorHandler.HandleException(e, _db);
                 }
             }
 

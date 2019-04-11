@@ -19,6 +19,24 @@ namespace DataAccessLayer.Database
             this.Database.Connection.ConnectionString = connectionString;
         }
 
+        public void RevertDatabaseChanges(DatabaseContext _db)
+        {
+            foreach (var entry in _db.ChangeTracker.Entries())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Modified:
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.State = EntityState.Unchanged;
+                        break;
+                    case EntityState.Added:
+                        entry.State = EntityState.Detached;
+                        break;
+                }
+            }
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Session> Sessions { get; set; }
         public DbSet<Service> Services { get; set; }

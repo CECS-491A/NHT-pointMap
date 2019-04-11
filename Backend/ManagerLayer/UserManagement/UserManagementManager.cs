@@ -34,9 +34,9 @@ namespace ManagerLayer.UserManagement
             {
                 var useremail = new System.Net.Mail.MailAddress(email);
             }
-            catch (Exception)
+            catch (FormatException e)
             {
-                throw new InvalidEmailException("Invalid Email");
+                throw new InvalidEmailException("Invalid Email", e);
             }
             _passwordService = new PasswordService();
             DateTime timestamp = DateTime.UtcNow;
@@ -50,14 +50,7 @@ namespace ManagerLayer.UserManagement
                 UpdatedAt = timestamp,
                 Id = SSOID
             };
-            try
-            {
-                _userService.CreateUser(_db, user);
-            }
-            catch (Exception)
-            {
-                throw new InvalidDbOperationException();
-            }
+             _userService.CreateUser(_db, user);
             return user;
         }
 

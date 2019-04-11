@@ -12,6 +12,7 @@ namespace ServiceLayer.Services
         {
             public InvalidEmailException() { }
             public InvalidEmailException(string message) : base(message) { }
+            public InvalidEmailException(string message, Exception innerException) : base(message, innerException) { }
         }
 
         public class InvalidDbOperationException : Exception
@@ -24,6 +25,13 @@ namespace ServiceLayer.Services
         {
             public InvalidTokenSignatureException() { }
             public InvalidTokenSignatureException(string message) : base (message) { }
+        }
+
+        public class InvalidPointException : Exception
+        {
+            public InvalidPointException() { }
+            public InvalidPointException(string message) : base(message) { }
+            public InvalidPointException(string message, Exception innerException) : base(message, innerException) { }
         }
     }
 }

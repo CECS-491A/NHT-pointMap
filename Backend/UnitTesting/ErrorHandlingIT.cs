@@ -208,7 +208,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("Session is not valid.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual("Login failed.", result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]

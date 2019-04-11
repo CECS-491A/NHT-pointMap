@@ -43,7 +43,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch(Exception e)
             {
-                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
+                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -62,7 +62,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch(Exception e)
             {
-                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
+                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -84,7 +84,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
+                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -103,7 +103,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
+                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
             }
         }
 

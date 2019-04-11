@@ -1,29 +1,32 @@
 ﻿using DataAccessLayer.Database;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.ErrorHandling
 {
-    public class LoginErrorHandler
+    public class UserErrorHandler
     {
-        public static HttpResponseMessage HandleDatabaseException(Exception e, DatabaseContext _db)
+        public static HttpResponseMessage HandleException(Exception e, DatabaseContext _db)
         {
             HttpResponseMessage httpResponse = new HttpResponseMessage();
-            if (e is FormatException || e is InvalidEmailException)
-            {
-                httpResponse.StatusCode = HttpStatusCode.BadRequest;
-                httpResponse.Content = new StringContent("Invalid credentials.");
-            }
-            else if (e is InvalidTokenSignatureException)
+            if (e is InvalidTokenSignatureException)
             {
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
                 httpResponse.Content = new StringContent("Login failed.");
             }
+            else if (e is InvalidEmailException)
+            {
+                httpResponse.StatusCode = HttpStatusCode.BadRequest;
+                httpResponse.Content = new StringContent("Invalid email.");
+            }
             else
             {
-                httpResponse = DatabaseErrorHandler.HandleException(e, _db);
+                httpResponse = AuthorizationErrorHandler.HandleException(e, _db);
             }
             return httpResponse;
         }

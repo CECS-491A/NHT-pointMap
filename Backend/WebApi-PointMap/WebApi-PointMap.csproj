@@ -112,8 +112,10 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ErrorHandling\AuthorizationErrorHandler.cs" />
     <Compile Include="ErrorHandling\GlobalErrorLogger.cs" />
-    <Compile Include="ErrorHandling\LocalErrorHandler.cs" />
+    <Compile Include="ErrorHandling\DatabaseErrorHandler.cs" />
     <Compile Include="ErrorHandling\LoginErrorHandler.cs" />
+    <Compile Include="ErrorHandling\PointErrorHandler.cs" />
+    <Compile Include="ErrorHandling\UserErrorHandler.cs" />
     <Compile Include="Filters\GlobalExceptionFilter.cs" />
     <Compile Include="Controllers\UserManagementController.cs" />
     <Compile Include="Global.asax.cs">

@@ -52,7 +52,7 @@ namespace WebApi_PointMap.ErrorHandling
             }
             else
             {
-                httpResponse = LocalErrorHandler.HandleDatabaseException(e, _db);
+                httpResponse = DatabaseErrorHandler.HandleException(e, _db);
             }
             return httpResponse;
         }
