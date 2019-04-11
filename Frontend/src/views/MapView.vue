@@ -107,7 +107,7 @@ export default {
               
             });
             this.marker.addListener('click', function() {
-              window.location.href = window.location.hostname+'/#/pointdetails/?pointId=' + point.Id
+              window.location.href = 'http://pointmap.net/#/pointdetails/?pointId=' + point.Id
             });
             this.markers.push(this.marker)
           })
