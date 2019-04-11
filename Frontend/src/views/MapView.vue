@@ -9,7 +9,6 @@ import {getPoints} from '../services/pointServices'
 import {gmapApi} from 'vue2-google-maps'
 import {checkSession} from '../services/authorizationService'
 
-
 export default {
   name: "MapView",
   props: ['name'],
@@ -28,7 +27,9 @@ export default {
       heightMeters: 1.0,
       points: [],
       markers: [],
-      marker: null
+      marker: null,
+      markerCluster: null,
+      title: null
     }
   },
   mounted: function () {
@@ -52,6 +53,7 @@ export default {
     },
     setPlace(place) {
     this.currentPlace = place;
+    this.requestPoints()
     },
     goTo() {
       if (this.currentPlace) {
@@ -91,14 +93,19 @@ export default {
             this.marker = new google.maps.Marker({
               position: 
               {
-                lat: point.Latitude, 
+                lat: point.Latitude,
                 lng: point.Longitude
               },
               map: this.map,
               title: point.Id
             });
+            this.marker.addListener('click', function() {
+              window.location.href = 'http://pointmap.net/#/pointdetails?pointId=' + point.Id
+            });
             this.markers.push(this.marker)
           })
+          // this.markerCluster = new MarkerClusterer(this.map, this.markers,
+          //   {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
         }
       });
     }
