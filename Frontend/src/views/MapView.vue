@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div v-on:click="requestPoints" id="map"></div>
+   <div><PointDetails></PointDetails></div>
+          <div v-on:click="requestPoints" id="map">
+          </div> 
   </div>
 </template>
 
@@ -8,8 +10,9 @@
 import {getPoints} from '../services/pointServices'
 import {gmapApi} from 'vue2-google-maps'
 import {checkSession} from '../services/authorizationService'
-
+import {PointDetails} from '../views/PointDetails'
 export default {
+  components: {PointDetails},
   name: "MapView",
   props: ['name'],
   data: function () {
@@ -33,7 +36,7 @@ export default {
     }
   },
   mounted: function () {
-    checkSession()
+    //checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom
@@ -55,6 +58,7 @@ export default {
     this.currentPlace = place;
     this.requestPoints()
     },
+    
     goTo() {
       if (this.currentPlace) {
         const marker = {
@@ -67,6 +71,7 @@ export default {
         this.getPoints();
       }
     },
+
     requestPoints(){
       this.zoom = this.map.getZoom();
       this.center = {
@@ -84,13 +89,14 @@ export default {
         minLng: this.center.lng - (this.widthMeters/111111), 
         maxLng: this.center.lng + (this.widthMeters/111111)
       }
-
+      
       this.points = getPoints(this.mapBorder.minLng, this.mapBorder.maxLng, this.mapBorder.minLat, this.mapBorder.maxLat, (arr) => {
         if(arr != null){
           this.markers = []
           this.points = arr
           this.points.forEach(point => {
             this.marker = new google.maps.Marker({
+              animation: google.maps.Animation.DROP,
               position: 
               {
                 lat: point.Latitude,
@@ -98,9 +104,10 @@ export default {
               },
               map: this.map,
               title: point.Id
+              
             });
             this.marker.addListener('click', function() {
-              window.location.href = 'http://pointmap.net/#/pointdetails?pointId=' + point.Id
+              window.location.href = window.location.hostname+'/#/pointdetails/?pointId=' + point.Id
             });
             this.markers.push(this.marker)
           })
@@ -108,6 +115,7 @@ export default {
           //   {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
         }
       });
+      
     }
   }  
 };
@@ -117,8 +125,9 @@ export default {
   #map{
       margin-bottom: 20px;
       width: 100%;
-      height: 550px;
+      height: 650px;
       margin: 0 auto;
       background: gray;
   }
+
 </style>

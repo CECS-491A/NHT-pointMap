@@ -1,0 +1,111 @@
+<template>
+
+    <div id = "pointdisplay" class="component" >
+        <h1>Point Details</h1>
+        <br />
+        <v-form>
+            <tt>Created At:</tt>
+            <strong>
+                {{createdAt}}
+            </strong>
+            <br /><br />
+            <tt>Point Name:</tt>
+    
+            <strong>
+                {{name}}
+            </strong>
+
+            <br /><br />
+            <tt>Point Description:</tt>
+            <input type ="text"  v-bind:placeholder= "description" >
+
+            <br />
+            <br />
+            <tt>Longitude:</tt>
+            <strong>
+                {{long}}
+            </strong>
+            <br />
+            <br />
+            <tt>Latitude:</tt>
+            <strong>
+                {{lat}}
+            </strong>
+            <br />
+            <br />
+            <tt>Last Modified At:</tt>
+            <strong>
+                {{lastModifiedAt}}
+            </strong>
+            <br />
+            <br />
+            <tt>Point Id:</tt>
+            <strong>
+                {{id}}
+            </strong>
+            <br />
+           
+        </v-form>
+
+    </div>
+
+
+</template>
+
+<script>
+
+import {getPoint} from '../services/pointServices'
+
+export default {
+  name: 'PointDetails',
+  data: function() {
+    return {
+      id: null,
+      url: null,
+      createdAt: null,
+      lastModifiedAt: null,
+      name: null,
+      description: null,
+      long: null,
+      lat: null
+
+    }
+  }, 
+  methods: {
+     getPointDetails: function()
+     { 
+         this.url = window.location.href
+         this.id = this.url.substring(this.url.length-36,this.url.length)
+         this.rawData =getPoint(this.id, (arr)=>
+         {
+                if(arr!=null){
+                    
+                    this.createdAt = arr[0].CreatedAt;
+                    this.lastModifiedAt = arr[0].UpdatedAt;
+                    this.name = arr[0].Name;
+                    this.description = arr[0].Description;
+                    this.long = arr[0].Longitude;
+                    this.lat = arr[0].Latitude;
+                    
+                }
+         })
+     },
+  },
+   beforeMount: function() {
+      this.getPointDetails()
+  }
+}
+</script>
+
+<style>
+#pointdisplay{
+     margin-bottom: 20px;
+      width: 100%;
+      height: 100px;
+      left: 2px;
+      background:whitesmoke;
+      font-size: large;
+      position: relative;
+}
+</style>
+
