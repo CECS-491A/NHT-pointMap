@@ -43,7 +43,6 @@ function getPoint(pointId, callback){
     let arr =[]
     let urlString = 'https://api.pointmap.net/api/point/'+pointId
     grabProm(urlString).then((response) => {
-        console.log(response.data)
         let data = response.data;
 
         arr.push(data);

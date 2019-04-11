@@ -77,7 +77,7 @@ export default {
      { 
          this.url = window.location.href
          this.id = this.url.substring(this.url.length-36,this.url.length)
-         this.rawData =getPoint(this.id, (arr)=>
+         getPoint(this.id, (arr)=>
          {
                 if(arr!=null){
                     
