@@ -27,30 +27,20 @@ namespace WebApi_PointMap.Controllers
         public HttpResponseMessage ValidateSession()
         {
             HttpResponseMessage response;
-            var re = Request;
-            var headers = re.Headers;
-            if (headers.Contains("token"))
-            {
-                try
-                {
-                    string token = headers.GetValues("token").First();
-                    var session = _am.ValidateAndUpdateSession(_db, token);
-                    //TODO: deal with null session
-                    _db.SaveChanges();
-                    response = Request.CreateResponse(HttpStatusCode.OK);
-                    response.Content = new StringContent(token,
-                    Encoding.Unicode);
-                    return response;
-                }
-                catch(Exception e)
-                {
-                    return DatabaseErrorHandler.HandleException(e, _db);
-                }
+            try
+            { 
+                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                _db.SaveChanges();
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(token,
+                Encoding.Unicode);
+                return response;
             }
-            response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-            response.Content = new StringContent("https://kfc-sso.com/#/login",
-            Encoding.Unicode);
-            return response;
+            catch(Exception e)
+            {
+                return DatabaseErrorHandler.HandleException(e, _db);
+            }
         }
 
         [HttpGet]
@@ -58,37 +48,28 @@ namespace WebApi_PointMap.Controllers
         public HttpResponseMessage DeleteSession()
         {
             HttpResponseMessage response;
-            var re = Request;
-            var headers = re.Headers;
-            if (headers.Contains("token"))
+            try
             {
-                try
-                {
-                    string token = headers.GetValues("token").First();
-                    var session = _am.ValidateAndUpdateSession(_db, token);
-                    if (session == null)
-                    {
-                        //return 404? (no session found)
-                    }
-                    _am.DeleteSession(_db, token);
-                    _db.SaveChanges();
+                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                _am.DeleteSession(_db, token);
 
-                    token = _am.DeleteSession(_db, token);
-                    //TODO: handle null response
-                    response = Request.CreateResponse(HttpStatusCode.OK);
-                    response.Content = new StringContent(token,
-                    Encoding.Unicode);
-                }
-                catch (Exception e)
+                var deletedSession = _am.DeleteSession(_db, token);
+                if(deletedSession == null)
                 {
-                    return DatabaseErrorHandler.HandleException(e, _db);
+                    //database operation failed
                 }
+                _db.SaveChanges();
+
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(deletedSession.Token,
+                Encoding.Unicode);
+                return response;
             }
-
-            response = Request.CreateResponse(HttpStatusCode.Unauthorized);
-            response.Content = new StringContent("https://kfc-sso.com/#/login",
-            Encoding.Unicode);
-            return response;
+            catch (Exception e)
+            {
+                return DatabaseErrorHandler.HandleException(e, _db);
+            }
         }
     }
 }

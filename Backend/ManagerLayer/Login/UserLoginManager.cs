@@ -49,10 +49,9 @@ namespace ManagerLayer.Login
             {
                 // create new user
                 user = _userManagementManager.CreateUser(Username, ssoID);
-                _db.SaveChanges();
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                     "Login/Registration API", user.Username, "Successful registration of new User", 
-                    "Line 52 UserLoginManager in ManagerLayer\n" +
+                    "Line 51 UserLoginManager in ManagerLayer\n" +
                     "Route Reference UserController in WebApi-PointMap");
                 loggingManager.sendLogSync(newLog);
             }
@@ -67,7 +66,7 @@ namespace ManagerLayer.Login
             };
             newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", user.Username, "Successful login of user",
-                        "Line 61 UserLoginManager in ManagerLayer\n" +
+                        "Line 59 UserLoginManager in ManagerLayer\n" +
                         "Route Reference UserController in WebApi-PointMap");
             loggingManager.sendLogSync(newLog);
 

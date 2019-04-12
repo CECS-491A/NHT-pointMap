@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web;
 using static ServiceLayer.Services.ExceptionService;
 
@@ -31,19 +32,23 @@ namespace WebApi_PointMap.ErrorHandling
             else if (e is HttpRequestException)
             {
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
-                httpResponse.Content = new StringContent(e.Message);
+                httpResponse.Content = new StringContent("https://kfc-sso.com/#/login",
+                Encoding.Unicode);
             }
             else if (e is NullReferenceException)
             {
                 if(string.Equals(e.Message, "User does not exist."))
                 {
                     httpResponse.StatusCode = HttpStatusCode.NotFound;
+                    httpResponse.Content = new StringContent(e.Message);
                 }
                 else
                 {
                     httpResponse.StatusCode = HttpStatusCode.Unauthorized;
+                    httpResponse.Content = new StringContent("https://kfc-sso.com/#/login",
+                    Encoding.Unicode);
                 }
-                httpResponse.Content = new StringContent(e.Message);
+                
             }
             else if (e is InvalidTokenSignatureException)
             {

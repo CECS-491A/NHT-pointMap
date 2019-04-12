@@ -29,13 +29,13 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = GetAndCheckToken(Request, "Token");
+                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
                 _db = new DatabaseContext();
 
-                var session = ValidateAndUpdateSession(_db, token);
+                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                _userManager = new UserManagementManager(_db);
-                var user = _userManager.GetUser(session.UserId);
+                _userManager = new UserManagementManager();
+                var user = _userManager.GetUser(_db, session.UserId);
                 if (user.IsAdministrator)
                 {
                     var users = _db.Users
@@ -73,7 +73,7 @@ namespace WebApi_PointMap.Controllers
                     throw new FormatException("Invalid payload.");
                 }
 
-                var ManagerId = ParseAndCheckId(managerId);
+                var ManagerId = ControllerHelpers.ParseAndCheckId(managerId);
 
                 _db = new DatabaseContext();
 
@@ -103,14 +103,14 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = GetAndCheckToken(Request, "Token");
+                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
 
                 _db = new DatabaseContext();
 
-                var session = ValidateAndUpdateSession(_db, token);
+                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                UserManagementManager _userManager = new UserManagementManager(_db);
-                var user = _userManager.GetUser(session.UserId);
+                UserManagementManager _userManager = new UserManagementManager();
+                var user = _userManager.GetUser(_db, session.UserId);
                 _db.SaveChanges();
                 return Ok(new
                 {
@@ -132,23 +132,23 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = GetAndCheckToken(Request, "Token");
+                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
                 _db = new DatabaseContext();
 
-                var session = ValidateAndUpdateSession(_db, token);
+                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                 if (userId == null)
                 {
                     throw new FormatException("Invalid payload.");
                 }
 
-                var UserId = ParseAndCheckId(userId);
+                var UserId = ControllerHelpers.ParseAndCheckId(userId);
 
-                UserManagementManager _userManager = new UserManagementManager(_db);
-                var user = _userManager.GetUser(session.UserId);
+                UserManagementManager _userManager = new UserManagementManager();
+                var user = _userManager.GetUser(_db, session.UserId);
                 if (user.IsAdministrator)
                 {
-                    _userManager.DeleteUser(UserId);
+                    _userManager.DeleteUser(_db, UserId);
                     _db.SaveChanges();
                     return Ok("User was deleted");
                 }
@@ -171,7 +171,7 @@ namespace WebApi_PointMap.Controllers
             }
             try
             {
-                var userSSOID = ParseAndCheckId(requestPayload.SSOUserId);
+                var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                 // check valid signature
                 TokenService _tokenService = new TokenService();
@@ -185,8 +185,8 @@ namespace WebApi_PointMap.Controllers
                 List<Session> sessions = null;
                 User user = null;
 
-                var _userManagementManager = new UserManagementManager(_db);
-                user = _userManagementManager.GetUser(userSSOID);
+                var _userManagementManager = new UserManagementManager();
+                user = _userManagementManager.GetUser(_db, userSSOID);
                 if (user == null)
                 {
                     return Ok("User was never registered.");
@@ -200,8 +200,8 @@ namespace WebApi_PointMap.Controllers
                         _sessionService.DeleteSession(_db, sess.Token);
                     }
                 }
-                UserManagementManager _userManager = new UserManagementManager(_db);
-                _userManager.DeleteUser(userSSOID);
+                UserManagementManager _userManager = new UserManagementManager();
+                _userManager.DeleteUser(_db, userSSOID);
                 _db.SaveChanges();
                 return Ok("User was deleted");
             }
@@ -217,22 +217,22 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = GetAndCheckToken(Request, "Token");
+                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
                 if (!ModelState.IsValid || payload == null)
                 {
                     return Content((HttpStatusCode)412, ModelState);
                 }
                 _db = new DatabaseContext();
 
-                var UserId = ParseAndCheckId(payload.Id);
+                var UserId = ControllerHelpers.ParseAndCheckId(payload.Id);
 
-                var session = ValidateAndUpdateSession(_db, token);
+                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                UserManagementManager _userManager = new UserManagementManager(_db);
-                var byUser = _userManager.GetUser(session.UserId);
+                UserManagementManager _userManager = new UserManagementManager();
+                var byUser = _userManager.GetUser(_db, session.UserId);
                 if (byUser.IsAdministrator)
                 {
-                    var user = _userManager.GetUser(UserId);
+                    var user = _userManager.GetUser(_db, UserId);
                     if (user == null)
                     {
                         throw new NullReferenceException("User does not exist.");
@@ -249,7 +249,7 @@ namespace WebApi_PointMap.Controllers
                         user.ManagerId = ManagerId;
                     }
 
-                    _userManager.UpdateUser(user);
+                    _userManager.UpdateUser(_db, user);
                     _db.SaveChanges();
                     return Content(HttpStatusCode.OK, "User updated");
                 }
@@ -260,52 +260,6 @@ namespace WebApi_PointMap.Controllers
             {
                 return ResponseMessage(UserErrorHandler.HandleException(e, _db));
             }
-        }
-
-        private string GetAndCheckToken(object request, string header)
-        {
-            var token = GetHeader(Request, "Token");
-
-            if (token.Length < 1)
-            {
-                throw new HttpRequestException("No token provided.");
-            }
-            return token;
-        }
-
-        private string GetHeader(object request, string header)
-        {
-            IEnumerable<string> headerValues;
-            var nameFilter = string.Empty;
-            if (Request.Headers.TryGetValues(header, out headerValues))
-            {
-                nameFilter = headerValues.FirstOrDefault();
-            }
-            return nameFilter;
-        }
-
-        private Guid ParseAndCheckId(string id)
-        {
-            Guid guid;
-
-            // check if valid SSO ID format
-            var validParse = Guid.TryParse(id, out guid);
-            if (!validParse)
-            {
-                throw new FormatException("Invalid User Id.");
-            }
-            return guid;
-        }
-
-        private Session ValidateAndUpdateSession(DatabaseContext _db, string token)
-        {
-            AuthorizationManager _sessionService = new AuthorizationManager(_db);
-            var session = _sessionService.ValidateAndUpdateSession(_db, token);
-            if (session == null)
-            {
-                throw new NullReferenceException("Session is no longer available.");
-            }
-            return session;
         }
     }
 }
