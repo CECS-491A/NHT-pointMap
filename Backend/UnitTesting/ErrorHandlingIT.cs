@@ -110,7 +110,33 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("No token provided.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual("https://kfc-sso.com/#/login", result.Content.ReadAsStringAsync().Result);
+        }
+
+        [TestMethod]
+        public void DeleteUser_NoUserIdProvided_412()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var endpoint = API_ROUTE_LOCAL + "/user/delete";
+            _umController.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            _umController.Request = request;
+
+            IHttpActionResult response = _umController.DeleteUser((string)null);
+
+            var result = response.ExecuteAsync(CancellationToken.None).Result;
+
+            Assert.AreEqual(HttpStatusCode.PreconditionFailed, result.StatusCode);
+            Assert.AreEqual("Invalid payload.", result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -136,7 +162,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("Session is no longer available.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual("https://kfc-sso.com/#/login", result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -208,7 +234,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("Login failed.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual("https://kfc-sso.com/#/login", result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]

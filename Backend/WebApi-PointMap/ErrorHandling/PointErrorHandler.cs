@@ -16,8 +16,6 @@ namespace WebApi_PointMap.ErrorHandling
             HttpResponseMessage httpResponse = new HttpResponseMessage();
             if (e is InvalidPointException)
             {
-                _db.RevertDatabaseChanges(_db);
-
                 httpResponse.StatusCode = HttpStatusCode.BadRequest;
                 httpResponse.Content = new StringContent(e.Message);
             }

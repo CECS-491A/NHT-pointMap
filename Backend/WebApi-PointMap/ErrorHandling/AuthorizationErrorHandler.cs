@@ -13,51 +13,33 @@ namespace WebApi_PointMap.ErrorHandling
 {
     public class AuthorizationErrorHandler
     {
-        public static HttpResponseMessage HandleException(Exception e, DatabaseContext _db)
+        private readonly static string Redirect = "https://kfc-sso.com/#/login";
+
+        public static HttpResponseMessage HandleException(Exception e)
         {
             HttpResponseMessage httpResponse = new HttpResponseMessage();
-            if (e is FormatException)
-            {
-                if (string.Equals(e.Message, "Invalid payload."))
-                {
-                    httpResponse.StatusCode = HttpStatusCode.PreconditionFailed;
-                }
-                else
-                {
-                    httpResponse.StatusCode = HttpStatusCode.BadRequest;
-                }
 
+            if(e is InvalidModelPayloadException)
+            {
+                httpResponse.StatusCode = HttpStatusCode.PreconditionFailed;
                 httpResponse.Content = new StringContent(e.Message);
             }
-            else if (e is HttpRequestException)
+            else if (   e is NoTokenProvidedException || 
+                        e is SessionNotFoundException ||
+                        e is InvalidTokenSignatureException)
             {
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
-                httpResponse.Content = new StringContent("https://kfc-sso.com/#/login",
+                httpResponse.Content = new StringContent(Redirect,
                 Encoding.Unicode);
             }
-            else if (e is NullReferenceException)
-            {
-                if(string.Equals(e.Message, "User does not exist."))
-                {
-                    httpResponse.StatusCode = HttpStatusCode.NotFound;
-                    httpResponse.Content = new StringContent(e.Message);
-                }
-                else
-                {
-                    httpResponse.StatusCode = HttpStatusCode.Unauthorized;
-                    httpResponse.Content = new StringContent("https://kfc-sso.com/#/login",
-                    Encoding.Unicode);
-                }
-                
-            }
-            else if (e is InvalidTokenSignatureException)
+            else if(e is UserIsNotAdministratorException)
             {
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
                 httpResponse.Content = new StringContent(e.Message);
             }
             else
             {
-                httpResponse = DatabaseErrorHandler.HandleException(e, _db);
+                httpResponse = GeneralErrorHandler.HandleException(e);
             }
             return httpResponse;
         }

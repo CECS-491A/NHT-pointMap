@@ -1,15 +1,11 @@
 ﻿using DataAccessLayer.Database;
-using DataAccessLayer.Models;
 using DTO.DTO;
-using ManagerLayer.AccessControl;
 using ManagerLayer.UserManagement;
 using ServiceLayer.Services;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using WebApi_PointMap.ErrorHandling;
 using WebApi_PointMap.Models;
@@ -20,7 +16,6 @@ namespace WebApi_PointMap.Controllers
     public class UserManagementController : ApiController
     {
         DatabaseContext _db;
-        SessionService _sessionService;
         UserManagementManager _userManager;
 
         [HttpGet]
@@ -29,9 +24,11 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                //throws ExceptionService.NoTokenProvidedException
+                var token = ControllerHelpers.GetToken(Request, "Token");
                 _db = new DatabaseContext();
 
+                //throws ExceptionService.SessionNotFoundException
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                 _userManager = new UserManagementManager();
@@ -53,12 +50,15 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     return Ok(users);
                 }
-                _db.SaveChanges();
-                return Unauthorized();
+                else
+                {
+                    _db.SaveChanges(); // save updated user session
+                    throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                }
             }
             catch (Exception e)
             {
-                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -68,11 +68,10 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                if (managerId == null)
-                {
-                    throw new FormatException("Invalid payload.");
-                }
+                //throws ExceptionService.InvalidModelPayloadException
+                ControllerHelpers.ValidateModelAndPayload(ModelState, managerId);
 
+                //throws ExceptionService.InvalidGuidException
                 var ManagerId = ControllerHelpers.ParseAndCheckId(managerId);
 
                 _db = new DatabaseContext();
@@ -89,11 +88,11 @@ namespace WebApi_PointMap.Controllers
                         disabled = u.Disabled,
                         isAdmin = u.IsAdministrator
                     }).ToList();
-                return Content((HttpStatusCode)200, users);
+                return Ok(users);
             }
             catch (Exception e)
             {
-                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -103,15 +102,18 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                //throws ExceptionService.NoTokenProvidedException
+                var token = ControllerHelpers.GetToken(Request, "Token");
 
                 _db = new DatabaseContext();
 
+                //throws ExceptionService.SessionNotFoundException
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                 UserManagementManager _userManager = new UserManagementManager();
                 var user = _userManager.GetUser(_db, session.UserId);
                 _db.SaveChanges();
+                //could be replaced with return Ok(user)?
                 return Ok(new
                 {
                     id = user.Id,
@@ -122,7 +124,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -132,17 +134,18 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                //throws ExceptionService.NoTokenProvidedException
+                var token = ControllerHelpers.GetToken(Request, "Token");
+
+                //throws ExceptionService.InvalidModelPayloadException
+                ControllerHelpers.ValidateModelAndPayload(ModelState, userId);
+
+                //throws ExceptionService.InvalidGuidException
+                var UserId = ControllerHelpers.ParseAndCheckId(userId);
                 _db = new DatabaseContext();
 
+                //throws ExceptionService.SessionNotFoundException
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-                if (userId == null)
-                {
-                    throw new FormatException("Invalid payload.");
-                }
-
-                var UserId = ControllerHelpers.ParseAndCheckId(userId);
 
                 UserManagementManager _userManager = new UserManagementManager();
                 var user = _userManager.GetUser(_db, session.UserId);
@@ -152,25 +155,28 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     return Ok("User was deleted");
                 }
-                _db.SaveChanges();
-                return Unauthorized();
+                else
+                {
+                    _db.SaveChanges(); // save updated user session
+                    throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                }
             }
             catch (Exception e)
             {
-                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
 
         [HttpPost]
         [Route("sso/user/delete")]
         public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
-        {
-            if (!ModelState.IsValid || requestPayload == null)
-            {
-                return Content((HttpStatusCode)412, ModelState);
-            }
+        {  
             try
             {
+                //throws ExceptionService.InvalidModelPayloadException
+                ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
+
+                //throws ExceptionService.InvalidGuidException
                 var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                 // check valid signature
@@ -182,17 +188,15 @@ namespace WebApi_PointMap.Controllers
 
                 _db = new DatabaseContext();
 
-                List<Session> sessions = null;
-                User user = null;
-
                 var _userManagementManager = new UserManagementManager();
-                user = _userManagementManager.GetUser(_db, userSSOID);
+                var user = _userManagementManager.GetUser(_db, userSSOID);
                 if (user == null)
                 {
                     return Ok("User was never registered.");
                 }
+
                 var _sessionService = new SessionService();
-                sessions = _sessionService.GetSessions(_db, userSSOID);
+                var sessions = _sessionService.GetSessions(_db, userSSOID);
                 if (sessions != null)
                 {
                     foreach (var sess in sessions)
@@ -200,6 +204,7 @@ namespace WebApi_PointMap.Controllers
                         _sessionService.DeleteSession(_db, sess.Token);
                     }
                 }
+
                 UserManagementManager _userManager = new UserManagementManager();
                 _userManager.DeleteUser(_db, userSSOID);
                 _db.SaveChanges();
@@ -207,7 +212,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -217,25 +222,27 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
-                if (!ModelState.IsValid || payload == null)
-                {
-                    return Content((HttpStatusCode)412, ModelState);
-                }
+                //throws ExceptionService.NoTokenProvidedException
+                var token = ControllerHelpers.GetToken(Request, "Token");
+                
+                //throws ExceptionService.InvalidModelPayloadException
+                ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
+
+                //throws ExceptionService.InvalidGuidException
+                var UserId = ControllerHelpers.ParseAndCheckId(payload.Id);
                 _db = new DatabaseContext();
 
-                var UserId = ControllerHelpers.ParseAndCheckId(payload.Id);
-
+                //throws ExceptionService.SessionNotFoundException
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                UserManagementManager _userManager = new UserManagementManager();
-                var byUser = _userManager.GetUser(_db, session.UserId);
-                if (byUser.IsAdministrator)
+                var _userManager = new UserManagementManager();
+                var manager = _userManager.GetUser(_db, session.UserId);
+                if (manager.IsAdministrator)
                 {
                     var user = _userManager.GetUser(_db, UserId);
                     if (user == null)
                     {
-                        throw new NullReferenceException("User does not exist.");
+                        throw new UserNotFoundException("User does not exist.");
                     }
                     user.City = payload.City;
                     user.State = payload.State;
@@ -245,20 +252,24 @@ namespace WebApi_PointMap.Controllers
                     user.ManagerId = null;
                     if (payload.Manager != null)
                     {
-                        var ManagerId = Guid.Parse(payload.Manager);
-                        user.ManagerId = ManagerId;
+                        //no need to check for parse error here (managerId is already in the database)
+                        var managerId = Guid.Parse(payload.Manager);
+                        user.ManagerId = managerId;
                     }
 
                     _userManager.UpdateUser(_db, user);
                     _db.SaveChanges();
                     return Content(HttpStatusCode.OK, "User updated");
                 }
-                _db.SaveChanges();
-                return Unauthorized();
+                else
+                {
+                    _db.SaveChanges(); // save updated user session
+                    throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                };
             }
             catch (Exception e)
             {
-                return ResponseMessage(UserErrorHandler.HandleException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
     }

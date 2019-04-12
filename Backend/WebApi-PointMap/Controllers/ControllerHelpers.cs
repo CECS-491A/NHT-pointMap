@@ -7,23 +7,34 @@ using System.Linq;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.ModelBinding;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
 {
     public class ControllerHelpers
     {
-        public static string GetAndCheckToken(HttpRequestMessage request, string header)
+
+        public static void ValidateModelAndPayload(ModelStateDictionary modelState, object payload)
+        {
+            if (!modelState.IsValid || payload == null)
+            {
+                throw new InvalidModelPayloadException("Invalid payload.");
+            }
+        }
+
+        public static string GetToken(HttpRequestMessage request, string header)
         {
             var token = GetHeader(request, "Token");
 
             if (token.Length < 1)
             {
-                throw new HttpRequestException("No token provided.");
+                throw new NoTokenProvidedException("No token provided.");
             }
             return token;
         }
 
-        public static string GetHeader(HttpRequestMessage request, string header)
+        private static string GetHeader(HttpRequestMessage request, string header)
         {
             IEnumerable<string> headerValues;
             var nameFilter = string.Empty;
@@ -42,7 +53,7 @@ namespace WebApi_PointMap.Controllers
             var validParse = Guid.TryParse(id, out guid);
             if (!validParse)
             {
-                throw new FormatException("Invalid User Id.");
+                throw new InvalidGuidException("Invalid User Id.");
             }
             return guid;
         }
@@ -53,7 +64,7 @@ namespace WebApi_PointMap.Controllers
             var session = _authorizationManager.ValidateAndUpdateSession(_db, token);
             if (session == null)
             {
-                throw new NullReferenceException("Session is no longer available.");
+                throw new SessionNotFoundException("Session is no longer available.");
             }
             return session;
         }

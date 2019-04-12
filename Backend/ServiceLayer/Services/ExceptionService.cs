@@ -33,5 +33,54 @@ namespace ServiceLayer.Services
             public InvalidPointException(string message) : base(message) { }
             public InvalidPointException(string message, Exception innerException) : base(message, innerException) { }
         }
+
+        public class InvalidModelPayloadException : Exception
+        {
+            public InvalidModelPayloadException() { }
+            public InvalidModelPayloadException(string message) : base(message) { }
+            public InvalidModelPayloadException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
+        public class NoTokenProvidedException : Exception
+        {
+            public NoTokenProvidedException() { }
+            public NoTokenProvidedException(string message) : base(message) { }
+            public NoTokenProvidedException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
+        public class InvalidGuidException : Exception
+        {
+            public InvalidGuidException() { }
+            public InvalidGuidException(string message) : base(message) { }
+            public InvalidGuidException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
+        public class SessionNotFoundException : Exception
+        {
+            public SessionNotFoundException() { }
+            public SessionNotFoundException(string message) : base(message) { }
+            public SessionNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
+        public class UserIsNotAdministratorException : Exception
+        {
+            public UserIsNotAdministratorException() { }
+            public UserIsNotAdministratorException(string message) : base(message) { }
+            public UserIsNotAdministratorException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
+        public class UserNotFoundException : Exception
+        {
+            public UserNotFoundException() { }
+            public UserNotFoundException(string message) : base(message) { }
+            public UserNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
+        public class InvalidHeaderException : Exception
+        {
+            public InvalidHeaderException() { }
+            public InvalidHeaderException(string message) : base(message) { }
+            public InvalidHeaderException(string message, Exception innerException) : base(message, innerException) { }
+        }
     }
 }

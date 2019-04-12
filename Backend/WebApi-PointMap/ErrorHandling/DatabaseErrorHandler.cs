@@ -23,7 +23,7 @@ namespace WebApi_PointMap.ErrorHandling
             }
             else
             {
-                throw new Exception(e.Message, e);
+                httpResponse = HttpErrorHandler.HandleException(e);
             }
             return httpResponse;
         }

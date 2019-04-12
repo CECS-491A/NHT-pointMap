@@ -13,7 +13,6 @@ namespace WebApi_PointMap.Controllers
     public class UserController : ApiController
     {
         UserLoginManager _userLoginManager;
-        UserManagementManager _userManagementManager;
         DatabaseContext _db;
 
         // POST api/user/login
@@ -21,17 +20,15 @@ namespace WebApi_PointMap.Controllers
         [Route("api/user/login")]
         public IHttpActionResult LoginFromSSO([FromBody] LoginDTO requestPayload)
         {
-            if (!ModelState.IsValid || requestPayload == null)
-            {
-                return Content((HttpStatusCode)412, ModelState);
-            }
-            _userLoginManager = new UserLoginManager();
-            Guid userSSOID;
             try
             {
-                // check if valid SSO ID format
-                userSSOID = Guid.Parse(requestPayload.SSOUserId);
+                //throws ExceptionService.InvalidModelPayloadException
+                ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
+                
+                //throws ExceptionService.InvalidGuidException
+                var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
                 _db = new DatabaseContext();
+                _userLoginManager = new UserLoginManager();
 
                 LoginManagerResponseDTO loginAttempt;
                 loginAttempt = _userLoginManager.LoginFromSSO(
@@ -50,7 +47,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(LoginErrorHandler.HandleDatabaseException(e, _db));
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
     }

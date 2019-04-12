@@ -42,13 +42,13 @@ namespace ManagerLayer.Login
             }
             ////////////////////////////////////////
             
-            _userManagementManager = new UserManagementManager(_db);
-            var user = _userManagementManager.GetUser(ssoID);
+            _userManagementManager = new UserManagementManager();
+            var user = _userManagementManager.GetUser(_db, ssoID);
             // check if user does not exist
             if (user == null)
             {
                 // create new user
-                user = _userManagementManager.CreateUser(Username, ssoID);
+                user = _userManagementManager.CreateUser(_db, Username, ssoID);
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                     "Login/Registration API", user.Username, "Successful registration of new User", 
                     "Line 51 UserLoginManager in ManagerLayer\n" +
@@ -59,8 +59,7 @@ namespace ManagerLayer.Login
             Session session = _authorizationManager.CreateSession(_db, user);
             _db.SaveChanges();
 
-            LoginManagerResponseDTO response;
-            response = new LoginManagerResponseDTO
+            LoginManagerResponseDTO response = new LoginManagerResponseDTO
             {
                 Token = session.Token
             };

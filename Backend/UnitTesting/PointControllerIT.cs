@@ -7,6 +7,8 @@ using System.Web.Http;
 using WebApi_PointMap.Models;
 using ServiceLayer.Services;
 using DataAccessLayer.Database;
+using System.Threading;
+using System.Web.Http.Results;
 
 namespace UnitTesting
 {
@@ -35,13 +37,13 @@ namespace UnitTesting
             _tu.CreateSessionInDb(newSession);
 
             //Uncomment to add mock data
-            //for (int i = 1; i < 11; i++)
-            //{
-            //    float num = (float)(i * .1);
-            //    Point newPoint = _tu.CreatePointObject(10 + num, -1 * (10 + num));
-            //    _tu.CreatePointInDb(newPoint);
-            //    Console.WriteLine(newPoint.Id);
-            //}
+            for (int i = 1; i < 11; i++)
+            {
+                float num = (float)(i * .1);
+                Point newPoint = _tu.CreatePointObject(10 + num, -1 * (10 + num));
+                _tu.CreatePointInDb(newPoint);
+                Console.WriteLine(newPoint.Id);
+            }
 
 
             var endpoint = API_ROUTE_LOCAL + "/api/points/";
@@ -49,7 +51,6 @@ namespace UnitTesting
             {
                 RequestUri = new Uri(endpoint)
             };
-
 
             var request = new HttpRequestMessage();
             request.Headers.Add("minLng", "10");
@@ -61,7 +62,11 @@ namespace UnitTesting
             controller.Request = request;
 
             var response = controller.GetPoints();
-            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
+
+            var result = response as OkNegotiatedContentResult<StringContent>;
+
+            Assert.IsNotNull(result);
+            Assert.IsNotNull(result.Content);
         }
     }
 }

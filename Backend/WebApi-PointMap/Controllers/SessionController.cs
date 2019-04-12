@@ -24,51 +24,39 @@ namespace WebApi_PointMap.Controllers
 
         [HttpGet]
         [Route("api/session")]
-        public HttpResponseMessage ValidateSession()
+        public IHttpActionResult ValidateSession()
         {
-            HttpResponseMessage response;
             try
             { 
-                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request, "Token");
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
                 _db.SaveChanges();
-                response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(token,
-                Encoding.Unicode);
-                return response;
+                return Ok(new StringContent(token, Encoding.Unicode));
             }
             catch(Exception e)
             {
-                return DatabaseErrorHandler.HandleException(e, _db);
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
 
         [HttpGet]
         [Route("api/logout/session")]
-        public HttpResponseMessage DeleteSession()
+        public IHttpActionResult DeleteSession()
         {
-            HttpResponseMessage response;
             try
             {
-                var token = ControllerHelpers.GetAndCheckToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request, "Token");
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
                 _am.DeleteSession(_db, token);
 
-                var deletedSession = _am.DeleteSession(_db, token);
-                if(deletedSession == null)
-                {
-                    //database operation failed
-                }
+                _am.DeleteSession(_db, token);
                 _db.SaveChanges();
 
-                response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(deletedSession.Token,
-                Encoding.Unicode);
-                return response;
+                return Ok();
             }
             catch (Exception e)
             {
-                return DatabaseErrorHandler.HandleException(e, _db);
+                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
             }
         }
     }

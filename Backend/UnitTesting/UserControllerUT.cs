@@ -29,20 +29,19 @@ namespace UnitTesting
         public void Login_NewUser_ValidUsername_200()
         {
             var controller = new UserController();
-            var valid_username = Guid.NewGuid() + "@mail.com";
-            var valid_ssoID = Guid.NewGuid();
+            var user = ut.CreateSSOUserInDb();
             var timestamp = 12312445;
             MockLoginPayload mock_payload = new MockLoginPayload
             {
-                ssoUserId = valid_ssoID,
-                email = valid_username,
+                ssoUserId = user.Id,
+                email = user.Username,
                 timestamp = timestamp
             };
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
             LoginDTO payload = new LoginDTO
             {
-                Email = valid_username,
+                Email = user.Username,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
                 Timestamp = mock_payload.timestamp,
                 Signature = mock_payload.Signature(),
