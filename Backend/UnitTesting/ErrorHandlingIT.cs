@@ -53,6 +53,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //passing null parameter creates InvalidModelPayloadException that should be caught
+            //  and return a 412
             IHttpActionResult response = _umController.GetUsersUnderManager(null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -80,6 +82,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //passing a non existent user Id sohuld result in an InvalidGuidException
+            //  and return a 400
             IHttpActionResult response = _umController.GetUsersUnderManager(badId);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -105,6 +109,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //no token provided should result in NoTokenProvidedException
+            //  and return a 401
             IHttpActionResult response = _umController.DeleteUser(newUser.Id.ToString());
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -131,6 +137,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //passing null parameter creates InvalidModelPayloadException that should be caught
+            //  and return a 412
             IHttpActionResult response = _umController.DeleteUser((string)null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -157,6 +165,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //passing user with no session should result in SessionNotFoundException
+            // and return a 401
             IHttpActionResult response = _umController.DeleteUser(newUser.Id.ToString());
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -195,6 +205,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //non existent userID should result in UserNotFoundException
+            //  and return a 404
             IHttpActionResult response = _umController.UpdateUser(userDTO);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -229,6 +241,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //invalid signature should throw and InvalidTokenSignatureException
+            //  and return a 401
             IHttpActionResult response = _umController.DeleteUser(loginDTO);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -264,6 +278,8 @@ namespace UnitTesting
 
             _umController.Request = request;
 
+            //out of range Longitude should throw InvalidPointException
+            //  and return a 400
             IHttpActionResult response = _pointController.Post(point);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
