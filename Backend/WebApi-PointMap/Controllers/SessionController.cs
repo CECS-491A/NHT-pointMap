@@ -53,6 +53,8 @@ namespace WebApi_PointMap.Controllers
                 _am.DeleteSession(_db, token);
                 _db.SaveChanges();
                 var response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
+
                 return response;
             }
             catch (Exception e)

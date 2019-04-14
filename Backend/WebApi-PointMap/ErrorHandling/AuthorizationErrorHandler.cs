@@ -7,14 +7,13 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Web;
+using WebApi_PointMap.Controllers;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.ErrorHandling
 {
     public class AuthorizationErrorHandler
     {
-        private readonly static string Redirect = "https://kfc-sso.com/#/login";
-
         public static HttpResponseMessage HandleException(Exception e)
         {
             HttpResponseMessage httpResponse = new HttpResponseMessage();
@@ -29,7 +28,7 @@ namespace WebApi_PointMap.ErrorHandling
                         e is InvalidTokenSignatureException)
             {
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
-                httpResponse.Content = new StringContent(Redirect,
+                httpResponse.Content = new StringContent(ControllerHelpers.Redirect,
                 Encoding.Unicode);
             }
             else if(e is UserIsNotAdministratorException)

@@ -5,14 +5,9 @@ using DataAccessLayer.Models;
 using System.Net.Http;
 using System.Web.Http;
 using WebApi_PointMap.Models;
-using ServiceLayer.Services;
-using DataAccessLayer.Database;
-using System.Web.Http.Results;
 using System.Net;
 using System.Threading;
-using System.Diagnostics;
 using DTO.DTO;
-using System.Collections.Generic;
 
 namespace UnitTesting
 {
@@ -24,15 +19,12 @@ namespace UnitTesting
         UserManagementController _umController;
         TestingUtils _tu;
         User newUser;
-        SessionService _ss;
-        DatabaseContext _db;
 
         public ErrorHandlingIT()
         {
             _pointController = new PointController();
             _umController = new UserManagementController();
             _tu = new TestingUtils();
-            _ss = new SessionService();
         }
 
         [TestMethod]
@@ -64,6 +56,36 @@ namespace UnitTesting
         }
 
         [TestMethod]
+        public void GetAllUsers_UserIsNotAdministrator_400()
+        {
+            newUser = _tu.CreateUserObject();
+            newUser.IsAdministrator = false;
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var endpoint = API_ROUTE_LOCAL + "/users";
+            _umController.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            _umController.Request = request;
+
+            //user is not adminstrator and therefore cannot return all users.
+            //  should result in an UserIsNotAdministratorException
+            //  and return a 401
+            IHttpActionResult response = _umController.GetAllUsers();
+
+            var result = response.ExecuteAsync(CancellationToken.None).Result;
+
+            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
+            Assert.AreEqual("Non-administrators cannot delete users.", result.Content.ReadAsStringAsync().Result);
+        }
+
+        [TestMethod]
         public void Delete_InvalidUserId_400()
         {
             newUser = _tu.CreateUserObject();
@@ -82,7 +104,7 @@ namespace UnitTesting
 
             _umController.Request = request;
 
-            //passing a non existent user Id should result in an InvalidGuidException
+            //passing a incorrectly formatted user Id should result in an InvalidGuidException
             //  and return a 400
             IHttpActionResult response = _umController.DeleteUser(badId);
 
@@ -116,7 +138,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("https://kfc-sso.com/#/login", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -172,7 +194,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("https://kfc-sso.com/#/login", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -248,7 +270,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("https://kfc-sso.com/#/login", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]

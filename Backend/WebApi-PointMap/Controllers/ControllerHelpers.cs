@@ -14,7 +14,7 @@ namespace WebApi_PointMap.Controllers
 {
     public class ControllerHelpers
     {
-
+        public readonly static string Redirect = "https://kfc-sso.com/#/login";
         public static void ValidateModelAndPayload(ModelStateDictionary modelState, object payload)
         {
             if (!modelState.IsValid || payload == null)
