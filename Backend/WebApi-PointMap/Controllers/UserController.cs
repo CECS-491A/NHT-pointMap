@@ -15,6 +15,12 @@ namespace WebApi_PointMap.Controllers
         UserLoginManager _userLoginManager;
         DatabaseContext _db;
 
+        public UserController()
+        {
+            _userLoginManager = new UserLoginManager();
+            _db = new DatabaseContext();
+        }
+
         // POST api/user/login
         [HttpPost]
         [Route("api/user/login")]
@@ -27,8 +33,6 @@ namespace WebApi_PointMap.Controllers
                 
                 //throws ExceptionService.InvalidGuidException
                 var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
-                _db = new DatabaseContext();
-                _userLoginManager = new UserLoginManager();
 
                 LoginManagerResponseDTO loginAttempt;
                 loginAttempt = _userLoginManager.LoginFromSSO(

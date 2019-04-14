@@ -23,11 +23,17 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        public static string GetToken(HttpRequestMessage request, string header)
+        public static string GetToken(HttpRequestMessage request)
         {
-            var token = GetHeader(request, "Token");
+            var token = GetHeader(request, "token");
 
-            if (token.Length < 1)
+            //allows the token to be stored in either location in the header
+            if(token == string.Empty)
+            {
+                token = GetHeader(request, "Token");
+            }
+
+            if (token == string.Empty)
             {
                 throw new NoTokenProvidedException("No token provided.");
             }

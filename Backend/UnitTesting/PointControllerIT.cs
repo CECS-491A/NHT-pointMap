@@ -63,10 +63,7 @@ namespace UnitTesting
 
             var response = controller.GetPoints();
 
-            var result = response as OkNegotiatedContentResult<StringContent>;
-
-            Assert.IsNotNull(result);
-            Assert.IsNotNull(result.Content);
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
         }
     }
 }

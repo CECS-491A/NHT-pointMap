@@ -25,7 +25,7 @@ namespace WebApi_PointMap.Controllers
             try
             {
                 //throws ExceptionService.NoTokenProvidedException
-                var token = ControllerHelpers.GetToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request);
                 _db = new DatabaseContext();
 
                 //throws ExceptionService.SessionNotFoundException
@@ -63,47 +63,13 @@ namespace WebApi_PointMap.Controllers
         }
 
         [HttpGet]
-        [Route("users/{managerId}")]
-        public IHttpActionResult GetUsersUnderManager(string managerId)
-        {
-            try
-            {
-                //throws ExceptionService.InvalidModelPayloadException
-                ControllerHelpers.ValidateModelAndPayload(ModelState, managerId);
-
-                //throws ExceptionService.InvalidGuidException
-                var ManagerId = ControllerHelpers.ParseAndCheckId(managerId);
-
-                _db = new DatabaseContext();
-
-                var users = _db.Users
-                    .Where(u => u.Manager.Id == ManagerId)
-                    .Select(u => new {
-                        id = u.Id,
-                        username = u.Username,
-                        manager = u.ManagerId,
-                        city = u.City,
-                        state = u.State,
-                        country = u.Country,
-                        disabled = u.Disabled,
-                        isAdmin = u.IsAdministrator
-                    }).ToList();
-                return Ok(users);
-            }
-            catch (Exception e)
-            {
-                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-            }
-        }
-
-        [HttpGet]
         [Route("user")]
         public IHttpActionResult GetUser()
         {
             try
             {
                 //throws ExceptionService.NoTokenProvidedException
-                var token = ControllerHelpers.GetToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request);
 
                 _db = new DatabaseContext();
 
@@ -113,7 +79,7 @@ namespace WebApi_PointMap.Controllers
                 UserManagementManager _userManager = new UserManagementManager();
                 var user = _userManager.GetUser(_db, session.UserId);
                 _db.SaveChanges();
-                //could be replaced with return Ok(user)?
+
                 return Ok(new
                 {
                     id = user.Id,
@@ -135,7 +101,7 @@ namespace WebApi_PointMap.Controllers
             try
             {
                 //throws ExceptionService.NoTokenProvidedException
-                var token = ControllerHelpers.GetToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request);
 
                 //throws ExceptionService.InvalidModelPayloadException
                 ControllerHelpers.ValidateModelAndPayload(ModelState, userId);
@@ -223,7 +189,7 @@ namespace WebApi_PointMap.Controllers
             try
             {
                 //throws ExceptionService.NoTokenProvidedException
-                var token = ControllerHelpers.GetToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request);
                 
                 //throws ExceptionService.InvalidModelPayloadException
                 ControllerHelpers.ValidateModelAndPayload(ModelState, payload);

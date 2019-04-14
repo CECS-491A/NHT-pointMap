@@ -36,13 +36,13 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void GetUsersUnderManager_InvalidManagerId_412()
+        public void DeleteUser_NoUserId_412()
         {
             newUser = _tu.CreateUserObject();
             Session newSession = _tu.CreateSessionObject(newUser);
             _tu.CreateSessionInDb(newSession);
 
-            var endpoint = API_ROUTE_LOCAL + "/users/";
+            var endpoint = API_ROUTE_LOCAL + "/users/delete/";
             _umController.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(endpoint)
@@ -55,7 +55,7 @@ namespace UnitTesting
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
             //  and return a 412
-            IHttpActionResult response = _umController.GetUsersUnderManager(null);
+            IHttpActionResult response = _umController.DeleteUser((string)null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
@@ -64,14 +64,14 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void GetUsersUnderManager_InvalidManagerId_400()
+        public void Delete_InvalidUserId_400()
         {
             newUser = _tu.CreateUserObject();
             Session newSession = _tu.CreateSessionObject(newUser);
             _tu.CreateSessionInDb(newSession);
             var badId = "q7h493proannaosnfdo";
 
-            var endpoint = API_ROUTE_LOCAL + "/users/";
+            var endpoint = API_ROUTE_LOCAL + "/users/delete/";
             _umController.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(endpoint)
@@ -82,9 +82,9 @@ namespace UnitTesting
 
             _umController.Request = request;
 
-            //passing a non existent user Id sohuld result in an InvalidGuidException
+            //passing a non existent user Id should result in an InvalidGuidException
             //  and return a 400
-            IHttpActionResult response = _umController.GetUsersUnderManager(badId);
+            IHttpActionResult response = _umController.DeleteUser(badId);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 

@@ -110,11 +110,11 @@ namespace WebApi_PointMap.Controllers
 
         [HttpGet]
         [Route("api/points")]
-        public IHttpActionResult GetPoints()
+        public HttpResponseMessage GetPoints()
         {
             try
             {
-                var token = ControllerHelpers.GetToken(Request, "token");
+                var token = ControllerHelpers.GetToken(Request);
 
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
@@ -140,14 +140,16 @@ namespace WebApi_PointMap.Controllers
                     if (pointList != null)
                     {
                         var jsonContent = new JavaScriptSerializer().Serialize(pointList);
-                        return Ok(new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+                        var response = Request.CreateResponse(HttpStatusCode.OK);
+                        response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                        return response;
                     }
                 }
                 throw new InvalidHeaderException("Invalid field formatting.");
             }
             catch(Exception e)
             {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                return PointErrorHandler.HandleException(e, _db);
             }
         }
     }

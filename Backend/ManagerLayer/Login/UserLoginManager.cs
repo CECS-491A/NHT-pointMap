@@ -57,7 +57,6 @@ namespace ManagerLayer.Login
             }
             _authorizationManager = new AuthorizationManager();
             Session session = _authorizationManager.CreateSession(_db, user);
-            _db.SaveChanges();
 
             LoginManagerResponseDTO response = new LoginManagerResponseDTO
             {

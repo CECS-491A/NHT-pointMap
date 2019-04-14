@@ -24,39 +24,40 @@ namespace WebApi_PointMap.Controllers
 
         [HttpGet]
         [Route("api/session")]
-        public IHttpActionResult ValidateSession()
+        public HttpResponseMessage ValidateSession()
         {
             try
             { 
-                var token = ControllerHelpers.GetToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request);
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
                 _db.SaveChanges();
-                return Ok(new StringContent(token, Encoding.Unicode));
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(token, Encoding.Unicode);
+                return response;
             }
             catch(Exception e)
             {
-                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                return DatabaseErrorHandler.HandleException(e, _db);
             }
         }
 
         [HttpGet]
         [Route("api/logout/session")]
-        public IHttpActionResult DeleteSession()
+        public HttpResponseMessage DeleteSession()
         {
             try
             {
-                var token = ControllerHelpers.GetToken(Request, "Token");
+                var token = ControllerHelpers.GetToken(Request);
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                _am.DeleteSession(_db, token);
 
                 _am.DeleteSession(_db, token);
                 _db.SaveChanges();
-
-                return Ok();
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                return response;
             }
             catch (Exception e)
             {
-                return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                return DatabaseErrorHandler.HandleException(e, _db);
             }
         }
     }

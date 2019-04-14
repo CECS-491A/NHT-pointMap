@@ -19,12 +19,14 @@ namespace ServiceLayer.Services
         {
             public InvalidDbOperationException() { }
             public InvalidDbOperationException(string message) : base (message) { }
+            public InvalidDbOperationException(string message, Exception innerException) : base(message, innerException) { }
         }
 
         public class InvalidTokenSignatureException : Exception
         {
             public InvalidTokenSignatureException() { }
             public InvalidTokenSignatureException(string message) : base (message) { }
+            public InvalidTokenSignatureException(string message, Exception innerException) : base(message, innerException) { }
         }
 
         public class InvalidPointException : Exception
