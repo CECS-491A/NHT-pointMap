@@ -81,8 +81,8 @@ export default {
          {
                 if(arr!=null){
                     
-                    this.createdAt = arr[0].CreatedAt;
-                    this.lastModifiedAt = arr[0].UpdatedAt;
+                    this.createdAt = new Date(parseInt(arr[0].CreatedAt.substr(6)));
+                    this.lastModifiedAt = new Date(parseInt(arr[0].UpdatedAt.substr(6)));
                     this.name = arr[0].Name;
                     this.description = arr[0].Description;
                     this.long = arr[0].Longitude;
