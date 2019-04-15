@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-on:click="requestPoints" id="map"></div>
+    <div v-on:click="requestPoints" id="map"></div> 
   </div>
 </template>
 
@@ -66,6 +66,7 @@ export default {
       }
       this.markers = [] //Clears array list
     },
+
     requestPoints(){
       this.clearPoints() //Clears points so as to not add any duplicate markers on request
       this.zoom = this.map.getZoom();
@@ -101,7 +102,7 @@ export default {
                 title: point.Id
               });
               this.marker.addListener('click', function() { //Adds an event listener to each point to reroute to pointDetails page
-                window.location.href = 'http://pointmap.net/#/pointdetails?pointId=' + point.Id
+                window.location.href = 'http://pointmap.net/#/pointdetails/?pointId=' + point.Id
               });
               this.markers.push(this.marker)
               resolve()
@@ -125,8 +126,9 @@ export default {
   #map{
       margin-bottom: 20px;
       width: 100%;
-      height: 550px;
+      height: 650px;
       margin: 0 auto;
       background: gray;
   }
+
 </style>
