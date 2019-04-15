@@ -102,7 +102,7 @@ export default {
                 title: point.Id
               });
               this.marker.addListener('click', function() { //Adds an event listener to each point to reroute to pointDetails page
-                window.location.href = 'http://pointmap.net/#/pointdetails?pointId=' + point.Id
+                window.location.href = 'http://pointmap.net/#/pointdetails/?pointId=' + point.Id
               });
               this.markers.push(this.marker)
               resolve()
