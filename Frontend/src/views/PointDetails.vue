@@ -75,9 +75,9 @@ export default {
   methods: {
      getPointDetails: function()
      { 
-         this.url = window.location.href
-         this.id = this.url.substring(this.url.length-36,this.url.length)
-         getPoint(this.id, (arr)=>
+
+         this.id =  this.$route.query.pointId
+         this.rawData =getPoint(this.id, (arr)=>
          {
                 if(arr!=null){
                     

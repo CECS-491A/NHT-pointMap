@@ -35,18 +35,18 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
     })
     return null;
 };
-function grabProm(fetchurl)
-{
-    return axios.get(fetchurl);
-};
+
 function getPoint(pointId, callback){
+    let content = {
+        'headers':{
+            'token': localStorage.getItem('token')
+        }
+    }
     let arr =[]
     let urlString = 'https://api.pointmap.net/api/point/'+pointId
-    grabProm(urlString).then((response) => {
+    axios.get(urlString, content).then((response) => {
         let data = response.data;
-
         arr.push(data);
-        
         return callback(arr);
         
     }).catch((err) => {

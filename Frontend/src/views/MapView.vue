@@ -1,18 +1,15 @@
 <template>
-  <div>
-   <div><PointDetails></PointDetails></div>
           <div v-on:click="requestPoints" id="map">
           </div> 
-  </div>
+  
 </template>
 
 <script>
 import {getPoints} from '../services/pointServices'
 import {gmapApi} from 'vue2-google-maps'
 import {checkSession} from '../services/authorizationService'
-import {PointDetails} from '../views/PointDetails'
+
 export default {
-  components: {PointDetails},
   name: "MapView",
   props: ['name'],
   data: function () {
