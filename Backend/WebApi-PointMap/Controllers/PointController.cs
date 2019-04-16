@@ -33,6 +33,8 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point/{guid}")]
         public IHttpActionResult Get(string guid)
         {
+            var token = ControllerHelpers.GetToken(Request);
+            ControllerHelpers.ValidateAndUpdateSession(_db, token);
             Guid id = new Guid(guid);
 
             try
@@ -53,6 +55,8 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointPOST pointPost)
         {
+            var token = ControllerHelpers.GetToken(Request);
+            ControllerHelpers.ValidateAndUpdateSession(_db, token);
             try
             {
                 var point = _pm.CreatePoint(_db, pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
@@ -71,6 +75,9 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point/{guid}")]
         public IHttpActionResult Put(string guid, [FromBody] PointPOST pointPost)
         {
+            var token = ControllerHelpers.GetToken(Request);
+            ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
             Guid id = new Guid(guid);
             pointPost.Id = id;
 
@@ -93,6 +100,9 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
         {
+            var token = ControllerHelpers.GetToken(Request);
+            ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
             Guid id = new Guid(guid);
 
             try
