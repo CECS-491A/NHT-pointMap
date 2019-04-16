@@ -5,6 +5,7 @@ import Login from '@/views/Login'
 import Dashboard from '../views/Dashboard'
 import AdminDashboard from '../views/AdminDashboard'
 import MapView from '../views/MapView'
+import PointDetails from '../views/PointDetails'
 
 Vue.use(Router)
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/mapview',
       name: 'MapView',
       component: MapView
+    },
+    {
+      path: '/pointdetails',
+      name: 'PointDetails',
+      component: PointDetails
     },
     {
       path: '*',
