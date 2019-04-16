@@ -8,6 +8,7 @@ using WebApi_PointMap.Models;
 using System.Net;
 using System.Threading;
 using DTO.DTO;
+using System.Diagnostics;
 
 namespace UnitTesting
 {
@@ -297,8 +298,8 @@ namespace UnitTesting
 
             var request = new HttpRequestMessage();
             request.Headers.Add("token", newSession.Token);
-
-            _umController.Request = request;
+            
+            _pointController.Request = request;
 
             //out of range Longitude should throw InvalidPointException
             //  and return a 400
