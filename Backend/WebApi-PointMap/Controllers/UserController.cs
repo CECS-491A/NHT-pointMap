@@ -28,8 +28,6 @@ namespace WebApi_PointMap.Controllers
                     //throws ExceptionService.InvalidGuidException
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
-
-                    var _userManager = new UserLoginManager(_db);
                     var _userLoginManager = new UserLoginManager(_db);
                     LoginManagerResponseDTO loginAttempt;
                     loginAttempt = _userLoginManager.LoginFromSSO(
