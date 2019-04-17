@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Logging\LoggingManager.cs" />
+    <Compile Include="Login\UserManager.cs" />
     <Compile Include="PointManagement\PointManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccessControl\AuthorizationManager.cs" />

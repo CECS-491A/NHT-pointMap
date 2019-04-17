@@ -29,7 +29,7 @@ namespace ManagerLayer.Login
             _db = db;
         }
 
-        public LoginManagerResponseDTO LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
+        public Session LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
@@ -48,32 +48,18 @@ namespace ManagerLayer.Login
             ////////////////////////////////////////
             
             _userManagementManager = new UserManagementManager(_db);
+            var _userManager = new UserManager(_db);
             var user = _userManagementManager.GetUser(ssoID);
+            Session session;
             // check if user does not exist
             if (user == null)
             {
                 // create new user
-                user = _userManagementManager.CreateUser(Username, ssoID);
-                newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                    "Login/Registration API", user.Username, "Successful registration of new User", 
-                    "Line 51 UserLoginManager in ManagerLayer\n" +
-                    "Route Reference UserController in WebApi-PointMap");
-                loggingManager.sendLogSync(newLog);
+                session = _userManager.Register(Username, ssoID);
+                return session;
             }
-            _authorizationManager = new AuthorizationManager(_db);
-            Session session = _authorizationManager.CreateSession(user);
-
-            LoginManagerResponseDTO response = new LoginManagerResponseDTO
-            {
-                Token = session.Token
-            };
-            newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", user.Username, "Successful login of user",
-                        "Line 59 UserLoginManager in ManagerLayer\n" +
-                        "Route Reference UserController in WebApi-PointMap");
-            loggingManager.sendLogSync(newLog);
-
-            return response;
+            session = _userManager.Login(user);
+            return session;
         }
     }
 }
