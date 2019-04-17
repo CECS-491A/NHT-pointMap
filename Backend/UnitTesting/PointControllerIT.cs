@@ -7,6 +7,8 @@ using System.Web.Http;
 using WebApi_PointMap.Models;
 using ServiceLayer.Services;
 using DataAccessLayer.Database;
+using System.Threading;
+using System.Web.Http.Results;
 
 namespace UnitTesting
 {
@@ -50,7 +52,6 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-
             var request = new HttpRequestMessage();
             request.Headers.Add("minLng", "10");
             request.Headers.Add("maxLng", "11");
@@ -61,6 +62,7 @@ namespace UnitTesting
             controller.Request = request;
 
             var response = controller.GetPoints();
+
             Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
         }
     }

@@ -51,6 +51,7 @@
     <Compile Include="DTO\RecoverableErrorDTO.cs" />
     <Compile Include="DTO\LoginManagerDTOs.cs" />
     <Compile Include="DTO\LogRequestDTO.cs" />
+    <Compile Include="DTO\UpdateUserRequestDTO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

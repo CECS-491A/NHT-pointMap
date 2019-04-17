@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ErrorHandlingIT.cs" />
     <Compile Include="ITestingUtils.cs" />
     <Compile Include="LoggingServicesIT.cs" />
     <Compile Include="PointControllerIT.cs" />

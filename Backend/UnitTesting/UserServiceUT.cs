@@ -114,10 +114,10 @@ namespace UnitTesting
             // Act
             using (var _db = tu.CreateDataBaseContext())
             {
-                _umm = new UserManagementManager(_db);
-                var response = _umm.CreateUser(Username, Guid.NewGuid());
+                _umm = new UserManagementManager();
+                var response = _umm.CreateUser(_db, Username, Guid.NewGuid());
                 _db.SaveChanges();
-                var result = _umm.GetUser(response.Id);
+                var result = _umm.GetUser(_db, response.Id);
 
                 // Assert 
                 Assert.IsNotNull(response);
@@ -138,8 +138,8 @@ namespace UnitTesting
             // Act
             using (var _db = tu.CreateDataBaseContext())
             {
-                _umm = new UserManagementManager(_db);
-                var response = _umm.CreateUser(email, Guid.NewGuid());
+                _umm = new UserManagementManager();
+                var response = _umm.CreateUser(_db, email, Guid.NewGuid());
 
                 // Assert 
                 //expects exception
@@ -329,10 +329,10 @@ namespace UnitTesting
             // ACT
             using (var _db = new DatabaseContext())
             {
-                _umm = new UserManagementManager(_db);
-                _umm.DisableUser(newUser);
+                _umm = new UserManagementManager();
+                _umm.DisableUser(_db, newUser);
                 _db.SaveChanges();
-                var result = _umm.GetUser(newUser.Id);
+                var result = _umm.GetUser(_db, newUser.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -352,10 +352,10 @@ namespace UnitTesting
             // ACT
             using (var _db = new DatabaseContext())
             {
-                _umm = new UserManagementManager(_db);
-                _umm.EnableUser(newUser);
+                _umm = new UserManagementManager();
+                _umm.EnableUser(_db, newUser);
                 _db.SaveChanges();
-                var result = _umm.GetUser(newUser.Id);
+                var result = _umm.GetUser(_db, newUser.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -373,10 +373,10 @@ namespace UnitTesting
             // ACT
             using (var _db = new DatabaseContext())
             {
-                _umm = new UserManagementManager(_db);
-                _umm.ToggleUser(newUser, true);
+                _umm = new UserManagementManager();
+                _umm.ToggleUser(_db, newUser, true);
                 _db.SaveChanges();
-                var result = _umm.GetUser(newUser.Id);
+                var result = _umm.GetUser(_db, newUser.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
