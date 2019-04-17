@@ -112,7 +112,7 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
-            Assert.AreEqual("Invalid User Id.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual("Invalid Id.", result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
