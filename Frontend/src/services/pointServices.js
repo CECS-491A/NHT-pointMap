@@ -59,7 +59,53 @@ function getPoint(pointId, callback){
     return null;
 };
 
+function updatePoint(point, callback){
+    let content = {
+        'headers':{
+            'token': localStorage.getItem('token')
+        },
+        'body': point
+    }
+    let urlString = 'https://api.pointmap.net/api/point/'+point.Id
+    axios.put(urlString, content).then((response) => {
+        let data = response.data;
+        return callback(data);
+        
+    }).catch((err) => {
+        console.log(err);
+        if (err.response.status == 401) {
+            localStorage.removeItem('token');
+            window.location.href = 'https://kfc-sso.com/#/login';
+        }
+    })
+    return null;
+};
+
+function createPoint(point, callback){
+    let content = {
+        'headers':{
+            'token': localStorage.getItem('token')
+        },
+        'body': point
+    }
+    let urlString = 'https://api.pointmap.net/api/point'
+    axios.post(urlString, content).then((response) => {
+        let data = response.data;
+        return callback(data);
+        
+    }).catch((err) => {
+        console.log(err);
+        if (err.response.status == 401) {
+            localStorage.removeItem('token');
+            window.location.href = 'https://kfc-sso.com/#/login';
+        }
+    })
+    return null;
+};
+
 export{
     getPoints,
-    getPoint
+    getPoint,
+    updatePoint,
+    createPoint
 }
