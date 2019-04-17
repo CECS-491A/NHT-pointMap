@@ -3,20 +3,29 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const Log = require('./models/log');
-var CryptoJS = require("crypto-js");
+const CryptoJS = require("crypto-js");
+const graphqlHTTP = require('express-graphql')
+const schema = require( './graphql/schema')
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 let port = process.env.PORT || 3000;
-let connectionString = 'mongodb://localhost/log'
+let connectionString = 'mongodb://localhost/logs'
 let sharedSecret = "FDF9B8E2935D6F4C7336604164B92B82E36D1BD87FF96333194D41FDDA023449"
 
+//Connects to local mongodb instance using defined connection string
 mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
     console.log('Connected to database: ', connectionString);
 },err => {
     console.log('Error connecting to db');
 });
+
+//Setsup the graphql route using the rootSchema
+app.use('/graphql', graphqlHTTP({
+    schema,
+    graphiql: true
+}))
 
 app.post('/', (req, res) => {
     if(!req.body){
