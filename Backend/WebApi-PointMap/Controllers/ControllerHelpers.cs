@@ -28,12 +28,12 @@ namespace WebApi_PointMap.Controllers
             var token = GetHeader(request, "token");
 
             //allows the token to be stored in either location in the header
-            if(token == string.Empty)
+            if(token.Length < 1)
             {
                 token = GetHeader(request, "Token");
             }
 
-            if (token == string.Empty)
+            if (token.Length < 1)
             {
                 throw new NoTokenProvidedException("No token provided.");
             }
