@@ -19,12 +19,10 @@ namespace WebApi_PointMap.Controllers
     {
         PointManager _pm;
 	    DatabaseContext _db;
-        AuthorizationManager _am;
 
         public PointController()
         {
             _pm = new PointManager();
-            _am = new AuthorizationManager();
 	        _db = new DatabaseContext();
         }
 

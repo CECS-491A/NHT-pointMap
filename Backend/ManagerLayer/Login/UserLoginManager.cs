@@ -22,9 +22,14 @@ namespace ManagerLayer.Login
         TokenService _tokenService;
         LogRequestDTO newLog;
         LoggingManager loggingManager;
+        DatabaseContext _db;
 
-        public LoginManagerResponseDTO LoginFromSSO(
-            DatabaseContext _db, string Username, Guid ssoID, string Signature, string PreSignatureString)
+        public UserLoginManager(DatabaseContext db)
+        {
+            _db = db;
+        }
+
+        public LoginManagerResponseDTO LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
@@ -42,21 +47,21 @@ namespace ManagerLayer.Login
             }
             ////////////////////////////////////////
             
-            _userManagementManager = new UserManagementManager();
-            var user = _userManagementManager.GetUser(_db, ssoID);
+            _userManagementManager = new UserManagementManager(_db);
+            var user = _userManagementManager.GetUser(ssoID);
             // check if user does not exist
             if (user == null)
             {
                 // create new user
-                user = _userManagementManager.CreateUser(_db, Username, ssoID);
+                user = _userManagementManager.CreateUser(Username, ssoID);
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                     "Login/Registration API", user.Username, "Successful registration of new User", 
                     "Line 51 UserLoginManager in ManagerLayer\n" +
                     "Route Reference UserController in WebApi-PointMap");
                 loggingManager.sendLogSync(newLog);
             }
-            _authorizationManager = new AuthorizationManager();
-            Session session = _authorizationManager.CreateSession(_db, user);
+            _authorizationManager = new AuthorizationManager(_db);
+            Session session = _authorizationManager.CreateSession(user);
 
             LoginManagerResponseDTO response = new LoginManagerResponseDTO
             {

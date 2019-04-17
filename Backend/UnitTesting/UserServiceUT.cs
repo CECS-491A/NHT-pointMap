@@ -20,9 +20,7 @@ namespace UnitTesting
 
         public UserServiceUT()
         {
-            us = new UserService();
             tu = new TestingUtils();
-            _umm = new UserManagementManager();
         }
 
         [TestMethod]
@@ -33,8 +31,10 @@ namespace UnitTesting
             var expected = newUser;
             using (_db = tu.CreateDataBaseContext())
             {
+                us = new UserService(_db);
+
                 // Act
-                var response = us.CreateUser(_db, newUser);
+                var response = us.CreateUser(newUser);
                 _db.SaveChanges();
 
                 //Assert
@@ -52,8 +52,10 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
+                us = new UserService(_db);
+
                 // Act
-                User response = us.CreateUser(_db, newUser);
+                User response = us.CreateUser(newUser);
                 _db.SaveChanges();
 
                 //Assert
@@ -82,12 +84,13 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // ACT
-                var response = us.CreateUser(_db, newUser);
+                us = new UserService(_db);
+                var response = us.CreateUser(newUser);
                 try
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     //catch error
                     // detach user attempted to be created from the db context - rollback
@@ -114,10 +117,10 @@ namespace UnitTesting
             // Act
             using (var _db = tu.CreateDataBaseContext())
             {
-                _umm = new UserManagementManager();
-                var response = _umm.CreateUser(_db, Username, Guid.NewGuid());
+                _umm = new UserManagementManager(_db);
+                var response = _umm.CreateUser(Username, Guid.NewGuid());
                 _db.SaveChanges();
-                var result = _umm.GetUser(_db, response.Id);
+                var result = _umm.GetUser(response.Id);
 
                 // Assert 
                 Assert.IsNotNull(response);
@@ -138,8 +141,8 @@ namespace UnitTesting
             // Act
             using (var _db = tu.CreateDataBaseContext())
             {
-                _umm = new UserManagementManager();
-                var response = _umm.CreateUser(_db, email, Guid.NewGuid());
+                _umm = new UserManagementManager(_db);
+                var response = _umm.CreateUser(email, Guid.NewGuid());
 
                 // Assert 
                 //expects exception
@@ -158,7 +161,8 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = us.DeleteUser(_db, newUser.Id);
+                us = new UserService(_db);
+                var response = us.DeleteUser(newUser.Id);
                 _db.SaveChanges();
                 var result = _db.Users.Find(expectedResponse.Id);
 
@@ -179,8 +183,9 @@ namespace UnitTesting
 
             using (_db = new DatabaseContext())
             {
+                us = new UserService(_db);
                 // Act
-                var response = us.DeleteUser(_db, nonExistingId);
+                var response = us.DeleteUser(nonExistingId);
                 // will return null if user does not exist
                 _db.SaveChanges();
                 var result = _db.Users.Find(expectedResponse);
@@ -203,7 +208,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = us.UpdateUser(_db, newUser);
+                us = new UserService(_db);
+
+                var response = us.UpdateUser(newUser);
                 _db.SaveChanges();
                 var result = _db.Users.Find(expectedResult.Id);
 
@@ -228,7 +235,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = us.UpdateUser(_db, newUser);
+                us = new UserService(_db);
+
+                var response = us.UpdateUser( newUser);
                 try
                 {
                     _db.SaveChanges();
@@ -259,12 +268,13 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = us.UpdateUser(_db, newUser);
+                us = new UserService(_db);
+                var response = us.UpdateUser(newUser);
                 try
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     // catch error
                     // rollback changes
@@ -292,7 +302,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = us.GetUser(_db, expectedResult.Id);
+                us = new UserService(_db);
+
+                var result = us.GetUser(expectedResult.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -310,7 +322,9 @@ namespace UnitTesting
             // Act
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = us.GetUser(_db, nonExistingUser);
+                us = new UserService(_db);
+
+                var result = us.GetUser(nonExistingUser);
 
                 // Assert
                 Assert.IsNull(result);
@@ -329,10 +343,10 @@ namespace UnitTesting
             // ACT
             using (var _db = new DatabaseContext())
             {
-                _umm = new UserManagementManager();
-                _umm.DisableUser(_db, newUser);
+                _umm = new UserManagementManager(_db);
+                _umm.DisableUser(newUser);
                 _db.SaveChanges();
-                var result = _umm.GetUser(_db, newUser.Id);
+                var result = _umm.GetUser(newUser.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -352,10 +366,10 @@ namespace UnitTesting
             // ACT
             using (var _db = new DatabaseContext())
             {
-                _umm = new UserManagementManager();
-                _umm.EnableUser(_db, newUser);
+                _umm = new UserManagementManager(_db);
+                _umm.EnableUser(newUser);
                 _db.SaveChanges();
-                var result = _umm.GetUser(_db, newUser.Id);
+                var result = _umm.GetUser(newUser.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -373,10 +387,10 @@ namespace UnitTesting
             // ACT
             using (var _db = new DatabaseContext())
             {
-                _umm = new UserManagementManager();
-                _umm.ToggleUser(_db, newUser, true);
+                _umm = new UserManagementManager(_db);
+                _umm.ToggleUser(newUser, true);
                 _db.SaveChanges();
-                var result = _umm.GetUser(_db, newUser.Id);
+                var result = _umm.GetUser(newUser.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -396,7 +410,8 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsFalse(us.IsManagerOver(_db, unassociatedUser, subject));
+                us = new UserService(_db);
+                Assert.IsFalse(us.IsManagerOver(unassociatedUser, subject));
             }
         }
 
@@ -414,7 +429,8 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsFalse(us.IsManagerOver(_db, unassociatedUser, subject));
+                us = new UserService(_db);
+                Assert.IsFalse(us.IsManagerOver(unassociatedUser, subject));
             }
         }
 
@@ -430,7 +446,8 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsTrue(us.IsManagerOver(_db, directManager, subject));
+                us = new UserService(_db);
+                Assert.IsTrue(us.IsManagerOver(directManager, subject));
             }
         }
 
@@ -450,7 +467,9 @@ namespace UnitTesting
 
             using (_db = tu.CreateDataBaseContext())
             {
-                Assert.IsTrue(us.IsManagerOver(_db, indirectManager, subject));
+                _db.SaveChanges();
+                us = new UserService(_db);
+                Assert.IsTrue(us.IsManagerOver(indirectManager, subject));
             }
         }
 
