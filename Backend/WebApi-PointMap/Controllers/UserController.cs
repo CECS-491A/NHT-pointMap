@@ -42,6 +42,8 @@ namespace WebApi_PointMap.Controllers
                     requestPayload.Signature,
                     requestPayload.PreSignatureString());
 
+                _db.SaveChanges();
+
                 LoginResponseDTO response = new LoginResponseDTO
                 {
                     redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token
