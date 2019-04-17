@@ -22,6 +22,11 @@ namespace ManagerLayer.UserManagement
             try
             {
                 var useremail = new System.Net.Mail.MailAddress(email);
+                var existingUserWithEmail = _userService.GetUser(email);
+                if (existingUserWithEmail != null)
+                {
+                    throw new UserAlreadyExistsException("User with that email already exists.");
+                }
             }
             catch (FormatException e)
             {

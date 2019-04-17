@@ -1,11 +1,10 @@
 ﻿using DataAccessLayer.Database;
-using ManagerLayer.Login;
+using ManagerLayer.SSOUtility;
 using DTO;
 using System;
 using System.Net;
 using System.Web.Http;
 using WebApi_PointMap.Models;
-using ManagerLayer.UserManagement;
 using WebApi_PointMap.ErrorHandling;
 
 namespace WebApi_PointMap.Controllers
@@ -29,8 +28,7 @@ namespace WebApi_PointMap.Controllers
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     var _userLoginManager = new UserLoginManager(_db);
-                    LoginManagerResponseDTO loginAttempt;
-                    loginAttempt = _userLoginManager.LoginFromSSO(
+                    var loginAttempt = _userLoginManager.LoginFromSSO(
                         requestPayload.Email,
                         userSSOID,
                         requestPayload.Signature,

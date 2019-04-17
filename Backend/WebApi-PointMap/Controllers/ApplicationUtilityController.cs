@@ -10,6 +10,8 @@ namespace WebApi_PointMap.Controllers
 {
     public class ApplicationUtilityController : ApiController
     {
+        // Check the health of the application
+        //  - return status code based on internal applicaiton errors
         [HttpOptions]
         [Route("api/utility/applicationhealth")]
         public IHttpActionResult ApplicationHealthCheck()
@@ -18,12 +20,17 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
+                    var existingConnection = _db.Database.Exists();
+                    if (!existingConnection)
+                    {
+                        return Content(HttpStatusCode.InternalServerError, "PointMap is encountering problems. (database connection error)");
+                    }
                     _db.SaveChanges();
                     return Content(HttpStatusCode.OK, "PointMap is online.");
                 }
                 catch (Exception)
                 {
-                    return Content(HttpStatusCode.InternalServerError, "PointMap is having an internal database error.");
+                    return Content(HttpStatusCode.InternalServerError, "PointMap is encountering problems. (internal database errors)");
                 }
             }
         }

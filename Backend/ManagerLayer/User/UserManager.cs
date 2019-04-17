@@ -5,12 +5,9 @@ using ManagerLayer.AccessControl;
 using ManagerLayer.Logging;
 using ManagerLayer.UserManagement;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static ServiceLayer.Services.ExceptionService;
 
-namespace ManagerLayer.Login
+namespace ManagerLayer.Users
 {
     public class UserManager
     {
@@ -45,15 +42,27 @@ namespace ManagerLayer.Login
         {
 
             var _userManagementManager = new UserManagementManager(_db);
-            var user = _userManagementManager.CreateUser(Username, ssoID);
-            newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                "Login/Registration API", user.Username, "Successful registration of new User",
-                "Line 51 UserLoginManager in ManagerLayer\n" +
-                "Route Reference UserController in WebApi-PointMap");
-            _loggingManager.sendLogSync(newLog);
-            var _authorizationManager = new AuthorizationManager(_db);
-            Session session = _authorizationManager.CreateSession(user);
-            return session;
+            try
+            {
+                var user = _userManagementManager.CreateUser(Username, ssoID);
+                newLog = new LogRequestDTO(ssoID.ToString(), Username,
+                    "Login/Registration API", user.Username, "Successful registration of new User",
+                    "Line 51 UserLoginManager in ManagerLayer\n" +
+                    "Route Reference UserController in WebApi-PointMap");
+                _loggingManager.sendLogSync(newLog);
+                var _authorizationManager = new AuthorizationManager(_db);
+                Session session = _authorizationManager.CreateSession(user);
+                return session;
+            }
+            catch (UserAlreadyExistsException e)
+            {
+                newLog = new LogRequestDTO(ssoID.ToString(), Username,
+                   "Login/Registration API", Username, "User with email already exists, create user prevented in registration.",
+                   "Line 51 Register in UserManager\n" +
+                   "Route Reference UserController in WebApi-PointMap");
+                _loggingManager.sendLogSync(newLog);
+                throw new UserAlreadyExistsException(e.Message);
+            }
         }
     }
 }
