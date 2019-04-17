@@ -31,23 +31,31 @@ namespace WebApi_PointMap.Controllers
         // GET api/point/get
         [HttpGet]
         [Route("api/point/{guid}")]
-        public IHttpActionResult Get(string guid)
+        public HttpResponseMessage Get(string guid)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
-            Guid id = new Guid(guid);
+            HttpResponseMessage response;
 
             try
-            {
-                var point = _pm.GetPoint(_db, id);
+            { 
+                var pointId = ControllerHelpers.ParseAndCheckId(guid);     
+                var token = ControllerHelpers.GetToken(Request);
+                ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                Guid id = new Guid(guid);
 
+                var point = _pm.GetPoint(_db, id);
                 _db.SaveChanges();
-                return Ok(point);
+
+                response = Request.CreateResponse(HttpStatusCode.OK);
+                var jsonContent = new JavaScriptSerializer().Serialize(point);
+                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                response = PointErrorHandler.HandleException(e, _db);
             }
+
+            return response;
         }
 
         //Post api/point

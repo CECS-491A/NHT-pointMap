@@ -59,7 +59,7 @@ namespace WebApi_PointMap.Controllers
             var validParse = Guid.TryParse(id, out guid);
             if (!validParse)
             {
-                throw new InvalidGuidException("Invalid User Id.");
+                throw new InvalidGuidException("Invalid Id.");
             }
             return guid;
         }
