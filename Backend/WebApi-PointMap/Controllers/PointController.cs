@@ -30,21 +30,50 @@ namespace WebApi_PointMap.Controllers
         // GET api/point/get
         [HttpGet]
         [Route("api/point/{guid}")]
-        public IHttpActionResult Get(string guid)
+        public HttpResponseMessage Get(string guid)
         {
+
+            HttpResponseMessage response;
+            var re = Request;
+            var headers = re.Headers;
             Guid id = new Guid(guid);
-
-            try
+            if (headers.Contains("token"))
             {
-                var point = _pm.GetPoint(_db, id);
+                try
+                {
+                    string token = headers.GetValues("token").First();
+                    string managerResponse = _am.ValidateAndUpdateSession(token);
+                    if (managerResponse == null)
+                    {
+                        response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+                        response.Content = new StringContent("https://kfc-sso.com/#/login",
+                        Encoding.Unicode);
+                    }
+                    else
+                    {
+                        response = Request.CreateResponse(HttpStatusCode.OK);
+                        var point = _pm.GetPoint(_db, id);
+                        _db.SaveChanges();
+                        var jsonContent = new JavaScriptSerializer().Serialize(point);
+                        response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                    }
 
-                _db.SaveChanges();
-                return Ok(point);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    response = Request.CreateResponse(HttpStatusCode.BadRequest);
+                    response.Content = new StringContent("Invalid field formatting",
+                    Encoding.Unicode);
+                }
             }
-            catch(Exception e)
+            else
             {
-                return ResponseMessage(LocalErrorHandler.HandleDatabaseException(e, _db));
+                response = Request.CreateResponse(HttpStatusCode.Unauthorized);
+                response.Content = new StringContent("https://kfc-sso.com/#/login",
+                Encoding.Unicode);
             }
+            return response;
         }
 
         //Post api/point
