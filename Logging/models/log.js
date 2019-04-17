@@ -24,6 +24,14 @@ let logSchema = mongoose.Schema({
     RecievedDate:{
         type: Date,
         required: true
+    },
+    Category:{
+        type: String,
+        required: true
+    },
+    Successful: {
+        type: String,
+        required: true
     }
 });
 
