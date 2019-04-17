@@ -13,7 +13,6 @@ namespace UnitTesting
     [TestClass]
     public class ClientServiceUT
     {
-        Client client;
         ClientService cs;
         DatabaseContext _db;
         TestingUtils tu;

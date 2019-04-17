@@ -13,55 +13,60 @@ namespace ServiceLayer.Services
     public class UserService : IUserService
     {
         private UserManagementRepository _UserManagementRepo;
+        DatabaseContext _db;
 
-        public UserService()
+        public UserService(DatabaseContext db)
         {
-            _UserManagementRepo = new UserManagementRepository();
+            _UserManagementRepo = new UserManagementRepository(db);
+            _db = db;
         }
 
-        public User CreateUser(DatabaseContext _db, User user)
+        public User CreateUser(User user)
         {
-            if (_UserManagementRepo.ExistingUser(_db, user))
+            return _UserManagementRepo.CreateNewUser(user);
+        }
+
+        public User DeleteUser(Guid Id)
+        {
+            return _UserManagementRepo.DeleteUser(Id);
+        }
+
+        public User GetUser(string email)
+        {
+            return _UserManagementRepo.GetUser(email);
+        }
+
+        public User GetUser(Guid Id)
+        {
+            return _UserManagementRepo.GetUser(Id);
+        }
+
+        public User UpdateUser(User user)
+        {
+            return _UserManagementRepo.UpdateUser(user);
+        }
+
+        public IEnumerable<User> GetAllUsers()
+        {
+            return _UserManagementRepo.GetAllUsers();
+        }
+
+        public bool IsManagerOver(User user, User subject)
+        {
+            if (subject.ManagerId == null)
             {
-                Console.WriteLine("User exists");
-                return null;
+                return false;
             }
-            return _UserManagementRepo.CreateNewUser(_db, user);
-        }
-
-        public User DeleteUser(DatabaseContext _db, Guid Id)
-        {
-            return _UserManagementRepo.DeleteUser(_db, Id);
-        }
-
-        public User GetUser(DatabaseContext _db, string email)
-        {
-            return _UserManagementRepo.GetUser(_db, email);
-        }
-
-        public User GetUser(DatabaseContext _db, Guid Id)
-        {
-            return _UserManagementRepo.GetUser(_db, Id);
-        }
-
-        public User GetUserBySSOID(DatabaseContext _db, Guid SSOID)
-        {
-            return _UserManagementRepo.GetUserBySSOID(_db, SSOID);
-        }
-
-        public User UpdateUser(DatabaseContext _db, User user)
-        {
-            return _UserManagementRepo.UpdateUser(_db, user);
-        }
-
-        public IEnumerable<User> GetAllUsers(DatabaseContext _db)
-        {
-            return _UserManagementRepo.GetAllUsers(_db);
-        }
-
-        public bool IsManagerOver(DatabaseContext _db, User user, User subject)
-        {
-            return _UserManagementRepo.IsManagerOver(_db, user, subject);
+            if (user.Id == subject.ManagerId)
+            {
+                return true;
+            }
+            var subjectManager = GetUser(subject.ManagerId.Value);
+            if (subjectManager != null)
+            {
+                return IsManagerOver(user, subjectManager);
+            }
+            return false;
         }
 
     }
