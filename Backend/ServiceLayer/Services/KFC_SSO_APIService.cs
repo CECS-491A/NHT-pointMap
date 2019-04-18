@@ -14,7 +14,8 @@ namespace ServiceLayer.Services
     public class KFC_SSO_APIService
     {
         const string API_URL = "https:/api.kfc-sso.com";
-        const string APP_ID = "4CB5916E-7C09-4495-8DA9-776A792295E8";
+        const string APP_ID = "69CA4919-0B26-40DA-AF1E-775FFADED87C";
+        public static readonly string APISecret = "5E5DDBD9B984E4C95BBFF621DF91ABC9A5318DAEC0A3B231B4C1BC8FE0851610";
 
         public HttpResponseMessage DeleteUserFromSSO(User user)
         {

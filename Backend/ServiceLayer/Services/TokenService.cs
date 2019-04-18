@@ -9,7 +9,6 @@ namespace ServiceLayer.Services
 {
     public class TokenService
     {
-        public static readonly string APISecret = "5E5DDBD9B984E4C95BBFF621DF91ABC9A5318DAEC0A3B231B4C1BC8FE0851610";
 
         public string GenerateToken()
         {
@@ -27,7 +26,7 @@ namespace ServiceLayer.Services
 
         public string GenerateSignature(string plaintext)
         {
-            HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(APISecret));
+            HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(KFC_SSO_APIService.APISecret));
             byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);
             byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
             return Convert.ToBase64String(signatureBytes);

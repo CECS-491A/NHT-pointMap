@@ -7,6 +7,11 @@ using System.Web.Http;
 using WebApi_PointMap.Models;
 using ManagerLayer.UserManagement;
 using WebApi_PointMap.ErrorHandling;
+using System.Collections.Generic;
+using static ServiceLayer.Services.ExceptionService;
+using ServiceLayer.Services;
+using System.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApi_PointMap.Controllers
 {
