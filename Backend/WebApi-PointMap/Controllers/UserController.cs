@@ -1,11 +1,10 @@
 ﻿using DataAccessLayer.Database;
 using ManagerLayer.SSOUtility;
-using DTO;
 using System;
 using System.Net;
 using System.Web.Http;
-using WebApi_PointMap.Models;
 using WebApi_PointMap.ErrorHandling;
+using static DTO.DTO.SSOServicesDTOs;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
@@ -16,7 +15,7 @@ namespace WebApi_PointMap.Controllers
         // POST api/user/login
         [HttpPost]
         [Route("api/user/login")]
-        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO requestPayload)
+        public IHttpActionResult LoginFromSSO([FromBody] LoginRequestPayload requestPayload)
         {
             using (var _db = new DatabaseContext())
             {

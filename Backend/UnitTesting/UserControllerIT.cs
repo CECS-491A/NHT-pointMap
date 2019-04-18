@@ -9,6 +9,7 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using static UnitTesting.TestingUtils;
 using System.Net;
+using static DTO.DTO.SSOServicesDTOs;
 
 namespace UnitTesting
 {
@@ -41,7 +42,7 @@ namespace UnitTesting
             };
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
-            LoginDTO payload = new LoginDTO
+            LoginRequestPayload payload = new LoginRequestPayload
             {
                 Email = user.Username,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
@@ -78,7 +79,7 @@ namespace UnitTesting
 
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
-            LoginDTO payload = new LoginDTO
+            LoginRequestPayload payload = new LoginRequestPayload
             {
                 Email = existing_username,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
@@ -118,7 +119,7 @@ namespace UnitTesting
 
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
-            LoginDTO payload = new LoginDTO
+            LoginRequestPayload payload = new LoginRequestPayload
             {
                 Email = alterdEmail,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
@@ -156,7 +157,7 @@ namespace UnitTesting
 
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
-            LoginDTO payload = new LoginDTO
+            LoginRequestPayload payload = new LoginRequestPayload
             {
                 Email = mock_payload.email,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
@@ -196,7 +197,7 @@ namespace UnitTesting
 
             var makeAttemptedSSOIdInvalid = mock_payload.ssoUserId.ToString() + "838fjf57h2dhdn2dn";
 
-            LoginDTO payload = new LoginDTO
+            LoginRequestPayload payload = new LoginRequestPayload
             {
                 Email = mock_payload.email,
                 SSOUserId = makeAttemptedSSOIdInvalid,

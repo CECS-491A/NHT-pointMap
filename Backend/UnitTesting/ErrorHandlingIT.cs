@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading;
 using DTO.DTO;
 using System.Diagnostics;
+using static DTO.DTO.SSOServicesDTOs;
 
 namespace UnitTesting
 {
@@ -251,7 +252,7 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-            LoginDTO loginDTO = new LoginDTO
+            LoginRequestPayload loginDTO = new LoginRequestPayload
             {
                 SSOUserId = Guid.NewGuid().ToString(),
                 Email = "something@email.com",

@@ -19,7 +19,6 @@ namespace ManagerLayer.SSOUtility
     public class UserLoginManager
     {
         UserManagementManager _userManagementManager;
-        AuthorizationManager _authorizationManager;
         TokenService _tokenService;
         LogRequestDTO newLog;
         LoggingManager loggingManager;

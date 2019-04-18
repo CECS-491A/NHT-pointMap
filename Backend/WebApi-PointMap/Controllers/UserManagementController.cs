@@ -9,6 +9,7 @@ using System.Net;
 using System.Web.Http;
 using WebApi_PointMap.ErrorHandling;
 using WebApi_PointMap.Models;
+using static DTO.DTO.SSOServicesDTOs;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
@@ -144,7 +145,7 @@ namespace WebApi_PointMap.Controllers
 
         [HttpPost]
         [Route("sso/user/delete")]
-        public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
+        public IHttpActionResult DeleteUser([FromBody, Required] LoginRequestPayload requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
