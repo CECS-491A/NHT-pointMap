@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div id="pointeditor" class="container">
     <h1>PointEditor</h1>
 
     <br />
@@ -8,24 +8,24 @@
       <v-text-field
         name="name"
         id="name"
-        v-model="name"
+        v-model="point.name"
         type="name"
         label="Name" /><br />
       <v-text-field
         name="description"
         id="description"
         type="description"
-        v-model="description"
+        v-model="point.description"
         label="Description" /><br />
       <v-text-field
         name="longitude"
         id="longitude"
-        v-model="longitude"
+        v-model="point.longitude"
         label="Longitude" /><br />
       <v-text-field
         name="latitude"
         id="latitude"
-        v-model="latitude"
+        v-model="point.latitude"
         label="Latitude" /><br />
 
       <v-alert
@@ -76,7 +76,8 @@ export default {
       responseError: null,
       error: "",
       creatingPoint: false,
-      point = {
+      loading: false,
+      point: {
         id: '',
         name: '',
         description: '',
@@ -89,7 +90,7 @@ export default {
   },
   mounted(){
     // checkSession();
-    getPointData();
+    // getPointData();
   },
   methods: {
     getPointData: function() {
@@ -111,14 +112,19 @@ export default {
             this.creatingPoint = true;
         }
     },
-    submit: function() {
+    submit: function() {   
       this.error = "";
+
       if (this.point.name == "") {
         this.error = "Point name is required.";
       } else if (this.point.description == "") {
-        this.error = "Point description is required";
-      } else if(this.point.latitude < 90 || this.point.latitude > 90 || 
-                this.point.longitude < 180 | this.point.latitude > 180) {
+        this.error = "Point description is required.";
+      } else if (this.point.latitude == "") {
+        this.error = "Point latitude is required.";
+      } else if(this.point.longitude == "") {
+        this.error = "Point longitude is required.";
+      }else if(parseInt(this.point.latitude) < -90 || parseInt(this.point.latitude) > 90 || 
+               parseInt(this.point.longitude) < -180 || parseInt(this.point.longitude) > 180) {
         this.error = "Latitude/Longitude value(s) out of range."
       }
 

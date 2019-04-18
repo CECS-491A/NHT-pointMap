@@ -37,8 +37,19 @@ export default {
     // checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
-      zoom: this.zoom
+      zoom: this.zoom,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+      },
+      streetViewControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+      },
     });
+    var addPointDiv = document.createElement('div');
+    
+    this.setupPointButton(addPointDiv, this.map);
+
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(addPointDiv);
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
   },
@@ -102,7 +113,7 @@ export default {
                 title: point.Id
               });
               this.marker.addListener('click', function() { //Adds an event listener to each point to reroute to pointDetails page
-                window.location.href = 'http://pointmap.net/#/pointeditor/?pointId=' + point.Id
+                window.location.href = 'http://pointmap.net/#/pointdetails/?pointId=' + point.Id
               });
               this.markers.push(this.marker)
               resolve()
@@ -117,6 +128,32 @@ export default {
     createCluster(){
       this.markerCluster = new MarkerClusterer(this.map, this.markers, //Creates a cluster object which clusters all markers on the map
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+    },
+    setupPointButton(addPointDiv){
+      addPointDiv.style.borderRadius = "50%";
+      addPointDiv.style.backgroundColor = "teal";
+      addPointDiv.style.color = "#fff";
+      addPointDiv.style.height = "56px";
+      addPointDiv.style.width = "56px";
+      addPointDiv.style.marginRight = "17px";
+      addPointDiv.style.marginBottom = "2px";
+      addPointDiv.style.boxShadow = '0 0 4px 2px rgba(0,0,0,.3)';
+      addPointDiv.align = 'center';
+
+      var addPointBtn = document.createElement('div');
+      addPointBtn.style.fontFamily = 'Roboto,Arial,sans-serif';
+      addPointBtn.style.fontSize = '30px';
+      addPointBtn.textContent = '+';
+      addPointBtn.style.paddingTop = '10px';
+      addPointBtn.style.height = '56px';
+      addPointBtn.style.width = '56px';
+      addPointBtn.style.cursor = 'pointer';
+
+      addPointBtn.addEventListener('click', function() {
+        window.location.href = 'http://localhost:8080/#/pointeditor';
+      });
+      
+      addPointDiv.appendChild(addPointBtn);
     }
   }  
 };
