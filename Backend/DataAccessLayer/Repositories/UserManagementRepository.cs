@@ -11,85 +11,53 @@ namespace DataAccessLayer.Repositories
 {
     public class UserManagementRepository
     {
-        public User CreateNewUser(DatabaseContext _db, User user)
+        DatabaseContext _db;
+
+        public UserManagementRepository(DatabaseContext db)
         {
-            _db.Entry(user).State = EntityState.Added;
+            _db = db;
+        }
+
+        public User CreateNewUser(User user)
+        {
+            _db.Users.Add(user);
             return user;
         }
 
-        public User DeleteUser(DatabaseContext _db, Guid Id)
+        // Notes: use find if searching through pkeys
+
+        public User DeleteUser(Guid Id)
         {
-            var user = _db.Users
-                .Where(c => c.Id == Id)
-                .FirstOrDefault<User>();
+            var user = _db.Users.Find(Id);
             if (user == null)
                 return null;
-            _db.Entry(user).State = EntityState.Deleted;
+            _db.Users.Remove(user);
             return user;
         }
 
-        public User GetUser(DatabaseContext _db, string email)
+        public User GetUser(string username)
         {
-            var user = _db.Users
-                .Where(c => c.Username == email)
-                .FirstOrDefault<User>();
+            var user = _db.Users.Where(u => u.Username == username).FirstOrDefault<User>();
             return user;
         }
 
-        public User GetUser(DatabaseContext _db, Guid Id)
+        public User GetUser(Guid Id)
         {
-            return _db.Users.Find(Id);
-        }
-
-        public User GetUserBySSOID(DatabaseContext _db, Guid SSOID)
-        {
-            var user = _db.Users
-                .Where(c => c.Id == SSOID)
-                .FirstOrDefault<User>();
+            var user = _db.Users.Find(Id);
             return user;
         }
 
-        public User UpdateUser(DatabaseContext _db, User user)
+        public User UpdateUser(User updatedUser)
         {
-            user.UpdatedAt = DateTime.UtcNow;
-            _db.Entry(user).State = EntityState.Modified;
-            return user;
+            updatedUser.UpdatedAt = DateTime.UtcNow;
+            _db.Entry(updatedUser).State = EntityState.Modified;
+            return updatedUser;
         }
 
-        public bool ExistingUser(DatabaseContext _db, User user)
+        public IEnumerable<User> GetAllUsers()
         {
-            var result = GetUser(_db, user.Username);
-            if (result != null)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public bool ExistingUser(DatabaseContext _db, string email)
-        {
-            var result = GetUser(_db, email);
-            if (result != null)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public IEnumerable<User> GetAllUsers(DatabaseContext _db)
-        {
-            return _db.Users.ToList<User>();
-        }
-
-        public bool IsManagerOver(DatabaseContext _db, User user, User subject)
-        {
-            if (subject == null || subject.ManagerId == null || user == null) return false;
-
-            if (subject.ManagerId == user.Id) return true;
-
-            // Check if we're a manager of the subjects manager
-            var managerOfSubject = GetUser(_db, (Guid) subject.ManagerId);
-            return IsManagerOver(_db, user, managerOfSubject);
+            var users = _db.Users.ToList<User>();
+            return users;
         }
     }
 }

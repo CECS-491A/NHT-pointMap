@@ -21,11 +21,15 @@ namespace ManagerLayer.Login
         AuthorizationManager _authorizationManager;
         TokenService _tokenService;
         LogRequestDTO newLog;
-        FormUrlEncodedContent logContent;
         LoggingManager loggingManager;
+        DatabaseContext _db;
 
-        public LoginManagerResponseDTO LoginFromSSO(
-            DatabaseContext _db, string Username, Guid ssoID, string Signature, string PreSignatureString)
+        public UserLoginManager(DatabaseContext db)
+        {
+            _db = db;
+        }
+
+        public LoginManagerResponseDTO LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
@@ -49,46 +53,23 @@ namespace ManagerLayer.Login
             if (user == null)
             {
                 // create new user
-                try
-                {
-                    user = _userManagementManager.CreateUser(Username, ssoID);
-                    _db.SaveChanges();
-                    newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", user.Username, "Successful registration of new User", 
-                        "Line 54 UserLoginManager in ManagerLayer\n" +
-                        "Route Reference UserController in WebApi-PointMap");
-                    loggingManager.sendLogSync(newLog);
+                user = _userManagementManager.CreateUser(Username, ssoID);
+                newLog = new LogRequestDTO(ssoID.ToString(), Username,
+                    "Login/Registration API", user.Username, "Successful registration of new User", 
+                    "Line 51 UserLoginManager in ManagerLayer\n" +
+                    "Route Reference UserController in WebApi-PointMap");
+                loggingManager.sendLogSync(newLog);
+            }
+            _authorizationManager = new AuthorizationManager(_db);
+            Session session = _authorizationManager.CreateSession(user);
 
-                }
-                catch (InvalidEmailException ex)
-                {
-                    throw new InvalidEmailException(ex.Message);
-                }
-                catch (InvalidDbOperationException)
-                {
-                    _db.Entry(user).State = System.Data.Entity.EntityState.Detached;
-                    throw new InvalidDbOperationException("User was not created");
-                }
-            }
-            _authorizationManager = new AuthorizationManager();
-            Session session = _authorizationManager.CreateSession(_db, user);
-            try
-            {
-                _db.SaveChanges();
-            }
-            catch (Exception)
-            {
-                _db.Entry(session).State = System.Data.Entity.EntityState.Detached;
-                throw new InvalidDbOperationException("Session was not created");
-            }
-            LoginManagerResponseDTO response;
-            response = new LoginManagerResponseDTO
+            LoginManagerResponseDTO response = new LoginManagerResponseDTO
             {
                 Token = session.Token
             };
             newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", user.Username, "Successful login of user",
-                        "Line 85 UserLoginManager in ManagerLayer\n" +
+                        "Line 59 UserLoginManager in ManagerLayer\n" +
                         "Route Reference UserController in WebApi-PointMap");
             loggingManager.sendLogSync(newLog);
 

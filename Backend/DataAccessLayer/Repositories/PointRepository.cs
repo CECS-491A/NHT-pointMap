@@ -13,7 +13,7 @@ namespace DataAccessLayer.Repositories
         {
             if (point.Longitude > 180 || point.Longitude < -180 ||
                 point.Latitude > 90 || point.Latitude < -90)
-                throw new ArgumentOutOfRangeException("Longitude/Latitude value out of range.");
+                throw new ArgumentOutOfRangeException();
             return true;
         }
 

@@ -2,32 +2,19 @@
 using DataAccessLayer.Models;
 using ServiceLayer.Services;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.UserManagement
 {
     public class UserManagementManager
     {
-        private IPasswordService _passwordService;
-        private IUserService _userService;
-        private readonly DatabaseContext _db;
-
-        public UserManagementManager()
-        {
-            _userService = new UserService();
-        }
+        DatabaseContext _db;
+        UserService _userService;
 
         public UserManagementManager(DatabaseContext db)
         {
             _db = db;
-            _userService = new UserService();
+            _userService = new UserService(_db);
         }
 
         public User CreateUser(string email, Guid SSOID)
@@ -36,11 +23,11 @@ namespace ManagerLayer.UserManagement
             {
                 var useremail = new System.Net.Mail.MailAddress(email);
             }
-            catch (Exception)
+            catch (FormatException e)
             {
-                throw new InvalidEmailException("Invalid Email");
+                throw new InvalidEmailException("Invalid Email", e);
             }
-            _passwordService = new PasswordService();
+            var _passwordService = new PasswordService();
             DateTime timestamp = DateTime.UtcNow;
             byte[] salt = _passwordService.GenerateSalt();
             string hash = _passwordService.HashPassword(timestamp.ToString(), salt);
@@ -52,30 +39,25 @@ namespace ManagerLayer.UserManagement
                 UpdatedAt = timestamp,
                 Id = SSOID
             };
-            try
-            {
-                _userService.CreateUser(_db, user);
-            }
-            catch (Exception)
-            {
-                throw new InvalidDbOperationException();
-            }
+             _userService.CreateUser(user);
             return user;
         }
 
         public void DeleteUser(Guid id)
         {
-            _userService.DeleteUser(_db, id);
+            _userService.DeleteUser(id);
         }
 
         public User GetUser(Guid id)
         {
-            return _userService.GetUser(_db, id); 
+            var user = _userService.GetUser(id);
+            return user;
         }
 
         public User GetUser(string email)
         {
-            return _userService.GetUser(_db, email);
+            var user = _userService.GetUser(email);
+            return user;
         }
 
         public void DisableUser(User user)
@@ -95,14 +77,12 @@ namespace ManagerLayer.UserManagement
                 disable = !user.Disabled;
             }
             user.Disabled = (bool)disable;
-            _userService.UpdateUser(_db, user);
+            _userService.UpdateUser(user);
         }
 
         public void UpdateUser(User user)
         {
-            _userService.UpdateUser(_db, user);
+            _userService.UpdateUser(user);
         }
-
-       
     }
 }

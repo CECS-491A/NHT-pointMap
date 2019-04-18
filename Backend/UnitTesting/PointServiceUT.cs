@@ -4,6 +4,7 @@ using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace UnitTesting
 {
@@ -36,16 +37,16 @@ namespace UnitTesting
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
         }
 
         [TestMethod]
@@ -66,16 +67,16 @@ namespace UnitTesting
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
         }
 
         [TestMethod]
@@ -138,7 +139,7 @@ namespace UnitTesting
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     //catch error
                     // detach Point attempted to be created from the db context - rollback
@@ -271,7 +272,7 @@ namespace UnitTesting
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     // catch error
                     // rollback changes
