@@ -6,6 +6,7 @@ using System.Net;
 using System.Web.Http;
 using WebApi_PointMap.Models;
 using WebApi_PointMap.ErrorHandling;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -36,15 +37,15 @@ namespace WebApi_PointMap.Controllers
 
                     _db.SaveChanges();
 
-                    LoginResponseDTO response = new LoginResponseDTO
-                    {
-                        redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token
-                    };
-
-                    return Ok(response);
-
+                    var redirect = "https://pointmap.net/#/login/?token=" + loginAttempt.Token;
+                    var response = Content(HttpStatusCode.Redirect, redirect);
+                    return response;
                 }
-                catch (Exception e)
+                catch (InvalidTokenSignatureException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                }
+                catch (Exception e) // catch an database error
                 {
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }

@@ -9,7 +9,7 @@ namespace ServiceLayer.Services
 {
     public class TokenService
     {
-        public static readonly string APISecret = "FDF9B8E2935D6F4C7336604164B92B82E36D1BD87FF96333194D41FDDA023449";
+        public static readonly string APISecret = "5E5DDBD9B984E4C95BBFF621DF91ABC9A5318DAEC0A3B231B4C1BC8FE0851610";
 
         public string GenerateToken()
         {

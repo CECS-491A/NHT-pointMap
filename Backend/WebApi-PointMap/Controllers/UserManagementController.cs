@@ -55,6 +55,10 @@ namespace WebApi_PointMap.Controllers
                     }
 
                 }
+                catch (UserIsNotAdministratorException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                }
                 catch (Exception e)
                 {
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));

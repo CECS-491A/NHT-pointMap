@@ -31,7 +31,7 @@ namespace ManagerLayer.AccessControl
         {
             _userService = new UserService(_db);
             //check if user exist
-            var userResponse = _userService.GetUser(user.Username);
+            var userResponse = _userService.GetUser(user.Id);
             if(userResponse == null)
             {
                 return null;

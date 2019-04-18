@@ -28,7 +28,7 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     return Content(HttpStatusCode.OK, "PointMap is online.");
                 }
-                catch (Exception)
+                catch (Exception) // catch error when trying to call db, return status of internal problems
                 {
                     return Content(HttpStatusCode.InternalServerError, "PointMap is encountering problems. (internal database errors)");
                 }
