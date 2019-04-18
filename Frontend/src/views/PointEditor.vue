@@ -76,32 +76,35 @@ export default {
       responseError: null,
       error: "",
       creatingPoint: false,
-      id: '',
-      name: '',
-      description: '',
-      latitude: '',
-      longitude: '',
-      createdAt: '',
-      updatedAt: ''
+      point = {
+        id: '',
+        name: '',
+        description: '',
+        latitude: '',
+        longitude: '',
+        createdAt: '',
+        updatedAt: ''
+      }
     }
   },
   mounted(){
-    checkSession();
+    // checkSession();
+    getPointData();
   },
   methods: {
     getPointData: function() {
-        this.id =  this.$route.query.pointId
+        this.point.id =  this.$route.query.pointId
 
         if(id !== '') {
             this.creatingPoint = false;
-            this.rawData = getPoint(this.id, (arr)=> {
+            this.rawData = getPoint(this.point.id, (arr)=> {
                 if(arr!=null) {
-                    this.createdAt = new Date(parseInt(arr[0].CreatedAt.substr(6)));
-                    this.lastModifiedAt = new Date(parseInt(arr[0].UpdatedAt.substr(6)));
-                    this.name = arr[0].Name;
-                    this.description = arr[0].Description;
-                    this.long = arr[0].Longitude;
-                    this.lat = arr[0].Latitude;
+                    this.point.createdAt = new Date(parseInt(arr.CreatedAt.substr(6)));
+                    this.point.updatedAt = new Date(parseInt(arr.UpdatedAt.substr(6)));
+                    this.point.name = arr.Name;
+                    this.point.description = arr.Description;
+                    this.point.longitude = arr.Longitude;
+                    this.point.latitude = arr.Latitude;
                 }
             })
         } else {
@@ -110,12 +113,12 @@ export default {
     },
     submit: function() {
       this.error = "";
-      if (this.name == "") {
+      if (this.point.name == "") {
         this.error = "Point name is required.";
-      } else if (this.description == "") {
+      } else if (this.point.description == "") {
         this.error = "Point description is required";
-      } else if(this.latitude < 90 || this.latitude > 90 || 
-                this.longitude < 180 | this.latitude > 180) {
+      } else if(this.point.latitude < 90 || this.point.latitude > 90 || 
+                this.point.longitude < 180 | this.point.latitude > 180) {
         this.error = "Latitude/Longitude value(s) out of range."
       }
 
@@ -130,12 +133,12 @@ export default {
       }
 
       func({
-            name: this.name,
-            description: this.description,
-            latitude: this.latitude,
-            longitude: this.longitude,
-            updatedAt: this.updatedAt,
-            createdAt: this.createdAt,
+            name: this.point.name,
+            description: this.point.description,
+            latitude: this.point.latitude,
+            longitude: this.point.longitude,
+            updatedAt: this.point.updatedAt,
+            createdAt: this.point.createdAt,
             id: this.Id
         }).then(() => {
             this.$router.push('mapview');

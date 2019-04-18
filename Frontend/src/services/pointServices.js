@@ -30,7 +30,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
         console.log(err);
         if(err.response.status == 401){
             localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            //window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;
@@ -53,7 +53,7 @@ function getPoint(pointId, callback){
         console.log(err);
         if (err.response.status == 401) {
             localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            //window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;
@@ -75,7 +75,7 @@ function updatePoint(point, callback){
         console.log(err);
         if (err.response.status == 401) {
             localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            //window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;
@@ -97,7 +97,7 @@ function createPoint(point, callback){
         console.log(err);
         if (err.response.status == 401) {
             localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            //window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;

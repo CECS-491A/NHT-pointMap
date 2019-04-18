@@ -93,7 +93,7 @@ export default {
      },
   },
    beforeMount: function() {
-      checkSession()
+    //   checkSession()
       this.getPointDetails()
   }
 }

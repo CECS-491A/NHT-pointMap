@@ -37,6 +37,10 @@ export default new Router({
       component: PointDetails
     },
     {
+      path: '/pointeditor',
+      name: 'PointEditor',
+    },
+    {
       path: '*',
       component: HelloWorld
     },
