@@ -25,51 +25,69 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
 app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true
-}))
+}));
 
 app.post('/', (req, res) => {
-    if(!req.body){
+    if(!req.body){//Check for valid body
         res.status(400).send({'Error': 'Invalid request format'});
         return
     }
-    if(!req.body.signature || !req.body.timestamp || !req.body.ssoUserId || !req.body.email){
+    let data = req.body
+    if(!data.signature || !data.timestamp || !data.ssoUserId || !data.email){ //Check for needed auth params
+        console.log('missing authentication fields')
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;         
     }
         
-    let plaintext = "ssoUserId=" + req.body.ssoUserId + ";email=" + req.body.email + ";timestamp=" + req.body.timestamp + ";"
-    var hash = CryptoJS.HmacSHA256(plaintext, sharedSecret);
+    let plaintext = "ssoUserId=" + data.ssoUserId + ";email=" + data.email + ";timestamp=" + data.timestamp + ";"
+    var hash = CryptoJS.HmacSHA256(plaintext, sharedSecret); //Computes auth
     var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
 
-    if(req.body.signature != hashInBase64){
+    if(data.signature != hashInBase64){ //Checks if signatures match
+        console.log('Hashes do not match')
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;
     }
-    if(!req.body.user || !req.body.source || !req.body.desc || !req.body.createdDate || !req.body.details){
-        res.status(400).send({'Error': 'Invalid request format'});
-        return
+
+    if(!data.ssoUserId || !data.email || !data.logCreatedAt || !data.source || !data.details){ //Checks for required fields
+        res.status(400).send({'Error': 'Missing required request fields'});
+        return;
     }
-    let newLog = new Log();
-    newLog.Source = req.body.source;
-    newLog.AssociatedUser = req.body.user;
-    newLog.Description = req.body.desc;
-    newLog.Details = req.body.details;
-    newLog.CreatedDate = req.body.createdDate;
-    newLog.RecievedDate = new Date;
-
-
-    Log.saveLog(newLog, (err, newLog) => {
-        if(err) {
+    let keys = Object.keys(data) //gets an array of body param keys
+    let json = {}
+    keys.forEach(key => {
+        if(key != 'email' && key != 'logCreatedAt' && key != 'source' && key != 'details' && 
+        key != 'signature' && key != 'ssoUserId' && key != 'timestamp')
+            json[key] = data[key]; //Adds an unused or required field to the json object
+    })
+    let newLog = new Log(); //Creates log object
+    newLog.email = data.email;
+    newLog.logCreatedAt = new Date(parseInt(data.logCreatedAt.substr(6)));
+    newLog.source = data.source;
+    newLog.details = data.details;
+    newLog.ssoUserId = data.ssoUserId;
+    
+    if('sessionCreatedAt' in json && 'sessionUpdatedAt' in json && 'sessionExpiredAt' in json){
+        let createdDate = new Date(parseInt(json.sessionCreatedAt.substr(6)));
+        let updatedDate = new Date(parseInt(json.sessionUpdatedAt.substr(6)));
+        let expiredAt = new Date(parseInt(json.sessionUpdatedAt.substr(6)));
+        let duration = (updatedDate.getTime() - createdDate.getTime()) / 1000;
+        json.sessionCreatedAt = createdDate;
+        json.sessionUpdatedAt = updatedDate;
+        json.sessionExpiredAt = expiredAt;
+        json['sessionDuration'] = duration;
+    }
+    newLog.json = json
+    Log.saveLog(newLog, (err, newLog) => { //Saving the log
+        if(err){ //Error saving newLog
+            console.log(err)
             res.status(500).send({'Error': 'Something went wrong'});
-            return;
-        } else {
-            console.log(newLog)
-            res.status(200).send(newLog);
-            return; 
+        }else{ //Successful log creation
+            res.status(200).send(newLog)
         }
-    });
+    })
 });
 
-app.listen(port, () => {
+app.listen(port, () => { //Server starts up on defined port
     console.log('Logging server started on port ', port);
 })

@@ -1,39 +1,28 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 
 let logSchema = mongoose.Schema({
-    Source: {
+    ssoUserId: {
         type: String,
         required: true
     },
-    AssociatedUser: {
-        type: String,
-        required: false
-    },
-    Description:{
-        type: String,
-        required: false
-    },
-    Details:{
-        type: String,
-        required: false
-    },
-    CreatedDate: {
+    email:{
         type: String,
         required: true
     },
-    RecievedDate:{
+    logCreatedAt: {
         type: Date,
         required: true
     },
-    Category:{
+    source: {
         type: String,
         required: true
     },
-    Successful: {
+    details: {
         type: String,
         required: true
-    }
-});
+    },
+    json: {}
+})
 
 let Log = module.exports = mongoose.model('Log', logSchema);
 

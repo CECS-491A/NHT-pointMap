@@ -33,11 +33,6 @@ namespace ManagerLayer.Login
             loggingManager = new LoggingManager();
             if (!_tokenService.isValidSignature(PreSignatureString, Signature))
             {
-                newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", Username, "Invalid signing attempt",
-                        "Line 35 UserLoginManager in ManagerLayer\n" +
-                        "Route Reference UserController in WebApi-PointMap");
-                loggingManager.sendLogSync(newLog);
                 throw new InvalidTokenSignatureException("Session is not valid.");
             }
             ////////////////////////////////////////
@@ -49,11 +44,6 @@ namespace ManagerLayer.Login
             {
                 // create new user
                 user = _userManagementManager.CreateUser(_db, Username, ssoID);
-                newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                    "Login/Registration API", user.Username, "Successful registration of new User", 
-                    "Line 51 UserLoginManager in ManagerLayer\n" +
-                    "Route Reference UserController in WebApi-PointMap");
-                loggingManager.sendLogSync(newLog);
             }
             _authorizationManager = new AuthorizationManager();
             Session session = _authorizationManager.CreateSession(_db, user);
@@ -62,11 +52,6 @@ namespace ManagerLayer.Login
             {
                 Token = session.Token
             };
-            newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", user.Username, "Successful login of user",
-                        "Line 59 UserLoginManager in ManagerLayer\n" +
-                        "Route Reference UserController in WebApi-PointMap");
-            loggingManager.sendLogSync(newLog);
 
             return response;
         }

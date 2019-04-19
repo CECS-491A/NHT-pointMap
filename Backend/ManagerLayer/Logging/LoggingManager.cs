@@ -11,7 +11,7 @@ namespace ManagerLayer.Logging
 {
     public class LoggingManager
     {
-        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
+        private const string LOG_SERVER_URL = "http://localhost:3000/";
         private readonly HttpClient client;
         private TokenService _ts;
         private LoggingService _ls;
@@ -25,18 +25,27 @@ namespace ManagerLayer.Logging
 
         public void sendLogSync(LogRequestDTO newLog)
         {
-            string[] content = getContent(newLog);
-            var responseStatusCode = _ls.sendLogSync(newLog, content[0],
-                content[1]);
-            _ls.notifyAdmin(responseStatusCode, _ls.getLogContent(newLog, content[0], content[1]));
+            if(newLog.isValid())
+            {
+                string[] content = getContent(newLog); //Returns [signature, timestamp]
+                newLog.signature = content[0];
+                newLog.timestamp = content[1];
+                var responseStatusCode = _ls.sendLogSync(newLog);
+                _ls.notifyAdmin(responseStatusCode, _ls.getLogContent(newLog));
+            }
+            
         }
 
         public async Task sendLogAsync(LogRequestDTO newLog)
         {
-            string[] content = getContent(newLog);
-            var responseStatusCode = await _ls.sendLogAsync(newLog, content[0],
-                content[1]);
-            _ls.notifyAdmin(responseStatusCode, _ls.getLogContent(newLog, content[0], content[1]));
+            if(newLog.isValid())
+            {
+                string[] content = getContent(newLog); //Returns [signature, timestamp]
+                newLog.signature = content[0];
+                newLog.timestamp = content[1];
+                var responseStatusCode = await _ls.sendLogAsync(newLog);
+                _ls.notifyAdmin(responseStatusCode, _ls.getLogContent(newLog));
+            }
         }
 
         private string[] getContent(LogRequestDTO newLog)

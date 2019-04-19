@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using static ServiceLayer.Services.ExceptionService;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApi_PointMap.ErrorHandling
 {
@@ -23,6 +24,10 @@ namespace WebApi_PointMap.ErrorHandling
             {
                 httpResponse.StatusCode = HttpStatusCode.NotFound;
                 httpResponse.Content = new StringContent(e.Message);
+            }
+            else if(e is ValidationException)
+            {
+
             }
             else
             {

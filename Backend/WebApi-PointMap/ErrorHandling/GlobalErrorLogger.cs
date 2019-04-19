@@ -14,8 +14,6 @@ namespace WebApi_PointMap.ErrorHandling
             newLog.email = "julianpoyo+22@gmail.com";
             newLog.ssoUserId = "0743cd2c-fec3-4b79-a5b6-a6c52a752c71";
             newLog.source = context.Exception.Source;
-            newLog.user = "test123";
-            newLog.desc = context.Exception.Message;
             newLog.details = context.Exception.StackTrace;
             //TODO : signature, check timestamp
             //var responseStatus = _ls.sendLogSync(newLog, "4T5Csu2U9OozqN66Us+pEc5ODcBwPs1ldaq2fmBqtfo=",

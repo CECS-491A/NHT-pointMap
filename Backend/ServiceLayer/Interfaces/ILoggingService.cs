@@ -10,7 +10,7 @@ namespace ServiceLayer.Interfaces
 {
     interface ILoggingService
     {
-        System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog, string signature, string timestamp);
-        Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog, string signature, string timestamp);
+        System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog);
+        Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog);
     }
 }

@@ -8,24 +8,25 @@ using System.Net.Http;
 using System.Net.Mail;
 using System.Net;
 using DTO;
+using System.Web.Script.Serialization;
 
 namespace ServiceLayer.Services
 {
     public class LoggingService : ILoggingService
     {
-        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
+        private const string LOG_SERVER_URL = "http://localhost:3000/";
 
-        public System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog, string signature, string timestamp)
+        public System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog)
         {
             try
             {
                 using (var client = new HttpClient())
                 { 
-                    var result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
+                    var result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).Result;
                     int attempt = 1;
                     while (!result.IsSuccessStatusCode)
                     {
-                        result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).Result;
+                        result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).Result;
                         attempt++;
                         if (attempt >= 100)
                         {
@@ -41,17 +42,17 @@ namespace ServiceLayer.Services
             }
         }
 
-        public async Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog, string signature, string timestamp)
+        public async Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog)
         {
             try
             {
                 using (var client = new HttpClient())
                 {
-                    var result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).ConfigureAwait(false);
+                    var result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).ConfigureAwait(false);
                     int attempt = 1;
                     while (!result.IsSuccessStatusCode)
                     {
-                        result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog, signature, timestamp)).ConfigureAwait(false);
+                        result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).ConfigureAwait(false);
                         attempt++;
                         if (attempt >= 100)
                         {
@@ -67,33 +68,24 @@ namespace ServiceLayer.Services
             }
         }
 
-        public FormUrlEncodedContent getLogContent(LogRequestDTO newLog, string signature, string timestamp)
+        public StringContent getLogContent(LogRequestDTO newLog)
         {
-            var content = new FormUrlEncodedContent(new[]
-                {
-                new KeyValuePair<string, string>( "ssoUserId", newLog.ssoUserId ),
-                new KeyValuePair<string, string>( "email", newLog.email ),
-                new KeyValuePair<string, string>( "timestamp", timestamp ),
-                new KeyValuePair<string, string>( "signature", signature ),
-                new KeyValuePair<string, string>( "source", newLog.source),
-                new KeyValuePair<string, string>( "user", newLog.user ),
-                new KeyValuePair<string, string>( "desc", newLog.desc ),
-                new KeyValuePair<string, string>( "details", newLog.details ),
-                new KeyValuePair<string, string>( "createdDate", DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))
-            });
+            
+            var jsonContent = new JavaScriptSerializer().Serialize(newLog);
+            var content = new StringContent(jsonContent.ToString(), Encoding.UTF8, "application/json");
 
             return content;
         }
 
-        public bool notifyAdmin(System.Net.HttpStatusCode notify, FormUrlEncodedContent content)
+        public bool notifyAdmin(System.Net.HttpStatusCode status, StringContent content)
         {
-            if (notify != System.Net.HttpStatusCode.OK)
+            if (status != System.Net.HttpStatusCode.OK)
             {
                 var fromAddress = new MailAddress("nightwatch491@gmail.com", "Night Watch");
                 var toAddress = new MailAddress("nightwatch491@gmail.com", "Night Watch");
                 const string password = "NightWatch_123";
                 const string subject = "System Admin Logging Notification";
-                string body = "PointMap Logging Notification: \n\nStatus Code:\n" + notify +"\n\nLog Content:\n" + System.Text.Encoding.Default.GetString(content.ReadAsByteArrayAsync().Result);
+                string body = "PointMap Logging Notification: \n\nStatus Code:\n" + status +"\n\nLog Content:\n" + content.ToString();
 
                 SmtpClient smtp = new SmtpClient
                 {

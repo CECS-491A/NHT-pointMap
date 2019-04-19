@@ -1,5 +1,5 @@
 let graphql = require('graphql');
-const Session = require('../models/session');
+const Log = require('../models/log');
 const {GraphQLDate} = require('graphql-iso-date');
 const {GraphQLObjectType, 
     GraphQLString, 
@@ -16,14 +16,11 @@ let SessionType = new GraphQLObjectType({ //Type used for grabbing user duration
             token: {
                 type: GraphQLID //Allows for loose typing when passing the token, surrounded by quotes or not
             },
-            createdAt: {
-                type: GraphQLDate
+            minSessionDuration: {
+                type: GraphQLString
             },
-            updatedAt: {
-                type: GraphQLDate
-            },
-            expiredAt: {
-                type: GraphQLDate
+            maxSessionDuration: {
+                type: GraphQLString
             }
         }
     }
@@ -32,20 +29,19 @@ let SessionType = new GraphQLObjectType({ //Type used for grabbing user duration
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        session: {
-            type: SessionType,
-            args:{
-                token: {type: GraphQLID} //Arguments passed when making a query to session, i.e. session(token: "...")
-            },
-            resolve(parent, args){
-                //code to get data from db
-                
-            }
-        },
-        sessions: {
+        minMaxSessionDuration: {
             type: new GraphQLList(SessionType),
             resolve(parent, args){
-                
+                let logs = Log.aggregate([
+                    { $group: { //Gets the min and max duration of every token
+                            _id: "$json.token", 
+                            token: {$min : '$json.token'},
+                            minSessionDuration : {$min : '$json.sessionDuration'}, 
+                            maxSessionDuration : {$max : '$json.sessionDuration'}
+                        }
+                    }
+                ]);
+                return logs
             }
         }
     }

@@ -47,6 +47,7 @@ namespace ManagerLayer.AccessControl
             if(response != null)
             {
                 response = _sessionService.UpdateSession(_db, response);
+
             }
 
             return response;

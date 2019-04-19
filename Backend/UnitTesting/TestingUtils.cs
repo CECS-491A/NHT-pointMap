@@ -3,7 +3,7 @@ using DataAccessLayer.Models;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
-
+using DTO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -53,6 +53,16 @@ namespace UnitTesting
             };
 
             return p;
+        }
+
+        public string[] getLogContent(LogRequestDTO newLog)
+        {
+            TokenService _ts = new TokenService();
+            string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+            string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email +
+                ";timestamp=" + timestamp + ";";
+            string signature = _ts.GenerateSignature(plaintext);
+            return new string[] { signature, timestamp };
         }
 
         public Point CreatePointInDb()
