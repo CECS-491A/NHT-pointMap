@@ -34,6 +34,7 @@ namespace WebApi_PointMap.Controllers
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     var _userLoginManager = new UserLoginManager(_db);
+                    //throws invalid token signature exception
                     LoginManagerResponseDTO loginAttempt;
                     loginAttempt = _userLoginManager.LoginFromSSO(
                         requestPayload.Email,
@@ -50,6 +51,10 @@ namespace WebApi_PointMap.Controllers
 
                     return Ok(response);
 
+                }
+                catch (InvalidTokenSignatureException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
                 }
                 catch (Exception e)
                 {
@@ -87,7 +92,7 @@ namespace WebApi_PointMap.Controllers
                         _db.SaveChanges();
                         return Ok("User was deleted");
                     }
-                    return Content(HttpStatusCode.InternalServerError, "User was not delete.");
+                    return Content(HttpStatusCode.InternalServerError, "User was not deleted.");
                 }
                 catch (KFCSSOAPIRequestException ex)
                 {
@@ -175,8 +180,16 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     return Ok("User was deleted");
                 }
+                catch (InvalidTokenSignatureException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                }
                 catch (Exception e)
                 {
+                    if (e is InvalidModelPayloadException || e is InvalidGuidException)
+                    {
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
