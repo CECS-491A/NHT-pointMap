@@ -62,7 +62,7 @@ export default {
   name: 'PointDetails',
   data: function() {
     return {
-      id: 1234,
+      id: null,
       url: null,
       createdAt: null,
       lastModifiedAt: null,
