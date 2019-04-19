@@ -30,7 +30,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
         console.log(err);
         if(err.response.status == 401){
             localStorage.removeItem('token');
-            //window.location.href = 'https://kfc-sso.com/#/login';
+            window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;
@@ -53,13 +53,13 @@ function getPoint(pointId, callback){
         console.log(err);
         if (err.response.status == 401) {
             localStorage.removeItem('token');
-            //window.location.href = 'https://kfc-sso.com/#/login';
+            window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;
 };
 
-function updatePoint(point, callback){
+function updatePoint(point){
     let content = {
         'headers':{
             'token': localStorage.getItem('token')
@@ -69,19 +69,19 @@ function updatePoint(point, callback){
     let urlString = 'https://api.pointmap.net/api/point/'+point.Id
     axios.put(urlString, content).then((response) => {
         let data = response.data;
-        return callback(data);
+        return data;
         
     }).catch((err) => {
         console.log(err);
         if (err.response.status == 401) {
             localStorage.removeItem('token');
-            //window.location.href = 'https://kfc-sso.com/#/login';
+            window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;
 };
 
-function createPoint(point, callback){
+function createPoint(point){
     let content = {
         'headers':{
             'token': localStorage.getItem('token')
@@ -91,13 +91,13 @@ function createPoint(point, callback){
     let urlString = 'https://api.pointmap.net/api/point'
     axios.post(urlString, content).then((response) => {
         let data = response.data;
-        return callback(data);
+        return data;
         
     }).catch((err) => {
         console.log(err);
         if (err.response.status == 401) {
             localStorage.removeItem('token');
-            //window.location.href = 'https://kfc-sso.com/#/login';
+            window.location.href = 'https://kfc-sso.com/#/login';
         }
     })
     return null;

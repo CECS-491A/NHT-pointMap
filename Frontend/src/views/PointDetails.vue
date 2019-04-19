@@ -47,6 +47,7 @@
            
         </v-form>
 
+        <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
     </div>
 
 
@@ -61,7 +62,7 @@ export default {
   name: 'PointDetails',
   data: function() {
     return {
-      id: null,
+      id: 1234,
       url: null,
       createdAt: null,
       lastModifiedAt: null,
@@ -91,11 +92,14 @@ export default {
                 }
          })
      },
+     pointEditor: function() {
+      window.location.href = 'http://pointmap.net/#/pointeditor/?pointId='+this.id;
+    }
   },
    beforeMount: function() {
-    //   checkSession()
+      checkSession()
       this.getPointDetails()
-  }
+  },
 }
 </script>
 

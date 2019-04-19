@@ -34,7 +34,7 @@ export default {
     }
   },
   mounted: function () {
-    // checkSession()
+    checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom,
@@ -150,7 +150,7 @@ export default {
       addPointBtn.style.cursor = 'pointer';
 
       addPointBtn.addEventListener('click', function() {
-        window.location.href = 'http://localhost:8080/#/pointeditor';
+        window.location.href = 'http://pointmap.net/#/pointeditor';
       });
       
       addPointDiv.appendChild(addPointBtn);
