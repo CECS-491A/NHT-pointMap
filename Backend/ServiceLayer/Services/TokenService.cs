@@ -9,7 +9,6 @@ namespace ServiceLayer.Services
 {
     public class TokenService
     {
-
         public string GenerateToken()
         {
             RNGCryptoServiceProvider provider = new RNGCryptoServiceProvider();
@@ -18,19 +17,5 @@ namespace ServiceLayer.Services
             string hex = BitConverter.ToString(b).Replace("-", "");
             return hex;
         }
-
-        public bool isValidSignature(string presignuatureString, string signature)
-        {
-            return GenerateSignature(presignuatureString) == signature;
-        }
-
-        public string GenerateSignature(string plaintext)
-        {
-            HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(KFC_SSO_APIService.APISecret));
-            byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);
-            byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
-            return Convert.ToBase64String(signatureBytes);
-        }
-
     }
 }

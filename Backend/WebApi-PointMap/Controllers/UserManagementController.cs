@@ -55,6 +55,10 @@ namespace WebApi_PointMap.Controllers
                     }
 
                 }
+                catch (UserIsNotAdministratorException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                }
                 catch (Exception e)
                 {
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
@@ -130,60 +134,16 @@ namespace WebApi_PointMap.Controllers
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     }
                 }
-                catch (Exception e)
+                catch (UserIsNotAdministratorException e)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-                }
-            }
-
-        }
-
-        [HttpPost]
-        [Route("sso/user/delete")]
-        public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
-        {
-            using (var _db = new DatabaseContext())
-            {
-                try
-                {
-                    //throws ExceptionService.InvalidModelPayloadException
-                    ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
-
-                    //throws ExceptionService.InvalidGuidException
-                    var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
-
-                    // check valid signature
-                    var _tokenService = new TokenService();
-                    if (!_tokenService.isValidSignature(requestPayload.PreSignatureString(), requestPayload.Signature))
-                    {
-                        throw new InvalidTokenSignatureException("Session is not valid.");
-                    }
-
-                    var _userManagementManager = new UserManagementManager(_db);
-                    var user = _userManagementManager.GetUser(userSSOID);
-                    if (user == null)
-                    {
-                        return Ok("User was never registered.");
-                    }
-
-                    var _sessionService = new SessionService();
-                    var sessions = _sessionService.GetSessions(_db, userSSOID);
-                    if (sessions != null)
-                    {
-                        foreach (var sess in sessions)
-                        {
-                            _sessionService.DeleteSession(_db, sess.Token);
-                        }
-                    }
-                    _userManagementManager.DeleteUser(userSSOID);
-                    _db.SaveChanges();
-                    return Ok("User was deleted");
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
                 }
                 catch (Exception e)
                 {
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
+
         }
 
         [HttpPut]
@@ -237,6 +197,10 @@ namespace WebApi_PointMap.Controllers
                         _db.SaveChanges(); // save updated user session
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     };
+                }
+                catch (UserNotFoundException e)
+                {
+                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
                 }
                 catch (Exception e)
                 {

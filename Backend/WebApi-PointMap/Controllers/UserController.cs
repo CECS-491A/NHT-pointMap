@@ -58,26 +58,21 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        // delete user from sso and all apps
+        // user delete self from pointmap and sso
         [HttpDelete]
         [Route("api/user/deletefromsso")]
         public IHttpActionResult DeleteFromSSO()
         {
-            var token = GetHeader(Request, "Token");
-            if (token.Length < 1)
-            {
-                return Content(HttpStatusCode.Unauthorized, "No token provided.");
-            }
             using (var _db = new DatabaseContext())
             {
                 try
                 {
-                    var _sessionService = new SessionService();
-                    var session = _sessionService.ValidateSession(_db, token);
-                    if (session == null)
-                    {
-                        return Content(HttpStatusCode.NotFound, "Session is no longer available.");
-                    }
+                    //throws ExceptionService.NoTokenProvidedException
+                    var token = ControllerHelpers.GetToken(Request);
+
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
                     if (user == null)
@@ -88,6 +83,8 @@ namespace WebApi_PointMap.Controllers
                     var requestResponse = _ssoAPI.DeleteUserFromSSO(user);
                     if (requestResponse.IsSuccessStatusCode)
                     {
+                        _userManager.DeleteUserAndSessions(user.Id);
+                        _db.SaveChanges();
                         return Ok("User was deleted");
                     }
                     return Content(HttpStatusCode.InternalServerError, "User was not delete.");
@@ -96,28 +93,93 @@ namespace WebApi_PointMap.Controllers
                 {
                     return Content(HttpStatusCode.ServiceUnavailable, ex.Message);
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    return Content((HttpStatusCode)500, ex.Message);
+                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
+                    {
+                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    }
+                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
         }
 
-        public string GetHeader(object request, string header)
+        [HttpDelete]
+        [Route("api/user/delete")]
+        public IHttpActionResult Delete() // user delete self from pointmap
         {
-            IEnumerable<string> headerValues;
-            var nameFilter = string.Empty;
-            if (Request.Headers.TryGetValues(header, out headerValues))
+            using (var _db = new DatabaseContext())
             {
-                nameFilter = headerValues.FirstOrDefault();
+                try
+                {
+                    //throws ExceptionService.NoTokenProvidedException
+                    var token = ControllerHelpers.GetToken(Request);
+
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    var _userManager = new UserManagementManager(_db);
+                    var user = _userManager.GetUser(session.UserId);
+                    if (user == null)
+                    {
+                        return Content(HttpStatusCode.NotFound, "User does not exists.");
+                    }
+                    //delete user self and their sessions
+                    _userManager.DeleteUserAndSessions(user.Id);
+                    _db.SaveChanges();
+                    return Content(HttpStatusCode.InternalServerError, "User was not delete.");
+                }
+                catch (KFCSSOAPIRequestException ex)
+                {
+                    return Content(HttpStatusCode.ServiceUnavailable, ex.Message);
+                }
+                catch (Exception e)
+                {
+                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
+                    {
+                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    }
+                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                }
             }
-            return nameFilter;
         }
 
-        class UserRequestDTO
+        [HttpPost]
+        [Route("sso/user/delete")] // request from sso to delete user self from sso to all apps
+        public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
         {
-            [Required]
-            public string id { get; set; }
+            using (var _db = new DatabaseContext())
+            {
+                try
+                {
+                    //throws ExceptionService.InvalidModelPayloadException
+                    ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
+
+                    //throws ExceptionService.InvalidGuidException
+                    var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
+
+                    // check valid signature
+                    var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
+                    if (!_ssoServiceAuth.IsValidClientRequest(requestPayload.PreSignatureString(), requestPayload.Signature))
+                    {
+                        throw new InvalidTokenSignatureException("Session is not valid.");
+                    }
+
+                    var _userManagementManager = new UserManagementManager(_db);
+                    var user = _userManagementManager.GetUser(userSSOID);
+                    if (user == null)
+                    {
+                        return Ok("User was never registered.");
+                    }
+                    _userManagementManager.DeleteUserAndSessions(userSSOID);
+                    _db.SaveChanges();
+                    return Ok("User was deleted");
+                }
+                catch (Exception e)
+                {
+                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                }
+            }
         }
     }
 }

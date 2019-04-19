@@ -5,17 +5,36 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static DTO.DTO.SSOServicesDTOs;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace ServiceLayer.Services
 {
     public class KFC_SSO_APIService
     {
-        const string API_URL = "https:/api.kfc-sso.com";
+        const string API_URL = "https://api.kfc-sso.com";
         const string APP_ID = "69CA4919-0B26-40DA-AF1E-775FFADED87C";
         public static readonly string APISecret = "5E5DDBD9B984E4C95BBFF621DF91ABC9A5318DAEC0A3B231B4C1BC8FE0851610";
+
+        public class RequestPayloadAuthentication
+        {
+            public bool IsValidClientRequest(string presignuatureString, string signature)
+            {
+                var generatedSignature = GenerateSignature(presignuatureString);
+                return generatedSignature == signature;
+            }
+
+            public string GenerateSignature(string plaintext)
+            {
+                HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(APISecret));
+                byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);
+                byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
+                return Convert.ToBase64String(signatureBytes);
+            }
+        }
 
         public HttpResponseMessage DeleteUserFromSSO(User user)
         {
@@ -27,7 +46,8 @@ namespace ServiceLayer.Services
                 Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
             };
             var _tokenService = new TokenService();
-            requestPayload.Signature = _tokenService.GenerateSignature(requestPayload.PreSignatureString());
+            var auth = new RequestPayloadAuthentication();
+            requestPayload.Signature = auth.GenerateSignature(requestPayload.PreSignatureString());
             var response = PingDeleteUserFromSSORouteAsync(requestPayload);
             if (response.IsCompleted)
             {
@@ -43,29 +63,6 @@ namespace ServiceLayer.Services
             var jsonPayload = new StringContent(stringPayload, Encoding.UTF8, "application/json");
             var request = await client.PostAsync(API_URL + "/api/users/appdeleteuser", jsonPayload);
             return request;
-        }
-
-        public class DeleteUserFromSSO_DTO
-        {
-            [Required]
-            public string AppId { get; set; }
-            [Required]
-            public string Email { get; set; }
-            [Required]
-            public string Signature { get; set; }
-            [Required]
-            public string SsoUserId { get; set; }
-            [Required]
-            public long Timestamp { get; set; }
-
-            public string PreSignatureString()
-            {
-                string acc = "";
-                acc += "ssoUserId=" + SsoUserId + ";";
-                acc += "email=" + Email + ";";
-                acc += "timestamp=" + Timestamp + ";";
-                return acc;
-            }
         }
     }
 }
