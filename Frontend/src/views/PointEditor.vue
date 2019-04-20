@@ -49,7 +49,7 @@
           dark
         >
           <v-card-text>
-            Loading
+            {{this.loadingText}}
             <v-progress-linear
               indeterminate
               color="white"
@@ -80,14 +80,15 @@ export default {
   data: () => {
     return {
       responseError: null,
+      loadingText: "",
       error: "",
       creatingPoint: false,
       loading: false,
       map: null,
       infoWindow: null,
       center: { 
-        lat: 45.508, 
-        lng: -73.587 
+        lat: '', 
+        lng: '' 
       },
       point: {
         id: '',
@@ -109,11 +110,11 @@ export default {
   },
   methods: {
     setupMap: function() {
-      this.map = new google.maps.Map(document.getElementById('map'), {
-        center: this.center,
-        zoom: this.zoom,
-      });
+      //displays loading message if map is delayed loading
+      this.loadingText = "Map loading";
+      this.loading = true;
 
+      //ensures that this.center is on the location of the user or point being updated before loading the map
       let promise = new Promise((resolve, reject) => {
         if(this.creatingPoint) {
           navigator.geolocation.getCurrentPosition(position => {
@@ -124,62 +125,66 @@ export default {
             resolve();
           });
         }
-        else { resolve(); }
+        else { resolve(); } //if the point is already created, this.center has already been set
       })
 
       promise.then(() => {
-        this.map.setCenter(this.center);
+        this.map = new google.maps.Map(document.getElementById('map'), {
+          center: this.center,
+          zoom: this.zoom,
+        });
+        //removes loading message
+        this.loadingText = "";
+        this.loading = false;
       }).then(() => {
-        this.placeMarker();
+        this.placeMarker(); //then places the marker at the center of the map
       })
     },
     placeMarker: function() {
+      //ensures that the marker is placed and centered before a listener is added
       let promise = new Promise((resolve, reject) => {
         this.marker = new google.maps.Marker({
           position: this.map.center,
           map: this.map,
           draggable: true
         });
+        //updates latitude/longitude form fields
+        this.point.latitude = this.marker.position.lat();
+        this.point.longitude = this.marker.position.lng();
         resolve();
       });
       
       promise.then(() => {
+        //will automatically pan the map center to the dragged location
         this.marker.addListener('dragend', function(marker) {
           this.map.panTo(marker.latLng);
-          this.point = {
-            id: this.point.id,
-            name: this.point.name,
-            description: this.point.description,
-            latitude: marker.latLng.lat(),
-            longitude: marker.latLng.lng(),
-            createdAt: this.point.CreatedAt,
-            updatedAt: this.point.updateAt
-          };
+          //updates latitude/longitude form fields
+          this.point.latitude = marker.latLng.lat();
+          this.point.longitude = marker.latLng.lng();
         }.bind(this));
       });
     },
+    //updates the postion of the marker if the form fields are edited
     updateMarkerPosition: function() {
       this.center = {
         lat: this.point.latitude,
         lng: this.point.longitude
       };
-      this.map.setCenter(this.center);
+      //resets the map center and marker position to be the longitude/latitude values in the form fields
+      //  then pans the map to the set center position
+      this.map.setCenter(this.center); 
       this.marker.setPosition(this.map.center);
       this.map.panTo(this.map.center);
     },
     getPointData: function() {
-      var pointId =  this.$route.query.pointId;
+      var pointId = this.$route.query.pointId;
 
-      if(pointId !== undefined) {
+      //enters here from point details
+      if(pointId !== undefined) { //needs to be tested
         this.creatingPoint = false;
-        this.rawData = getPoint(pointId, (arr)=> {
+        getPoint(pointId, (point) => {
           if(arr!=null) {
-            this.point.createdAt = new Date(parseInt(arr.CreatedAt.substr(6)));
-            this.point.updatedAt = new Date(parseInt(arr.UpdatedAt.substr(6)));
-            this.point.name = arr.Name;
-            this.point.description = arr.Description;
-            this.point.longitude = arr.Longitude;
-            this.point.latitude = arr.Latitude;
+            this.point = point; 
             this.center = {
               lat: this.point.latitude,
               lng: this.point.longitude
@@ -187,22 +192,14 @@ export default {
           }
         })
         this.point.id = pointId;
-      } else {
+      } else { //enters here from map view
         this.creatingPoint = true;
-        this.point = {
-          id: this.point.id,
-          name: this.point.name,
-          description: this.point.description,
-          latitude: this.center.lat,
-          longitude: this.center.lng,
-          createdAt: this.point.CreatedAt,
-          updatedAt: this.point.updateAt
-        };
       }
     },
     submit: function() {   
       this.error = "";
 
+      //ensures all required fields are filled in and valid
       if (this.point.name == "") {
         this.error = "Point name is required.";
       } else if (this.point.description == "") {
@@ -218,24 +215,27 @@ export default {
 
       if (this.error) return;
 
-      this.loading = true;
       var func = null;
+      //Dynamically loads either the create or update functions based upon whether a point is 
+      //  being created or updated. Also displays a specific message for each case.
       if(this.creatingPoint) {
           func = createPoint;
+          this.loadingText = "Creating point."
       } else {
           func = updatePoint;
+          this.loadingText = "Updating point."
       }
+      this.loading = true;
 
-      func({
-        name: this.point.name,
-        description: this.point.description,
-        latitude: this.point.latitude,
-        longitude: this.point.longitude,
-        updatedAt: this.point.updatedAt,
-        createdAt: this.point.createdAt,
-        id: this.point.id
-      }).then(() => {
-          this.$router.push('mapview');
+      //calls the pointServices.[func(point)] to call the backend and perform the operation
+      let promise = new Promise((resolve, reject) => {
+        func(this.point);
+        resolve();
+      });
+
+      promise.then(() => {
+        //after operation, sends the user back to the mapview
+        this.$router.push('mapview');
       }).catch(err => {
           switch(err.response.status) {
           case 401: 

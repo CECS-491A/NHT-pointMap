@@ -45,11 +45,11 @@ export default {
         position: google.maps.ControlPosition.LEFT_BOTTOM
       },
     });
+    //places add point button on map
     var addPointDiv = document.createElement('div');
-    
     this.setupPointButton(addPointDiv, this.map);
-
     this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(addPointDiv);
+    
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
   },
@@ -129,7 +129,7 @@ export default {
       this.markerCluster = new MarkerClusterer(this.map, this.markers, //Creates a cluster object which clusters all markers on the map
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     },
-    setupPointButton(addPointDiv){
+    setupPointButton(addPointDiv){ //sets up the add point button
       addPointDiv.style.borderRadius = "50%";
       addPointDiv.style.backgroundColor = "teal";
       addPointDiv.style.color = "#fff";
