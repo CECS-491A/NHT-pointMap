@@ -71,8 +71,10 @@ export default {
         this.loading = false;
         switch(err.response.status){
           case 401:
+            this.doRedirect = true;
+            this.popupMessage = 'Session has expired.';
             this.popup = true;
-            this.popupMessage = "Session has expired.";
+            localStorage.removeItem('token');
             break;
         }
       })
