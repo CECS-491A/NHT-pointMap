@@ -1,65 +1,68 @@
 import axios from "axios";
+import { api_url } from "@/const.js";
 
-function getPoints(minLng, maxLng, minLat, maxLat, callback){
-    let urlString = 'https://api.pointmap.net/api/points/'
-    let content = {
-        'headers':{
-            'minLng': minLng,
-            'maxLng': maxLng,
-            'minLat': minLat,
-            'maxLat': maxLat,
-            'token': localStorage.getItem('token')
-        }
+function getPoints(minLng, maxLng, minLat, maxLat, callback) {
+  let urlString = `${api_url}/api/points/`;
+  let content = {
+    headers: {
+      minLng: minLng,
+      maxLng: maxLng,
+      minLat: minLat,
+      maxLat: maxLat,
+      token: localStorage.getItem("token")
     }
+  };
 
-    let arr = []
-    axios.get(urlString, content).then((response) => {
-        let data = response.data
-        if(data){
-            data.forEach(point => {
-                let tempPoint = {
-                    Latitude: point.Latitude, 
-                    Longitude: point.Longitude,
-                    Id: point.Id
-                }
-                arr.push(tempPoint);
-            });
-        }
-        return callback(arr);
-    }).catch((err) => {
-        console.log(err);
-        if(err.response.status == 401){
-            localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
-        }
+  let arr = [];
+  axios
+    .get(urlString, content)
+    .then(response => {
+      let data = response.data;
+      if (data) {
+        data.forEach(point => {
+          let tempPoint = {
+            Latitude: point.Latitude,
+            Longitude: point.Longitude,
+            Id: point.Id
+          };
+          arr.push(tempPoint);
+        });
+      }
+      return callback(arr);
     })
-    return null;
-};
-
-function getPoint(pointId, callback){
-    let content = {
-        'headers':{
-            'token': localStorage.getItem('token')
-        }
-    }
-    let arr =[]
-    let urlString = 'https://api.pointmap.net/api/point/'+pointId
-    axios.get(urlString, content).then((response) => {
-        let data = response.data;
-        arr.push(data);
-        return callback(arr);
-        
-    }).catch((err) => {
-        console.log(err);
-        if (err.response.status == 401) {
-            localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
-        }
-    })
-    return null;
-};
-
-export{
-    getPoints,
-    getPoint
+    .catch(err => {
+      console.log(err);
+      if (err.response.status == 401) {
+        localStorage.removeItem("token");
+        window.location.href = "https://kfc-sso.com/#/login";
+      }
+    });
+  return null;
 }
+
+function getPoint(pointId, callback) {
+  let content = {
+    headers: {
+      token: localStorage.getItem("token")
+    }
+  };
+  let arr = [];
+  let urlString = `${api_url}/api/point/` + pointId;
+  axios
+    .get(urlString, content)
+    .then(response => {
+      let data = response.data;
+      arr.push(data);
+      return callback(arr);
+    })
+    .catch(err => {
+      console.log(err);
+      if (err.response.status == 401) {
+        localStorage.removeItem("token");
+        window.location.href = "https://kfc-sso.com/#/login";
+      }
+    });
+  return null;
+}
+
+export { getPoints, getPoint };

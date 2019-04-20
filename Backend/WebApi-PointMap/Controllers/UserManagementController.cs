@@ -94,6 +94,10 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
+                    {
+                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    }
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }

@@ -139,7 +139,6 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -195,7 +194,6 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -267,12 +265,11 @@ namespace UnitTesting
 
             //invalid signature should throw and InvalidTokenSignatureException
             //  and return a 401
-            IHttpActionResult response = _userController.DeleteUser(loginDTO);
+            IHttpActionResult response = _userController.DeleteViaSSO(loginDTO);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]

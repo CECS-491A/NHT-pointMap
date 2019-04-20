@@ -132,7 +132,7 @@ namespace WebApi_PointMap.Controllers
                     //delete user self and their sessions
                     _userManager.DeleteUserAndSessions(user.Id);
                     _db.SaveChanges();
-                    return Content(HttpStatusCode.InternalServerError, "User was not delete.");
+                    return Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
                 }
                 catch (KFCSSOAPIRequestException ex)
                 {
@@ -151,7 +151,7 @@ namespace WebApi_PointMap.Controllers
 
         [HttpPost]
         [Route("sso/user/delete")] // request from sso to delete user self from sso to all apps
-        public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
+        public IHttpActionResult DeleteViaSSO([FromBody, Required] LoginDTO requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
