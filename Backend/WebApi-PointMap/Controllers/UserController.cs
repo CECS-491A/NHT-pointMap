@@ -12,6 +12,7 @@ using static ServiceLayer.Services.ExceptionService;
 using ServiceLayer.Services;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
+using ManagerLayer.KFC_SSO_Utility;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -84,9 +85,9 @@ namespace WebApi_PointMap.Controllers
                     {
                         return Content(HttpStatusCode.NotFound, "User does not exists.");
                     }
-                    var _ssoAPI = new KFC_SSO_APIService();
-                    var requestResponse = _ssoAPI.DeleteUserFromSSO(user);
-                    if (requestResponse.IsSuccessStatusCode)
+                    var _ssoAPIManager = new KFC_SSO_Manager();
+                    var requestSuccessful = _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);
+                    if (requestSuccessful)
                     {
                         _userManager.DeleteUserAndSessions(user.Id);
                         _db.SaveChanges();
