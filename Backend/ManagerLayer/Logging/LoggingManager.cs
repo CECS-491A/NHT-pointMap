@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using DTO;
 using ServiceLayer.Services;
+using DataAccessLayer.Models;
 
 namespace ManagerLayer.Logging
 {
@@ -21,6 +22,17 @@ namespace ManagerLayer.Logging
             _ts = new TokenService();
             _ls = new LoggingService();
             client = new HttpClient();
+        }
+
+        public LogRequestDTO addSessionToLog(LogRequestDTO newLog, Session session)
+        {
+            newLog.sessionCreatedAt = session.CreatedAt;
+            newLog.sessionExpiredAt = session.ExpiresAt;
+            newLog.sessionUpdatedAt = session.UpdatedAt;
+            newLog.token = session.Token;
+            newLog.ssoUserId = session.User.Id.ToString();
+            newLog.email = session.User.Username;
+            return newLog;
         }
 
         public void sendLogSync(LogRequestDTO newLog)

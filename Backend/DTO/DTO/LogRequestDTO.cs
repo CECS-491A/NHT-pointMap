@@ -43,12 +43,12 @@ namespace DTO
         public bool success { get; set; }
 
         //Used to prevent fluxation in source attributes
-        public static string registrationPage = "Registration";
-        public static string loginPage = "Login";
-        public static string sessionPage = "Session";
-        public static string logoutPage = "Logout";
-        public static string mapViewPage = "MapView";
-        public static string pointDetailsPage = "PointDetails";
+        public string registrationPage = "Registration";
+        public string loginPage = "Login";
+        public string sessionPage = "Session";
+        public string logoutPage = "Logout";
+        public string mapViewPage = "MapView";
+        public string pointDetailsPage = "PointDetails";
         public List<string> validPage;
 
         public LogRequestDTO(string ssoUserId, string email, string source, string details)

@@ -10,6 +10,7 @@ using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
 using ManagerLayer.Logging;
 using DTO;
+using DataAccessLayer.Models;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -24,12 +25,18 @@ namespace WebApi_PointMap.Controllers
         [Route("api/session")]
         public HttpResponseMessage ValidateSession()
         {
+            _lm = new LoggingManager();
+            newLog = new LogRequestDTO();
             using (var _db = new DatabaseContext())
             {
                 try
                 {
                     var token = ControllerHelpers.GetToken(Request);
                     var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    initalizeLogForController("Validated and updated Session at SessionController line 35 for " +
+                        "validate session", true);
+                    newLog = _lm.addSessionToLog(newLog, session);
+                    _lm.sendLogAsync(newLog); //Sends session log
                     _db.SaveChanges();
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(token, Encoding.Unicode);
@@ -53,8 +60,16 @@ namespace WebApi_PointMap.Controllers
                 {
                     var token = ControllerHelpers.GetToken(Request);
                     var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    initalizeLogForController("Validated and updated Session at SessionController line 59 " +
+                        "for logout", true);
+                    newLog = _lm.addSessionToLog(newLog, session);
+                    _lm.sendLogAsync(newLog); //Sends session log
 
                     _am.DeleteSession(_db, token);
+                    initalizeLogForController("Deleted Session at SessionController line 66 for logout", true);
+                    newLog.page = newLog.logoutPage;
+                    newLog = _lm.addSessionToLog(newLog, session);
+                    _lm.sendLogAsync(newLog); //Sends logout log
                     _db.SaveChanges();
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
@@ -66,6 +81,15 @@ namespace WebApi_PointMap.Controllers
                     return DatabaseErrorHandler.HandleException(e, _db);
                 }
             }
+        }
+
+        private void initalizeLogForController(string details, bool success)
+        {
+            newLog = new LogRequestDTO();
+            newLog.source = "Session Controller";
+            newLog.details = details;
+            newLog.success = success;
+            newLog.page = newLog.sessionPage;
         }
     }
 }
