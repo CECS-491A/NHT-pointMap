@@ -36,7 +36,7 @@ namespace ServiceLayer.Services
                     return result.StatusCode;
                 }
             }
-            catch (System.AggregateException ex)
+            catch (System.AggregateException)
             {
                 return System.Net.HttpStatusCode.InternalServerError;
             }
@@ -62,7 +62,7 @@ namespace ServiceLayer.Services
                     return result.StatusCode;
                 }
             }
-            catch (System.AggregateException ex)
+            catch (System.AggregateException)
             {
                 return System.Net.HttpStatusCode.InternalServerError;
             }

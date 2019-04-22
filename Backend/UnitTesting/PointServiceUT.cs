@@ -139,7 +139,7 @@ namespace UnitTesting
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     //catch error
                     // detach Point attempted to be created from the db context - rollback
@@ -272,7 +272,7 @@ namespace UnitTesting
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     // catch error
                     // rollback changes

@@ -20,39 +20,25 @@ namespace WebApi_PointMap.Controllers
         LoggingManager _lm;
         LogRequestDTO newLog;
 
-        public SessionController()
-        {
-            _am = new AuthorizationManager();
-            _db = new DatabaseContext();
-            _lm = new LoggingManager();
-            newLog = new LogRequestDTO();
-        }
-
         [HttpGet]
         [Route("api/session")]
         public HttpResponseMessage ValidateSession()
         {
-            try
-            { 
-                var token = ControllerHelpers.GetToken(Request);
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                newLog.source = "Session";
-                newLog.details = "Session successful validation at SessionController line 40";
-                newLog.token = session.Token;
-                newLog.success = true;
-                newLog.page = "Session";
-                newLog.sessionExpiredAt = session.ExpiresAt;
-                newLog.sessionCreatedAt = session.CreatedAt;
-                newLog.sessionUpdatedAt = session.UpdatedAt;
-                _lm.sendLogAsync(newLog);
-                _db.SaveChanges();
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(token, Encoding.Unicode);
-                return response;
-            }
-            catch(Exception e)
+            using (var _db = new DatabaseContext())
             {
-                return DatabaseErrorHandler.HandleException(e, _db);
+                try
+                {
+                    var token = ControllerHelpers.GetToken(Request);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    _db.SaveChanges();
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Content = new StringContent(token, Encoding.Unicode);
+                    return response;
+                }
+                catch (Exception e)
+                {
+                    return DatabaseErrorHandler.HandleException(e, _db);
+                }
             }
         }
 
@@ -60,21 +46,25 @@ namespace WebApi_PointMap.Controllers
         [Route("api/logout/session")]
         public HttpResponseMessage DeleteSession()
         {
-            try
+            using (var _db = new DatabaseContext())
             {
-                var token = ControllerHelpers.GetToken(Request);
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                _am = new AuthorizationManager(_db);
+                try
+                {
+                    var token = ControllerHelpers.GetToken(Request);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                _am.DeleteSession(_db, token);
-                _db.SaveChanges();
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
+                    _am.DeleteSession(_db, token);
+                    _db.SaveChanges();
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
 
-                return response;
-            }
-            catch (Exception e)
-            {
-                return DatabaseErrorHandler.HandleException(e, _db);
+                    return response;
+                }
+                catch (Exception e)
+                {
+                    return DatabaseErrorHandler.HandleException(e, _db);
+                }
             }
         }
     }

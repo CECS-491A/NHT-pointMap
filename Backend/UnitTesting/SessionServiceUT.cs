@@ -89,7 +89,7 @@ namespace UnitTesting
                 {
                     _db.SaveChanges();
                 }
-                catch (DbEntityValidationException ex)
+                catch (DbEntityValidationException)
                 {
                     //catch error
                     // detach Session attempted to be created from the db context - rollback

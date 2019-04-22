@@ -17,14 +17,11 @@ namespace UnitTesting
     public class UserLoginManagerUT
     {
         readonly TestingUtils ut;
-        readonly UserLoginManager _loginManager;
-        readonly AuthorizationManager _authManager;
+        public UserLoginManager _loginManager;
 
         public UserLoginManagerUT()
         {
             ut = new TestingUtils();
-            _loginManager = new UserLoginManager();
-            _authManager = new AuthorizationManager();
         }
 
         [TestMethod]
@@ -39,7 +36,8 @@ namespace UnitTesting
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                _loginManager.LoginFromSSO(_db, invalid_username, valid_ssoID, Signature, preSignatureString);
+                _loginManager = new UserLoginManager(_db);
+                _loginManager.LoginFromSSO(invalid_username, valid_ssoID, Signature, preSignatureString);
             }
 
             //Assert - catch exception
@@ -50,6 +48,7 @@ namespace UnitTesting
         {
             using (var _db = ut.CreateDataBaseContext())
             {
+                _loginManager = new UserLoginManager(_db);
                 var user = ut.CreateSSOUserInDb();
                 var timestamp = 8283752242;
                 MockLoginPayload mock_payload = new MockLoginPayload
@@ -59,7 +58,7 @@ namespace UnitTesting
                     timestamp = timestamp
                 };
 
-                var response = _loginManager.LoginFromSSO(_db, user.Username, user.Id, mock_payload.Signature(), mock_payload.PreSignatureString());
+                var response = _loginManager.LoginFromSSO(user.Username, user.Id, mock_payload.Signature(), mock_payload.PreSignatureString());
                 Assert.IsNotNull(response);
             }
         }
@@ -75,7 +74,8 @@ namespace UnitTesting
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                var response = _loginManager.LoginFromSSO(_db, existing_username, existing_ssoID, mock_payload.Signature(), mock_payload.PreSignatureString());
+                _loginManager = new UserLoginManager(_db);
+                var response = _loginManager.LoginFromSSO(existing_username, existing_ssoID, mock_payload.Signature(), mock_payload.PreSignatureString());
                 Assert.IsNotNull(response);
             }
         }

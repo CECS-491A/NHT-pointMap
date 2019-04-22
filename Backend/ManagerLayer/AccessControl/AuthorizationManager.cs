@@ -10,10 +10,12 @@ namespace ManagerLayer.AccessControl
     {
         private ISessionService _sessionService;
         private IUserService _userService;
+        DatabaseContext _db;
 
-        public AuthorizationManager()
+        public AuthorizationManager(DatabaseContext db)
         {
              _sessionService = new SessionService();
+            _db = db;
         }
 
         public string GenerateSessionToken()
@@ -25,11 +27,11 @@ namespace ManagerLayer.AccessControl
             return hex;
         }
 
-        public Session CreateSession(DatabaseContext _db, User user)
+        public Session CreateSession(User user)
         {
-            _userService = new UserService();
+            _userService = new UserService(_db);
             //check if user exist
-            var userResponse = _userService.GetUser(_db, user.Username);
+            var userResponse = _userService.GetUser(user.Username);
             if(userResponse == null)
             {
                 return null;
