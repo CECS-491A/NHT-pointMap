@@ -40,6 +40,17 @@ namespace DTO
 
         public string page { get; set; }
 
+        public bool success { get; set; }
+
+        //Used to prevent fluxation in source attributes
+        public static string registrationPage = "Registration";
+        public static string loginPage = "Login";
+        public static string sessionPage = "Session";
+        public static string logoutPage = "Logout";
+        public static string mapViewPage = "MapView";
+        public static string pointDetailsPage = "PointDetails";
+        public List<string> validPage;
+
         public LogRequestDTO(string ssoUserId, string email, string source, string details)
         {
             this.ssoUserId = ssoUserId;
@@ -47,11 +58,24 @@ namespace DTO
             this.source = source;
             this.details = details;
             logCreatedAt = DateTime.UtcNow;
+            fillArray();
+        }
+
+        private void fillArray()
+        {
+            validPage = new List<string>();
+            validPage.Add(registrationPage);
+            validPage.Add(sessionPage);
+            validPage.Add(logoutPage);
+            validPage.Add(mapViewPage);
+            validPage.Add(pointDetailsPage);
+            validPage.Add(loginPage);
         }
 
         public LogRequestDTO()
         {
             logCreatedAt = DateTime.UtcNow;
+            fillArray();
         }
 
         public bool isValid()
@@ -72,6 +96,11 @@ namespace DTO
                 }
                 Console.WriteLine(sbrErrors.ToString());
                 
+            }
+            if (!this.validPage.Contains(this.page) && this.page != null)
+            {
+                isValid = false;
+                Console.WriteLine("Invalid Page object, please use a defined page in LogoutDTO");
             }
             return isValid;
         }

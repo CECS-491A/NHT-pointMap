@@ -79,8 +79,6 @@ namespace UnitTesting
         public void createSessions()
         {
             newLog = new LogRequestDTO();
-            newLog.email = "julianpoyo+22@gmail.com";
-            newLog.ssoUserId = "0743cd2c-fec3-4b79-a5b6-a6c52a752c71";
             newLog.source = "testingClass";
             newLog.details = "testing stacktrace";
             Random rand = new Random();
@@ -89,13 +87,21 @@ namespace UnitTesting
                 User newUser = _tu.CreateUserObject();
                 Session newSession = _tu.CreateSessionObject(newUser);
                 _tu.CreateSessionInDb(newSession);
-                
+                newLog.email = newUser.Username;
+                newLog.ssoUserId = newUser.Id.ToString();
+                newLog.logCreatedAt = new DateTime(2018, 11, 21);
                 for (var j = 0; j < 3; j++)
                 {
-                    var duartion = rand.Next(1, 1000);
+                    newLog.success = true;
+                    newLog.page = LogRequestDTO.loginPage;
+                    if (j == 0)
+                        newLog.page = LogRequestDTO.registrationPage;
+                    var duration = rand.Next(1, 1000);
+                    if(duration < 200)
+                        newLog.success = false;
                     newLog.sessionCreatedAt = newSession.CreatedAt;
-                    newLog.sessionExpiredAt = newSession.ExpiresAt.AddSeconds(duartion);
-                    newLog.sessionUpdatedAt = newSession.UpdatedAt.AddSeconds(duartion);
+                    newLog.sessionExpiredAt = newSession.ExpiresAt.AddSeconds(duration);
+                    newLog.sessionUpdatedAt = newSession.UpdatedAt.AddSeconds(duration);
                     newLog.token = newSession.Token;
                     var content = _tu.getLogContent(newLog); //signature timestamp
                     newLog.signature = content[0];
