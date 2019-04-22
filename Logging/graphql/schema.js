@@ -117,7 +117,8 @@ const RootQuery = new GraphQLObjectType({
                                 {$and: [
                                     {$eq : ["$json.page", "Registration"]},
                                     {$eq: ["$json.success", true]}
-                                ]}, 1, 0]}}, 
+                                ]}, 1, 0]}
+                            }, 
                             month: {$max : {$month : {$toDate : "$logCreatedAt"}}}, //Gets the month
                             year: {$max : {$year : {$toDate : "$logCreatedAt"}}}, //Gets the year
                             loginAttempts: {$sum : 
@@ -126,8 +127,12 @@ const RootQuery = new GraphQLObjectType({
                                         {$eq : ["$json.page", "Login"]}, //successful login attempt
                                         {$eq : [true, "$json.success"]}
                                     ]}, 1, 0]
-                                }} //Counts successful logins
+                                }
+                            } //Counts successful logins
                         }
+                    },
+                    {
+                        $sort: {year: 1, month : 1}
                     }
                 ])
                 return logs
@@ -145,8 +150,8 @@ const RootQuery = new GraphQLObjectType({
                             _id: {
                                 "login": "$json.page"
                             },
-                            successfulLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", true]}, 1, 0]}},
-                            failedLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", false]}, 1, 0]}}
+                            successfulLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", true]}, 1, 0]}}, //Sums every successful login
+                            failedLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", false]}, 1, 0]}} //Sums every unsuccessful login
                         }
                     }
                 ])
@@ -161,14 +166,14 @@ const RootQuery = new GraphQLObjectType({
                         $group: {
                             _id: "$json.page",
                             topfeature: {$max: "$json.page"},
-                            numUses: {$sum : 1}
+                            numUses: {$sum : 1} //Counts the number every page was pinged
                         }
                     },
                     {
-                        $sort: {numUses: -1}
+                        $sort: {numUses: -1} //Sorts by number of uses in descending order
                     },
                     {
-                        $limit: 5
+                        $limit: 5 //Takes the top 5 results
                     }
                 ])
                 return logs

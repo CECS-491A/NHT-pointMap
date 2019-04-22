@@ -6,6 +6,7 @@ const Log = require('./models/log');
 const CryptoJS = require("crypto-js");
 const graphqlHTTP = require('express-graphql')
 const schema = require( './graphql/schema')
+const fetch = require('isomorphic-fetch')
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -24,8 +25,67 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
 //Setsup the graphql route using the rootSchema
 app.use('/graphql', graphqlHTTP({
     schema,
-    graphiql: true
+    graphiql: false
 }));
+
+app.get('/', (req, res) => {
+    var query = `query RootQueryType{
+        minMaxSessionDuration{
+            sessionDuration
+        },
+        successfulLoginsxRegisteredUsersMonth{
+            totalRegisteredUsers
+            month
+            year
+            loginAttempts
+        },
+        loginAttempts{
+            successfulLoginAttempts
+            failedLoginAttempts
+        },
+        topFeatures{
+            topfeature
+        },
+        longestPageUse{
+            pageName
+        }
+      }`;
+    fetch('http://localhost:3000/graphql', {
+        method:'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            query
+        })
+    }).then(r => r.json()).then(data => {
+        editData(data['data'], (finishedData, err) => {
+            if(err){
+                console.log(err)
+                res.status(500).send('Internal Server Error')
+                return
+            }
+            res.status(200).send(finishedData)
+            return
+        })
+    }).catch(err => {
+        console.log(err)
+        res.status(500).send('Internal Server Error')
+    })
+});
+
+function editData(data, callback){ //Adds the users of each previous month together so totalusers displays totalUsers and not newly registered users
+    let users = 0
+    let count = 0
+    data['successfulLoginsxRegisteredUsersMonth'].forEach((ele => {
+        count++
+        users += parseInt(ele['totalRegisteredUsers'])
+        ele['totalRegisteredUsers'] = users
+        if(count == data['successfulLoginsxRegisteredUsersMonth'].length)
+            return callback(data)
+    }))
+}
 
 app.post('/', (req, res) => {
     if(!req.body){//Check for valid body
