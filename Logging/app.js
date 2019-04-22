@@ -25,15 +25,15 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
 //Setsup the graphql route using the rootSchema
 app.use('/graphql', graphqlHTTP({
     schema,
-    graphiql: false
+    graphiql: true
 }));
 
 app.get('/', (req, res) => {
     var query = `query RootQueryType{
-        minMaxSessionDuration{
+        averageSessionDuration{
             sessionDuration
         },
-        successfulLoginsxRegisteredUsersMonth{
+        successfulLoginsxRegisteredUsers{
             totalRegisteredUsers
             month
             year
@@ -43,10 +43,10 @@ app.get('/', (req, res) => {
             successfulLoginAttempts
             failedLoginAttempts
         },
-        topFeatures{
+        topFeaturesByPageVisits{
             topfeature
         },
-        longestPageUse{
+        topFeaturesByPageTime{
             pageName
         }
       }`;
@@ -78,11 +78,11 @@ app.get('/', (req, res) => {
 function editData(data, callback){ //Adds the users of each previous month together so totalusers displays totalUsers and not newly registered users
     let users = 0
     let count = 0
-    data['successfulLoginsxRegisteredUsersMonth'].forEach((ele => {
+    data['successfulLoginsxRegisteredUsers'].forEach((ele => {
         count++
         users += parseInt(ele['totalRegisteredUsers'])
         ele['totalRegisteredUsers'] = users
-        if(count == data['successfulLoginsxRegisteredUsersMonth'].length)
+        if(count == data['successfulLoginsxRegisteredUsers'].length)
             return callback(data)
     }))
 }

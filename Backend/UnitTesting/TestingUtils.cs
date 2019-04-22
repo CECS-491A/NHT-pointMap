@@ -23,6 +23,44 @@ namespace UnitTesting
             return salt;
         }
 
+        public void createLogs()
+        {
+            LogRequestDTO newLog = new LogRequestDTO();
+            LoggingService _ls = new LoggingService();
+            newLog.source = "testingClass";
+            newLog.details = "testing stacktrace";
+            Random rand = new Random();
+            for (var i = 0; i < 20; i++)
+            {
+                User newUser = CreateUserObject();
+                Session newSession = CreateSessionObject(newUser);
+                CreateSessionInDb(newSession);
+                newLog.email = newUser.Username;
+                newLog.ssoUserId = newUser.Id.ToString();
+                newLog.logCreatedAt = new DateTime(2018, 11, 21);
+                for (var j = 0; j < 3; j++)
+                {
+                    newLog.success = true;
+                    newLog.page = LogRequestDTO.loginPage;
+                    if (j == 0)
+                        newLog.page = LogRequestDTO.registrationPage;
+                    var duration = rand.Next(1, 1000);
+                    if (duration < 200)
+                        newLog.success = false;
+                    newLog.sessionCreatedAt = newSession.CreatedAt;
+                    newLog.sessionExpiredAt = newSession.ExpiresAt.AddSeconds(duration);
+                    newLog.sessionUpdatedAt = newSession.UpdatedAt.AddSeconds(duration);
+                    newLog.token = newSession.Token;
+                    var content = getLogContent(newLog); //signature timestamp
+                    newLog.signature = content[0];
+                    newLog.timestamp = content[1];
+                    var responseStatus = _ls.sendLogSync(newLog);
+                    Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.OK);
+                }
+            }
+
+        }
+
         public Point CreatePointObject(float longitude, float latitude)
         {
             Random rand = new Random();

@@ -81,7 +81,7 @@ let pageUse = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        minMaxSessionDuration: {
+        averageSessionDuration: {
             type: new GraphQLList(SessionType),
             resolve(parent, args){
                 let logs = Log.aggregate([
@@ -100,7 +100,7 @@ const RootQuery = new GraphQLObjectType({
                 return logs
             }
         },
-        successfulLoginsxRegisteredUsersMonth:{
+        successfulLoginsxRegisteredUsers:{
             type: new GraphQLList(LoginRegisteredUsers),
             resolve(parent, args){
                 let logs = Log.aggregate([
@@ -158,7 +158,7 @@ const RootQuery = new GraphQLObjectType({
                 return logs
             }
         },
-        topFeatures: {
+        topFeaturesByPageVisits: {
             type: new GraphQLList(mostUsedFeature),
             resolve(parent, args){
                 let logs = Log.aggregate([
@@ -179,7 +179,7 @@ const RootQuery = new GraphQLObjectType({
                 return logs
             }
         },
-        longestPageUse: {
+        topFeaturesByPageTime: {
             type: new GraphQLList(pageUse),
             resolve(parent, args){
                 let logs = Log.aggregate([
