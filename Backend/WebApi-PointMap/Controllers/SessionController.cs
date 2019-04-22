@@ -8,6 +8,8 @@ using ManagerLayer.AccessControl;
 using System.Text;
 using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
+using ManagerLayer.Logging;
+using DTO;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -15,11 +17,15 @@ namespace WebApi_PointMap.Controllers
     {
         AuthorizationManager _am;
         DatabaseContext _db;
+        LoggingManager _lm;
+        LogRequestDTO newLog;
 
         public SessionController()
         {
             _am = new AuthorizationManager();
             _db = new DatabaseContext();
+            _lm = new LoggingManager();
+            newLog = new LogRequestDTO();
         }
 
         [HttpGet]
@@ -30,6 +36,15 @@ namespace WebApi_PointMap.Controllers
             { 
                 var token = ControllerHelpers.GetToken(Request);
                 var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                newLog.source = "Session";
+                newLog.details = "Session successful validation at SessionController line 40";
+                newLog.token = session.Token;
+                newLog.success = true;
+                newLog.page = "Session";
+                newLog.sessionExpiredAt = session.ExpiresAt;
+                newLog.sessionCreatedAt = session.CreatedAt;
+                newLog.sessionUpdatedAt = session.UpdatedAt;
+                _lm.sendLogAsync(newLog);
                 _db.SaveChanges();
                 var response = Request.CreateResponse(HttpStatusCode.OK);
                 response.Content = new StringContent(token, Encoding.Unicode);
