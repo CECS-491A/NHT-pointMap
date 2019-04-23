@@ -1,7 +1,8 @@
 import axios from "axios";
+import { api_url, sso_login_url } from "@/const.js"
 
 function checkSession(){
-    let urlString = 'https://api.pointmap.net/api/session/'
+    let urlString = api_url + '/api/session/'
     let content = {
         'headers':{
             'token': localStorage.getItem('token')
@@ -12,13 +13,13 @@ function checkSession(){
     }).catch((err) => {
         if(err.response.status == 401){
             localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            window.location.href = sso_login_url;
         }
     })
 };
 
 function deleteSession(){
-    let urlString = 'https://api.pointmap.net/api/logout/session/'
+    let urlString = api_url + '/api/logout/session/'
     let content = {
         'headers':{
             'token': localStorage.getItem('token')
@@ -26,11 +27,11 @@ function deleteSession(){
     }
     axios.get(urlString, content).then((response) => {
         localStorage.removeItem('token');
-        window.location.href = 'https://kfc-sso.com/#/login';
+        window.location.href = sso_login_url;
     }).catch((err) => {
         if(err.response.status == 401){
             localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            window.location.href = sso_login_url;
         }
     })
 };

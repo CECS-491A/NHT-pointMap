@@ -1,7 +1,9 @@
 import axios from "axios";
+import { api_url } from "@/const.js";
+import { deleteSession } from "./authorizationService.js"
 
 function getPoints(minLng, maxLng, minLat, maxLat, callback){
-    let urlString = 'https://api.pointmap.net/api/points/'
+    let urlString = api_url + '/api/points/'
     let content = {
         'headers':{
             'minLng': minLng,
@@ -29,8 +31,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
     }).catch((err) => {
         console.log(err);
         if(err.response.status == 401){
-            localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            deleteSession();
         }
     })
     return null;
@@ -43,7 +44,7 @@ function getPoint(pointId, callback){
         }
     }
     let arr =[]
-    let urlString = 'https://api.pointmap.net/api/point/'+pointId
+    let urlString = api_url + '/api/point/' + pointId
     axios.get(urlString, content).then((response) => {
         let data = response.data;
         arr.push(data);
@@ -52,8 +53,7 @@ function getPoint(pointId, callback){
     }).catch((err) => {
         console.log(err);
         if (err.response.status == 401) {
-            localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
+            deleteSession();
         }
     })
     return null;
@@ -66,18 +66,16 @@ function updatePoint(point){
         },
         'body': point
     }
-    let urlString = 'https://api.pointmap.net/api/point/'+point.Id
-    axios.put(urlString, content).then((response) => {
-        let data = response.data;
-        return data;
+    axios.put(`${api_url}/api/point/${point.Id}`, content)
+        .then((response) => {
+            return response.data;
         
-    }).catch((err) => {
-        console.log(err);
-        if (err.response.status == 401) {
-            localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
-        }
-    })
+        }).catch((err) => {
+            console.log(err);
+            if (err.response.status == 401) {
+                deleteSession();
+            }
+        })
     return null;
 };
 
@@ -88,18 +86,16 @@ function createPoint(point){
         },
         'body': point
     }
-    let urlString = 'https://api.pointmap.net/api/point'
-    axios.post(urlString, content).then((response) => {
-        let data = response.data;
-        return data;
-        
-    }).catch((err) => {
-        console.log(err);
-        if (err.response.status == 401) {
-            localStorage.removeItem('token');
-            window.location.href = 'https://kfc-sso.com/#/login';
-        }
-    })
+    axios.post(`${api_url}/api/point`, content)
+        .then((response) => {
+            return response.data;
+            
+        }).catch((err) => {
+            console.log(err);
+            if (err.response.status == 401) {
+                deleteSession();
+            }
+        })
     return null;
 };
 

@@ -27,41 +27,22 @@
           v-model.number="point.latitude"
           label="Latitude" 
           @change="updateMarkerPosition"/><br />
-        <br />
         <v-alert
           :value="error"
           type="error"
           transition="scale-transition"
         >
           {{error}}
-        </v-alert>
+        </v-alert><br />
         <v-btn color="success" v-on:click="submit">Save Point</v-btn>
 
       </v-form>
-      <v-dialog
-        v-model="loading"
-        hide-overlay
-        persistent
-        width="300"
-      >
-        <v-card
-          color="primary"
-          dark
-        >
-          <v-card-text>
-            {{this.loadingText}}
-            <v-progress-linear
-              indeterminate
-              color="white"
-              class="mb-0"
-            ></v-progress-linear>
-          </v-card-text>
-        </v-card>
-      </v-dialog>
+      <div v-if="loading">
+        <Loading :dialog="loading" :text="loadingText"/>
+      </div>
       <br />
       <div id="instruction">
-        <h2>Drag the marker on the map to the desired location and 
-          update the latitude/longitude of the marker. </h2>
+        <h2>Drag the marker on the map to the desired location. </h2>
       </div>
     </div>
     <div>
@@ -72,11 +53,15 @@
 
 <script>
 
+import Loading from '@/components/dialogs/Loading.vue'
 import {checkSession} from '../services/authorizationService'
 import {updatePoint, createPoint, getPoint} from '../services/pointServices'
 
 export default {
   name: 'PointEditor',
+  components: {
+    Loading
+  },
   data: () => {
     return {
       responseError: null,
@@ -166,15 +151,34 @@ export default {
     },
     //updates the postion of the marker if the form fields are edited
     updateMarkerPosition: function() {
-      this.center = {
-        lat: this.point.latitude,
-        lng: this.point.longitude
-      };
-      //resets the map center and marker position to be the longitude/latitude values in the form fields
-      //  then pans the map to the set center position
-      this.map.setCenter(this.center); 
-      this.marker.setPosition(this.map.center);
-      this.map.panTo(this.map.center);
+      //ensures that latitude longitude fields cannot be edited to an empty string
+      //  this prevents an error caused when updating the marker location
+      if(this.point.latitude == "" || this.point.longitude == "") {
+        this.point.latitude = this.center.lat;
+        this.point.longitude = this.center.lng;
+
+        //displays an error message
+        this.error = "Latitude/longitude values cannot be empty.";
+        var promise = new Promise((resolve, reject) => {
+          setTimeout(() => { //error messages is displayed for 2 seconds
+            resolve()
+          }, 2000);
+        })
+        promise.then(() => {
+          this.error = ""; // error message is removed
+        });
+      }
+      else {
+        this.center = {
+          lat: this.point.latitude,
+          lng: this.point.longitude
+        };
+        //resets the map center and marker position to be the longitude/latitude values in the form fields
+        //  then pans the map to the set center position
+        this.map.setCenter(this.center); 
+        this.marker.setPosition(this.map.center);
+        this.map.panTo(this.map.center);
+      }
     },
     getPointData: function() {
       var pointId = this.$route.query.pointId;
@@ -272,7 +276,7 @@ export default {
     justify-content: space-between;
   }
   #pointeditor{
-    width: 550px;
+    width: 590px;
     margin: 20px;
   }
   #instruction{

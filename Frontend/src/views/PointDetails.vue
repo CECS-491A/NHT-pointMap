@@ -93,7 +93,7 @@ export default {
          })
      },
      pointEditor: function() {
-      window.location.href = 'http://pointmap.net/#/pointeditor/?pointId='+this.id;
+      this.$router.push('pointeditor/?pointId=' + this.id);
     }
   },
    beforeMount: function() {
