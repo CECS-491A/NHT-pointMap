@@ -45,11 +45,13 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (InvalidTokenSignatureException e)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    var responseAuthError = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return responseAuthError;
                 }
                 catch (Exception e)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return responseInternalError;
                 }
             }
         }
@@ -71,10 +73,6 @@ namespace WebApi_PointMap.Controllers
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
-                    if (user == null)
-                    {
-                        return Content(HttpStatusCode.NotFound, "User does not exists.");
-                    }
                     var requestSuccessful = KFC_SSO_Manager.DeleteUserFromSSOviaPointmap(user);
                     if (requestSuccessful)
                     {
@@ -82,19 +80,27 @@ namespace WebApi_PointMap.Controllers
                         _db.SaveChanges();
                         return Ok("User was deleted");
                     }
-                    return Content(HttpStatusCode.InternalServerError, "User was not deleted.");
+                    var response = Content(HttpStatusCode.InternalServerError, "User was not deleted.");
+                    return response;
                 }
                 catch (KFCSSOAPIRequestException ex)
                 {
-                    return Content(HttpStatusCode.ServiceUnavailable, ex.Message);
+                    var response = Content(HttpStatusCode.ServiceUnavailable, ex.Message);
+                    return response;
+                }
+                catch (UserNotFoundException e)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e)
                 {
                     if (e is SessionNotFoundException || e is NoTokenProvidedException)
                     {
-                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        var responseAuthError = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseAuthError;
                     }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    var response = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return response;
                 }
             }
         }
@@ -114,27 +120,32 @@ namespace WebApi_PointMap.Controllers
                     var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                     var _userManager = new UserManagementManager(_db);
+                    // throw exception if user not found
                     var user = _userManager.GetUser(session.UserId);
-                    if (user == null)
-                    {
-                        return Content(HttpStatusCode.NotFound, "User does not exists.");
-                    }
                     //delete user self and their sessions
                     _userManager.DeleteUserAndSessions(user.Id);
                     _db.SaveChanges();
-                    return Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
+                    var response = Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
+                    return response;
                 }
                 catch (KFCSSOAPIRequestException ex)
                 {
-                    return Content(HttpStatusCode.ServiceUnavailable, ex.Message);
+                    var responseAPIError = Content(HttpStatusCode.ServiceUnavailable, ex.Message);
+                    return responseAPIError;
+                }
+                catch (UserNotFoundException e)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e)
                 {
                     if (e is SessionNotFoundException || e is NoTokenProvidedException)
                     {
-                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        var responseAuthError = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseAuthError;
                     }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return responseInternalError;
                 }
             }
         }
@@ -161,11 +172,8 @@ namespace WebApi_PointMap.Controllers
                     }
 
                     var _userManagementManager = new UserManagementManager(_db);
+                    // throw exception if user does not exist
                     var user = _userManagementManager.GetUser(userSSOID);
-                    if (user == null)
-                    {
-                        return Ok("User was never registered.");
-                    }
                     _userManagementManager.DeleteUserAndSessions(userSSOID);
                     _db.SaveChanges();
                     return Ok("User was deleted");
@@ -173,6 +181,10 @@ namespace WebApi_PointMap.Controllers
                 catch (InvalidTokenSignatureException e)
                 {
                     return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                }
+                catch (UserNotFoundException e)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e)
                 {

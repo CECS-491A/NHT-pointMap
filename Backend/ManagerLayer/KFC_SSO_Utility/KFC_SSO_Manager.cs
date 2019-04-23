@@ -48,17 +48,21 @@ namespace ManagerLayer.KFC_SSO_Utility
 
             _userManagementManager = new UserManagementManager(_db);
             var _userManager = new UserManager(_db);
-            var user = _userManagementManager.GetUser(ssoID);
-            Session session;
-            // check if user does not exist
-            if (user == null)
+            try
             {
-                // create new user, UserAlreadyExistsException thrown if user with email already exists
-                session = _userManager.Register(Username, ssoID);
+                //throw exception if user does not exist
+                var user = _userManagementManager.GetUser(ssoID);
+                var session = _userManager.Login(user);
                 return session;
             }
-            session = _userManager.Login(user);
-            return session;
+            catch (UserNotFoundException)
+            {
+                // check if user does not exist
+                    // create new user, UserAlreadyExistsException thrown if user with email already exists
+                var session = _userManager.Register(Username, ssoID);
+                return session;  
+            }
+            
         }
 
         public static bool DeleteUserFromSSOviaPointmap(User user)
