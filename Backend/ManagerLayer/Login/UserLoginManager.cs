@@ -19,7 +19,6 @@ namespace ManagerLayer.Login
     {
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
-        TokenService _tokenService;
         LogRequestDTO newLog;
         LoggingManager loggingManager;
         DatabaseContext _db;
@@ -34,9 +33,9 @@ namespace ManagerLayer.Login
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
-            _tokenService = new TokenService();
+            var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
             loggingManager = new LoggingManager();
-            if (!_tokenService.isValidSignature(PreSignatureString, Signature))
+            if (!_ssoServiceAuth.IsValidClientRequest(PreSignatureString, Signature))
             {
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", Username, "Invalid signing attempt",

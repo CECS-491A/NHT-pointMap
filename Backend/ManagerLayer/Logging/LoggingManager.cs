@@ -44,7 +44,8 @@ namespace ManagerLayer.Logging
             string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email +
                 ";timestamp=" + timestamp + ";";
-            string signature = _ts.GenerateSignature(plaintext);
+            var _logServiceAuth = new LoggingService.RequestPayloadAuthentication();
+            string signature = _logServiceAuth.GenerateSignature(plaintext);
             return new string[] { signature, timestamp };
         }
     }

@@ -48,6 +48,13 @@ namespace ManagerLayer.UserManagement
             _userService.DeleteUser(id);
         }
 
+        public void DeleteUserAndSessions(Guid id)
+        {
+            var _sessionService = new SessionService();
+            _sessionService.DeleteSessionsOfUser(_db, id);
+            var user = _userService.GetUser(id);
+        }
+
         public User GetUser(Guid id)
         {
             var user = _userService.GetUser(id);

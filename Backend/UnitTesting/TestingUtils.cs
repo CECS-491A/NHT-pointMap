@@ -11,7 +11,7 @@ namespace UnitTesting
 {
     public class TestingUtils
     {
-        public string Mock_APISecret = TokenService.APISecret;
+        public string Mock_APISecret = KFC_SSO_APIService.APISecret;
 
         public byte[] GetRandomness()
         {
@@ -124,7 +124,7 @@ namespace UnitTesting
 
         public class MockLoginPayload
         {
-            public string Mock_APISecret = TokenService.APISecret;
+            public string Mock_APISecret = KFC_SSO_APIService.APISecret;
 
             public Guid ssoUserId { get; set; }
             public string email { get; set; }
