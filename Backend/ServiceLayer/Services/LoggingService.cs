@@ -8,12 +8,25 @@ using System.Net.Http;
 using System.Net.Mail;
 using System.Net;
 using DTO;
+using System.Security.Cryptography;
 
 namespace ServiceLayer.Services
 {
     public class LoggingService : ILoggingService
     {
         private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
+        public static string LOGGER_API_SECRET = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP";
+
+        public class RequestPayloadAuthentication
+        {
+            public string GenerateSignature(string plaintext)
+            {
+                HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(LOGGER_API_SECRET));
+                byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);
+                byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
+                return Convert.ToBase64String(signatureBytes);
+            }
+        }
 
         public System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog, string signature, string timestamp)
         {

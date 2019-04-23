@@ -91,5 +91,11 @@ namespace ServiceLayer.Services
             public InvalidHeaderException(string message) : base(message) { }
             public InvalidHeaderException(string message, Exception innerException) : base(message, innerException) { }
         }
+
+        public class KFCSSOAPIRequestException : Exception
+        {
+            public KFCSSOAPIRequestException() { }
+            public KFCSSOAPIRequestException(string message) : base (message) { }
+        }
     }
 }

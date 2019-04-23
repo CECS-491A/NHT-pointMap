@@ -140,7 +140,6 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -196,7 +195,6 @@ namespace UnitTesting
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]
@@ -247,7 +245,8 @@ namespace UnitTesting
             _tu.CreateSessionInDb(newSession);
 
             var endpoint = API_ROUTE_LOCAL + "/sso/user/delete";
-            _umController.Request = new HttpRequestMessage
+            var _userController = new UserController();
+            _userController.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(endpoint)
             };
@@ -263,16 +262,15 @@ namespace UnitTesting
             var request = new HttpRequestMessage();
             request.Headers.Add("token", newSession.Token);
 
-            _umController.Request = request;
+            _userController.Request = request;
 
             //invalid signature should throw and InvalidTokenSignatureException
             //  and return a 401
-            IHttpActionResult response = _umController.DeleteUser(loginDTO);
+            IHttpActionResult response = _userController.DeleteViaSSO(loginDTO);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual(ControllerHelpers.Redirect, result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]

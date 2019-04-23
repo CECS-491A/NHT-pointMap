@@ -1,30 +1,29 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
-using ManagerLayer.AccessControl;
 using DTO;
-using ManagerLayer.UserManagement;
+using ManagerLayer.AccessControl;
 using ManagerLayer.Logging;
+using ManagerLayer.UserManagement;
+using ManagerLayer.Users;
 using ServiceLayer.Services;
-using System.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static ServiceLayer.Services.ExceptionService;
-using ManagerLayer.Users;
 
-namespace ManagerLayer.SSOUtility
+namespace ManagerLayer.KFC_SSO_Utility
 {
-    public class UserLoginManager
+    public class KFC_SSO_Manager
     {
         UserManagementManager _userManagementManager;
-        TokenService _tokenService;
+        AuthorizationManager _authorizationManager;
         LogRequestDTO newLog;
         LoggingManager loggingManager;
         DatabaseContext _db;
 
-        public UserLoginManager(DatabaseContext db)
+        public KFC_SSO_Manager(DatabaseContext db)
         {
             _db = db;
         }
@@ -34,9 +33,9 @@ namespace ManagerLayer.SSOUtility
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
-            _tokenService = new TokenService();
+            var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
             loggingManager = new LoggingManager();
-            if (!_tokenService.isValidSignature(PreSignatureString, Signature))
+            if (!_ssoServiceAuth.IsValidClientRequest(PreSignatureString, Signature))
             {
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", Username, "Invalid signing attempt",
@@ -46,7 +45,7 @@ namespace ManagerLayer.SSOUtility
                 throw new InvalidTokenSignatureException("Session is not valid.");
             }
             ////////////////////////////////////////
-            
+
             _userManagementManager = new UserManagementManager(_db);
             var _userManager = new UserManager(_db);
             var user = _userManagementManager.GetUser(ssoID);
@@ -60,6 +59,18 @@ namespace ManagerLayer.SSOUtility
             }
             session = _userManager.Login(user);
             return session;
+        }
+
+        public static bool DeleteUserFromSSOviaPointmap(User user)
+        {
+            var _ssoAPI = new KFC_SSO_APIService();
+            var requestResponse = _ssoAPI.DeleteUserFromSSO(user);
+            if (requestResponse.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            // throw response of request
+            throw new KFCSSOAPIRequestException(requestResponse.Content.ToString());
         }
     }
 }
