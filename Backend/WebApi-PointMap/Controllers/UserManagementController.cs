@@ -128,16 +128,13 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-<<<<<<< HEAD
                     logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
                     session.User.Username, newLog.adminDashPage, session);
 
-=======
                     if (e is SessionNotFoundException || e is NoTokenProvidedException)
                     {
                         return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
                     }
->>>>>>> 1a5429c1902b88094286fe212bea0f1db2153d57
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -187,70 +184,9 @@ namespace WebApi_PointMap.Controllers
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     }
                 }
-<<<<<<< HEAD
-                catch (Exception e)
-                {
-                    logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, newLog.adminDashPage, session);
-
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-                }
-            }
-
-        }
-
-        [HttpPost]
-        [Route("sso/user/delete")]
-        public IHttpActionResult DeleteUser([FromBody, Required] LoginDTO requestPayload)
-        {
-            using (var _db = new DatabaseContext())
-            {
-                try
-                {
-                    //throws ExceptionService.InvalidModelPayloadException
-                    ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
-
-                    //throws ExceptionService.InvalidGuidException
-                    var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
-
-                    // check valid signature
-                    var _tokenService = new TokenService();
-                    if (!_tokenService.isValidSignature(requestPayload.PreSignatureString(), requestPayload.Signature))
-                    {
-                        throw new InvalidTokenSignatureException("Session is not valid.");
-                    }
-
-                    var _userManagementManager = new UserManagementManager(_db);
-                    user = _userManagementManager.GetUser(userSSOID);
-                    if (user == null)
-                    {
-                        return Ok("User was never registered.");
-                    }
-
-                    var _sessionService = new SessionService();
-                    var sessions = _sessionService.GetSessions(_db, userSSOID);
-                    if (sessions != null)
-                    {
-                        foreach (var sess in sessions)
-                        {
-                            _sessionService.DeleteSession(_db, sess.Token);
-                        }
-                    }
-                    _userManagementManager.DeleteUser(userSSOID);
-                    _db.SaveChanges();
-
-                    newLog = logger.initalizeAnalyticsLog("User deleted from SSO at UserManagement Controller line 214\n" +
-                        "Route: GET /user/", newLog.ssoSource);
-                    newLog.ssoUserId = user.Id.ToString();
-                    newLog.email = user.Username;
-                    logger.sendLogAsync(newLog);
-
-                    return Ok("User was deleted");
-=======
                 catch (UserIsNotAdministratorException e)
                 {
                     return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
->>>>>>> 1a5429c1902b88094286fe212bea0f1db2153d57
                 }
                 catch (Exception e)
                 {
