@@ -27,7 +27,8 @@ namespace WebApi_PointMap.ErrorHandling
             }
             else if(e is ValidationException)
             {
-
+                httpResponse.StatusCode = HttpStatusCode.BadRequest;
+                httpResponse.Content = new StringContent(e.Message);
             }
             else
             {

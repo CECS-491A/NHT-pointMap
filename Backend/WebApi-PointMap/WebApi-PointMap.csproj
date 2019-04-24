@@ -113,7 +113,6 @@
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ErrorHandling\AuthorizationErrorHandler.cs" />
     <Compile Include="ErrorHandling\GeneralErrorHandler.cs" />
-    <Compile Include="ErrorHandling\GlobalErrorLogger.cs" />
     <Compile Include="ErrorHandling\DatabaseErrorHandler.cs" />
     <Compile Include="ErrorHandling\HttpErrorHandler.cs" />
     <Compile Include="ErrorHandling\PointErrorHandler.cs" />
@@ -147,6 +146,10 @@
     <ProjectReference Include="..\DTO\DTO.csproj">
       <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
       <Name>DTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{62d0d976-da3b-4c5a-bd81-474f528c1567}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
       <Project>{dd7c51a6-44cd-4a05-9809-1171fe66f434}</Project>

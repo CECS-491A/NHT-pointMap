@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 let port = process.env.PORT || 3000;
 let connectionString = 'mongodb://localhost/logs'
-let sharedSecret = "FDF9B8E2935D6F4C7336604164B92B82E36D1BD87FF96333194D41FDDA023449"
+let sharedSecret = "5E5DDBD9B984E4C95BBFF621DF91ABC9A5318DAEC0A3B231B4C1BC8FE0851610"
 
 //Connects to local mongodb instance using defined connection string
 mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {
@@ -28,7 +28,7 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true
 }));
 
-app.get('/', (req, res) => {
+app.get('/', (req, res) => { //GraphQL query
     var query = `query RootQueryType{
         averageSessionDuration{
             sessionDuration
@@ -50,7 +50,7 @@ app.get('/', (req, res) => {
             pageName
         }
       }`;
-    fetch('http://localhost:3000/graphql', {
+    fetch('http://localhost:3000/graphql', { //Makes a request for information from graphql
         method:'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -59,8 +59,8 @@ app.get('/', (req, res) => {
         body: JSON.stringify({
             query
         })
-    }).then(r => r.json()).then(data => {
-        editData(data['data'], (finishedData, err) => {
+    }).then(r => r.json()).then(data => { //Gets the raw request
+        editData(data['data'], (finishedData, err) => { //Performs an operation on the request
             if(err){
                 console.log(err)
                 res.status(500).send('Internal Server Error')
@@ -94,8 +94,8 @@ app.post('/', (req, res) => {
     }
     let data = req.body
     if(!data.signature || !data.timestamp || !data.ssoUserId || !data.email){ //Check for needed auth params
-        console.log('missing authentication fields')
         res.status(401).send({'Error': 'Unauthorized Request'});
+        console.log("missing auth fields")
         return;         
     }
         
@@ -104,13 +104,14 @@ app.post('/', (req, res) => {
     var hashInBase64 = CryptoJS.enc.Base64.stringify(hash);
 
     if(data.signature != hashInBase64){ //Checks if signatures match
-        console.log('Hashes do not match')
         res.status(401).send({'Error': 'Unauthorized Request'});
+        console.log("Bad signature")
         return;
     }
 
     if(!data.ssoUserId || !data.email || !data.logCreatedAt || !data.source || !data.details){ //Checks for required fields
         res.status(400).send({'Error': 'Missing required request fields'});
+        console.log("missing request fields")
         return;
     }
     let keys = Object.keys(data) //gets an array of body param keys
@@ -127,15 +128,15 @@ app.post('/', (req, res) => {
     newLog.details = data.details;
     newLog.ssoUserId = data.ssoUserId;
     
-    if('sessionCreatedAt' in json && 'sessionUpdatedAt' in json && 'sessionExpiredAt' in json){
-        let createdDate = new Date(parseInt(json.sessionCreatedAt.substr(6)));
+    if('sessionCreatedAt' in json && 'sessionUpdatedAt' in json && 'sessionExpiredAt' in json){ 
+        let createdDate = new Date(parseInt(json.sessionCreatedAt.substr(6))); //Formats the fields
         let updatedDate = new Date(parseInt(json.sessionUpdatedAt.substr(6)));
         let expiredAt = new Date(parseInt(json.sessionUpdatedAt.substr(6)));
-        let duration = (updatedDate.getTime() - createdDate.getTime()) / 1000;
+        let duration = (updatedDate.getTime() - createdDate.getTime()) / 1000; //Retrieves duration of session
         json.sessionCreatedAt = createdDate;
         json.sessionUpdatedAt = updatedDate;
         json.sessionExpiredAt = expiredAt;
-        json['sessionDuration'] = duration;
+        json['sessionDuration'] = duration;//Adds duration of session
     }
     newLog.json = json
     Log.saveLog(newLog, (err, newLog) => { //Saving the log

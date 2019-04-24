@@ -64,6 +64,7 @@
     <Compile Include="ErrorHandlingIT.cs" />
     <Compile Include="ITestingUtils.cs" />
     <Compile Include="LoggingServicesIT.cs" />
+    <Compile Include="LoggingServiceUT.cs" />
     <Compile Include="PointControllerIT.cs" />
     <Compile Include="UserControllerUT.cs" />
     <Compile Include="UserLoginManagerUT.cs" />
@@ -81,6 +82,10 @@
     <ProjectReference Include="..\DTO\DTO.csproj">
       <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
       <Name>DTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{62d0d976-da3b-4c5a-bd81-474f528c1567}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
       <Project>{DD7C51A6-44CD-4A05-9809-1171FE66F434}</Project>

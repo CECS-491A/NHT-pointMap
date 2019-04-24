@@ -3,7 +3,6 @@ using DataAccessLayer.Models;
 using ManagerLayer.AccessControl;
 using DTO;
 using ManagerLayer.UserManagement;
-using ManagerLayer.Logging;
 using ServiceLayer.Services;
 using System.Net.Http;
 using System;
@@ -21,7 +20,6 @@ namespace ManagerLayer.Login
         AuthorizationManager _authorizationManager;
         TokenService _tokenService;
         LogRequestDTO newLog;
-        LoggingManager loggingManager;
         DatabaseContext _db;
 
         public UserLoginManager(DatabaseContext db)
@@ -35,7 +33,8 @@ namespace ManagerLayer.Login
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
             _tokenService = new TokenService();
-            loggingManager = new LoggingManager();
+            LoginManagerResponseDTO response = new LoginManagerResponseDTO();
+            response.newUser = false;
             if (!_tokenService.isValidSignature(PreSignatureString, Signature))
             {
                 throw new InvalidTokenSignatureException("Session is not valid.");
@@ -48,15 +47,14 @@ namespace ManagerLayer.Login
             if (user == null)
             {
                 // create new user
-                user = _userManagementManager.CreateUser(_db, Username, ssoID);
+                user = _userManagementManager.CreateUser(Username, ssoID);
+                response.newUser = true;
             }
             _authorizationManager = new AuthorizationManager(_db);
             Session session = _authorizationManager.CreateSession(user);
 
-            LoginManagerResponseDTO response = new LoginManagerResponseDTO
-            {
-                Token = session.Token
-            };
+            
+            response.Token = session.Token;
 
             return response;
         }

@@ -10,11 +10,25 @@ using System.Web.Http;
 using WebApi_PointMap.ErrorHandling;
 using WebApi_PointMap.Models;
 using static ServiceLayer.Services.ExceptionService;
-
+using DTO;
+using DataAccessLayer.Models;
+using Logging.Logging;
 namespace WebApi_PointMap.Controllers
 {
     public class UserManagementController : ApiController
     {
+        Logger logger;
+        LogRequestDTO newLog;
+
+        Session session;
+        User user;
+
+        public UserManagementController()
+        {
+            logger = new Logger();
+            newLog = new LogRequestDTO();
+        }
+
         [HttpGet]
         [Route("users")]
         public IHttpActionResult GetAllUsers()
@@ -27,7 +41,11 @@ namespace WebApi_PointMap.Controllers
                     var token = ControllerHelpers.GetToken(Request);
 
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    newLog = logger.initalizeAnalyticsLog("Session validated at UserManagement Controller line 40\n" +
+                        "Route: GET /users/", newLog.sessionSource, session.User, session);
+                    logger.sendLogAsync(newLog);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -46,6 +64,11 @@ namespace WebApi_PointMap.Controllers
                             isAdmin = u.IsAdministrator
                         }).ToList();
                         _db.SaveChanges();
+
+                        newLog = logger.initalizeAnalyticsLog("User list retrieved at UserManagement Controller line 50\n" +
+                        "Route: GET /users/", newLog.adminDashSource, session.User, session, newLog.adminDashPage);
+                        logger.sendLogAsync(newLog);
+
                         return Ok(users);
                     }
                     else
@@ -57,6 +80,9 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
+                    session.User.Username, newLog.adminDashPage, session);
+
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -74,11 +100,19 @@ namespace WebApi_PointMap.Controllers
                     var token = ControllerHelpers.GetToken(Request);
 
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    newLog = logger.initalizeAnalyticsLog("Session validated at UserManagement Controller line 96\n" +
+                        "Route: GET /user/", newLog.sessionSource, session.User, session);
+                    logger.sendLogAsync(newLog);
 
                     UserManagementManager _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
                     _db.SaveChanges();
+
+                    newLog = logger.initalizeAnalyticsLog("User retrieved at UserManagement Controller line 103\n" +
+                        "Route: GET /user/", newLog.adminDashSource, session.User, session, newLog.adminDashPage);
+                    logger.sendLogAsync(newLog);
 
                     return Ok(new
                     {
@@ -90,6 +124,9 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
+                    session.User.Username, newLog.adminDashPage, session);
+
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -114,7 +151,11 @@ namespace WebApi_PointMap.Controllers
                     var UserId = ControllerHelpers.ParseAndCheckId(userId);
 
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    newLog = logger.initalizeAnalyticsLog("Session validated at UserManagement Controller line 144\n" +
+                        "Route: DELETE /user/delete/{userId}", newLog.sessionSource, session.User, session);
+                    logger.sendLogAsync(newLog);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -122,6 +163,11 @@ namespace WebApi_PointMap.Controllers
                     {
                         _userManager.DeleteUser(UserId);
                         _db.SaveChanges();
+
+                        newLog = logger.initalizeAnalyticsLog("User deleted at UserManagement Controller line 154\n" +
+                        "Route: GET /user/", newLog.adminDashSource, session.User, session, newLog.adminDashPage);
+                        logger.sendLogAsync(newLog);
+
                         return Ok("User was deleted");
                     }
                     else
@@ -132,6 +178,9 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
+                    session.User.Username, newLog.adminDashPage, session);
+
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -160,7 +209,7 @@ namespace WebApi_PointMap.Controllers
                     }
 
                     var _userManagementManager = new UserManagementManager(_db);
-                    var user = _userManagementManager.GetUser(userSSOID);
+                    user = _userManagementManager.GetUser(userSSOID);
                     if (user == null)
                     {
                         return Ok("User was never registered.");
@@ -177,10 +226,19 @@ namespace WebApi_PointMap.Controllers
                     }
                     _userManagementManager.DeleteUser(userSSOID);
                     _db.SaveChanges();
+
+                    newLog = logger.initalizeAnalyticsLog("User deleted from SSO at UserManagement Controller line 214\n" +
+                        "Route: GET /user/", newLog.ssoSource);
+                    newLog.ssoUserId = user.Id.ToString();
+                    newLog.email = user.Username;
+                    logger.sendLogAsync(newLog);
+
                     return Ok("User was deleted");
                 }
                 catch (Exception e)
                 {
+                    logger.sendErrorLog(newLog.ssoSource, e.StackTrace, user.Id.ToString(), user.Username);
+
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -204,7 +262,11 @@ namespace WebApi_PointMap.Controllers
                     var UserId = ControllerHelpers.ParseAndCheckId(payload.Id);
 
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    newLog = logger.initalizeAnalyticsLog("Session validated at UserManagement Controller line 250\n" +
+                        "Route: PUT /user/update", newLog.sessionSource, session.User, session);
+                    logger.sendLogAsync(newLog);
 
                     var _userManager = new UserManagementManager(_db);
                     var manager = _userManager.GetUser(session.UserId);
@@ -230,6 +292,11 @@ namespace WebApi_PointMap.Controllers
 
                         _userManager.UpdateUser(user);
                         _db.SaveChanges();
+
+                        newLog = logger.initalizeAnalyticsLog("User updated at UserManagement Controller line 278\n" +
+                        "Route: PUT /user/update", newLog.adminDashSource, session.User, session, newLog.adminDashPage);
+                        logger.sendLogAsync(newLog);
+
                         return Content(HttpStatusCode.OK, "User updated");
                     }
                     else
@@ -240,6 +307,9 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
+                    session.User.Username, newLog.adminDashPage, session);
+
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }

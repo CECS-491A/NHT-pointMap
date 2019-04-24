@@ -28,8 +28,6 @@ namespace WebApi_PointMap
             );
 
             config.Filters.Add(new GlobalExceptionFilter());
-
-            config.Services.Add(typeof(IExceptionLogger), new GlobalErrorLogger());
         }
     }
 }

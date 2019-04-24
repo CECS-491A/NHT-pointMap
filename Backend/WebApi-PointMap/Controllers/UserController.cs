@@ -7,12 +7,22 @@ using System.Web.Http;
 using WebApi_PointMap.Models;
 using ManagerLayer.UserManagement;
 using WebApi_PointMap.ErrorHandling;
-using ManagerLayer.Logging;
+using Logging.Logging;
 
 namespace WebApi_PointMap.Controllers
 {
     public class UserController : ApiController
     {
+        Logger logger;
+        LogRequestDTO newLog;
+
+        private Guid userSSOID;
+
+        public UserController()
+        {
+            logger = new Logger();
+            newLog = new LogRequestDTO();
+        }
 
         // POST api/user/login
         [HttpPost]
@@ -27,7 +37,7 @@ namespace WebApi_PointMap.Controllers
                     ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
 
                     //throws ExceptionService.InvalidGuidException
-                    var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
+                    userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     var _userLoginManager = new UserLoginManager(_db);
                     LoginManagerResponseDTO loginAttempt;
@@ -36,8 +46,24 @@ namespace WebApi_PointMap.Controllers
                         userSSOID,
                         requestPayload.Signature,
                         requestPayload.PreSignatureString());
-
                     _db.SaveChanges();
+
+                    if (loginAttempt.newUser)
+                    {
+                        newLog = logger.initalizeAnalyticsLog("New user registration in UserController line 40\n" +
+                            "Route: POST api/user/login", newLog.registrationSource);
+                        newLog.ssoUserId = userSSOID.ToString();
+                        newLog.email = requestPayload.Email;
+                        logger.sendLogAsync(newLog);
+                    }
+                    else
+                    {
+                        newLog = logger.initalizeAnalyticsLog("Existing user login in UserController line 40\n" +
+                            "Route: POST api/user/login", newLog.loginSource);
+                        newLog.ssoUserId = userSSOID.ToString();
+                        newLog.email = requestPayload.Email;
+                        logger.sendLogAsync(newLog);
+                    }
 
                     LoginResponseDTO response = new LoginResponseDTO
                     {
@@ -49,6 +75,9 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    logger.sendErrorLog(newLog.ssoSource, e.StackTrace, userSSOID.ToString(),
+                    requestPayload.Email, null);
+
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }

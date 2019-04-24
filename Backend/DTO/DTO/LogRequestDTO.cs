@@ -42,14 +42,24 @@ namespace DTO
 
         public bool success { get; set; }
 
-        //Used to prevent fluxation in source attributes
-        public string registrationPage = "Registration";
-        public string loginPage = "Login";
-        public string sessionPage = "Session";
-        public string logoutPage = "Logout";
-        public string mapViewPage = "MapView";
-        public string pointDetailsPage = "PointDetails";
+        //Used to prevent fluxation in page attributes
+        public readonly string mapViewPage = "MapView";
+        public readonly string pointDetailsPage = "PointDetails";
+        public readonly string adminDashPage = "AdminDash";
+        public readonly string pointEditorPage = "PointEditor";
         public List<string> validPage;
+
+        //Used to prevent fluxation in source attributes
+        public readonly string registrationSource = "Registration";
+        public readonly string logoutSource = "Logout";
+        public readonly string loginSource = "Login";
+        public readonly string mapViewSource = "Mapview";
+        public readonly string pointDetailsSource = "PointDetails";
+        public readonly string adminDashSource = "AdminDash";
+        public readonly string pointEditorSource = "PointEditor";
+        public readonly string sessionSource = "Session";
+        public readonly string ssoSource = "SSO";
+        public List<string> validSource;
 
         public LogRequestDTO(string ssoUserId, string email, string source, string details)
         {
@@ -64,12 +74,21 @@ namespace DTO
         private void fillArray()
         {
             validPage = new List<string>();
-            validPage.Add(registrationPage);
-            validPage.Add(sessionPage);
-            validPage.Add(logoutPage);
             validPage.Add(mapViewPage);
             validPage.Add(pointDetailsPage);
-            validPage.Add(loginPage);
+            validPage.Add(adminDashPage);
+            validPage.Add(pointEditorPage);
+
+            validSource = new List<string>();
+            validSource.Add(registrationSource);
+            validSource.Add(logoutSource);
+            validSource.Add(loginSource);
+            validSource.Add(mapViewSource);
+            validSource.Add(pointDetailsSource);
+            validSource.Add(adminDashSource);
+            validSource.Add(pointEditorSource);
+            validSource.Add(ssoSource);
+            validSource.Add(sessionSource);
         }
 
         public LogRequestDTO()
@@ -100,7 +119,13 @@ namespace DTO
             if (!this.validPage.Contains(this.page) && this.page != null)
             {
                 isValid = false;
-                Console.WriteLine("Invalid Page object, please use a defined page in LogoutDTO");
+                Console.WriteLine("Invalid Page object, please use a pre-defined page in LogRequestDTO");
+            }
+
+            if (!this.validSource.Contains(this.source))
+            {
+                isValid = false;
+                Console.WriteLine("Invalid Source object, please use a pre-defined source in LogRequestDTO");
             }
             return isValid;
         }

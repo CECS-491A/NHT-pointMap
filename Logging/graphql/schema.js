@@ -105,7 +105,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args){
                 let logs = Log.aggregate([
                     {
-                        $match: {$or :[{"json.page": "Registration"}, {"json.page": "Login"}]} //Gets only pages that were login or register
+                        $match: {$or :[{"source": "Registration"}, {"source": "Login"}]} //Gets only pages that were login or register
                     },
                     {
                         $group: {
@@ -115,7 +115,7 @@ const RootQuery = new GraphQLObjectType({
                             },
                             totalRegisteredUsers:{$sum: {$cond : [//Counts successful registration users during month and year
                                 {$and: [
-                                    {$eq : ["$json.page", "Registration"]},
+                                    {$eq : ["$source", "Registration"]},
                                     {$eq: ["$json.success", true]}
                                 ]}, 1, 0]}
                             }, 
@@ -124,7 +124,7 @@ const RootQuery = new GraphQLObjectType({
                             loginAttempts: {$sum : 
                                 {$cond : [
                                     {$and : [
-                                        {$eq : ["$json.page", "Login"]}, //successful login attempt
+                                        {$eq : ["$source", "Login"]}, //successful login attempt
                                         {$eq : [true, "$json.success"]}
                                     ]}, 1, 0]
                                 }
@@ -143,12 +143,12 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args){
                 let logs = Log.aggregate([
                     {
-                        $match: {"json.page" : "Login"}
+                        $match: {"source" : "Login"}
                     },
                     {
                         $group: {
                             _id: {
-                                "login": "$json.page"
+                                "login": "$source"
                             },
                             successfulLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", true]}, 1, 0]}}, //Sums every successful login
                             failedLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", false]}, 1, 0]}} //Sums every unsuccessful login
@@ -162,6 +162,11 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(mostUsedFeature),
             resolve(parent, args){
                 let logs = Log.aggregate([
+                    {
+                        $match: {
+                            "json.page" : {"$exists": true, "$ne": null}
+                        }
+                    },
                     {
                         $group: {
                             _id: "$json.page",
@@ -183,6 +188,11 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(pageUse),
             resolve(parent, args){
                 let logs = Log.aggregate([
+                    {
+                        $match: {
+                            "json.page" : {"$exists": true, "$ne": null}
+                        }
+                    },
                     {
                         $group: { //Groups by token duration with page
                             _id: {

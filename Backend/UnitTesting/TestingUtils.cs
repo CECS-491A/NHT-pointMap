@@ -27,7 +27,7 @@ namespace UnitTesting
         {
             LogRequestDTO newLog = new LogRequestDTO();
             LoggingService _ls = new LoggingService();
-            newLog.source = "testingClass";
+            newLog.source = newLog.sessionSource;
             newLog.details = "testing stacktrace";
             Random rand = new Random();
             for (var i = 0; i < 20; i++)
@@ -38,15 +38,33 @@ namespace UnitTesting
                 newLog.email = newUser.Username;
                 newLog.ssoUserId = newUser.Id.ToString();
                 newLog.logCreatedAt = new DateTime(2018, 11, 21);
+                newLog.page = newLog.pointDetailsPage;
                 for (var j = 0; j < 3; j++)
                 {
                     newLog.success = true;
-                    newLog.page = LogRequestDTO.loginPage;
+                    newLog.source = newLog.loginSource;
                     if (j == 0)
-                        newLog.page = LogRequestDTO.registrationPage;
+                    {
+                        newLog.source = newLog.registrationSource;
+                        newLog.page = newLog.mapViewPage;
+                    }
                     var duration = rand.Next(1, 1000);
-                    if (duration < 200)
+                    if (duration < 100)
+                    {
                         newLog.success = false;
+                    }
+                    else if(duration < 300){
+                        newLog.page = newLog.adminDashPage;
+                    }
+                    else if (duration < 500)
+                    {
+                        newLog.page = newLog.pointDetailsPage;
+                    }
+                    else if (duration < 700)
+                    {
+                        newLog.page = newLog.pointEditorPage;
+                    }
+
                     newLog.sessionCreatedAt = newSession.CreatedAt;
                     newLog.sessionExpiredAt = newSession.ExpiresAt.AddSeconds(duration);
                     newLog.sessionUpdatedAt = newSession.UpdatedAt.AddSeconds(duration);
@@ -54,8 +72,7 @@ namespace UnitTesting
                     var content = getLogContent(newLog); //signature timestamp
                     newLog.signature = content[0];
                     newLog.timestamp = content[1];
-                    var responseStatus = _ls.sendLogSync(newLog);
-                    Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.OK);
+                    _ls.sendLogSync(newLog);
                 }
             }
 

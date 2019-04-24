@@ -14,5 +14,7 @@ namespace DTO
     public class LoginManagerResponseDTO
     {
         public string Token { get; set; }
+
+        public bool newUser { get; set; }
     }
 }
