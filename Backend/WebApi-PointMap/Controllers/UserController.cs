@@ -7,8 +7,8 @@ using static ServiceLayer.Services.ExceptionService;
 using ServiceLayer.Services;
 using System.ComponentModel.DataAnnotations;
 using ManagerLayer.KFC_SSO_Utility;
-using static DTO.DTO.SSOServicesDTOs;
 using ManagerLayer.UserManagement;
+using DTO.KFCSSO_API;
 
 namespace WebApi_PointMap.Controllers
 {

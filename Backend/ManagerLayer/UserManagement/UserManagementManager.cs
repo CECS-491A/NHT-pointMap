@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using DTO.DTO;
+using DTO.UserManagementAPI;
 using ServiceLayer.Services;
 using System;
 using static ServiceLayer.Services.ExceptionService;
@@ -54,9 +55,9 @@ namespace ManagerLayer.UserManagement
             // update user with given values
             try
             {
-                var newUserUsername = new System.Net.Mail.MailAddress(user.Username).ToString();
+                var newUserUsername = new System.Net.Mail.MailAddress(user.Username);
                 var newUserId = Guid.NewGuid();
-                var newUser = CreateUser(newUserUsername, newUserId);
+                var newUser = CreateUser(user.Username, newUserId);
                 if (user.Manager != "")
                 {
                     var managerId = Guid.Parse(user.Manager);
@@ -73,17 +74,22 @@ namespace ManagerLayer.UserManagement
                 newUser.State = user.State;
                 newUser.Disabled = user.Disabled;
                 // update new user with changes
-                _userService.UpdateUser(newUser);
+                _userService.CreateUser(newUser);
                 return newUser;
             }
-            catch (FormatException e)
+            catch (FormatException)
             {
-                throw new InvalidEmailException(e.Message);
+                throw new InvalidEmailException("Invalid username.");
             }
         }
 
         public void DeleteUser(Guid id)
         {
+            var user = _userService.GetUser(id);
+            if (user == null)
+            {
+                throw new UserNotFoundException("User does not exist.");
+            }
             _userService.DeleteUser(id);
         }
 
@@ -92,6 +98,37 @@ namespace ManagerLayer.UserManagement
             var _sessionService = new SessionService();
             _sessionService.DeleteSessionsOfUser(_db, id);
             var user = _userService.GetUser(id);
+        }
+
+        public User ToUpdateUser(User user, UpdateUserRequestDTO requestChanges)
+        {
+            if (user == null)
+            {
+                throw new UserNotFoundException("User does not exist.");
+            }
+            user.City = requestChanges.City;
+            user.State = requestChanges.State;
+            user.Country = requestChanges.Country;
+            user.Disabled = requestChanges.Disabled;
+            user.IsAdministrator = requestChanges.IsAdmin;
+            user.ManagerId = null;
+            if (requestChanges.Manager != "")
+            {
+                // check if manager id is valid ssoid
+                Guid managerId;
+                var validParse = Guid.TryParse(requestChanges.Manager, out managerId);
+                if (!validParse)
+                {
+                    throw new InvalidGuidException("Invalid Manager Id.");
+                }
+                var manager = GetUser(managerId);
+                if (manager == null)
+                {
+                    throw new UserNotFoundException("Manager does not exist.");
+                }
+                user.ManagerId = managerId;
+            }
+            return user;
         }
 
         public User GetUser(Guid id)

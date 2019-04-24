@@ -10,7 +10,7 @@ using DataAccessLayer.Database;
 using System.Threading;
 using System.Web.Http.Results;
 
-namespace UnitTesting
+namespace UnitTesting.IntegrationTests
 {
     [TestClass]
     public class PointControllerIT

@@ -111,7 +111,7 @@
 </template>
 
 <script>
-import { GetUsers, UpdateUser, DeleteUser } from '@/services/userManagementServices';
+import { GetUsers, UpdateUser, DeleteUser, createNewUser } from '@/services/userManagementServices';
 import Loading from '@/components/dialogs/Loading.vue'
 import AlertDialog from '@/components/dialogs/AlertDialog.vue'
 
@@ -155,7 +155,7 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         city: '',
         state: '',
         country: '',
-        managerId: '',
+        manager: '',
         username: '',
         disabled: false,
         isAdmin: false
@@ -165,7 +165,7 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         city: '',
         state: '',
         country: '',
-        managerId: '',
+        manager: '',
         username: '',
         disabled: false,
         isAdmin: false
@@ -271,7 +271,7 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
             .catch(err => {
               this.alertDialog.alert = true
               this.alertDialog.alertText = 'User was not updated'
-              this.AlertDialog.alertType = 'error'
+              this.alertDialog.alertType = 'error'
             })
             .finally(() => {
               this.loading = false
@@ -279,7 +279,38 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
             })
           Object.assign(this.users[this.editedIndex], this.editedItem)
         } else {
-          this.users.push(this.editedItem)
+          this.loading = true;
+          this.loadingText = 'Creating user...';
+          createNewUser(this.editedItem)
+            .then(response => {
+              const status = response.status;
+              switch(status){
+                case 201:
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = 'User was created.'
+                  this.alertDialog.alertType = 'success'
+                  this.users.push(this.editedItem)
+                  break;
+                default:
+              }
+            })
+            .catch(err => {
+              const status = err.response.status;
+              switch(status){
+                case 409:
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = err.response.data
+                  this.alertDialog.alertType = 'error'
+                  break;
+                default:
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = 'User was not created.'
+                  this.alertDialog.alertType = 'error'
+              }
+            })
+            .finally(() =>{
+              this.loading = false;
+            })
         }
         this.close()
       }

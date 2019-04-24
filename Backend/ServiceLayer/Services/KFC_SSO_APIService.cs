@@ -1,4 +1,5 @@
 ﻿using DataAccessLayer.Models;
+using DTO.KFCSSO_API;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,6 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using static DTO.DTO.SSOServicesDTOs;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace ServiceLayer.Services

@@ -18,7 +18,6 @@ namespace ManagerLayer.KFC_SSO_Utility
     public class KFC_SSO_Manager
     {
         UserManagementManager _userManagementManager;
-        AuthorizationManager _authorizationManager;
         LogRequestDTO newLog;
         LoggingManager loggingManager;
         DatabaseContext _db;

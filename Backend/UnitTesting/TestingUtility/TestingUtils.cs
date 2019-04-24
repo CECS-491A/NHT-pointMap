@@ -200,6 +200,15 @@ namespace UnitTesting
             };
             return user;
         }
+
+        public void DeleteUser(User user)
+        {
+            using(var _db = new DatabaseContext())
+            {
+                _db.Users.Remove(user);
+                _db.SaveChanges();
+            }
+        }
         
         public Session CreateSessionObject(User user)
         {

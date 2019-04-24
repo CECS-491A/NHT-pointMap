@@ -18,7 +18,7 @@ namespace WebApi_PointMap.ErrorHandling
         {
             HttpResponseMessage httpResponse = new HttpResponseMessage();
 
-            if(e is InvalidModelPayloadException)
+            if(e is InvalidModelPayloadException || e is ArgumentNullException)
             {
                 httpResponse.StatusCode = HttpStatusCode.PreconditionFailed;
                 httpResponse.Content = new StringContent(e.Message);

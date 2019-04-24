@@ -9,9 +9,9 @@ using System.Web.Http;
 using System.Web.Http.Results;
 using static UnitTesting.TestingUtils;
 using System.Net;
-using static DTO.DTO.SSOServicesDTOs;
+using DTO.KFCSSO_API;
 
-namespace UnitTesting
+namespace UnitTesting.IntegrationTests
 {
     /// <summary>
     /// Summary description for UserControllerUT

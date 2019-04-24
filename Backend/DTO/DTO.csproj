@@ -51,9 +51,11 @@
     <Compile Include="DTO\RecoverableErrorDTO.cs" />
     <Compile Include="DTO\LoginManagerDTOs.cs" />
     <Compile Include="DTO\LogRequestDTO.cs" />
-    <Compile Include="DTO\SSOServicesDTOs.cs" />
-    <Compile Include="DTO\UpdateUserRequestDTO.cs" />
+    <Compile Include="KFCSSO_API\SSO_API_Requests.cs" />
+    <Compile Include="KFCSSO_API\SSO_API_Responses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserManagementAPI\UserManagementRequests.cs" />
+    <Compile Include="UserManagementAPI\UserManagementResponses.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

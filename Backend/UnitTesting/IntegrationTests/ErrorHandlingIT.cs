@@ -9,9 +9,10 @@ using System.Net;
 using System.Threading;
 using DTO.DTO;
 using System.Diagnostics;
-using static DTO.DTO.SSOServicesDTOs;
+using DTO.UserManagementAPI;
+using DTO.KFCSSO_API;
 
-namespace UnitTesting
+namespace UnitTesting.IntegrationTests
 {
     [TestClass]
     public class ErrorHandlingIT

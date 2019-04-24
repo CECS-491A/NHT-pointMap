@@ -7,7 +7,7 @@ using ServiceLayer.Services;
 using System.Threading.Tasks;
 using System.Net.Http;  
 
-namespace UnitTesting
+namespace UnitTesting.IntegrationTests
 {
     [TestClass]
     public class LoggingServicesIT
