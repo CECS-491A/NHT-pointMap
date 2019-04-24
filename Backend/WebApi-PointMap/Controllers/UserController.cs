@@ -7,16 +7,13 @@ using System.Web.Http;
 using WebApi_PointMap.Models;
 using ManagerLayer.UserManagement;
 using WebApi_PointMap.ErrorHandling;
-<<<<<<< HEAD
 using Logging.Logging;
-=======
 using System.Collections.Generic;
 using static ServiceLayer.Services.ExceptionService;
 using ServiceLayer.Services;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using ManagerLayer.KFC_SSO_Utility;
->>>>>>> 1a5429c1902b88094286fe212bea0f1db2153d57
 
 namespace WebApi_PointMap.Controllers
 {

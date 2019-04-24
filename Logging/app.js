@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 
 let port = process.env.PORT || 3000;
 let connectionString = 'mongodb://localhost/logs'
-let sharedSecret = "5E5DDBD9B984E4C95BBFF621DF91ABC9A5318DAEC0A3B231B4C1BC8FE0851610"
+let sharedSecret = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP"
 
 //Connects to local mongodb instance using defined connection string
 mongoose.connect(connectionString, {useNewUrlParser: true}).then(()=> {

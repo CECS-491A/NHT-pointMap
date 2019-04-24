@@ -14,12 +14,10 @@ namespace Logging.Logging
     {
         private const string LOG_SERVER_URL = "http://localhost:3000/";
         private readonly HttpClient client;
-        private TokenService _ts;
         private LoggingService _ls;
 
         public Logger()
         {
-            _ts = new TokenService();
             _ls = new LoggingService();
             client = new HttpClient();
         }
@@ -55,7 +53,7 @@ namespace Logging.Logging
             string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email +
                 ";timestamp=" + timestamp + ";";
-            string signature = _ts.GenerateSignature(plaintext);
+            string signature = _ls.GenerateSignature(plaintext);
             return new string[] { signature, timestamp };
         }
 

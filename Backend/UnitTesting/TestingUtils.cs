@@ -112,11 +112,11 @@ namespace UnitTesting
 
         public string[] getLogContent(LogRequestDTO newLog)
         {
-            TokenService _ts = new TokenService();
+            LoggingService _ls = new LoggingService();
             string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
             string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email +
                 ";timestamp=" + timestamp + ";";
-            string signature = _ts.GenerateSignature(plaintext);
+            string signature = _ls.GenerateSignature(plaintext);
             return new string[] { signature, timestamp };
         }
 

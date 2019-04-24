@@ -18,12 +18,13 @@ namespace ManagerLayer.Login
     {
         UserManagementManager _userManagementManager;
         AuthorizationManager _authorizationManager;
-        LogRequestDTO newLog;
         DatabaseContext _db;
+        LoginManagerResponseDTO response;
 
         public UserLoginManager(DatabaseContext db)
         {
             _db = db;
+            response = new LoginManagerResponseDTO();
         }
 
         public LoginManagerResponseDTO LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
@@ -32,7 +33,6 @@ namespace ManagerLayer.Login
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
             var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
-            loggingManager = new LoggingManager();
             if (!_ssoServiceAuth.IsValidClientRequest(PreSignatureString, Signature))
             {
                 throw new InvalidTokenSignatureException("Session is not valid.");
