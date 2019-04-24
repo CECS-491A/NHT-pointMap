@@ -61,6 +61,7 @@ export default {
           if (err.response){
             switch(err.response.status){
               case 404:
+              case 401:
                 this.loading = false;
                 this.popupMessage = 'The session has expired...';
                 this.validSession = false;

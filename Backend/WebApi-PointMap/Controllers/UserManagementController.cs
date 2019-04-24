@@ -78,6 +78,10 @@ namespace WebApi_PointMap.Controllers
                     }
 
                 }
+                catch (UserIsNotAdministratorException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                }
                 catch (Exception e)
                 {
                     logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
@@ -124,9 +128,16 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+<<<<<<< HEAD
                     logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
                     session.User.Username, newLog.adminDashPage, session);
 
+=======
+                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
+                    {
+                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    }
+>>>>>>> 1a5429c1902b88094286fe212bea0f1db2153d57
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -176,6 +187,7 @@ namespace WebApi_PointMap.Controllers
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     }
                 }
+<<<<<<< HEAD
                 catch (Exception e)
                 {
                     logger.sendErrorLog(newLog.adminDashSource, e.StackTrace, session.User.Id.ToString(),
@@ -234,6 +246,11 @@ namespace WebApi_PointMap.Controllers
                     logger.sendLogAsync(newLog);
 
                     return Ok("User was deleted");
+=======
+                catch (UserIsNotAdministratorException e)
+                {
+                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+>>>>>>> 1a5429c1902b88094286fe212bea0f1db2153d57
                 }
                 catch (Exception e)
                 {
@@ -242,6 +259,7 @@ namespace WebApi_PointMap.Controllers
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
+
         }
 
         [HttpPut]
@@ -304,6 +322,10 @@ namespace WebApi_PointMap.Controllers
                         _db.SaveChanges(); // save updated user session
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     };
+                }
+                catch (UserNotFoundException e)
+                {
+                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
                 }
                 catch (Exception e)
                 {

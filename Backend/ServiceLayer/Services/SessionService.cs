@@ -40,6 +40,12 @@ namespace ServiceLayer.Services
             return _SessionRepo.DeleteSession(_db, token);
         }
 
+        public void DeleteSessionsOfUser(DatabaseContext _db, Guid userId)
+        {
+            var sessionsOfUser = _SessionRepo.GetSessions(_db, userId);
+            _db.Sessions.RemoveRange(sessionsOfUser);
+        }
+
         public Session GetSession(DatabaseContext _db, string token)
         {
             return _SessionRepo.GetSession(_db, token);
