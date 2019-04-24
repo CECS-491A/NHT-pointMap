@@ -52,6 +52,12 @@ const GetUser = () =>
         })
 }
 
+export const createNewUser = () =>
+{
+    config.headers.Token = localStorage.getItem('token');
+    
+}
+
 export
 {
     GetUsers,

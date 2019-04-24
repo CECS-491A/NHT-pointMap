@@ -1,5 +1,6 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using DTO.DTO;
 using ServiceLayer.Services;
 using System;
 using static ServiceLayer.Services.ExceptionService;
@@ -46,6 +47,39 @@ namespace ManagerLayer.UserManagement
             };
              _userService.CreateUser(user);
             return user;
+        }
+
+        public User CreateUser(CreateUserRequestDTO user)
+        {
+            // update user with given values
+            try
+            {
+                var newUserUsername = new System.Net.Mail.MailAddress(user.Username).ToString();
+                var newUserId = Guid.NewGuid();
+                var newUser = CreateUser(newUserUsername, newUserId);
+                if (user.Manager != "")
+                {
+                    var managerId = Guid.Parse(user.Manager);
+                    var manager = _userService.GetUser(managerId);
+                    if (manager == null)
+                    {
+                        throw new UserNotFoundException("Manager does not exist.");
+                    }
+                    newUser.ManagerId = managerId;
+                }
+                newUser.IsAdministrator = user.IsAdmin;
+                newUser.City = user.City;
+                newUser.Country = user.Country;
+                newUser.State = user.State;
+                newUser.Disabled = user.Disabled;
+                // update new user with changes
+                _userService.UpdateUser(newUser);
+                return newUser;
+            }
+            catch (FormatException e)
+            {
+                throw new InvalidEmailException(e.Message);
+            }
         }
 
         public void DeleteUser(Guid id)

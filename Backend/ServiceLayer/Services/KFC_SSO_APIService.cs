@@ -45,7 +45,6 @@ namespace ServiceLayer.Services
                 SsoUserId = user.Id.ToString(),
                 Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
             };
-            var _tokenService = new TokenService();
             var auth = new RequestPayloadAuthentication();
             requestPayload.Signature = auth.GenerateSignature(requestPayload.PreSignatureString());
             var response = PingDeleteUserFromSSORouteAsync(requestPayload);

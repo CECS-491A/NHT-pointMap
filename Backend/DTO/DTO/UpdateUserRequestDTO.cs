@@ -15,4 +15,18 @@ namespace DTO.DTO
         [Required]
         public bool Disabled { get; set; }
     }
+
+    public class CreateUserRequestDTO
+    {
+        [Required]
+        public string Username { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
+        public string Manager { get; set; }
+        [Required]
+        public bool IsAdmin { get; set; }
+        [Required]
+        public bool Disabled { get; set; }
+    }
 }

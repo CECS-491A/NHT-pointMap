@@ -8,8 +8,9 @@
         vertical
       ></v-divider>
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="dialog" max-width="700px">
         <template v-slot:activator="{ on }">
+          <v-btn color="primary" dark class="mb-2" v-on="on">New User</v-btn>
         </template>
         <v-card>
           <v-card-title>
@@ -19,6 +20,9 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field small :readonly="usernameReadonly" v-model="editedItem.username" label="Username"></v-text-field>
+                </v-flex>
                 <v-flex xs12 sm12 md12>
                   <v-text-field v-model="editedItem.manager" label="Manager ID"></v-text-field>
                 </v-flex>
@@ -145,12 +149,14 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
       ],
       users: [],
       editedIndex: -1,
+      usernameReadonly: true,
       editedItem: {
         id: '',
         city: '',
         state: '',
         country: '',
         managerId: '',
+        username: '',
         disabled: false,
         isAdmin: false
       },
@@ -160,6 +166,7 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         state: '',
         country: '',
         managerId: '',
+        username: '',
         disabled: false,
         isAdmin: false
       },
@@ -174,6 +181,7 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
 
     watch: {
       dialog (val) {
+        this.editedIndex < 0 ? this.usernameReadonly = false : this.usernameReadonly = true;
         val || this.close()
       }
     },
@@ -216,9 +224,20 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
           this.loadingText = 'Deleting User...'
           DeleteUser(item.id)
             .then(response => {
-              this.alertDialog.alert = true
-              this.alertDialog.alertText = 'User was deleted'
-              this.alertDialog.alertType = 'success'
+              const statusCode = response.status;
+              switch(statusCode){
+                case 200:
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = 'User was deleted'
+                  this.alertDialog.alertType = 'success'
+                  break;
+                case 404:
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = response.data
+                  this.alertDialog.alertType = 'error'
+                  break;
+                default:
+              }
             })
             .catch(err => {
               this.alertDialog.alert = true

@@ -225,5 +225,58 @@ namespace WebApi_PointMap.Controllers
                 }
             }
         }
+
+        [HttpPost]
+        [Route("user/create")]
+        public IHttpActionResult CreateNewUser([FromBody, Required] CreateUserRequestDTO payload)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                try
+                {
+                    //throws ExceptionService.NoTokenProvidedException
+                    var token = ControllerHelpers.GetToken(Request);
+
+                    //throws ExceptionService.InvalidModelPayloadException
+                    ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
+
+                    //throws ExceptionService.InvalidGuidException
+                    if (payload.Manager != "")
+                    {
+                        ControllerHelpers.ParseAndCheckId(payload.Manager);
+                    }
+
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    var _userManager = new UserManagementManager(_db);
+                    var user = _userManager.GetUser(session.UserId);
+                    if (user.IsAdministrator)
+                    {
+                        var newUser = _userManager.CreateUser(payload);
+                        _db.SaveChanges();
+                        var responseCreated = Content(HttpStatusCode.Created, newUser);
+                        return responseCreated;
+                    }
+                    _db.SaveChanges();
+                    throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                }
+                catch (Exception e)
+                {
+                    if (e is UserIsNotAdministratorException)
+                    {
+                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseUnauthorized;
+                    }
+                    if (e is InvalidEmailException || e is InvalidGuidException || e is UserNotFoundException)
+                    {
+                        var responseInvalidEmail = ResponseMessage(GeneralErrorHandler.HandleException(e));
+                        return responseInvalidEmail;
+                    }
+                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return responseInternalError;
+                }
+            }
+        }
     }
 }
