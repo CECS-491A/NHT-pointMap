@@ -12,8 +12,7 @@ function checkSession(){
         
     }).catch((err) => {
         if(err.response.status == 401){
-            localStorage.removeItem('token');
-            window.location.href = sso_login_url;
+            deleteSession()
         }
     })
 };
