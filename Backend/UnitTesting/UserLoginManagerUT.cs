@@ -7,6 +7,7 @@ using ManagerLayer.Login;
 using ManagerLayer.AccessControl;
 using DataAccessLayer.Models;
 using static UnitTesting.TestingUtils;
+using ServiceLayer.Services;
 
 namespace UnitTesting
 {
@@ -37,7 +38,7 @@ namespace UnitTesting
             using (var _db = ut.CreateDataBaseContext())
             {
                 _loginManager = new UserLoginManager(_db);
-                _loginManager.LoginFromSSO(invalid_username, valid_ssoID, Signature, preSignatureString);
+                _loginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, Signature);
             }
 
             //Assert - catch exception
@@ -58,7 +59,7 @@ namespace UnitTesting
                     timestamp = timestamp
                 };
 
-                var response = _loginManager.LoginFromSSO(user.Username, user.Id, mock_payload.Signature(), mock_payload.PreSignatureString());
+                var response = _loginManager.LoginFromSSO(user.Username, user.Id, timestamp,  mock_payload.Signature());
                 Assert.IsNotNull(response);
             }
         }
@@ -70,12 +71,14 @@ namespace UnitTesting
             var existing_username = existing_user.Username;
             var existing_ssoID = existing_user.Id;
             var timestamp = 12312312;
-            var mock_payload = ut.GenerateLoginPayloadWithSignature(existing_ssoID, existing_username, timestamp);
+            var _ssoAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
+            var mock_payload = _ssoAuth.PreparePayload(existing_ssoID, existing_username, timestamp);
+            var signature = _ssoAuth.Sign(mock_payload);
 
             using (var _db = ut.CreateDataBaseContext())
             {
                 _loginManager = new UserLoginManager(_db);
-                var response = _loginManager.LoginFromSSO(existing_username, existing_ssoID, mock_payload.Signature(), mock_payload.PreSignatureString());
+                var response = _loginManager.LoginFromSSO(existing_username, existing_ssoID, timestamp, signature);
                 Assert.IsNotNull(response);
             }
         }

@@ -28,21 +28,21 @@ namespace ManagerLayer.Login
             _db = db;
         }
 
-        public LoginManagerResponseDTO LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
+        public LoginManagerResponseDTO LoginFromSSO(string Username, Guid ssoID, long timestamp, string signature)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
             var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
             loggingManager = new LoggingManager();
-            if (!_ssoServiceAuth.IsValidClientRequest(PreSignatureString, Signature))
+            if (!_ssoServiceAuth.IsValidClientRequest(ssoID, Username, timestamp, signature))
             {
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", Username, "Invalid signing attempt",
                         "Line 35 UserLoginManager in ManagerLayer\n" +
                         "Route Reference UserController in WebApi-PointMap");
                 loggingManager.sendLogSync(newLog);
-                throw new InvalidTokenSignatureException("Session is not valid.");
+                throw new InvalidTokenSignatureException("Invalid token signature.");
             }
             ////////////////////////////////////////
             
