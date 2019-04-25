@@ -8,8 +8,8 @@ namespace ManagerLayer
 {
     public class PointManager
     {
-        PointService _ps;
-        DatabaseContext _db;
+        private PointService _ps;
+        private DatabaseContext _db;
 
         public PointManager(DatabaseContext db)
         {

@@ -9,7 +9,7 @@ namespace DataAccessLayer.Repositories
 {
     public class SessionRepository
     {
-        DatabaseContext _db;
+        private DatabaseContext _db;
 
         public SessionRepository(DatabaseContext db)
         {

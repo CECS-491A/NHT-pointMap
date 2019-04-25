@@ -9,7 +9,8 @@ namespace DataAccessLayer.Repositories
 {
     public class PointRepository
     {
-        DatabaseContext _db;
+        private DatabaseContext _db;
+
         public PointRepository(DatabaseContext db)
         {
             _db = db;

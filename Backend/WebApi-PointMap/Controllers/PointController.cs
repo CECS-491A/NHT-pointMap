@@ -26,13 +26,11 @@ namespace WebApi_PointMap.Controllers
             _pm = new PointManager(_db);
         }
 
-        // GET api/point/get
+        // retrieves a point
         [HttpGet]
         [Route("api/point/{guid}")]
-        public HttpResponseMessage Get(string guid)
+        public IHttpActionResult Get(string guid)
         {
-            HttpResponseMessage response;
-
             try
             { 
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);     
@@ -43,28 +41,23 @@ namespace WebApi_PointMap.Controllers
                 var point = _pm.GetPoint(id);
                 _db.SaveChanges();
 
-                response = Request.CreateResponse(HttpStatusCode.OK);
-                var jsonContent = new JavaScriptSerializer().Serialize(point);
-                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
+                return Ok(point);
             }
             catch (Exception e)
             {
-                response = PointErrorHandler.HandleException(e, _db);
+                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
             }
-
-            return response;
         }
 
-        //Post api/point
+        // creates a point
         [HttpPost]
         [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointPOST pointPost)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
             try
             {
+                var token = ControllerHelpers.GetToken(Request);
+                ControllerHelpers.ValidateAndUpdateSession(_db, token);
                 var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
 
                 _db.SaveChanges();
@@ -77,18 +70,18 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
+        // updates a point
         [HttpPut]
         [Route("api/point/{guid}")]
         public IHttpActionResult Put(string guid, [FromBody] PointPOST pointPost)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-            Guid id = new Guid(guid);
-            pointPost.Id = id;
-
             try
             {
+                var token = ControllerHelpers.GetToken(Request);
+                ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                Guid id = new Guid(guid);
+                pointPost.Id = id;
                 var point = _pm.UpdatePoint(id, pointPost.Longitude, pointPost.Latitude,
                                             pointPost.Description, pointPost.Name,
                                             pointPost.CreatedAt);
@@ -102,17 +95,18 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
+        //Deletes a point
         [HttpDelete]
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-            Guid id = new Guid(guid);
-
             try
             {
+                var token = ControllerHelpers.GetToken(Request);
+                ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                var id = new Guid(guid);
+
                 _pm.DeletePoint(id);
                 _db.SaveChanges();
 
