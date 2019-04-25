@@ -14,6 +14,7 @@ using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using ManagerLayer.KFC_SSO_Utility;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -23,7 +24,7 @@ namespace WebApi_PointMap.Controllers
         // POST api/user/login
         [HttpPost]
         [Route("api/user/login")]
-        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO requestPayload)
+        public HttpResponseMessage LoginFromSSO([FromBody] LoginDTO requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
@@ -48,16 +49,27 @@ namespace WebApi_PointMap.Controllers
 
                     var redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token;
 
-                    return Content(HttpStatusCode.TemporaryRedirect, redirectURL);
-
-                }
-                catch (InvalidTokenSignatureException e)
-                {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    var response = Request.CreateResponse(HttpStatusCode.Moved);
+                    response.Headers.Location = new Uri(redirectURL);
+                    return response;
                 }
                 catch (Exception e)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    var response = new HttpResponseMessage();
+                    if (e is InvalidTokenSignatureException)
+                    {
+                        response.Content = new StringContent(e.Message);
+                        response.StatusCode = HttpStatusCode.Unauthorized;
+                        return response;
+                    }
+                    if (e is InvalidGuidException)
+                    {
+                        response.Content = new StringContent(e.Message);
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                    response.Content = new StringContent(e.Message);
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
                 }
             }
         }

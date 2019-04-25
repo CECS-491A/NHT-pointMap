@@ -32,7 +32,7 @@ namespace UnitTesting
             var controller = new UserController();
             var user = ut.CreateSSOUserInDb();
             var timestamp = 12312445;
-            var expectedStatusCode = HttpStatusCode.TemporaryRedirect;
+            var expectedStatusCode = HttpStatusCode.MovedPermanently;
 
             MockLoginPayload mock_payload = new MockLoginPayload
             {
@@ -54,10 +54,9 @@ namespace UnitTesting
             {
                 RequestUri = new Uri(endpoint)
             };
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
-            Assert.IsInstanceOfType(actionresult, typeof(NegotiatedContentResult<string>));
-            Assert.IsNotNull(actionresult as NegotiatedContentResult<string>);
-            var contentresult = actionresult as NegotiatedContentResult<string>;
+            var actionresult = controller.LoginFromSSO(payload);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            var contentresult = actionresult as HttpResponseMessage;
             Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
         }
 
@@ -69,7 +68,7 @@ namespace UnitTesting
             var existing_username = existing_user.Username;
             var existing_ssoID = existing_user.Id;
             var timestamp = 23454252;
-            var expectedStatusCode = HttpStatusCode.TemporaryRedirect;
+            var expectedStatusCode = HttpStatusCode.MovedPermanently;
 
             MockLoginPayload mock_payload = new MockLoginPayload
             {
@@ -92,9 +91,9 @@ namespace UnitTesting
             {
                 RequestUri = new Uri(endpoint)
             };
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
-            Assert.IsInstanceOfType(actionresult, typeof(NegotiatedContentResult<string>));
-            var contentresult = actionresult as NegotiatedContentResult<string>;
+            var actionresult = controller.LoginFromSSO(payload);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            var contentresult = actionresult as HttpResponseMessage;
             Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
             Assert.IsNotNull(contentresult);
         }

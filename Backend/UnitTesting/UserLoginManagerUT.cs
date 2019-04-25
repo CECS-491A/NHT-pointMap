@@ -32,13 +32,20 @@ namespace UnitTesting
             var invalid_username = Guid.NewGuid() + ".com";
             var valid_ssoID = Guid.NewGuid();
             var timestamp = 8283752242;
-            string preSignatureString = ut.GeneratePreSignatureString(valid_ssoID, invalid_username, timestamp);
-            string Signature = ut.GenerateTokenSignature(valid_ssoID, invalid_username, 8283752242);
+
+            MockLoginPayload mock_payload = new MockLoginPayload
+            {
+                email = invalid_username,
+                ssoUserId = valid_ssoID,
+                timestamp = timestamp
+            };
+
+            var signature = mock_payload.Signature();
 
             using (var _db = ut.CreateDataBaseContext())
             {
                 _loginManager = new UserLoginManager(_db);
-                _loginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, Signature);
+                _loginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, signature);
             }
 
             //Assert - catch exception
