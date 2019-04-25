@@ -38,12 +38,9 @@ namespace WebApi_PointMap.Controllers
 
                     _db.SaveChanges();
 
-                    LoginResponseDTO response = new LoginResponseDTO
-                    {
-                        redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token
-                    };
+                    var redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token;
 
-                    return Ok(response);
+                    return Content(HttpStatusCode.TemporaryRedirect, redirectURL);
 
                 }
                 catch (Exception e)
