@@ -15,8 +15,7 @@ namespace ServiceLayer.Services
 {
     public class LoggingService : ILoggingService
     {
-        private const string LOG_SERVER_URL = "http://localhost:3000/";
-        //private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
+        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
         public static string LOGGER_API_SECRET = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP";
 
         public string GenerateSignature(string plaintext)

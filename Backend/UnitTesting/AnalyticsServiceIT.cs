@@ -8,7 +8,14 @@ namespace UnitTesting
     [TestClass]
     public class AnalyticsServiceIT
     {
-        AnalyticsService _as = new AnalyticsService();
+        AnalyticsService _as;
+        TestingUtils _tu;
+
+        public AnalyticsServiceIT()
+        {
+            _tu = new TestingUtils();
+            _as = new AnalyticsService();
+        }
         [TestMethod]
         public void response200()
         {
@@ -17,6 +24,12 @@ namespace UnitTesting
             Console.WriteLine(content);
             Assert.IsNotNull(response.Content);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [TestMethod]
+        public void addLogs()
+        {
+            _tu.createLogs();
         }
     }
 }

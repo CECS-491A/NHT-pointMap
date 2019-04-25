@@ -12,7 +12,7 @@ namespace Logging.Logging
 {
     public class Logger
     {
-        private const string LOG_SERVER_URL = "http://localhost:3000/";
+        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
         private readonly HttpClient client;
         private LoggingService _ls;
 

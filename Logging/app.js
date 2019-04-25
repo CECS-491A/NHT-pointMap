@@ -50,7 +50,7 @@ app.get('/', (req, res) => { //GraphQL query
             pageName
         }
       }`;
-    fetch('http://localhost:3000/graphql', { //Makes a request for information from graphql
+    fetch(req.protocol + '://' + req.get('host') + req.originalUrl + 'graphql', { //Makes a request for information from graphql
         method:'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -59,8 +59,13 @@ app.get('/', (req, res) => { //GraphQL query
         body: JSON.stringify({
             query
         })
-    }).then(r => r.json()).then(data => { //Gets the raw request
-        editData(data['data'], (finishedData, err) => { //Performs an operation on the request
+    }).then(r => r.json()).then(rawdata => { //Gets the raw request
+        data = rawdata['data']
+        if(data['successfulLoginsxRegisteredUsers'] == ""){
+            res.status(200).send(data)
+            return
+        }
+        editData(data, (finishedData, err) => { //Performs an operation on the request
             if(err){
                 console.log(err)
                 res.status(500).send('Internal Server Error')
@@ -95,7 +100,6 @@ app.post('/', (req, res) => {
     let data = req.body
     if(!data.signature || !data.timestamp || !data.ssoUserId || !data.email){ //Check for needed auth params
         res.status(401).send({'Error': 'Unauthorized Request'});
-        console.log("missing auth fields")
         return;         
     }
         
@@ -105,13 +109,11 @@ app.post('/', (req, res) => {
 
     if(data.signature != hashInBase64){ //Checks if signatures match
         res.status(401).send({'Error': 'Unauthorized Request'});
-        console.log("Bad signature")
         return;
     }
 
     if(!data.ssoUserId || !data.email || !data.logCreatedAt || !data.source || !data.details){ //Checks for required fields
         res.status(400).send({'Error': 'Missing required request fields'});
-        console.log("missing request fields")
         return;
     }
     let keys = Object.keys(data) //gets an array of body param keys
