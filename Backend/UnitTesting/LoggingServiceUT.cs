@@ -4,7 +4,6 @@ using DTO;
 using ServiceLayer.Services;
 using DataAccessLayer.Models;
 using System.Threading.Tasks;
-using System.Net.Http;
 
 namespace UnitTesting
 {

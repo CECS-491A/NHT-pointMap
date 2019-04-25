@@ -25,11 +25,5 @@ namespace UnitTesting
             Assert.IsNotNull(response.Content);
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
         }
-
-        [TestMethod]
-        public void addLogs()
-        {
-            _tu.createLogs();
-        }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Net.Http;
 using DTO;
 using ServiceLayer.Services;
 using DataAccessLayer.Models;
@@ -12,14 +8,11 @@ namespace Logging.Logging
 {
     public class Logger
     {
-        private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
-        private readonly HttpClient client;
         private LoggingService _ls;
 
         public Logger()
         {
             _ls = new LoggingService();
-            client = new HttpClient();
         }
 
         public bool sendLogSync(LogRequestDTO newLog)
@@ -51,8 +44,7 @@ namespace Logging.Logging
         private string[] getContent(LogRequestDTO newLog)
         {
             string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
-            string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email +
-                ";timestamp=" + timestamp + ";";
+            string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email + ";timestamp=" + timestamp + ";";
             string signature = _ls.GenerateSignature(plaintext);
             return new string[] { signature, timestamp };
         }
