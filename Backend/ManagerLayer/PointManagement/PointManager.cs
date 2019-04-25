@@ -9,34 +9,38 @@ namespace ManagerLayer
     public class PointManager
     {
         PointService _ps;
+        DatabaseContext _db;
 
-        public PointManager()
+        public PointManager(DatabaseContext db)
         {
-            _ps = new PointService();
+            _ps = new PointService(db);
+            _db = db;
         }
 
-        public Point CreatePoint(DatabaseContext _db, float longitude, float latitude, string description, string name)
+        public Point CreatePoint(float longitude, float latitude, string description, string name)
         {
-            Point point = new Point();
-            point.Description = description;
-            point.Longitude = longitude;
-            point.Latitude = latitude;
-            point.Name = name;
+            var point = new Point
+            {
+                Description = description,
+                Longitude = longitude,
+                Latitude = latitude,
+                Name = name
+            };
 
-            point = _ps.CreatePoint(_db, point);
+            point = _ps.CreatePoint(point);
 
             return point;
         }
 
-        public Point GetPoint(DatabaseContext _db, Guid pointId)
+        public Point GetPoint(Guid pointId)
         {
-            return _ps.GetPoint(_db, pointId);
+            return _ps.GetPoint(pointId);
         }
 
-        public Point UpdatePoint(DatabaseContext _db, Guid pointId, float longitude, float latitude, 
+        public Point UpdatePoint(Guid pointId, float longitude, float latitude, 
                                 string description, string name, DateTime createdAt)
         {
-            Point point = new Point
+            var point = new Point
             {
                 CreatedAt = createdAt,
                 Id = pointId,
@@ -46,20 +50,20 @@ namespace ManagerLayer
                 Name = name
             };
 
-            point = _ps.UpdatePoint(_db, point);
+            point = _ps.UpdatePoint(point);
             return point;
         }
 
-        public Point DeletePoint(DatabaseContext _db, Guid pointId)
+        public Point DeletePoint(Guid pointId)
         {
-            Point point = _ps.DeletePoint(_db, pointId);
+            var point = _ps.DeletePoint(pointId);
 
             return point;
         }
 
-        public List<Point> GetAllPoints(DatabaseContext _db, float minLat, float minLng, float maxLat, float maxLng)
+        public List<Point> GetAllPoints(float minLat, float minLng, float maxLat, float maxLng)
         {
-            return _ps.getAllPoints(_db, minLat, minLng, maxLat, maxLng);
+            return _ps.GetAllPoints(minLat, minLng, maxLat, maxLng);
         }
     }
 }

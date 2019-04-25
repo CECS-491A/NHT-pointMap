@@ -18,9 +18,9 @@ namespace UnitTesting
         public SessionServiceUT()
         {
             //Arrange
-            _db = new DatabaseContext();
             tu = new TestingUtils();
-            ss = new SessionService();
+            _db = tu.CreateDataBaseContext();
+            ss = new SessionService(_db);
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = ss.CreateSession(_db, newSession, newUser.Id);
+                var response = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
 
                 //Assert
@@ -53,7 +53,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = ss.CreateSession(_db, newSession, newUser.Id);
+                var response = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
 
                 //Assert
@@ -84,7 +84,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // ACT
-                var response = ss.CreateSession(_db, newSession, newUser.Id);
+                var response = ss.CreateSession(newSession, newUser.Id);
                 try
                 {
                     _db.SaveChanges();
@@ -115,12 +115,12 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                newSession = ss.CreateSession(newSession, newUser.Id);
                 var expectedResponse = newSession;
 
                 _db.SaveChanges();
 
-                var response = ss.ExpireSession(_db, newSession.Token);
+                var response = ss.ExpireSession(newSession.Token);
                 _db.SaveChanges();
                 var result = _db.Sessions.Find(expectedResponse.Id);
 
@@ -140,7 +140,7 @@ namespace UnitTesting
             using (_db = new DatabaseContext())
             {
                 // Act
-                var response = ss.ExpireSession(_db, nonExistingToken);
+                var response = ss.ExpireSession(nonExistingToken);
                 // will return null if Session does not exist
                 _db.SaveChanges();
                 var result = _db.Sessions.Find(response);
@@ -163,10 +163,10 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             { 
-                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                newSession = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
                 newSession.CreatedAt = newSession.CreatedAt.AddYears(60);
-                var response = ss.UpdateSession(_db, newSession);
+                var response = ss.UpdateSession(newSession);
                 _db.SaveChanges();
                 var result = _db.Sessions.Find(expectedResult.Id);
 
@@ -192,7 +192,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = ss.UpdateSession(_db, newSession);
+                var response = ss.UpdateSession(newSession);
                 try
                 {
                     _db.SaveChanges();
@@ -222,9 +222,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                newSession = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
-                var result = ss.GetSession(_db, newSession.Token);
+                var result = ss.GetSession(newSession.Token);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -242,7 +242,7 @@ namespace UnitTesting
             // Act
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = ss.GetSession(_db, nonExistingToken);
+                var result = ss.GetSession(nonExistingToken);
 
                 // Assert
                 Assert.IsNull(result);
@@ -261,9 +261,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                newSession = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
-                var result = ss.ValidateSession(_db, newSession.Token);
+                var result = ss.ValidateSession(newSession.Token);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -283,9 +283,9 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                newSession = ss.CreateSession(_db, newSession, newUser.Id);
+                newSession = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
-                var result = ss.ValidateSession(_db, newSession.Token);
+                var result = ss.ValidateSession(newSession.Token);
 
                 // Assert
                 Assert.IsNull(result);

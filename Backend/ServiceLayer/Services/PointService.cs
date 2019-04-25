@@ -10,17 +10,19 @@ namespace ServiceLayer.Services
     public class PointService : IPointService
     {
         private PointRepository _PointRepo;
+        private DatabaseContext _db;
 
-        public PointService()
+        public PointService(DatabaseContext db)
         {
-            _PointRepo = new PointRepository();
+            _PointRepo = new PointRepository(db);
+            _db = db;
         }
 
-        public Point CreatePoint(DatabaseContext _db, Point point)
+        public Point CreatePoint(Point point)
         {
             try
             {
-                var pointCreated = _PointRepo.CreatePoint(_db, point);
+                var pointCreated = _PointRepo.CreatePoint(point);
                 return pointCreated;
             }
             catch(ArgumentOutOfRangeException e)
@@ -29,37 +31,38 @@ namespace ServiceLayer.Services
             }
         }
 
-        public Point DeletePoint(DatabaseContext _db, Guid Id)
+        public Point DeletePoint(Guid Id)
         {
-            return _PointRepo.DeletePoint(_db, Id);
+            return _PointRepo.DeletePoint(Id);
         }
 
-        public Point GetPoint(DatabaseContext _db, float longitude, float latitude)
+        public Point GetPoint(float longitude, float latitude)
         {
-            return _PointRepo.GetPoint(_db, longitude, latitude);
+            return _PointRepo.GetPoint(longitude, latitude);
         }
 
-        public Point GetPoint(DatabaseContext _db, Guid Id)
+        public Point GetPoint(Guid Id)
         {
-            return _PointRepo.GetPoint(_db, Id);
+            return _PointRepo.GetPoint(Id);
         }
 
-        public Point UpdatePoint(DatabaseContext _db, Point point)
+        public Point UpdatePoint(Point point)
         {
             try
             {
-                var pointUpdated = _PointRepo.UpdatePoint(_db, point);
+                var pointUpdated = _PointRepo.UpdatePoint(point);
                 return pointUpdated;
             }
             catch (ArgumentOutOfRangeException e)
             {
+                //catches error from DataAccessLayer and wraps it with a more specific error
                 throw new InvalidPointException("Longitude/Latitude value invalid.", e);
             }
         }
 
-        public List<Point> getAllPoints(DatabaseContext _db, float minLat, float minLng, float maxLat, float maxLng)
+        public List<Point> GetAllPoints(float minLat, float minLng, float maxLat, float maxLng)
         {
-            return _PointRepo.GetAllPoints(_db, minLat, minLng, maxLat, maxLng);
+            return _PointRepo.GetAllPoints(minLat, minLng, maxLat, maxLng);
         }
     }
 }

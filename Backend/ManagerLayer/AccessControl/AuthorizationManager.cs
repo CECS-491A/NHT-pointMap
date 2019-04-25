@@ -10,11 +10,11 @@ namespace ManagerLayer.AccessControl
     {
         private ISessionService _sessionService;
         private IUserService _userService;
-        DatabaseContext _db;
+        private DatabaseContext _db;
 
         public AuthorizationManager(DatabaseContext db)
         {
-             _sessionService = new SessionService();
+             _sessionService = new SessionService(db);
             _db = db;
         }
 
@@ -36,34 +36,34 @@ namespace ManagerLayer.AccessControl
             {
                 return null;
             }
-            Session session = new Session();
+            var session = new Session();
             session.Token = GenerateSessionToken();
-            session = _sessionService.CreateSession(_db, session, userResponse.Id);
+            session = _sessionService.CreateSession(session, userResponse.Id);
             return session;
         }
 
-        public Session ValidateAndUpdateSession(DatabaseContext _db, string token)
+        public Session ValidateAndUpdateSession(string token)
         {
-            Session response = _sessionService.ValidateSession(_db, token);
+            var response = _sessionService.ValidateSession(token);
 
             if(response != null)
             {
-                response = _sessionService.UpdateSession(_db, response);
+                response = _sessionService.UpdateSession(response);
             }
 
             return response;
         }
 
-        public Session ExpireSession(DatabaseContext _db, string token)
+        public Session ExpireSession(string token)
         {
-            Session response = _sessionService.ExpireSession(_db, token);
+            var response = _sessionService.ExpireSession(token);
 
             return response;
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token)
+        public Session DeleteSession(string token)
         {
-            Session response = _sessionService.DeleteSession(_db, token);
+            var response = _sessionService.DeleteSession(token);
 
             return response;
         }

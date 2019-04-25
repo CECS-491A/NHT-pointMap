@@ -18,9 +18,9 @@ namespace UnitTesting
 
         public PointServiceUT()
         {
-            ps = new PointService();
             tu = new TestingUtils();
-            _db = new DatabaseContext();
+            _db = tu.CreateDataBaseContext();
+            ps = new PointService(_db);
         }
 
         [TestMethod]
@@ -28,25 +28,25 @@ namespace UnitTesting
         {
             //testing valid values for longitude and latitude
             newPoint = tu.CreatePointObject(-180, -90);
-            var result = ps.CreatePoint(_db, newPoint);
+            var result = ps.CreatePoint(newPoint);
             Assert.IsNotNull(result);
 
             newPoint = tu.CreatePointObject(180, 90);
-            result = ps.CreatePoint(_db, newPoint);
+            result = ps.CreatePoint(newPoint);
             Assert.IsNotNull(result);
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
-            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
-            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
-            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
-            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.CreatePoint(newPoint));
         }
 
         [TestMethod]
@@ -58,25 +58,25 @@ namespace UnitTesting
 
             //testing valid values for longitude and latitude
             newPoint = tu.CreatePointObject(-180, -90);
-            var result = ps.UpdatePoint(_db, newPoint);
+            var result = ps.UpdatePoint(newPoint);
             Assert.IsNotNull(result);
 
             newPoint = tu.CreatePointObject(180, 90);
-            result = ps.UpdatePoint(_db, newPoint);
+            result = ps.UpdatePoint(newPoint);
             Assert.IsNotNull(result);
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
-            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
-            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
-            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
-            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(_db, newPoint));
+            Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
         }
 
         [TestMethod]
@@ -88,7 +88,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = ps.CreatePoint(_db, newPoint);
+                var response = ps.CreatePoint(newPoint);
                 _db.SaveChanges();
 
                 //Assert
@@ -107,7 +107,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                Point response = ps.CreatePoint(_db, newPoint);
+                Point response = ps.CreatePoint(newPoint);
                 _db.SaveChanges();
 
                 //Assert
@@ -134,7 +134,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // ACT
-                var response = ps.CreatePoint(_db, newPoint);
+                var response = ps.CreatePoint(newPoint);
                 try
                 {
                     _db.SaveChanges();
@@ -166,7 +166,7 @@ namespace UnitTesting
             using (_db = tu.CreateDataBaseContext())
             {
                 // Act
-                var response = ps.DeletePoint(_db, newPoint.Id);
+                var response = ps.DeletePoint(newPoint.Id);
                 _db.SaveChanges();
                 var result = _db.Points.Find(expectedResponse.Id);
 
@@ -188,7 +188,7 @@ namespace UnitTesting
             using (_db = new DatabaseContext())
             {
                 // Act
-                var response = ps.DeletePoint(_db, nonExistingId);
+                var response = ps.DeletePoint(nonExistingId);
                 // will return null if Point does not exist
                 _db.SaveChanges();
                 var result = _db.Points.Find(expectedResponse);
@@ -211,7 +211,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = ps.UpdatePoint(_db, newPoint);
+                var response = ps.UpdatePoint(newPoint);
                 _db.SaveChanges();
                 var result = _db.Points.Find(expectedResult.Id);
 
@@ -236,7 +236,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = ps.UpdatePoint(_db, newPoint);
+                var response = ps.UpdatePoint(newPoint);
                 try
                 {
                     _db.SaveChanges();
@@ -267,7 +267,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var response = ps.UpdatePoint(_db, newPoint);
+                var response = ps.UpdatePoint(newPoint);
                 try
                 {
                     _db.SaveChanges();
@@ -300,7 +300,7 @@ namespace UnitTesting
             // ACT
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = ps.GetPoint(_db, expectedResult.Id);
+                var result = ps.GetPoint(expectedResult.Id);
 
                 // Assert
                 Assert.IsNotNull(result);
@@ -318,7 +318,7 @@ namespace UnitTesting
             // Act
             using (_db = tu.CreateDataBaseContext())
             {
-                var result = ps.GetPoint(_db, nonExistingPoint);
+                var result = ps.GetPoint(nonExistingPoint);
 
                 // Assert
                 Assert.IsNull(result);

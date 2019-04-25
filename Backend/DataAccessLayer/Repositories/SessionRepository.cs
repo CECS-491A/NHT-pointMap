@@ -9,9 +9,15 @@ namespace DataAccessLayer.Repositories
 {
     public class SessionRepository
     {
+        DatabaseContext _db;
+
+        public SessionRepository(DatabaseContext db)
+        {
+            _db = db;
+        }
         //returns null if no valid session is found in the sessions table, otherwise
         //  returns the current session
-        public Session GetSession(DatabaseContext _db, string token)
+        public Session GetSession(string token)
         {
             var session = _db.Sessions
                 .Where(s => s.Token == token)
@@ -20,22 +26,19 @@ namespace DataAccessLayer.Repositories
             return session;
         }
         
-        public Session CreateSession(DatabaseContext _db, Session session, Guid userId)
+        public Session CreateSession(Session session, Guid userId)
         {
             session.UserId = userId;
-            _db.Entry(session).State = EntityState.Added;
+            _db.Sessions.Add(session);
             return session;
         }
 
-        public Session ValidateSession(DatabaseContext _db, string token)
+        public Session ValidateSession(string token)
         {
-            var session = GetSession(_db, token);
+            var session = GetSession(token);
 
-            if (session == null || session.Token != token)
-            {
-                return null;
-            }
-            else if (session.ExpiresAt < DateTime.UtcNow)
+            //checks if session exists and if it is already expired
+            if (session == null || session.Token != token || session.ExpiresAt < DateTime.UtcNow)
             {
                 return null;
             }
@@ -45,18 +48,18 @@ namespace DataAccessLayer.Repositories
             }
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token)
+        public Session DeleteSession(string token)
         {
             var session = _db.Sessions
                 .Where(s => s.Token == token)
                 .FirstOrDefault<Session>();
             if (session == null)
                 return null;
-            _db.Entry(session).State = EntityState.Deleted;
+            _db.Sessions.Remove(session);
             return session;
         }
 
-        public Session UpdateSession(DatabaseContext _db, Session session)
+        public Session UpdateSession(Session session)
         {
             session.UpdatedAt = DateTime.UtcNow;
             session.ExpiresAt = DateTime.UtcNow.AddMinutes(Session.MINUTES_UNTIL_EXPIRATION);
@@ -64,9 +67,9 @@ namespace DataAccessLayer.Repositories
             return session;
         }
 
-        public Session ExpireSession(DatabaseContext _db, string token)
+        public Session ExpireSession(string token)
         {
-            var session = GetSession(_db, token);
+            var session = GetSession(token);
             if (session == null)
                 return null;
 
@@ -76,7 +79,7 @@ namespace DataAccessLayer.Repositories
             return session;
         }
 
-        public List<Session> GetSessions(DatabaseContext _db, Guid userId)
+        public List<Session> GetSessions(Guid userId)
         {
             var sessions = _db.Sessions
                 .Where(s => s.UserId == userId)

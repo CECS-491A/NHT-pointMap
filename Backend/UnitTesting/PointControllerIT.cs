@@ -20,12 +20,14 @@ namespace UnitTesting
         TestingUtils _tu;
         User newUser;
         SessionService _ss;
+        DatabaseContext _db;
 
         public PointControllerIT()
         {
             controller = new PointController();
             _tu = new TestingUtils();
-            _ss = new SessionService();
+            _db = _tu.CreateDataBaseContext();
+            _ss = new SessionService(_db);
         }
 
         [TestMethod]
