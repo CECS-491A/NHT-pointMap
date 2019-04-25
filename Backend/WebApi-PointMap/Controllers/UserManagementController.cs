@@ -199,7 +199,7 @@ namespace WebApi_PointMap.Controllers
                         var userToUpdate = _userManager.GetUser(UserId);
                         _userManager.ToUpdateUser(userToUpdate, payload);
 
-                        _userManager.UpdateUser(user);
+                        _userManager.UpdateUser(userToUpdate);
                         _db.SaveChanges();
                         return Content(HttpStatusCode.OK, "User updated");
                     }
@@ -253,11 +253,11 @@ namespace WebApi_PointMap.Controllers
                     {
                         var newUser = _userManager.CreateUser(payload);
                         _db.SaveChanges();
-                        var responseCreated = Content(HttpStatusCode.Created, newUser);
+                        var responseCreated = Content(HttpStatusCode.Created, "User created.");
                         return responseCreated;
                     }
                     _db.SaveChanges();
-                    throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                    throw new UserIsNotAdministratorException("Non-administrators can not create users.");
                 }
                 catch (Exception e)
                 {
