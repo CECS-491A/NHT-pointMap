@@ -20,8 +20,8 @@ namespace WebApi_PointMap.Models
         public string PreSignatureString()
         {
             string acc = "";
-            acc += "ssoUserId=" + SSOUserId + ";";
             acc += "email=" + Email + ";";
+            acc += "ssoUserId=" + SSOUserId + ";";
             acc += "timestamp=" + Timestamp + ";";
             return acc;
         }
