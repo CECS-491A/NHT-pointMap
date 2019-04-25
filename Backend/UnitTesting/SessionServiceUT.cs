@@ -50,18 +50,15 @@ namespace UnitTesting
             newSession = tu.CreateSessionObject(newUser);
             var expected = newSession;
 
-            using (_db = tu.CreateDataBaseContext())
-            {
-                // Act
-                var response = ss.CreateSession(newSession, newUser.Id);
-                _db.SaveChanges();
+            // Act
+            var response = ss.CreateSession(newSession, newUser.Id);
+            _db.SaveChanges();
 
-                //Assert
-                var result = _db.Sessions.Find(newSession.Id);
-                Assert.IsNotNull(response);
-                Assert.IsNotNull(result);
-                Assert.AreSame(result, expected);
-            }
+            //Assert
+            var result = _db.Sessions.Find(newSession.Id);
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(result);
+            Assert.AreSame(result, expected);
         }
 
         [TestMethod]
@@ -112,23 +109,20 @@ namespace UnitTesting
             newUser = tu.CreateUserObject();
             newSession = tu.CreateSessionObject(newUser);
 
-            using (_db = tu.CreateDataBaseContext())
-            {
-                // Act
-                newSession = ss.CreateSession(newSession, newUser.Id);
-                var expectedResponse = newSession;
+            // Act
+            newSession = ss.CreateSession(newSession, newUser.Id);
+            var expectedResponse = newSession;
 
-                _db.SaveChanges();
+            _db.SaveChanges();
 
-                var response = ss.ExpireSession(newSession.Token);
-                _db.SaveChanges();
-                var result = _db.Sessions.Find(expectedResponse.Id);
+            var response = ss.ExpireSession(newSession.Token);
+            _db.SaveChanges();
+            var result = _db.Sessions.Find(expectedResponse.Id);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.IsTrue(result.ExpiresAt < DateTime.UtcNow);
-                Assert.AreEqual(response.Id, expectedResponse.Id);
-            }
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsTrue(result.ExpiresAt < DateTime.UtcNow);
+            Assert.AreEqual(response.Id, expectedResponse.Id);
         }
 
         [TestMethod]
@@ -161,8 +155,6 @@ namespace UnitTesting
             var expectedResult = newSession;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            { 
                 newSession = ss.CreateSession(newSession, newUser.Id);
                 _db.SaveChanges();
                 newSession.CreatedAt = newSession.CreatedAt.AddYears(60);
@@ -177,8 +169,6 @@ namespace UnitTesting
                 Assert.AreEqual(result.UpdatedAt, expectedResult.UpdatedAt);
                 Assert.AreEqual(result.ExpiresAt, expectedResult.ExpiresAt);
                 Assert.AreNotEqual(result.CreatedAt, expectedResultTime);
-            }
-
         }
 
         [TestMethod]
@@ -220,16 +210,13 @@ namespace UnitTesting
             var expectedResult = newSession;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            {
-                newSession = ss.CreateSession(newSession, newUser.Id);
-                _db.SaveChanges();
-                var result = ss.GetSession(newSession.Token);
+            newSession = ss.CreateSession(newSession, newUser.Id);
+            _db.SaveChanges();
+            var result = ss.GetSession(newSession.Token);
 
-                // Assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedResult.Id, result.Id);
-            }
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResult.Id, result.Id);
         }
 
         [TestMethod]
@@ -259,16 +246,13 @@ namespace UnitTesting
             var expectedResult = newSession;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            {
-                newSession = ss.CreateSession(newSession, newUser.Id);
-                _db.SaveChanges();
-                var result = ss.ValidateSession(newSession.Token);
+            newSession = ss.CreateSession(newSession, newUser.Id);
+            _db.SaveChanges();
+            var result = ss.ValidateSession(newSession.Token);
 
-                // Assert
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedResult.Id, result.Id);
-            }
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResult.Id, result.Id);
         }
 
         [TestMethod]

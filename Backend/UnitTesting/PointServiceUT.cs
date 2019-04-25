@@ -104,18 +104,16 @@ namespace UnitTesting
             newPoint = tu.CreatePointObject();
             var expected = newPoint;
 
-            using (_db = tu.CreateDataBaseContext())
-            {
-                // Act
-                Point response = ps.CreatePoint(newPoint);
-                _db.SaveChanges();
+            // Act
+            Point response = ps.CreatePoint(newPoint);
+            _db.SaveChanges();
 
-                //Assert
-                var result = _db.Points.Find(newPoint.Id);
-                Assert.IsNotNull(response);
-                Assert.IsNotNull(result);
-                Assert.AreSame(result, expected);
-            }
+            //Assert
+            var result = _db.Points.Find(newPoint.Id);
+
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(result);
+            Assert.AreSame(result, expected);
         }
 
         [TestMethod]
@@ -163,18 +161,15 @@ namespace UnitTesting
 
             var expectedResponse = newPoint;
 
-            using (_db = tu.CreateDataBaseContext())
-            {
-                // Act
-                var response = ps.DeletePoint(newPoint.Id);
-                _db.SaveChanges();
-                var result = _db.Points.Find(expectedResponse.Id);
+            // Act
+            var response = ps.DeletePoint(newPoint.Id);
+            _db.SaveChanges();
+            var result = _db.Points.Find(expectedResponse.Id);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.IsNull(result);
-                Assert.AreEqual(response.Id, expectedResponse.Id);
-            }
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsNull(result);
+            Assert.AreEqual(response.Id, expectedResponse.Id);
         }
 
         [TestMethod]
@@ -209,19 +204,15 @@ namespace UnitTesting
             var expectedResult = newPoint;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
-            {
-                var response = ps.UpdatePoint(newPoint);
-                _db.SaveChanges();
-                var result = _db.Points.Find(expectedResult.Id);
+            var response = ps.UpdatePoint(newPoint);
+            _db.SaveChanges();
+            var result = _db.Points.Find(expectedResult.Id);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(result.Id, expectedResult.Id);
-                Assert.AreEqual(result.Description, expectedResult.Description);
-            }
-
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Id, expectedResult.Id);
+            Assert.AreEqual(result.Description, expectedResult.Description);
         }
 
         [TestMethod]
@@ -265,28 +256,25 @@ namespace UnitTesting
             var expectedResponse = newPoint;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
+            var response = ps.UpdatePoint(newPoint);
+            try
             {
-                var response = ps.UpdatePoint(newPoint);
-                try
-                {
-                    _db.SaveChanges();
-                }
-                catch (DbEntityValidationException)
-                {
-                    // catch error
-                    // rollback changes
-                    _db.Entry(response).CurrentValues.SetValues(_db.Entry(response).OriginalValues);
-                    _db.Entry(response).State = System.Data.Entity.EntityState.Unchanged;
-                }
-                var result = _db.Points.Find(expectedResult.Id);
-
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.AreEqual(expectedResponse, response);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(expectedResult, result);
+                _db.SaveChanges();
             }
+            catch (DbEntityValidationException)
+            {
+                // catch error
+                // rollback changes
+                _db.Entry(response).CurrentValues.SetValues(_db.Entry(response).OriginalValues);
+                _db.Entry(response).State = System.Data.Entity.EntityState.Unchanged;
+            }
+            var result = _db.Points.Find(expectedResult.Id);
+
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual(expectedResponse, response);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(expectedResult, result);
         }
 
         [TestMethod]
