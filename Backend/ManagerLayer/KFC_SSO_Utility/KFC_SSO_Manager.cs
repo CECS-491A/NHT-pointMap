@@ -11,10 +11,10 @@ namespace ManagerLayer.KFC_SSO_Utility
 {
     public class KFC_SSO_Manager
     {
-        public bool DeleteUserFromSSOviaPointmap(User user)
+        public async Task<bool> DeleteUserFromSSOviaPointmap(User user)
         {
             var _ssoAPI = new KFC_SSO_APIService();
-            var requestResponse = _ssoAPI.DeleteUserFromSSO(user);
+            var requestResponse = await _ssoAPI.DeleteUserFromSSO(user);
             if (requestResponse.IsSuccessStatusCode)
             {
                 return true;
