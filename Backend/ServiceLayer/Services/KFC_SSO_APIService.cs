@@ -47,14 +47,14 @@ namespace ServiceLayer.Services
                 // This is necessary so that the recipient of the payload will be able to generate the
                 // correct hash even if the order changes
                 var orderedPayload = from payloadItem in payload
-                                     orderby payloadItem.Value ascending
+                                     orderby payloadItem.Value descending
                                      select payloadItem;
 
                 var payloadString = "";
                 // Build a payload string with the format:
                 // key =value;key2=value2;
                 // SECURITY: This must be passed in this format so that the resulting hash is the same
-                foreach (KeyValuePair<string, string> pair in orderedPayload)
+                foreach (var pair in orderedPayload)
                 {
                     payloadString = payloadString + pair.Key + "=" + pair.Value + ";";
                 }
