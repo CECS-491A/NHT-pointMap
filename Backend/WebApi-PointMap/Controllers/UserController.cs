@@ -13,6 +13,8 @@ using ServiceLayer.Services;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using ManagerLayer.KFC_SSO_Utility;
+using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -22,7 +24,7 @@ namespace WebApi_PointMap.Controllers
         // POST api/user/login
         [HttpPost]
         [Route("api/user/login")]
-        public IHttpActionResult LoginFromSSO([FromBody] LoginDTO requestPayload)
+        public HttpResponseMessage LoginFromSSO([FromBody] LoginDTO requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
@@ -40,23 +42,34 @@ namespace WebApi_PointMap.Controllers
                     loginAttempt = _userLoginManager.LoginFromSSO(
                         requestPayload.Email,
                         userSSOID,
-                        requestPayload.Signature,
-                        requestPayload.PreSignatureString());
+                        requestPayload.Timestamp,
+                        requestPayload.Signature);
 
                     _db.SaveChanges();
 
                     var redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token;
 
-                    return Content(HttpStatusCode.TemporaryRedirect, redirectURL);
-
-                }
-                catch (InvalidTokenSignatureException e)
-                {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    var response = Request.CreateResponse(HttpStatusCode.Moved);
+                    response.Headers.Location = new Uri(redirectURL);
+                    return response;
                 }
                 catch (Exception e)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    var response = new HttpResponseMessage();
+                    if (e is InvalidTokenSignatureException)
+                    {
+                        response.Content = new StringContent(e.Message);
+                        response.StatusCode = HttpStatusCode.Unauthorized;
+                        return response;
+                    }
+                    if (e is InvalidGuidException)
+                    {
+                        response.Content = new StringContent(e.Message);
+                        response.StatusCode = HttpStatusCode.BadRequest;
+                    }
+                    response.Content = new StringContent(e.Message);
+                    response.StatusCode = HttpStatusCode.InternalServerError;
+                    return response;
                 }
             }
         }
@@ -64,7 +77,7 @@ namespace WebApi_PointMap.Controllers
         // user delete self from pointmap and sso
         [HttpDelete]
         [Route("api/user/deletefromsso")]
-        public IHttpActionResult DeleteFromSSO()
+        public async Task<IHttpActionResult> DeleteFromSSO()
         {
             using (var _db = new DatabaseContext())
             {
@@ -83,7 +96,7 @@ namespace WebApi_PointMap.Controllers
                         return Content(HttpStatusCode.NotFound, "User does not exists.");
                     }
                     var _ssoAPIManager = new KFC_SSO_Manager();
-                    var requestSuccessful = _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);
+                    var requestSuccessful = await _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);
                     if (requestSuccessful)
                     {
                         _userManager.DeleteUserAndSessions(user.Id);
@@ -163,7 +176,7 @@ namespace WebApi_PointMap.Controllers
 
                     // check valid signature
                     var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
-                    if (!_ssoServiceAuth.IsValidClientRequest(requestPayload.PreSignatureString(), requestPayload.Signature))
+                    if (!_ssoServiceAuth.IsValidClientRequest(userSSOID, requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature))
                     {
                         throw new InvalidTokenSignatureException("Session is not valid.");
                     }
