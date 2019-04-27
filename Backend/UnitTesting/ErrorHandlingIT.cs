@@ -280,7 +280,7 @@ namespace UnitTesting
             _tu.CreateSessionInDb(newSession);
 
             var endpoint = API_ROUTE_LOCAL + "/api/point";
-            _umController.Request = new HttpRequestMessage
+            _pointController.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(endpoint)
             };

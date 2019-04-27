@@ -54,28 +54,32 @@ namespace UnitTesting
         {
             //setting up point in db for update testing
             newPoint = tu.CreatePointObject(-180, -90);
-            tu.CreatePointInDb(newPoint);
+            var point = tu.CreatePointInDb(newPoint);
 
             //testing valid values for longitude and latitude
-            newPoint = tu.CreatePointObject(-180, -90);
             var result = ps.UpdatePoint(newPoint);
             Assert.IsNotNull(result);
 
             newPoint = tu.CreatePointObject(180, 90);
+            newPoint.Id = point.Id;
             result = ps.UpdatePoint(newPoint);
             Assert.IsNotNull(result);
 
             //testing invalid values for longitude and latitude
             newPoint = tu.CreatePointObject(-181, -90);
+            newPoint.Id = point.Id;
             Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(-180, -91);
+            newPoint.Id = point.Id;
             Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(181, 90);
+            newPoint.Id = point.Id;
             Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
 
             newPoint = tu.CreatePointObject(180, 91);
+            newPoint.Id = point.Id;
             Assert.ThrowsException<InvalidPointException>(() => ps.UpdatePoint(newPoint));
         }
 
@@ -241,7 +245,7 @@ namespace UnitTesting
                 var result = _db.Points.Find(expectedResult.Id);
 
                 // Assert
-                Assert.IsNotNull(response);
+                Assert.IsNull(response);
                 Assert.IsNull(result);
             }
         }
@@ -272,9 +276,17 @@ namespace UnitTesting
 
             // Assert
             Assert.IsNotNull(response);
-            Assert.AreEqual(expectedResponse, response);
+            Assert.AreEqual(response.Name, expectedResponse.Name);
+            Assert.AreEqual(response.Description, expectedResponse.Description);
+            Assert.AreEqual(response.Longitude, expectedResponse.Longitude);
+            Assert.AreEqual(response.Latitude, expectedResponse.Latitude);
+            Assert.AreEqual(response.CreatedAt, expectedResponse.CreatedAt);
             Assert.IsNotNull(result);
-            Assert.AreEqual(expectedResult, result);
+            Assert.AreEqual(result.Name, expectedResult.Name);
+            Assert.AreEqual(result.Description, expectedResult.Description);
+            Assert.AreEqual(result.Longitude, expectedResult.Longitude);
+            Assert.AreEqual(result.Latitude, expectedResult.Latitude);
+            Assert.AreEqual(result.CreatedAt, expectedResult.CreatedAt);
         }
 
         [TestMethod]

@@ -73,18 +73,23 @@ namespace WebApi_PointMap.Controllers
         // updates a point
         [HttpPut]
         [Route("api/point/{guid}")]
-        public IHttpActionResult Put(string guid, [FromBody] PointPOST pointPost)
+        public IHttpActionResult Put(string pointId, [FromBody] PointPOST pointPost)
         {
             try
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                Guid id = new Guid(guid);
-                pointPost.Id = id;
+                Guid id = ControllerHelpers.ParseAndCheckId(pointId);
+
                 var point = _pm.UpdatePoint(id, pointPost.Longitude, pointPost.Latitude,
                                             pointPost.Description, pointPost.Name,
                                             pointPost.CreatedAt);
+
+                if(point == null)
+                {
+                    throw new PointNotFoundException("Point not found.");
+                }
                 _db.SaveChanges();
 
                 return Ok(point);

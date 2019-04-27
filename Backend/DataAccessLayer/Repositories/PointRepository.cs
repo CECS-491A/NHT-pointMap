@@ -49,9 +49,17 @@ namespace DataAccessLayer.Repositories
         {
             ValidateLongLat(point);
 
-            point.UpdatedAt = DateTime.UtcNow;
-            _db.Entry(point).State = EntityState.Modified;
-            return point;
+            var pointToUpdate = _db.Points.Find(point.Id);
+            if (pointToUpdate != null)
+            {
+                pointToUpdate.Name = point.Name;
+                pointToUpdate.Description = point.Description;
+                pointToUpdate.Latitude = point.Latitude;
+                pointToUpdate.Longitude = point.Longitude;
+                pointToUpdate.UpdatedAt = DateTime.UtcNow;
+            }
+
+            return pointToUpdate;
         }
 
         public Point DeletePoint(Guid Id)

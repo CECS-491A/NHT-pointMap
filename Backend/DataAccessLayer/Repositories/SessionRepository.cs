@@ -79,6 +79,7 @@ namespace DataAccessLayer.Repositories
             return session;
         }
 
+        // returns all sessions associated with a specific user
         public List<Session> GetSessions(Guid userId)
         {
             var sessions = _db.Sessions
