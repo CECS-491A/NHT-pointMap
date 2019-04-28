@@ -8,15 +8,16 @@ namespace ManagerLayer.UserManagement
 {
     public class UserManagementManager
     {
-        private IPasswordService _passwordService;
-        private IUserService _userService;
+        DatabaseContext _db;
+        UserService _userService;
 
-        public UserManagementManager()
+        public UserManagementManager(DatabaseContext db)
         {
-            _userService = new UserService();
+            _db = db;
+            _userService = new UserService(_db);
         }
 
-        public User CreateUser(DatabaseContext _db, string email, Guid SSOID)
+        public User CreateUser(string email, Guid SSOID)
         {
             try
             {
@@ -26,7 +27,7 @@ namespace ManagerLayer.UserManagement
             {
                 throw new InvalidEmailException("Invalid Email", e);
             }
-            _passwordService = new PasswordService();
+            var _passwordService = new PasswordService();
             DateTime timestamp = DateTime.UtcNow;
             byte[] salt = _passwordService.GenerateSalt();
             string hash = _passwordService.HashPassword(timestamp.ToString(), salt);
@@ -38,48 +39,57 @@ namespace ManagerLayer.UserManagement
                 UpdatedAt = timestamp,
                 Id = SSOID
             };
-             _userService.CreateUser(_db, user);
+             _userService.CreateUser(user);
             return user;
         }
 
-        public void DeleteUser(DatabaseContext _db, Guid id)
+        public void DeleteUser(Guid id)
         {
-            _userService.DeleteUser(_db, id);
+            _userService.DeleteUser(id);
         }
 
-        public User GetUser(DatabaseContext _db, Guid id)
+        public void DeleteUserAndSessions(Guid id)
         {
-            return _userService.GetUser(_db, id); 
+            var _sessionService = new SessionService();
+            _sessionService.DeleteSessionsOfUser(_db, id);
+            var user = _userService.GetUser(id);
         }
 
-        public User GetUser(DatabaseContext _db, string email)
+        public User GetUser(Guid id)
         {
-            return _userService.GetUser(_db, email);
+            var user = _userService.GetUser(id);
+            return user;
         }
 
-        public void DisableUser(DatabaseContext _db, User user)
+        public User GetUser(string email)
         {
-            ToggleUser(_db, user, true);
+            var user = _userService.GetUser(email);
+            return user;
         }
 
-        public void EnableUser(DatabaseContext _db, User user)
+        public void DisableUser(User user)
         {
-            ToggleUser(_db, user, false);
+            ToggleUser(user, true);
         }
 
-        public void ToggleUser(DatabaseContext _db, User user, bool? disable)
+        public void EnableUser(User user)
+        {
+            ToggleUser(user, false);
+        }
+
+        public void ToggleUser(User user, bool? disable)
         {
             if (disable == null)
             {
                 disable = !user.Disabled;
             }
             user.Disabled = (bool)disable;
-            _userService.UpdateUser(_db, user);
+            _userService.UpdateUser(user);
         }
 
-        public void UpdateUser(DatabaseContext _db, User user)
+        public void UpdateUser(User user)
         {
-            _userService.UpdateUser(_db, user);
+            _userService.UpdateUser(user);
         }
     }
 }

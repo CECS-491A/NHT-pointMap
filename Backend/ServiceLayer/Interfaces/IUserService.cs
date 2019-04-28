@@ -11,12 +11,11 @@ namespace ServiceLayer.Services
     public interface IUserService
     {
         // CRUD
-        User CreateUser(DatabaseContext _db, User user);
-        User GetUser(DatabaseContext _db, string email);
-        User GetUser(DatabaseContext _db, Guid Id);
-        User GetUserBySSOID(DatabaseContext _db, Guid SSOID);
-        User DeleteUser(DatabaseContext _db, Guid Id);
-        User UpdateUser(DatabaseContext _db, User user);
-        bool IsManagerOver(DatabaseContext _db, User user, User subject);
+        User CreateUser(User user);
+        User GetUser(string email);
+        User GetUser(Guid Id);
+        User DeleteUser(Guid Id);
+        User UpdateUser(User user);
+        bool IsManagerOver(User user, User subject);
     }
 }

@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="KFC_SSO_Utility\KFC_SSO_Manager.cs" />
     <Compile Include="Logging\LoggingManager.cs" />
     <Compile Include="PointManagement\PointManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
