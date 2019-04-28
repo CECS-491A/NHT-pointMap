@@ -1,15 +1,11 @@
 ﻿using DataAccessLayer.Database;
-using DTO.DTO;
+using DTO.UserManagementAPI;
 using ManagerLayer.UserManagement;
-using ServiceLayer.Services;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
 using WebApi_PointMap.ErrorHandling;
-using WebApi_PointMap.Models;
-using static DTO.DTO.SSOServicesDTOs;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers

@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Text;
-using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApi_PointMap.Controllers;
-using WebApi_PointMap.Models;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
 using static UnitTesting.TestingUtils;
 using System.Net;
-using static DTO.DTO.SSOServicesDTOs;
+using DTO.KFCSSO_API;
 
 namespace UnitTesting
 {
@@ -33,7 +30,7 @@ namespace UnitTesting
             var controller = new UserController();
             var user = ut.CreateSSOUserInDb();
             var timestamp = 12312445;
-            var expectedStatusCode = HttpStatusCode.Redirect;
+            var expectedStatusCode = HttpStatusCode.MovedPermanently;
             MockLoginPayload mock_payload = new MockLoginPayload
             {
                 ssoUserId = user.Id,
@@ -42,7 +39,7 @@ namespace UnitTesting
             };
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
-            LoginRequestPayload payload = new LoginRequestPayload
+            var payload = new LoginRequestPayload
             {
                 Email = user.Username,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
@@ -54,10 +51,10 @@ namespace UnitTesting
             {
                 RequestUri = new Uri(endpoint)
             };
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
-            Assert.IsInstanceOfType(actionresult, typeof(NegotiatedContentResult<string>));
-            Assert.IsNotNull(actionresult as NegotiatedContentResult<string>);
-            var result = actionresult as NegotiatedContentResult<string>;
+            var actionresult = controller.LoginFromSSO(payload);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            Assert.IsNotNull(actionresult as HttpResponseMessage);
+            var result = actionresult as HttpResponseMessage;
             Assert.AreEqual(expectedStatusCode, result.StatusCode);
         }
 
@@ -79,7 +76,7 @@ namespace UnitTesting
 
             var endpoint = API_ROUTE_LOCAL + "/api/user/login";
 
-            LoginRequestPayload payload = new LoginRequestPayload
+            var payload = new LoginRequestPayload
             {
                 Email = existing_username,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
@@ -91,9 +88,9 @@ namespace UnitTesting
             {
                 RequestUri = new Uri(endpoint)
             };
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
-            Assert.IsInstanceOfType(actionresult, typeof(NegotiatedContentResult<string>));
-            var contentresult = actionresult as NegotiatedContentResult<string>;
+            var actionresult = controller.LoginFromSSO(payload);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            var contentresult = actionresult as HttpResponseMessage;
             Assert.IsNotNull(contentresult);
         }
 
@@ -132,11 +129,11 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
+            var actionresult = controller.LoginFromSSO(payload);
             // returns a HTTPResponseMessage
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            var contentresult = actionresult as HttpResponseMessage;
+            Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
         }
 
         [TestMethod]
@@ -170,11 +167,11 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
+            var actionresult = controller.LoginFromSSO(payload);
             // returns a HTTPResponseMessage
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            var contentresult = actionresult as HttpResponseMessage;
+            Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
         }
 
         [TestMethod]
@@ -210,11 +207,11 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-            IHttpActionResult actionresult = controller.LoginFromSSO(payload);
+            var actionresult = controller.LoginFromSSO(payload);
             // returns a HTTPResponseMessage
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
+            var contentresult = actionresult as HttpResponseMessage;
+            Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
         }
     }
 }

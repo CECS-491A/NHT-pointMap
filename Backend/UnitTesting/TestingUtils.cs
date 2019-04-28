@@ -132,15 +132,9 @@ namespace UnitTesting
 
             public string Signature()
             {
-                string preSignatureString = "";
-                preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
-                preSignatureString += "email=" + email + ";";
-                preSignatureString += "timestamp=" + timestamp + ";";
-
-                HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(Mock_APISecret));
-                byte[] launchPayloadBuffer = Encoding.ASCII.GetBytes(preSignatureString);
-                byte[] signatureBytes = hmacsha1.ComputeHash(launchPayloadBuffer);
-                string signature = Convert.ToBase64String(signatureBytes);
+                var _ssoAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
+                var payload = _ssoAuth.PreparePayload(ssoUserId, email, timestamp);
+                var signature = _ssoAuth.Sign(payload);
                 return signature;
             }
 
