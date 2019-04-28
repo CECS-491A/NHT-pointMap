@@ -17,15 +17,18 @@ namespace ServiceLayer.KFC_API_Services
 
         public async Task<HttpResponseMessage> DeleteUserFromSSO(User user)
         {
+            var auth = new SignatureService();
+            var timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var payloadToSign = auth.PreparePayload(user.Id.ToString(), user.Username, timestamp);
+            var signature = auth.Sign(payloadToSign);
             var requestPayload = new DeleteUserFromSSO_DTO
             {
                 AppId = APP_ID,
                 Email = user.Username,
                 SsoUserId = user.Id.ToString(),
-                Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+                Timestamp = timestamp,
+                Signature = signature
             };
-            var auth = new SignatureService();
-            requestPayload.Signature = auth.Sign(requestPayload.PreSignatureString());
             var response = await PingDeleteUserFromSSORouteAsync(requestPayload);
             if (response.IsSuccessStatusCode)
             {
