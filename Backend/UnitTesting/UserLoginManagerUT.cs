@@ -4,6 +4,7 @@ using static ServiceLayer.Services.ExceptionService;
 using static UnitTesting.TestingUtils;
 using ManagerLayer.KFC_SSO_Utility;
 using ServiceLayer.Services;
+using ServiceLayer.KFC_API_Services;
 
 namespace UnitTesting
 {
@@ -74,7 +75,7 @@ namespace UnitTesting
             var existing_username = existing_user.Username;
             var existing_ssoID = existing_user.Id;
             var timestamp = 12312312;
-            var _ssoAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
+            var _ssoAuth = new SignatureService();
             MockLoginPayload mock_payload = new MockLoginPayload
             {
                 email = existing_username,

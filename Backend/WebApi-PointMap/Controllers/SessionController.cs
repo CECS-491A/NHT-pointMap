@@ -14,7 +14,6 @@ namespace WebApi_PointMap.Controllers
     public class SessionController : ApiController
     {
         AuthorizationManager _am;
-        DatabaseContext _db;
 
         [HttpGet]
         [Route("api/session")]

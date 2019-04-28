@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using DTO.KFCSSO_API;
 using ManagerLayer.UserManagement;
+using ServiceLayer.KFC_API_Services;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -179,8 +180,8 @@ namespace WebApi_PointMap.Controllers
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     // check valid signature
-                    var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
-                    if (!_ssoServiceAuth.IsValidClientRequest(userSSOID, requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature))
+                    var _ssoServiceAuth = new SignatureService();
+                    if (!_ssoServiceAuth.IsValidClientRequest(userSSOID.ToString(), requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature))
                     {
                         throw new InvalidTokenSignatureException("Session is not valid.");
                     }
