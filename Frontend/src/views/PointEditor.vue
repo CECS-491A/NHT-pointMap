@@ -152,6 +152,7 @@ export default {
     //updates the postion of the marker if the form fields are edited
     updateMarkerPosition: function() {
       //ensures that latitude longitude fields cannot be edited to an empty string
+      //  or longitude/latitude values that cannot exist
       //  this prevents an error caused when updating the marker location
       if(this.point.latitude == "" || this.point.longitude == "" || 
           this.point.latitude < -90 || this.point.latitude > 90 ||
