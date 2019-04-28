@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using ServiceLayer.Services;
 using System;
 using System.Security.Cryptography;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.AccessControl
 {
@@ -34,7 +35,7 @@ namespace ManagerLayer.AccessControl
             var userResponse = _userService.GetUser(user.Id);
             if(userResponse == null)
             {
-                return null;
+                throw new UserNotFoundException("User does not exist. Session can not be created.");
             }
             Session session = new Session();
             session.Token = GenerateSessionToken();
