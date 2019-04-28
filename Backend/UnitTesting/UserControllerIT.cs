@@ -30,7 +30,7 @@ namespace UnitTesting
             var controller = new UserController();
             var user = ut.CreateSSOUserInDb();
             var timestamp = 12312445;
-            var expectedStatusCode = HttpStatusCode.MovedPermanently;
+            var expectedStatusCode = HttpStatusCode.SeeOther;
             MockLoginPayload mock_payload = new MockLoginPayload
             {
                 ssoUserId = user.Id,

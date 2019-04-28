@@ -17,7 +17,7 @@ namespace DTO.KFCSSO_API
     {
         public static HttpResponseMessage ResponseRedirect(ApiController controller, string redirectURL)
         {
-            var redirect = controller.Request.CreateResponse(HttpStatusCode.Moved);
+            var redirect = controller.Request.CreateResponse(HttpStatusCode.SeeOther);
             redirect.Headers.Location = new Uri(redirectURL);
             return redirect;
         }
