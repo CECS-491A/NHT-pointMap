@@ -1,14 +1,11 @@
 ﻿using DataAccessLayer.Database;
-using DTO.DTO;
+using DTO.UserManagementAPI;
 using ManagerLayer.UserManagement;
-using ServiceLayer.Services;
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
 using WebApi_PointMap.ErrorHandling;
-using WebApi_PointMap.Models;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
@@ -59,6 +56,10 @@ namespace WebApi_PointMap.Controllers
                 {
                     return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
                 }
+                catch (UserNotFoundException e)
+                {
+                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                }
                 catch (Exception e)
                 {
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
@@ -94,6 +95,10 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    if (e is UserNotFoundException)
+                    {
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
                     if (e is SessionNotFoundException || e is NoTokenProvidedException)
                     {
                         return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
@@ -144,6 +149,10 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    if (e is UserNotFoundException)
+                    {
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }

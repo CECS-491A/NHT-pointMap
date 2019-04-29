@@ -7,8 +7,8 @@ using System.Web.Http;
 using WebApi_PointMap.Models;
 using System.Net;
 using System.Threading;
-using DTO.DTO;
-using System.Diagnostics;
+using DTO.UserManagementAPI;
+using DTO.KFCSSO_API;
 
 namespace UnitTesting
 {
@@ -210,7 +210,7 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-            UpdateUserRequestDTO userDTO = new UpdateUserRequestDTO
+            var userDTO = new UpdateUserRequestDTO
             {
                 Id = Guid.NewGuid().ToString(),
                 City = newUser.City,
@@ -250,7 +250,7 @@ namespace UnitTesting
                 RequestUri = new Uri(endpoint)
             };
 
-            LoginDTO loginDTO = new LoginDTO
+            var loginDTO = new LoginRequestPayload
             {
                 SSOUserId = Guid.NewGuid().ToString(),
                 Email = "something@email.com",

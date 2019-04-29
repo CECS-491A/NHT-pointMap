@@ -106,6 +106,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\ApplicationUtilityController.cs" />
     <Compile Include="Controllers\ControllerHelpers.cs" />
     <Compile Include="Controllers\PointController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
@@ -122,7 +123,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\UserControllerDTOs.cs" />
     <Compile Include="Models\PointControllerPOCO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
