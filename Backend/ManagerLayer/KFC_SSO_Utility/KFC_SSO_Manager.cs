@@ -5,6 +5,7 @@ using ManagerLayer.AccessControl;
 using ManagerLayer.Logging;
 using ManagerLayer.UserManagement;
 using ManagerLayer.Users;
+using ServiceLayer.KFC_API_Services;
 using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
@@ -27,14 +28,19 @@ namespace ManagerLayer.KFC_SSO_Utility
             _db = db;
         }
 
-        public Session LoginFromSSO(string Username, Guid ssoID, string Signature, string PreSignatureString)
+        public KFC_SSO_Manager()
+        {
+
+        }
+
+        public Session LoginFromSSO(string Username, Guid ssoID, long timestamp, string signature)
         {
             ////////////////////////////////////////
             /// User oAuth at the indivudal application level
             // verify if the login payload is valid via its signature
-            var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
+            var _ssoServiceAuth = new SignatureService();
             loggingManager = new LoggingManager();
-            if (!_ssoServiceAuth.IsValidClientRequest(PreSignatureString, Signature))
+            if (!_ssoServiceAuth.IsValidClientRequest(ssoID.ToString(), Username, timestamp, signature))
             {
                 newLog = new LogRequestDTO(ssoID.ToString(), Username,
                         "Login/Registration API", Username, "Invalid signing attempt",
@@ -64,10 +70,10 @@ namespace ManagerLayer.KFC_SSO_Utility
             
         }
 
-        public static bool DeleteUserFromSSOviaPointmap(User user)
+        public async Task<bool> DeleteUserFromSSOviaPointmap(User user)
         {
-            var _ssoAPI = new KFC_SSO_APIService();
-            var requestResponse = _ssoAPI.DeleteUserFromSSO(user);
+            var _ssoAPI = new SSO_APIService();
+            var requestResponse = await _ssoAPI.DeleteUserFromSSO(user);
             if (requestResponse.IsSuccessStatusCode)
             {
                 return true;

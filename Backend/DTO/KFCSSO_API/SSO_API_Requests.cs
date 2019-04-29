@@ -9,7 +9,6 @@ namespace DTO.KFCSSO_API
 {
     public class SSO_API_Requests
     {
-        
     }
 
     public class LoginRequestPayload
@@ -22,15 +21,6 @@ namespace DTO.KFCSSO_API
         public long Timestamp { get; set; }
         [Required]
         public string Signature { get; set; }
-
-        public string PreSignatureString()
-        {
-            string acc = "";
-            acc += "ssoUserId=" + SSOUserId + ";";
-            acc += "email=" + Email + ";";
-            acc += "timestamp=" + Timestamp + ";";
-            return acc;
-        }
     }
 
     public class DeleteUserFromSSO_DTO
@@ -45,14 +35,5 @@ namespace DTO.KFCSSO_API
         public string SsoUserId { get; set; }
         [Required]
         public long Timestamp { get; set; }
-
-        public string PreSignatureString()
-        {
-            string acc = "";
-            acc += "ssoUserId=" + SsoUserId + ";";
-            acc += "email=" + Email + ";";
-            acc += "timestamp=" + Timestamp + ";";
-            return acc;
-        }
     }
 }

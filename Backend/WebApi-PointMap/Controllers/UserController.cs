@@ -7,8 +7,11 @@ using static ServiceLayer.Services.ExceptionService;
 using ServiceLayer.Services;
 using System.ComponentModel.DataAnnotations;
 using ManagerLayer.KFC_SSO_Utility;
-using ManagerLayer.UserManagement;
+using System.Threading.Tasks;
+using System.Net.Http;
 using DTO.KFCSSO_API;
+using ManagerLayer.UserManagement;
+using ServiceLayer.KFC_API_Services;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -18,7 +21,7 @@ namespace WebApi_PointMap.Controllers
         // POST api/user/login
         [HttpPost]
         [Route("api/user/login")]
-        public IHttpActionResult LoginFromSSO([FromBody] LoginRequestPayload requestPayload)
+        public HttpResponseMessage LoginFromSSO([FromBody] LoginRequestPayload requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
@@ -31,27 +34,34 @@ namespace WebApi_PointMap.Controllers
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     var _ssoLoginManager = new KFC_SSO_Manager(_db);
-                    var loginAttempt = _ssoLoginManager.LoginFromSSO(
+                    // user will get logged in or registered
+                    var loginSession = _ssoLoginManager.LoginFromSSO(
                         requestPayload.Email,
                         userSSOID,
-                        requestPayload.Signature,
-                        requestPayload.PreSignatureString());
+                        requestPayload.Timestamp,
+                        requestPayload.Signature);
 
                     _db.SaveChanges();
 
-                    var redirect = "https://pointmap.net/#/login/?token=" + loginAttempt.Token;
-                    var response = Content(HttpStatusCode.Redirect, redirect);
+                    var redirectURL = "https://pointmap.net/#/login/?token=" + loginSession.Token;
+                    var response = SSOLoginResponse.ResponseRedirect(this, redirectURL);
                     return response;
-                }
-                catch (InvalidTokenSignatureException e)
-                {
-                    var responseAuthError = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                    return responseAuthError;
                 }
                 catch (Exception e)
                 {
-                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-                    return responseInternalError;
+                    var response = new HttpResponseMessage();
+                    if (e is InvalidTokenSignatureException)
+                    {
+                        response = AuthorizationErrorHandler.HandleException(e);
+                        return response;
+                    }
+                    if (e is InvalidGuidException || e is InvalidEmailException)
+                    {
+                        response = GeneralErrorHandler.HandleException(e);
+                        return response;
+                    }
+                    response = DatabaseErrorHandler.HandleException(e, _db);
+                    return response;
                 }
             }
         }
@@ -59,7 +69,7 @@ namespace WebApi_PointMap.Controllers
         // user delete self from pointmap and sso
         [HttpDelete]
         [Route("api/user/deletefromsso")]
-        public IHttpActionResult DeleteFromSSO()
+        public async Task<IHttpActionResult> DeleteFromSSO()
         {
             using (var _db = new DatabaseContext())
             {
@@ -73,7 +83,12 @@ namespace WebApi_PointMap.Controllers
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
-                    var requestSuccessful = KFC_SSO_Manager.DeleteUserFromSSOviaPointmap(user);
+                    if (user == null)
+                    {
+                        return Content(HttpStatusCode.NotFound, "User does not exists.");
+                    }
+                    var _ssoAPIManager = new KFC_SSO_Manager();
+                    var requestSuccessful = await _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);
                     if (requestSuccessful)
                     {
                         _userManager.DeleteUserAndSessions(user.Id);
@@ -165,8 +180,8 @@ namespace WebApi_PointMap.Controllers
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     // check valid signature
-                    var _ssoServiceAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
-                    if (!_ssoServiceAuth.IsValidClientRequest(requestPayload.PreSignatureString(), requestPayload.Signature))
+                    var _ssoServiceAuth = new SignatureService();
+                    if (!_ssoServiceAuth.IsValidClientRequest(userSSOID.ToString(), requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature))
                     {
                         throw new InvalidTokenSignatureException("Session is not valid.");
                     }

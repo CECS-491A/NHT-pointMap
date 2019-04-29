@@ -25,11 +25,6 @@ namespace ManagerLayer.Users
         {
             var _authorizationManager = new AuthorizationManager(_db);
             Session session = _authorizationManager.CreateSession(user);
-
-            LoginManagerResponseDTO response = new LoginManagerResponseDTO
-            {
-                Token = session.Token
-            };
             newLog = new LogRequestDTO(user.Id.ToString(), user.Username,
                         "Login/Registration API", user.Username, "Successful login of user",
                         "Line 59 UserLoginManager in ManagerLayer\n" +

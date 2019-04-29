@@ -6,12 +6,13 @@ using ServiceLayer.Services;
 
 using System.Security.Cryptography;
 using System.Text;
+using ServiceLayer.KFC_API_Services;
 
 namespace UnitTesting
 {
     public class TestingUtils
     {
-        public string Mock_APISecret = KFC_SSO_APIService.APISecret;
+        public string Mock_APISecret = SSO_APIService.APISecret;
 
         public byte[] GetRandomness()
         {
@@ -124,7 +125,7 @@ namespace UnitTesting
 
         public class MockLoginPayload
         {
-            public string Mock_APISecret = KFC_SSO_APIService.APISecret;
+            public string Mock_APISecret = SSO_APIService.APISecret;
 
             public Guid ssoUserId { get; set; }
             public string email { get; set; }
@@ -132,15 +133,9 @@ namespace UnitTesting
 
             public string Signature()
             {
-                string preSignatureString = "";
-                preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
-                preSignatureString += "email=" + email + ";";
-                preSignatureString += "timestamp=" + timestamp + ";";
-
-                HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(Mock_APISecret));
-                byte[] launchPayloadBuffer = Encoding.ASCII.GetBytes(preSignatureString);
-                byte[] signatureBytes = hmacsha1.ComputeHash(launchPayloadBuffer);
-                string signature = Convert.ToBase64String(signatureBytes);
+                var _ssoAuth = new SignatureService();
+                var payload = _ssoAuth.PreparePayload(ssoUserId.ToString(), email, timestamp);
+                var signature = _ssoAuth.Sign(payload);
                 return signature;
             }
 

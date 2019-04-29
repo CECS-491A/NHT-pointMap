@@ -543,8 +543,8 @@ namespace UnitTesting.IntegrationTests
             controller.Request.Headers.Add("token", adminSession.Token);
 
             IHttpActionResult actionresult = controller.CreateNewUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(NegotiatedContentResult<User>));
-            var contentresult = actionresult as NegotiatedContentResult<User>;
+            Assert.IsInstanceOfType(actionresult, typeof(NegotiatedContentResult<string>));
+            var contentresult = actionresult as NegotiatedContentResult<string>;
             Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
 
             // persistence test
