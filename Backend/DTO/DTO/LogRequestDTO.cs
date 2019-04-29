@@ -6,6 +6,9 @@ using DTO.DTOBase;
 
 namespace DTO
 {
+    /// <summary>
+    /// Data Transfer object for log analytics, derived object of BaseLogDTO
+    /// </summary>
     public class LogRequestDTO : BaseLogDTO
     {
         [Required]
@@ -23,6 +26,11 @@ namespace DTO
 
         public string page{ get; private set; }
 
+        /// <summary>
+        /// Constructor for the LogRequestDTO class
+        /// </summary>
+        /// <param name="ssoUserId">A string of a GUID of a User object</param>
+        /// <param name="source">A Constants.Constants.Sources enumeration for the source the error originated</param>
         public LogRequestDTO(string ssoUserId, Constants.Constants.Sources source)
         {
             this.ssoUserId = ssoUserId;
@@ -30,22 +38,36 @@ namespace DTO
             logCreatedAt = DateTime.UtcNow;
         }
 
-        public void setPage(Constants.Constants.Pages page)
-        {
-            this.page = page.ToString();
-        }
-
-        public void setSource(Constants.Constants.Sources source)
-        {
-            this.source = source.ToString();
-        }
-
+        /// <summary>
+        /// Base constructor for the LogRequestDTO object
+        /// </summary>
         public LogRequestDTO()
         {
             logCreatedAt = DateTime.UtcNow;
         }
 
+        /// <summary>
+        /// Setter method converting Constants.Constants.Pages to the equivalent string value
+        /// </summary>
+        /// <param name="source">A Constants.Constants.Pages enumeration for the page the log originated</param>
+        public void setPage(Constants.Constants.Pages page)
+        {
+            this.page = page.ToString();
+        }
 
+        /// <summary>
+        /// Setter method converting Constants.Constants.Sources to the equivalent string value
+        /// </summary>
+        /// <param name="source">A Constants.Constants.Sources enumeration for the source the log originated</param>
+        public void setSource(Constants.Constants.Sources source)
+        {
+            this.source = source.ToString();
+        }
+
+        /// <summary>
+        /// The validation method for LogRequestDTO
+        /// </summary>
+        /// <returns>Returns true if all required fields have been filled properly</returns>
         public override bool isValid()
         {
             ValidationContext context = new ValidationContext(this, serviceProvider: null, items: null); //Creates validation context

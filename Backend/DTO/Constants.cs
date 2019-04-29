@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DTO.Constants
 {
+    /// <summary>
+    /// Holds constant enumerations and values to be accessed from other classes
+    /// </summary>
     public class Constants
     {
 

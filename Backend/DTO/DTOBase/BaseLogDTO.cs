@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DTO.DTOBase
 {
+    /// <summary>
+    /// Base class for all LogDTO objects
+    /// </summary>
     public abstract class BaseLogDTO
     {
         [Required]
