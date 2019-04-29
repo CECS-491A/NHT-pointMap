@@ -26,14 +26,15 @@
     <v-toolbar-title class="white--text">PointMap</v-toolbar-title>
     <v-spacer></v-spacer>
 
-    <v-menu  
+    <v-menu
         bottom 
         offset-y
-        transition="slide-x-transition">
-        <template v-slot:activator="{ on }">
+        transition="slide-x-transition"
+        v-if="stored.state.isLogin">
+        <template v-slot:activator="{on}">
             <v-btn v-on="on" fab dark color="teal">
                 <v-avatar size=40 dark>
-                    <span class="white--text headline">A</span>
+                    <span class="white--text headline">{{stored.state.email[0]}}</span>
                 </v-avatar>
             </v-btn>
         </template>
@@ -42,6 +43,7 @@
                 v-for="(item, i) in this.UserMenuItems"
                 :key="i"
                 v-on:click="item.action"
+                :to="{path: `${item.link}`}"
               >
                 <button>{{item.title}}</button>
             </v-list-tile>
@@ -51,7 +53,9 @@
 </template>
 
 <script>
-import {deleteSession} from '../services/authorizationService'
+import {deleteSession} from '../services/authorizationService';
+import { store, getUser } from '@/services/accountServices';
+
 
 export default {
   name: 'Navbar',
@@ -60,9 +64,30 @@ export default {
         {title: 'Map View', link: "/mapview"}
       ],
       UserMenuItems: [
-          { title: 'Logout', action: deleteSession }
-      ]
+          { title: 'Account', link: '/account'},
+          { title: 'Logout', action: deleteSession, link: '/' }
+      ],
+      user: {},
+      stored: store
   }),
+  updated() {
+    getUser()
+      .then(response => {
+        switch(response.status){
+          case 200:
+            this.user = response.data;
+            break;
+        }
+      })
+  },
+  mounted() {
+    store.isUserLogin()
+      if (store.state.isLogin === true) {
+          store.getEmail();
+          this.stored = store;
+          this.$forceUpdate();
+      }
+  },
   methods:{
     logout(){
       deleteSession()

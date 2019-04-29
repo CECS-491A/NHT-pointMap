@@ -66,7 +66,7 @@ namespace WebApi_PointMap.Controllers
 
         public static Session ValidateAndUpdateSession(DatabaseContext _db, string token)
         {
-            AuthorizationManager _authorizationManager = new AuthorizationManager();
+            AuthorizationManager _authorizationManager = new AuthorizationManager(_db);
             var session = _authorizationManager.ValidateAndUpdateSession(_db, token);
             if (session == null)
             {

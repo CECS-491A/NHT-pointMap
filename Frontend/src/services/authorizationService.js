@@ -33,9 +33,6 @@ function deleteSession(){
             window.location.href = sso_login_url;
         }
     })
-};
-
-export{
-    checkSession,
-    deleteSession
 }
+
+export { checkSession, deleteSession };

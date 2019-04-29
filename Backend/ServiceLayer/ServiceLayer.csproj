@@ -37,7 +37,11 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -56,6 +60,7 @@
     <Compile Include="Interfaces\IDataSerializer.cs" />
     <Compile Include="Interfaces\IOperationService.cs" />
     <Compile Include="Interfaces\IPointService.cs" />
+    <Compile Include="Services\KFC_SSO_APIService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\OperationService.cs" />
     <Compile Include="Interfaces\IPasswordService.cs" />
@@ -78,6 +83,11 @@
       <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
       <Name>DTO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -2,17 +2,17 @@ import axios from "axios";
 import { api_url } from "@/const.js";
 import { deleteSession } from "./authorizationService.js"
 
-function getPoints(minLng, maxLng, minLat, maxLat, callback){
-    let urlString = api_url + '/api/points/'
-    let content = {
-        'headers':{
-            'minLng': minLng,
-            'maxLng': maxLng,
-            'minLat': minLat,
-            'maxLat': maxLat,
-            'token': localStorage.getItem('token')
-        }
+function getPoints(minLng, maxLng, minLat, maxLat, callback) {
+  let urlString = `${api_url}/api/points/`;
+  let content = {
+    headers: {
+      minLng: minLng,
+      maxLng: maxLng,
+      minLat: minLat,
+      maxLat: maxLat,
+      token: localStorage.getItem("token")
     }
+  };
 
     let arr = []
     axios.get(urlString, content).then((response) => {
@@ -33,31 +33,33 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback){
         if(err.response.status == 401){
             deleteSession();
         }
-    })
-    return null;
-};
+      });
+  return null;
+}
 
-function getPoint(pointId, callback){
-    let content = {
-        'headers':{
-            'token': localStorage.getItem('token')
-        }
+function getPoint(pointId, callback) {
+  let content = {
+    headers: {
+      token: localStorage.getItem("token")
     }
-    let arr =[]
-    let urlString = api_url + '/api/point/' + pointId
-    axios.get(urlString, content).then((response) => {
-        let data = response.data;
-        arr.push(data);
-        return callback(arr);
-        
-    }).catch((err) => {
-        console.log(err);
-        if (err.response.status == 401) {
-            deleteSession();
-        }
+  }
+  let arr = [];
+  let urlString = `${api_url}/api/point/` + pointId;
+  axios
+    .get(urlString, content)
+    .then(response => {
+      let data = response.data;
+      arr.push(data);
+      return callback(arr);
     })
-    return null;
-};
+    .catch(err => {
+      console.log(err);
+      if (err.response.status == 401) {
+        deleteSession();
+      }
+    });
+  return null;
+}
 
 function updatePoint(point){
     let content = {

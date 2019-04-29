@@ -28,8 +28,7 @@ namespace WebApi_PointMap.ErrorHandling
                         e is InvalidTokenSignatureException)
             {
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
-                httpResponse.Content = new StringContent(ControllerHelpers.Redirect,
-                Encoding.Unicode);
+                httpResponse.Content = new StringContent(e.Message);
             }
             else if(e is UserIsNotAdministratorException)
             {

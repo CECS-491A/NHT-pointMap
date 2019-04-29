@@ -7,6 +7,7 @@ using ManagerLayer.Login;
 using ManagerLayer.AccessControl;
 using DataAccessLayer.Models;
 using static UnitTesting.TestingUtils;
+using ServiceLayer.Services;
 
 namespace UnitTesting
 {
@@ -17,14 +18,11 @@ namespace UnitTesting
     public class UserLoginManagerUT
     {
         readonly TestingUtils ut;
-        readonly UserLoginManager _loginManager;
-        readonly AuthorizationManager _authManager;
+        public UserLoginManager _loginManager;
 
         public UserLoginManagerUT()
         {
             ut = new TestingUtils();
-            _loginManager = new UserLoginManager();
-            _authManager = new AuthorizationManager();
         }
 
         [TestMethod]
@@ -34,12 +32,20 @@ namespace UnitTesting
             var invalid_username = Guid.NewGuid() + ".com";
             var valid_ssoID = Guid.NewGuid();
             var timestamp = 8283752242;
-            string preSignatureString = ut.GeneratePreSignatureString(valid_ssoID, invalid_username, timestamp);
-            string Signature = ut.GenerateTokenSignature(valid_ssoID, invalid_username, 8283752242);
+
+            MockLoginPayload mock_payload = new MockLoginPayload
+            {
+                email = invalid_username,
+                ssoUserId = valid_ssoID,
+                timestamp = timestamp
+            };
+
+            var signature = mock_payload.Signature();
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                _loginManager.LoginFromSSO(_db, invalid_username, valid_ssoID, Signature, preSignatureString);
+                _loginManager = new UserLoginManager(_db);
+                _loginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, signature);
             }
 
             //Assert - catch exception
@@ -50,6 +56,7 @@ namespace UnitTesting
         {
             using (var _db = ut.CreateDataBaseContext())
             {
+                _loginManager = new UserLoginManager(_db);
                 var user = ut.CreateSSOUserInDb();
                 var timestamp = 8283752242;
                 MockLoginPayload mock_payload = new MockLoginPayload
@@ -59,7 +66,7 @@ namespace UnitTesting
                     timestamp = timestamp
                 };
 
-                var response = _loginManager.LoginFromSSO(_db, user.Username, user.Id, mock_payload.Signature(), mock_payload.PreSignatureString());
+                var response = _loginManager.LoginFromSSO(user.Username, user.Id, timestamp,  mock_payload.Signature());
                 Assert.IsNotNull(response);
             }
         }
@@ -71,11 +78,14 @@ namespace UnitTesting
             var existing_username = existing_user.Username;
             var existing_ssoID = existing_user.Id;
             var timestamp = 12312312;
-            var mock_payload = ut.GenerateLoginPayloadWithSignature(existing_ssoID, existing_username, timestamp);
+            var _ssoAuth = new KFC_SSO_APIService.RequestPayloadAuthentication();
+            var mock_payload = _ssoAuth.PreparePayload(existing_ssoID, existing_username, timestamp);
+            var signature = _ssoAuth.Sign(mock_payload);
 
             using (var _db = ut.CreateDataBaseContext())
             {
-                var response = _loginManager.LoginFromSSO(_db, existing_username, existing_ssoID, mock_payload.Signature(), mock_payload.PreSignatureString());
+                _loginManager = new UserLoginManager(_db);
+                var response = _loginManager.LoginFromSSO(existing_username, existing_ssoID, timestamp, signature);
                 Assert.IsNotNull(response);
             }
         }

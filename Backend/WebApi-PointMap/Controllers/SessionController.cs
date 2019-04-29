@@ -16,28 +16,25 @@ namespace WebApi_PointMap.Controllers
         AuthorizationManager _am;
         DatabaseContext _db;
 
-        public SessionController()
-        {
-            _am = new AuthorizationManager();
-            _db = new DatabaseContext();
-        }
-
         [HttpGet]
         [Route("api/session")]
         public HttpResponseMessage ValidateSession()
         {
-            try
-            { 
-                var token = ControllerHelpers.GetToken(Request);
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                _db.SaveChanges();
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(token, Encoding.Unicode);
-                return response;
-            }
-            catch(Exception e)
+            using (var _db = new DatabaseContext())
             {
-                return DatabaseErrorHandler.HandleException(e, _db);
+                try
+                {
+                    var token = ControllerHelpers.GetToken(Request);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    _db.SaveChanges();
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Content = new StringContent(token, Encoding.Unicode);
+                    return response;
+                }
+                catch (Exception e)
+                {
+                    return DatabaseErrorHandler.HandleException(e, _db);
+                }
             }
         }
 
@@ -45,21 +42,25 @@ namespace WebApi_PointMap.Controllers
         [Route("api/logout/session")]
         public HttpResponseMessage DeleteSession()
         {
-            try
+            using (var _db = new DatabaseContext())
             {
-                var token = ControllerHelpers.GetToken(Request);
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                _am = new AuthorizationManager(_db);
+                try
+                {
+                    var token = ControllerHelpers.GetToken(Request);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                _am.DeleteSession(_db, token);
-                _db.SaveChanges();
-                var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
+                    _am.DeleteSession(_db, token);
+                    _db.SaveChanges();
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
 
-                return response;
-            }
-            catch (Exception e)
-            {
-                return DatabaseErrorHandler.HandleException(e, _db);
+                    return response;
+                }
+                catch (Exception e)
+                {
+                    return DatabaseErrorHandler.HandleException(e, _db);
+                }
             }
         }
     }
