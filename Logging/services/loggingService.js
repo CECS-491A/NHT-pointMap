@@ -4,7 +4,7 @@ module.exports.fillJson = function(keys, data){
     let json = {}
     for(i = 0; i < keys.length; i++){
         let key = keys[i]
-        if(key != 'email' && key != 'logCreatedAt' && key != 'source' && key != 'details' && 
+        if(key != 'logCreatedAt' && key != 'source' && key != 'details' && 
         key != 'signature' && key != 'ssoUserId' && key != 'timestamp')
             json[key] = data[key]; //Adds an unused or required field to the json object
     }

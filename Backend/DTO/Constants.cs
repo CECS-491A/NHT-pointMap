@@ -11,9 +11,6 @@ namespace DTO.Constants
     /// </summary>
     public class Constants
     {
-
-        public Pages page { get; set; }
-
         public enum Pages
         {
             None,
