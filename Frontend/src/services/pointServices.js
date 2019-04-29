@@ -67,7 +67,7 @@ function updatePoint(point){
             'token': localStorage.getItem('token')
         },
     }
-    axios.put(`${api_url}/api/point/${point.Id}`, point, content)
+    axios.put(`${api_url}/api/point`, point, content)
         .then((response) => {
             return response.data;
         

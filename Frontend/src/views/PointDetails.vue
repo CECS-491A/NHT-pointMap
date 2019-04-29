@@ -93,11 +93,11 @@ export default {
          })
      },
      pointEditor: function() {
-      this.$router.push('pointeditor/?pointId=' + this.id);
+       this.$router.push({ path: 'pointeditor', query: { pointId: this.id } });
     }
   },
    beforeMount: function() {
-//      checkSession()
+      checkSession()
       this.getPointDetails()
   },
 }

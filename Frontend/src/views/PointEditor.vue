@@ -34,7 +34,7 @@
         >
           {{error}}
         </v-alert><br />
-        <v-btn color="success" v-on:click="submit">Save Point</v-btn>
+        <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
 
       </v-form>
       <div v-if="loading">
@@ -76,22 +76,27 @@ export default {
         lng: '' 
       },
       point: {
-	longitude: '',
-	latitude: '',
+	      longitude: '',
+	      latitude: '',
         description: '',
-	name: '',
-	id: '',
+	      name: '',
+	      id: '',
         createdAt: null,
         updatedAt: null
       },
       zoom: 18,
-      marker: null
+      marker: null,
+      saveButtonText: "Create Point"
     }
   },
   mounted() {
-//    checkSession();
-    this.getPointData();
-    this.setupMap();
+    checkSession();
+    let promise = new Promise((resolve, reject) => {
+      this.getPointData(resolve);
+    });
+    promise.then(() => {
+      this.setupMap();
+    })
   },
   methods: {
     setupMap: function() {
@@ -183,24 +188,41 @@ export default {
         this.map.panTo(this.map.center);
       }
     },
-    getPointData: function() {
+    getPointData: function(promiseResolve) {
       var pointId = this.$route.query.pointId;
 
       //enters here from point details
-      if(pointId !== undefined) { //needs to be tested
+      if (pointId !== undefined) {
+        this.loadingText = "Loading point data.";
+        this.loading = true;
         this.creatingPoint = false;
-        getPoint(pointId, (point) => {
-          if(arr!=null) {
-            this.point = point; 
+        this.saveButtonText = "Update Point";
+        this.point.id = pointId;
+        
+        getPoint(pointId, (arr) => {
+          if (arr != null) {
+            //sets the local point data
+            this.point.createdAt = arr[0].CreatedAt;
+            this.point.updatedAt = arr[0].UpdatedAt;
+            this.point.name = arr[0].Name;
+            this.point.description = arr[0].Description;
+            this.point.longitude = arr[0].Longitude;
+            this.point.latitude = arr[0].Latitude;
+
+            //sets the center where the map should be loaded
             this.center = {
               lat: this.point.latitude,
               lng: this.point.longitude
             };
           }
-        })
-        this.point.id = pointId;
+          this.loadingText = "";
+          this.loading = false;
+          promiseResolve(); 
+        });
       } else { //enters here from map view
         this.creatingPoint = true;
+        this.saveButtonText = "Create Point";
+        promiseResolve();
       }
     },
     submit: function() {   
@@ -242,7 +264,7 @@ export default {
 
       promise.then(() => {
         //after operation, sends the user back to the mapview
-        this.$router.push('mapview');
+        this.$router.push('/mapview');
       }).catch(err => {
           switch(err.response.status) {
           case 401: 
