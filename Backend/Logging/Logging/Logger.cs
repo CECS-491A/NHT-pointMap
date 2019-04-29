@@ -49,14 +49,14 @@ namespace Logging.Logging
             return new string[] { signature, timestamp };
         }
 
-        public LogRequestDTO initalizeAnalyticsLog(string details, string source, User user = null, 
-            Session session = null, string page = null)
+        public LogRequestDTO initalizeAnalyticsLog(string details, DTO.Constants.Constants.Sources source, User user = null, 
+            Session session = null, DTO.Constants.Constants.Pages page = DTO.Constants.Constants.Pages.None)
         {
             LogRequestDTO newLog = new LogRequestDTO();
             newLog.source = source;
             newLog.details = details;
             newLog.success = true;
-            if(page != null)
+            if(page != DTO.Constants.Constants.Pages.None)
                 newLog.page = page;
             if(session != null)
             {
@@ -74,8 +74,8 @@ namespace Logging.Logging
             return newLog;
         }
 
-        public bool sendErrorLog(string source, string details, string id = null, string email = null, 
-            string page = null, Session session = null)
+        public bool sendErrorLog(DTO.Constants.Constants.Sources source, string details, string id = null, string email = null,
+            DTO.Constants.Constants.Pages page = DTO.Constants.Constants.Pages.None, Session session = null)
         {
             LogRequestDTO newLog = new LogRequestDTO();
             newLog.source = source;

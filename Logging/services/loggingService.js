@@ -1,5 +1,4 @@
-const disk = require('diskusage');
-const os = require('os');
+const mongoose = require('mongoose');
 
 module.exports.fillJson = function(keys, data){
     let json = {}
@@ -24,6 +23,16 @@ module.exports.fillJson = function(keys, data){
     return json
 }
 
-module.exports.checkDiskSpace = function(){
-
+module.exports.checkLogSpace = function(callback){
+    let db = mongoose.connection;
+    db.db.stats({scale: 1024}, (err, stats) => { //bytes are in kilobytes
+        if(err){
+            console.log(err)
+            return callback(false);
+        }else{
+            if(stats['fsUsedSize'] > (stats['fsTotalSize'] + 2048)) //at least two megabytes left before storing a log
+                return callback(false);
+            return callback(true);
+        }
+    })
 }

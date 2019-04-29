@@ -9,7 +9,6 @@ const {GraphQLObjectType,
     GraphQLInt,
     GraphQLFloat
  } = graphql;
-const _ = require('lodash');
 
 let SessionType = new GraphQLObjectType({ //Type used for grabbing user duration data
     name: 'SessionType',
