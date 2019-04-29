@@ -46,17 +46,10 @@ namespace WebApi_PointMap.Controllers
 				var pointId = ControllerHelpers.ParseAndCheckId(guid);     
 				var token = ControllerHelpers.GetToken(Request);
 				session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                newLog = logger.initalizeAnalyticsLog("Session validated at PointController line 48\n" +
-                    "route: GET api/point/{guid}", newLog.sessionSource, session.User, session);
-                logger.sendLogAsync(newLog);
                 Guid id = new Guid(guid);
 
 				var point = _pm.GetPoint(_db, id);
 				_db.SaveChanges();
-
-                newLog = logger.initalizeAnalyticsLog("Request information at Point Details in PointController line 54\n " +
-                    "route: GET api/point/{guid}", newLog.pointDetailsSource, session.User, session, newLog.pointDetailsPage);
-                logger.sendLogAsync(newLog);
 
                 response = Request.CreateResponse(HttpStatusCode.OK);
 				var jsonContent = new JavaScriptSerializer().Serialize(point);
@@ -66,8 +59,6 @@ namespace WebApi_PointMap.Controllers
 			catch (Exception e)
 			{
 				response = PointErrorHandler.HandleException(e, _db);
-                logger.sendErrorLog(newLog.pointDetailsSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, newLog.pointDetailsPage, session);
             }
 
 			return response;
@@ -80,17 +71,10 @@ namespace WebApi_PointMap.Controllers
 		{
 			var token = ControllerHelpers.GetToken(Request);
 			session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-            newLog = logger.initalizeAnalyticsLog("Session validated at PointController line 82\n" +
-                "route: POST api/point/", newLog.sessionSource, session.User, session);
-            logger.sendLogAsync(newLog);
             try
 			{
 				var point = _pm.CreatePoint(_db, pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
 				_db.SaveChanges();
-
-                newLog = logger.initalizeAnalyticsLog("Point Creation for MapView in PointController line 88\n " +
-                    "route: POST api/point/", newLog.pointEditorSource, session.User, session, newLog.pointEditorPage);
-                logger.sendLogAsync(newLog);
 
                 return Ok(point);
 			}
@@ -107,10 +91,6 @@ namespace WebApi_PointMap.Controllers
 			var token = ControllerHelpers.GetToken(Request);
 			session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-            newLog = logger.initalizeAnalyticsLog("Session validated at PointController line 108\n" +
-                "Route: PUT api/point/{guid}", newLog.sessionSource, session.User, session);
-            logger.sendLogAsync(newLog);
-
             Guid id = new Guid(guid);
 			pointPost.Id = id;
 
@@ -121,16 +101,10 @@ namespace WebApi_PointMap.Controllers
 											pointPost.CreatedAt);
 				_db.SaveChanges();
 
-                newLog = logger.initalizeAnalyticsLog("Point Edit for MapView in PointController line 119\n " +
-                    "route: PUT api/point/{guid}", newLog.pointEditorSource, session.User, session, newLog.pointEditorPage);
-                logger.sendLogAsync(newLog);
-
                 return Ok(point);
 			}
 			catch (Exception e)
 			{
-                logger.sendErrorLog(newLog.pointEditorSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, newLog.pointEditorPage, session);
                 return ResponseMessage(PointErrorHandler.HandleException(e, _db));
 			}
 		}
@@ -142,9 +116,6 @@ namespace WebApi_PointMap.Controllers
 			var token = ControllerHelpers.GetToken(Request);
 			session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-            newLog = logger.initalizeAnalyticsLog("Session validated at PointController line 143\n" +
-                "route: Delete api/point/{guid}", newLog.sessionSource, session.User, session);
-            logger.sendLogAsync(newLog);
 
             Guid id = new Guid(guid);
 
@@ -153,16 +124,10 @@ namespace WebApi_PointMap.Controllers
 				_pm.DeletePoint(_db, id);
 				_db.SaveChanges();
 
-                newLog = logger.initalizeAnalyticsLog("Point Deleted for MapView in PointController line 153\n " +
-                    "route: DELETE api/point/{guid}", newLog.pointEditorSource, session.User, session, newLog.pointEditorPage);
-                logger.sendLogAsync(newLog);
-
                 return Ok();
 			}
 			catch (Exception e)
 			{
-                logger.sendErrorLog(newLog.pointEditorSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, newLog.pointEditorPage, session);
                 return ResponseMessage(PointErrorHandler.HandleException(e, _db));
 			}
 		}
@@ -176,8 +141,6 @@ namespace WebApi_PointMap.Controllers
 				var token = ControllerHelpers.GetToken(Request);
 				session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                newLog = logger.initalizeAnalyticsLog("Session validated at PointController line 177\n" +
-                    "Route: GET api/points", newLog.sessionSource, session.User, session);
                 logger.sendLogAsync(newLog);
 
                 var headers = Request.Headers;
@@ -191,10 +154,6 @@ namespace WebApi_PointMap.Controllers
 					float maxLng = float.Parse(headers.GetValues("maxLng").First());
 					float maxLat = float.Parse(headers.GetValues("maxLat").First());
 					pointList = _pm.GetAllPoints(_db, minLat, minLng, maxLat, maxLng);
-
-                    newLog = logger.initalizeAnalyticsLog("Point Deleted for MapView in PointController line 193\n " +
-                    "route: GET api/points/", newLog.mapViewSource, session.User, session, newLog.mapViewPage);
-                    logger.sendLogAsync(newLog);
 							
 					if (pointList != null)
 					{
@@ -208,8 +167,6 @@ namespace WebApi_PointMap.Controllers
 			}
 			catch(Exception e)
 			{
-                logger.sendErrorLog(newLog.mapViewSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, newLog.mapViewPage, session);
                 return PointErrorHandler.HandleException(e, _db);
 			}
 		}

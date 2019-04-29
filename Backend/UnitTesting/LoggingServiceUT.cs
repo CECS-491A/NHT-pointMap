@@ -10,9 +10,10 @@ namespace UnitTesting
     [TestClass]
     public class LoggingServiceUT
     {
-        LogRequestDTO newLog;
         LoggingService _ls;
         TestingUtils _tu;
+        LogRequestDTO newLog;
+        ErrorRequestDTO newError;
 
         User newUser;
         Session newSession;
@@ -20,7 +21,6 @@ namespace UnitTesting
         {
             _ls = new LoggingService();
             _tu = new TestingUtils();
-            newLog = new LogRequestDTO();
 
             newUser = _tu.CreateUserObject();
             newSession = _tu.CreateSessionObject(newUser);
@@ -31,17 +31,14 @@ namespace UnitTesting
         public void notifySystemAdmin()
         {
             newLog = new LogRequestDTO();
-            newLog.source = newLog.adminDashSource;
+            newLog.setSource(DTO.Constants.Constants.Sources.Login);
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
             newLog.sessionUpdatedAt = newSession.UpdatedAt;
             newLog.token = newSession.Token;
-            var auth = _tu.getLogContent(newLog); //[signature, timestamp]
-            newLog.signature = auth[0];
-            newLog.timestamp = auth[1];
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog);
             var content = _ls.getLogContent(newLog);
             bool adminNotified = _ls.notifyAdmin(System.Net.HttpStatusCode.Unauthorized, content);
             Assert.IsTrue(adminNotified);
@@ -51,37 +48,62 @@ namespace UnitTesting
         public void dontNotifySystemAdmin()
         {
             newLog = new LogRequestDTO();
-            newLog.source = newLog.adminDashSource;
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
             newLog.sessionUpdatedAt = newSession.UpdatedAt;
             newLog.token = newSession.Token;
-            var auth = _tu.getLogContent(newLog); //[signature, timestamp]
-            newLog.signature = auth[0];
-            newLog.timestamp = auth[1];
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog); //[signature, timestamp]
             var content = _ls.getLogContent(newLog);
             bool adminNotified = _ls.notifyAdmin(System.Net.HttpStatusCode.OK, content);
             Assert.IsTrue(adminNotified);
         }
 
         [TestMethod]
+        public void ErrorSyncResponse200()
+        {
+            newError = new ErrorRequestDTO();
+            newError.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newError.details = "This is a test error";
+            newError = (ErrorRequestDTO)_tu.getLogContent(newError);
+            var responseStatus = _ls.sendLogSync(newError);
+            Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.OK);
+        }
+
+        [TestMethod]
+        public void ErrorSyncResponse400()
+        {
+            newError = new ErrorRequestDTO();
+            newError.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newError = (ErrorRequestDTO)_tu.getLogContent(newError);
+            var responseStatus = _ls.sendLogSync(newError);
+            Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.BadRequest);
+        }
+
+        [TestMethod]
+        public void ErrorSyncResponse401()
+        {
+            newError = new ErrorRequestDTO();
+            newError.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newError.details = "This is a test error";
+            var responseStatus = _ls.sendLogSync(newError);
+            Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
         public void LogSyncResponse200()
         {
             newLog = new LogRequestDTO();
-            newLog.source = newLog.adminDashSource;
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
             newLog.sessionUpdatedAt = newSession.UpdatedAt;
             newLog.token = newSession.Token;
-            var content = _tu.getLogContent(newLog); //[signature, timestamp]
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog);
             var responseStatus = _ls.sendLogSync(newLog);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.OK);
         }
@@ -91,15 +113,12 @@ namespace UnitTesting
         {
             newLog = new LogRequestDTO(); //Missing Required Source field
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
             newLog.sessionUpdatedAt = newSession.UpdatedAt;
             newLog.token = newSession.Token;
-            var content = _tu.getLogContent(newLog); //[signature, timestamp]
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog); //[signature, timestamp]
             var responseStatus = _ls.sendLogSync(newLog);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.BadRequest);
 
@@ -109,9 +128,8 @@ namespace UnitTesting
         public void LogSyncResponse401()
         {
             newLog = new LogRequestDTO();
-            newLog.source = newLog.adminDashSource;
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
@@ -126,17 +144,14 @@ namespace UnitTesting
         public async Task LogAsyncResponse200()
         {
             newLog = new LogRequestDTO();
-            newLog.source = newLog.adminDashSource;
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
             newLog.sessionUpdatedAt = newSession.UpdatedAt;
             newLog.token = newSession.Token;
-            var content = _tu.getLogContent(newLog); //[signature, timestamp]
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog); //[signature, timestamp]
             var responseStatus = await _ls.sendLogAsync(newLog);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.OK);
 
@@ -147,15 +162,12 @@ namespace UnitTesting
         {
             newLog = new LogRequestDTO(); //Missing Required Source field
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;
             newLog.sessionUpdatedAt = newSession.UpdatedAt;
             newLog.token = newSession.Token;
-            var content = _tu.getLogContent(newLog); //[signature, timestamp]
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog); //[signature, timestamp]
             var responseStatus = await _ls.sendLogAsync(newLog);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.BadRequest);
 
@@ -164,9 +176,8 @@ namespace UnitTesting
         [TestMethod]
         public async Task LogAsyncResponse401()
         {
-            newLog = new LogRequestDTO(); //Missing signature and timestamp
+            newLog = new LogRequestDTO(); //Missing signature, timestamp and salt
             newLog.details = "testing stacktrace";
-            newLog.email = newUser.Username;
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
             newLog.sessionExpiredAt = newSession.ExpiresAt;

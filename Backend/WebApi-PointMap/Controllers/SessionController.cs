@@ -39,9 +39,6 @@ namespace WebApi_PointMap.Controllers
                 {
                     var token = ControllerHelpers.GetToken(Request);
                     session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                    newLog = logger.initalizeAnalyticsLog("Validated and updated Session at SessionController line 35 for " +
-                        "validate session", newLog.sessionSource, session.User, session);
-                    logger.sendLogAsync(newLog); //Sends session log
                     _db.SaveChanges();
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(token, Encoding.Unicode);
@@ -49,9 +46,6 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    logger.sendErrorLog(newLog.sessionSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, null, session);
-
                     return DatabaseErrorHandler.HandleException(e, _db);
                 }
             }
@@ -68,16 +62,9 @@ namespace WebApi_PointMap.Controllers
                 {
                     var token = ControllerHelpers.GetToken(Request);
                     session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                    newLog = logger.initalizeAnalyticsLog("Validated and updated Session at SessionController line 59 " +
-                        "for logout", newLog.sessionSource, session.User, session);
-                    logger.sendLogAsync(newLog); //Sends session log
 
                     _am.DeleteSession(_db, token);
                     _db.SaveChanges();
-
-                    newLog = logger.initalizeAnalyticsLog("Deleted Session at SessionController line 66 for logout line 68\n" +
-                        "route: api/logout/session", newLog.logoutSource, session.User, session);
-                    logger.sendLogAsync(newLog); //Sends logout log
 
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
@@ -86,9 +73,6 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    logger.sendErrorLog(newLog.logoutSource, e.StackTrace, session.User.Id.ToString(),
-                    session.User.Username, null, session);
-
                     return DatabaseErrorHandler.HandleException(e, _db);
                 }
             }

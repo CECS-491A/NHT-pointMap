@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using DTO;
 using ServiceLayer.Services;
 using DataAccessLayer.Models;
+using DTO.DTOBase;
 
 namespace Logging.Logging
 {
@@ -15,11 +16,9 @@ namespace Logging.Logging
             _ls = new LoggingService();
         }
 
-        public bool sendLogSync(LogRequestDTO newLog)
+        public bool sendLogSync(BaseLogDTO newLog)
         {
-            string[] content = getContent(newLog); //Returns [signature, timestamp]
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = getContent(newLog);
             if (newLog.isValid())
             {
                 var responseStatusCode = _ls.sendLogSync(newLog);
@@ -28,11 +27,9 @@ namespace Logging.Logging
             return newLog.isValid();
         }
 
-        public async Task<bool> sendLogAsync(LogRequestDTO newLog)
+        public async Task<bool> sendLogAsync(BaseLogDTO newLog)
         {
-            string[] content = getContent(newLog); //Returns [signature, timestamp]
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = getContent(newLog);
             if (newLog.isValid())
             {
                 var responseStatusCode = await _ls.sendLogAsync(newLog);
@@ -41,65 +38,37 @@ namespace Logging.Logging
             return newLog.isValid();
         }
 
-        private string[] getContent(LogRequestDTO newLog)
+        private BaseLogDTO getContent(BaseLogDTO newLog)
         {
             string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
-            string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email + ";timestamp=" + timestamp + ";";
+            string salt = _ls.GetSalt();
+            string plaintext = "timestamp=" + timestamp + ";salt=" + salt;
             string signature = _ls.GenerateSignature(plaintext);
-            return new string[] { signature, timestamp };
+            newLog.timestamp = timestamp;
+            newLog.salt = salt;
+            newLog.signature = signature;
+            return newLog;
         }
 
-        public LogRequestDTO initalizeAnalyticsLog(string details, DTO.Constants.Constants.Sources source, User user = null, 
-            Session session = null, DTO.Constants.Constants.Pages page = DTO.Constants.Constants.Pages.None)
+        public LogRequestDTO initalizeAnalyticsLog(DTO.Constants.Constants.Sources source, string userId, Session session = null)
         {
-            LogRequestDTO newLog = new LogRequestDTO();
-            newLog.source = source;
-            newLog.details = details;
-            newLog.success = true;
-            if(page != DTO.Constants.Constants.Pages.None)
-                newLog.page = page;
+            LogRequestDTO newLog = new LogRequestDTO(userId, source);
             if(session != null)
             {
                 newLog.sessionCreatedAt = session.CreatedAt;
                 newLog.sessionExpiredAt = session.ExpiresAt;
                 newLog.sessionUpdatedAt = session.UpdatedAt;
                 newLog.token = session.Token;
-            }
-            if(user != null)
-            {
-                newLog.ssoUserId = user.Id.ToString();
-                newLog.email = user.Username;
             }
 
             return newLog;
         }
 
-        public bool sendErrorLog(DTO.Constants.Constants.Sources source, string details, string id = null, string email = null,
-            DTO.Constants.Constants.Pages page = DTO.Constants.Constants.Pages.None, Session session = null)
+        public ErrorRequestDTO initalizeErrorLog(string details, DTO.Constants.Constants.Sources source)
         {
-            LogRequestDTO newLog = new LogRequestDTO();
-            newLog.source = source;
-            newLog.success = false;
-            newLog.details = details;
-            if (id == null)
-                newLog.ssoUserId = "Invalid User";
-            else
-                newLog.ssoUserId = id;
-            if (email == null)
-                newLog.email = "Invalid Email";
-            else
-                newLog.email = email;
-            if (page != null)
-                newLog.page = page;
-            if(session != null)
-            {
-                newLog.sessionCreatedAt = session.CreatedAt;
-                newLog.sessionExpiredAt = session.ExpiresAt;
-                newLog.sessionUpdatedAt = session.UpdatedAt;
-                newLog.token = session.Token;
-            }
+            ErrorRequestDTO newError = new ErrorRequestDTO(details, source);
 
-            return sendLogSync(newLog);
+            return newError;
         }
     }
 }

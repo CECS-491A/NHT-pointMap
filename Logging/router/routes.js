@@ -5,27 +5,28 @@ const {generateSignature} = require ('../services/authorizationService.js')
 const {editData, query} = require('../services/analyticsService.js')
 const fetch = require('isomorphic-fetch')
 const Log = require('../models/log');
+const Error = require('../models/error')
 
-router.post('/log', (req, res) => {
+router.post('/log', (req, res) => { //POST ROUTE FOR ADDING AN ANALYTICS LOG
     if(!req.body){//Check for valid body
         res.status(400).send({'Error': 'Invalid request format'});
         return
     }
 
     let data = req.body
-    if(!data.signature || !data.timestamp || !data.ssoUserId || !data.email){ //Check for needed auth params
+    if(!data.signature || !data.timestamp || !data.salt){ //Check for needed auth params
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;         
     }
-        
-    let signature = generateSignature(data.ssoUserId, data.email, data.timestamp)
+
+    let signature = generateSignature(data.salt, data.timestamp)
 
     if(data.signature != signature){ //Checks if signatures match
         res.status(401).send({'Error': 'Unauthorized Request'});
         return;
     }
 
-    if(!data.ssoUserId || !data.email || !data.logCreatedAt || !data.source || !data.details){ //Checks for required fields
+    if(!data.ssoUserId || !data.logCreatedAt || !data.source){ //Checks for required fields
         res.status(400).send({'Error': 'Missing required request fields'});
         return;
     }
@@ -34,10 +35,8 @@ router.post('/log', (req, res) => {
 
     let newLog = new Log(); //Creates log object
     newLog.json = fillJson(keys, data);//Fills the json object
-    newLog.email = data.email;
     newLog.logCreatedAt = new Date(parseInt(data.logCreatedAt.substr(6)));
     newLog.source = data.source;
-    newLog.details = data.details;
     newLog.ssoUserId = data.ssoUserId;
 
     checkLogSpace((canStore) => { //return boolean through callback function
@@ -47,18 +46,65 @@ router.post('/log', (req, res) => {
                     console.log(err)
                     res.status(500).send({'Error': 'Something went wrong'});
                 }else{ //Successful log creation
+                    console.log(newLog)
                     res.status(200).send(newLog)
                 }
             })
         }else{
-            res.status(503).send({'Error': 'Logging service temporarily unavailable'})
+            res.status(503).send({'Error': 'Logging service temporarily unavailable'}) //Service Unavailable
         }
     })   
 });
 
-router.post('/error')
+router.post('/error', (req, res) => { //POST ROUTE FOR ADDING AN ERROR
+    if(!req.body){//Check for valid body
+        res.status(400).send({'Error': 'Invalid request format'});
+        return
+    }
 
-router.get('/', (req, res) => { //GraphQL query
+    let data = req.body
+    if(!data.signature || !data.timestamp || !data.salt){ //Check for needed auth params
+        res.status(401).send({'Error': 'Unauthorized Request'});
+        return;         
+    }
+    let signature = generateSignature(data.salt, data.timestamp)
+
+    if(data.signature != signature){ //Checks if signatures match
+        res.status(401).send({'Error': 'Unauthorized Request'});
+        return;
+    }
+
+    if(!data.details || !data.logCreatedAt || !data.source){ //Checks for required fields
+        res.status(400).send({'Error': 'Missing required request fields'});
+        return;
+    }
+
+    let keys = Object.keys(data) //gets an array of body param keys
+
+    let newError = new Error(); //Creates log object
+    newError.json = fillJson(keys, data);//Fills the json object
+    newError.logCreatedAt = new Date(parseInt(data.logCreatedAt.substr(6)));
+    newError.source = data.source;
+    newError.details = data.details;
+
+    checkLogSpace((canStore) => { //return boolean through callback function
+        if(canStore){
+            Error.saveError(newError, (err, newError) => { //Saving the log
+                if(err){ //Error saving newError
+                    console.log(err)
+                    res.status(500).send({'Error': 'Something went wrong'});
+                }else{ //Successful log creation
+                    console.log(newError)
+                    res.status(200).send(newError)
+                }
+            })
+        }else{
+            res.status(503).send({'Error': 'Logging service temporarily unavailable'}) //Service Unavailable
+        }
+    })   
+});
+
+router.get('/analytics', (req, res) => { //GET ROUTE FOR ANALYTICS DATA
     fetch(req.protocol + '://' + req.get('host') + req.originalUrl + 'graphql', { //Makes a request for information from graphql
         method:'POST',
         headers: {

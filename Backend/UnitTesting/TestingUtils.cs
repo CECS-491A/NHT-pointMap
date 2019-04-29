@@ -6,6 +6,7 @@ using ServiceLayer.Services;
 using DTO;
 using System.Security.Cryptography;
 using System.Text;
+using DTO.DTOBase;
 
 namespace UnitTesting
 {
@@ -27,7 +28,7 @@ namespace UnitTesting
         {
             LogRequestDTO newLog = new LogRequestDTO();
             LoggingService _ls = new LoggingService();
-            newLog.source = newLog.sessionSource;
+            newLog.setSource(DTO.Constants.Constants.Sources.Session);
             newLog.details = "testing stacktrace";
             Random rand = new Random();
             for (var i = 0; i < 20; i++)
@@ -35,43 +36,35 @@ namespace UnitTesting
                 User newUser = CreateUserObject();
                 Session newSession = CreateSessionObject(newUser);
                 CreateSessionInDb(newSession);
-                newLog.email = newUser.Username;
                 newLog.ssoUserId = newUser.Id.ToString();
                 newLog.logCreatedAt = new DateTime(2018, 11, 21);
-                newLog.page = newLog.pointDetailsPage;
+                newLog.setPage(DTO.Constants.Constants.Pages.PointDetails);
                 for (var j = 0; j < 3; j++)
                 {
-                    newLog.success = true;
-                    newLog.source = newLog.loginSource;
+                    newLog.setSource(DTO.Constants.Constants.Sources.Login);
                     if (j == 0)
                     {
-                        newLog.source = newLog.registrationSource;
-                        newLog.page = newLog.mapViewPage;
+                        newLog.setSource(DTO.Constants.Constants.Sources.Registration);
+                        newLog.setPage( DTO.Constants.Constants.Pages.MapView);
                     }
                     var duration = rand.Next(1, 1000);
-                    if (duration < 100)
-                    {
-                        newLog.success = false;
-                    }
-                    else if(duration < 300){
-                        newLog.page = newLog.adminDashPage;
+                    if(duration < 300){
+                        newLog.setPage(DTO.Constants.Constants.Pages.AdminDash);
                     }
                     else if (duration < 500)
                     {
-                        newLog.page = newLog.pointDetailsPage;
+                        newLog.setPage(DTO.Constants.Constants.Pages.PointDetails);
                     }
                     else if (duration < 700)
                     {
-                        newLog.page = newLog.pointEditorPage;
+                        newLog.setPage(DTO.Constants.Constants.Pages.PointEditor);
                     }
 
                     newLog.sessionCreatedAt = newSession.CreatedAt;
                     newLog.sessionExpiredAt = newSession.ExpiresAt.AddSeconds(duration);
                     newLog.sessionUpdatedAt = newSession.UpdatedAt.AddSeconds(duration);
                     newLog.token = newSession.Token;
-                    var content = getLogContent(newLog); //signature timestamp
-                    newLog.signature = content[0];
-                    newLog.timestamp = content[1];
+                    newLog = (LogRequestDTO)getLogContent(newLog);
                     _ls.sendLogSync(newLog);
                 }
             }
@@ -110,14 +103,17 @@ namespace UnitTesting
             return p;
         }
 
-        public string[] getLogContent(LogRequestDTO newLog)
+        public BaseLogDTO getLogContent(BaseLogDTO newLog)
         {
             LoggingService _ls = new LoggingService();
             string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
-            string plaintext = "ssoUserId=" + newLog.ssoUserId + ";email=" + newLog.email +
-                ";timestamp=" + timestamp + ";";
+            string salt = _ls.GetSalt();
+            string plaintext = "timestamp=" + timestamp + ";salt=" + salt;
             string signature = _ls.GenerateSignature(plaintext);
-            return new string[] { signature, timestamp };
+            newLog.timestamp = timestamp;
+            newLog.salt = salt;
+            newLog.signature = signature;
+            return newLog;
         }
 
         public Point CreatePointInDb()

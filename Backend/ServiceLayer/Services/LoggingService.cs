@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ServiceLayer.Interfaces;
 using System.Threading.Tasks;
@@ -10,34 +8,47 @@ using System.Net;
 using DTO;
 using System.Web.Script.Serialization;
 using System.Security.Cryptography;
+using DTO.DTOBase;
 
 namespace ServiceLayer.Services
 {
     public class LoggingService : ILoggingService
     {
-        //private const string LOG_SERVER_URL = "https://julianjp.com/logging/";
-        private const string LOG_SERVER_URL = "http://localhost:3000/log";
+        //private const string LOG_POST_URL = "https://julianjp.com/logging/log";
+        private const string LOG_POST_URL = "http://localhost:3000/log";
+        private const string ERROR_POST_URL = "http://localhost:3000/error";
         public static string LOGGER_API_SECRET = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP";
 
         public string GenerateSignature(string plaintext)
         {
             HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(LOGGER_API_SECRET));
-            byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);
+            byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);//ASCII or Hex for NIST standard
             byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
             return Convert.ToBase64String(signatureBytes);
         }
 
-        public System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog)
+        public string GetSalt()
         {
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+            var salt = new byte[32]; //Complies with NIST standard of at least 32 bits in length
+            rng.GetBytes(salt);
+
+            return Convert.ToBase64String(salt);
+        }
+
+        public System.Net.HttpStatusCode sendLogSync(BaseLogDTO newLog) //Sends a log synchronously
+        {
+            string tempURL = getURL(newLog);
             try
             {
                 using (var client = new HttpClient())
                 { 
-                    var result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).Result;
+                    var result = client.PostAsync(tempURL, getLogContent(newLog)).Result; //.Result make it sync
                     int attempt = 1;
                     while (!result.IsSuccessStatusCode)
                     {
-                        result = client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).Result;
+                        //Must reinitalize logContent everytime a post attempt is made 
+                        result = client.PostAsync(tempURL, getLogContent(newLog)).Result; 
                         attempt++;
                         if (attempt >= 100)
                         {
@@ -53,17 +64,18 @@ namespace ServiceLayer.Services
             }
         }
 
-        public async Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog)
+        public async Task<System.Net.HttpStatusCode> sendLogAsync(BaseLogDTO newLog)
         {
+            string tempURL = getURL(newLog);
             try
             {
                 using (var client = new HttpClient())
                 {
-                    var result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).ConfigureAwait(false);
+                    var result = await client.PostAsync(tempURL, getLogContent(newLog)).ConfigureAwait(false);
                     int attempt = 1;
                     while (!result.IsSuccessStatusCode)
                     {
-                        result = await client.PostAsync(LOG_SERVER_URL, getLogContent(newLog)).ConfigureAwait(false);
+                        result = await client.PostAsync(tempURL, getLogContent(newLog)).ConfigureAwait(false);
                         attempt++;
                         if (attempt >= 100)
                         {
@@ -79,7 +91,7 @@ namespace ServiceLayer.Services
             }
         }
 
-        public StringContent getLogContent(LogRequestDTO newLog)
+        public StringContent getLogContent(BaseLogDTO newLog) //Turn the log request DTO into a JSON string
         {
             
             var jsonContent = new JavaScriptSerializer().Serialize(newLog);
@@ -124,6 +136,20 @@ namespace ServiceLayer.Services
                 }
             }
             return true;
+        }
+
+        private string getURL(BaseLogDTO newLog)
+        {
+            string tempURL;
+            if (newLog.GetType().Equals(typeof(LogRequestDTO)))
+            {
+                tempURL = LOG_POST_URL;
+            }
+            else
+            {
+                tempURL = ERROR_POST_URL;
+            }
+            return tempURL;
         }
     }
 }

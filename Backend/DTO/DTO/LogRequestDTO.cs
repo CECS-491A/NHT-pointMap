@@ -2,31 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
+using DTO.DTOBase;
 
 namespace DTO
 {
-    public class LogRequestDTO
+    public class LogRequestDTO : BaseLogDTO
     {
         [Required]
         public string ssoUserId { get; set; }
 
-        [Required]
-        public string email { get; set; }
-
-        [Required]
-        public DateTime logCreatedAt { get; set; }
-
-        [Required]
-        public Constants.Constants.Sources source { get; set; }
-
-        [Required]
         public string details { get; set; }
-
-        [Required]
-        public string timestamp { get; set; }
-
-        [Required]
-        public string signature { get; set; }
 
         public string token { get; set; }
 
@@ -36,17 +21,23 @@ namespace DTO
 
         public DateTime sessionExpiredAt { get; set; }
 
-        public Constants.Constants.Pages page{ get; set; }
+        public string page{ get; private set; }
 
-        public bool success { get; set; }        
-
-        public LogRequestDTO(string ssoUserId, string email, string source, string details)
+        public LogRequestDTO(string ssoUserId, Constants.Constants.Sources source)
         {
             this.ssoUserId = ssoUserId;
-            this.email = email;
-            this.source = (Constants.Constants.Sources)Enum.Parse(typeof(Constants.Constants.Sources), source);
-            this.details = details;
+            this.source = source.ToString();
             logCreatedAt = DateTime.UtcNow;
+        }
+
+        public void setPage(Constants.Constants.Pages page)
+        {
+            this.page = page.ToString();
+        }
+
+        public void setSource(Constants.Constants.Sources source)
+        {
+            this.source = source.ToString();
         }
 
         public LogRequestDTO()
@@ -54,7 +45,8 @@ namespace DTO
             logCreatedAt = DateTime.UtcNow;
         }
 
-        public bool isValid()
+
+        public override bool isValid()
         {
             ValidationContext context = new ValidationContext(this, serviceProvider: null, items: null); //Creates validation context
             List<ValidationResult> results = new List<ValidationResult>(); //Initalizes validated results array

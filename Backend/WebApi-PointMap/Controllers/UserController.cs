@@ -55,23 +55,6 @@ namespace WebApi_PointMap.Controllers
                         requestPayload.PreSignatureString());
                     _db.SaveChanges();
 
-                    if (loginAttempt.newUser)
-                    {
-                        newLog = logger.initalizeAnalyticsLog("New user registration in UserController line 40\n" +
-                            "Route: POST api/user/login", newLog.registrationSource);
-                        newLog.ssoUserId = userSSOID.ToString();
-                        newLog.email = requestPayload.Email;
-                        logger.sendLogAsync(newLog);
-                    }
-                    else
-                    {
-                        newLog = logger.initalizeAnalyticsLog("Existing user login in UserController line 40\n" +
-                            "Route: POST api/user/login", newLog.loginSource);
-                        newLog.ssoUserId = userSSOID.ToString();
-                        newLog.email = requestPayload.Email;
-                        logger.sendLogAsync(newLog);
-                    }
-
                     LoginResponseDTO response = new LoginResponseDTO
                     {
                         redirectURL = "https://pointmap.net/#/login/?token=" + loginAttempt.Token
@@ -86,9 +69,6 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    logger.sendErrorLog(newLog.ssoSource, e.StackTrace, userSSOID.ToString(),
-                    requestPayload.Email, null);
-
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }

@@ -14,10 +14,12 @@ namespace UnitTesting
     [TestClass]
     public class LoggingServicesIT
     {
-        LogRequestDTO newLog;
         LoggingService _ls;
         TestingUtils _tu;
         Logger logger;
+        ErrorRequestDTO newError;
+        LogRequestDTO newLog;
+        
 
         User newUser;
         Session newSession;
@@ -26,7 +28,6 @@ namespace UnitTesting
         {
             _tu = new TestingUtils();
             logger = new Logger();
-            newLog = new LogRequestDTO();
 
             newUser = _tu.CreateUserObject();
             newSession = _tu.CreateSessionObject(newUser);
@@ -36,19 +37,9 @@ namespace UnitTesting
         [TestMethod]
         public void validLogRequestDTO()
         {
-            
-
-            newLog = logger.initalizeAnalyticsLog("Testing", newLog.adminDashSource, newUser, newSession);
-            var content = _tu.getLogContent(newLog); //signature timestamp
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
-
-            Assert.IsTrue(newLog.isValid());
-
-            newLog = logger.initalizeAnalyticsLog("Testing", newLog.adminDashSource, newUser);
-            content = _tu.getLogContent(newLog); //signature timestamp
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog = new LogRequestDTO();
+            newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession);
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog); //Valid after initalization and retrieving auth contents
 
             Assert.IsTrue(newLog.isValid());
         }
@@ -57,75 +48,86 @@ namespace UnitTesting
         public void invalidLogRequestDTO()
         {
             newLog = new LogRequestDTO();
-            newLog.email = "julianpoyo+22@gmail.com";
-
-            Assert.IsFalse(newLog.isValid());
-
             newLog.details = "Test details";
-            newLog.ssoUserId = newUser.Id.ToString();
-            newLog.email = newUser.Username;
-            newLog.source = "Invalid Source";
-            var content = _tu.getLogContent(newLog); //signature timestamp
-            newLog.signature = content[0];
-            newLog.timestamp = content[1];
+            newLog.setSource(DTO.Constants.Constants.Sources.Session);
+            newLog = (LogRequestDTO)_tu.getLogContent(newLog);
 
-            Assert.IsFalse(newLog.isValid());
+            Assert.IsFalse(newLog.isValid()); //No userId
         }
 
         [TestMethod]
-        public void sendValidErrorLog()
+        public void sendErrorSyncPass()
         {
-            Assert.IsTrue(logger.sendErrorLog(newLog.sessionSource, "deatils", null, null, null));
-            Assert.IsTrue(logger.sendErrorLog(newLog.sessionSource, "deatils", newUser.Id.ToString(), newUser.Username, null));
+            newError = new ErrorRequestDTO();
+            newError = logger.initalizeErrorLog("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
+            Assert.IsTrue(logger.sendLogSync(newError));
         }
 
         [TestMethod]
-        public void sendInalidErrorLog()
+        public async Task sendErrorAsyncPass()
         {
-            Assert.IsFalse(logger.sendErrorLog("Invalid source", "deatils", null, null, null));
-            Assert.IsFalse(logger.sendErrorLog("Invalid source", "deatils", newUser.Id.ToString(), newUser.Username, null));
+            newError = new ErrorRequestDTO();
+            newError = logger.initalizeErrorLog("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
+            Assert.IsTrue(await logger.sendLogAsync(newError));
+        }
+
+        [TestMethod]
+        public void sendErrorSyncFail()
+        {
+            newError = new ErrorRequestDTO();
+            Assert.IsFalse(logger.sendLogSync(newError));
+        }
+
+        [TestMethod]
+        public async Task sendErrorAsyncFail()
+        {
+            newError = new ErrorRequestDTO();
+            Assert.IsFalse(await logger.sendLogAsync(newError));
         }
 
         [TestMethod]
         public void sendLogSyncPass()
         {
-            newLog = logger.initalizeAnalyticsLog("Testing Log", newLog.adminDashSource, newUser, newSession, newLog.adminDashPage);
-            Assert.IsTrue(logger.sendLogSync(newLog));
-
-            newLog = logger.initalizeAnalyticsLog("Testing Log", newLog.adminDashSource, newUser);
+            newLog = new LogRequestDTO();
+            newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(),
+                newSession);
             Assert.IsTrue(logger.sendLogSync(newLog));
         }
 
         [TestMethod]
-        public void sendLogSyncFail()
+        public void sendLogSyncFail() 
         {
-            newLog = logger.initalizeAnalyticsLog("Testing Log", "Invalid source", newUser, newSession, newLog.adminDashPage);
-            Assert.IsFalse(logger.sendLogSync(newLog));
+            newLog = new LogRequestDTO();
+            newLog.setSource(DTO.Constants.Constants.Sources.Logout);
+            Assert.IsFalse(logger.sendLogSync(newLog));//Missing userId
 
-            newLog = logger.initalizeAnalyticsLog("Testing Log", newLog.adminDashSource, newUser, null, "Invalid page");
-            Assert.IsFalse(logger.sendLogSync(newLog));
+            newLog = new LogRequestDTO();
+            newLog.ssoUserId = newUser.Id.ToString();
+            Assert.IsFalse(logger.sendLogSync(newLog)); //Missing source
         }
 
         [TestMethod]
         public async Task sendLogAsyncPass()
         {
-            newLog = logger.initalizeAnalyticsLog("Testing Log", newLog.adminDashSource, newUser, newSession, 
-                newLog.adminDashPage);
-            Assert.IsTrue(await logger.sendLogAsync(newLog));
-
-            newLog = logger.initalizeAnalyticsLog("Testing Log", newLog.adminDashSource, newUser);
+            newLog = new LogRequestDTO();
+            newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(),
+                newSession);
             Assert.IsTrue(await logger.sendLogAsync(newLog));
         }
 
         [TestMethod]
         public async Task sendLogAsyncFail()
         {
-            newLog = logger.initalizeAnalyticsLog("Testing Log", "Invalid source", newUser, newSession, 
-                newLog.adminDashPage);
-            Assert.IsFalse(await logger.sendLogAsync(newLog));
+            newLog = new LogRequestDTO();
+            newLog.setSource(DTO.Constants.Constants.Sources.Logout);
+            Assert.IsFalse(logger.sendLogSync(newLog));
+            Assert.IsFalse(await logger.sendLogAsync(newLog)); //Missing UserId
 
-            newLog = logger.initalizeAnalyticsLog("Testing Log", newLog.adminDashSource, newUser, null, "Invalid page");
-            Assert.IsFalse(await logger.sendLogAsync(newLog));
+
+            newLog = new LogRequestDTO();
+            newLog.ssoUserId = newUser.Id.ToString();
+            Assert.IsFalse(logger.sendLogSync(newLog));
+            Assert.IsFalse(await logger.sendLogAsync(newLog)); //Missing Source
         }
     }
 }

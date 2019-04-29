@@ -13,7 +13,7 @@ namespace ServiceLayer.Services
 {
     public class AnalyticsService : IAnalyticsService
     {
-        private const string ANALYTICS_SERVER_URL = "https://julianjp.com/logging/";
+        private const string ANALYTICS_SERVER_URL = "https://julianjp.com/logging/analytics";
 
         public HttpResponseMessage getAnalyticsData()
         {
