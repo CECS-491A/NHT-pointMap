@@ -60,7 +60,8 @@
     <Compile Include="Interfaces\IDataSerializer.cs" />
     <Compile Include="Interfaces\IOperationService.cs" />
     <Compile Include="Interfaces\IPointService.cs" />
-    <Compile Include="Services\KFC_SSO_APIService.cs" />
+    <Compile Include="KFC_API_Services\SignatureService.cs" />
+    <Compile Include="KFC_API_Services\SSO_APIService.cs" />
     <Compile Include="Services\LoggingService.cs" />
     <Compile Include="Services\OperationService.cs" />
     <Compile Include="Interfaces\IPasswordService.cs" />

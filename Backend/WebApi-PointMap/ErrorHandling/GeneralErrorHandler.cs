@@ -24,6 +24,11 @@ namespace WebApi_PointMap.ErrorHandling
                 httpResponse.StatusCode = HttpStatusCode.NotFound;
                 httpResponse.Content = new StringContent(e.Message);
             }
+            else if(e is UserAlreadyExistsException)
+            {
+                httpResponse.StatusCode = HttpStatusCode.Conflict;
+                httpResponse.Content = new StringContent(e.Message);
+            }
             else
             {
                 throw new Exception(e.Message, e);

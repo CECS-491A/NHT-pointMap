@@ -13,8 +13,8 @@ namespace WebApi_PointMap.Controllers
 {
     public class SessionController : ApiController
     {
-        AuthorizationManager _am;
-        DatabaseContext _db;
+        private AuthorizationManager _am;
+        private DatabaseContext _db;
 
         public SessionController()
         {

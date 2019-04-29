@@ -1,8 +1,6 @@
 <template>
     <div class="publish-wrapper">
-        
-        <h1>Publish Your Application</h1>
-
+        <h1>Update Pointmap - SSO</h1>
         <br />
         <v-form>
         <v-text-field
@@ -12,15 +10,17 @@
             type="key"
             label="API Key" 
             v-if="!validation"
-            /><br />
-        <v-text-field
-            name="title"
-            id="title"
-            v-model="title"
-            type="title"
-            label="Application Title" 
-            v-if="!validation"
-            /><br />
+            :loading="retrievingKey"
+            :readonly="true"
+            >
+            </v-text-field>     
+              <v-btn 
+                id="generatekey" 
+                color="success" 
+                small
+                v-on:click="generateKey">Generate Key</v-btn>       
+            <br />
+            <br/>
         <v-textarea
             name="description"
             id="description"
@@ -46,8 +46,6 @@
             label="Application Under Maintenance"
             v-if="!validation">
         </v-switch>
-
-        
         <v-alert
             :value="error"
             id="error"
@@ -61,27 +59,30 @@
             <h3>Successful Publish!</h3>
             <p>{{ validation }}</p>
         </div>
-
         <br />
-
         <v-btn id="btnPublish" color="success" v-if="!validation" v-on:click="publish">Publish</v-btn>
-
         </v-form>
     </div>
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
+import { generateApiKey, updateApplicationInformation } from '@/services/kfcSSOServices';
+
 export default {
   data () {
     return {
       validation: null,
+      retrievingKey: false,
       key: '',
-      title: '',
-      description: '',
-      logoUrl: '',
+      title: 'Pointmap',
+      adminEmail: 'admin@pointmap.com',
+      description: 'Hello World, from Pointmap',
+      logoUrl: 'https://media-hearth.cursecdn.com/avatars/thumbnails/245/497/55/55/635739598851922201.png',
       underMaintenance: false,
-      error: ''
+      error: '',
+      loading: true,
+      loadingText: ''
     }
   },
   methods: {
@@ -91,25 +92,32 @@ export default {
         this.error = "Fields Cannot Be Left Blank.";
       }
       if (this.error) return;
-      const url = 'https://api.kfc-sso.com/api/applications/publish'
-      axios.post(url, {
-        key: document.getElementById('key').value,
-        title: document.getElementById('title').value,
-        description: document.getElementById('description').value,
-        logoUrl: document.getElementById('logoUrl').value,
-        underMaintenance: document.getElementById('underMaintenance').value,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
+      updateApplicationInformation(this.key, this.title, this.description, this.logoUrl, this.underMaintenance)
         .then(response => {
-          this.validation = response.data // Retrieve validation message from response
+          this.validation = response.data.message // Retrieve validation message from response
         })
         .catch(err => {
           this.error = err.response.data
         })
-    }
+        .finally(() => {
+          this.loading = false;
+        })
+    },
+    generateKey: function() {
+      this.key = '';
+      this.retrievingKey = true;
+      generateApiKey(this.title, this.adminEmail)
+        .then(response => {
+          this.key = response.data.Key;
+        })
+        .catch(err => {
+          this.key = err.response.message;
+        })
+        .finally( () => {
+          this.retrievingKey = false;
+        }
+        )
+      }
   }
 }
 </script>
