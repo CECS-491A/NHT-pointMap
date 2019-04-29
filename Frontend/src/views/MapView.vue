@@ -1,8 +1,9 @@
 <template>
   <div>
     <div v-on:click="requestPoints" id="map"></div> 
-    <v-btn fab dark color="teal" id="addPointBtn">
-      <v-icon v-on:click="createPoint">add</v-icon>
+    <v-btn v-on:click="createPoint" fab dark color="teal" 
+id="addPointBtn">
+      <v-icon>add</v-icon>
     </v-btn>
   </div>
 </template>
@@ -37,7 +38,7 @@ export default {
     }
   },
   mounted: function () {
-    checkSession()
+    //checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom,
@@ -131,7 +132,7 @@ export default {
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     },
     createPoint(){ //called when add point button is clicked
-      this.$router.push('pointeditor');
+	this.$router.push('pointeditor');
     }
   }  
 };

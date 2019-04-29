@@ -38,8 +38,8 @@ namespace WebApi_PointMap.Controllers
             try
             { 
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);     
-                var token = ControllerHelpers.GetToken(Request);
-                ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                //var token = ControllerHelpers.GetToken(Request);
+               // ControllerHelpers.ValidateAndUpdateSession(_db, token);
                 Guid id = new Guid(guid);
 
                 var point = _pm.GetPoint(_db, id);
@@ -63,8 +63,8 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointPOST pointPost)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
+           // var token = ControllerHelpers.GetToken(Request);
+            //ControllerHelpers.ValidateAndUpdateSession(_db, token);
             try
             {
                 var point = _pm.CreatePoint(_db, pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
@@ -83,11 +83,11 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point/{guid}")]
         public IHttpActionResult Put(string guid, [FromBody] PointPOST pointPost)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
+            //var token = ControllerHelpers.GetToken(Request);
+            //ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
             Guid id = new Guid(guid);
-            pointPost.Id = id;
+            //pointPost.Id = id;
 
             try
             {
@@ -108,8 +108,8 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
         {
-            var token = ControllerHelpers.GetToken(Request);
-            ControllerHelpers.ValidateAndUpdateSession(_db, token);
+            //var token = ControllerHelpers.GetToken(Request);
+            //ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
             Guid id = new Guid(guid);
 
@@ -132,9 +132,9 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = ControllerHelpers.GetToken(Request);
+                //var token = ControllerHelpers.GetToken(Request);
 
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+               // var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                 var headers = Request.Headers;
 

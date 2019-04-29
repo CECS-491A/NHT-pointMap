@@ -64,9 +64,8 @@ function updatePoint(point){
         'headers':{
             'token': localStorage.getItem('token')
         },
-        'body': point
     }
-    axios.put(`${api_url}/api/point/${point.Id}`, content)
+    axios.put(`${api_url}/api/point/${point.Id}`, point, content)
         .then((response) => {
             return response.data;
         
@@ -84,9 +83,8 @@ function createPoint(point){
         'headers':{
             'token': localStorage.getItem('token')
         },
-        'body': point
     }
-    axios.post(`${api_url}/api/point`, content)
+    axios.post(`${api_url}/api/point`, point, content)
         .then((response) => {
             return response.data;
             

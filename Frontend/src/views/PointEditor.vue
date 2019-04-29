@@ -76,11 +76,11 @@ export default {
         lng: '' 
       },
       point: {
-        id: '',
-        name: '',
+	longitude: '',
+	latitude: '',
         description: '',
-        latitude: '',
-        longitude: '',
+	name: '',
+	id: '',
         createdAt: null,
         updatedAt: null
       },
@@ -89,7 +89,7 @@ export default {
     }
   },
   mounted() {
-    checkSession();
+//    checkSession();
     this.getPointData();
     this.setupMap();
   },
