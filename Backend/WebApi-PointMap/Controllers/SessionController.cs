@@ -42,6 +42,10 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(token, Encoding.Unicode);
+
+                    newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.Login, session.UserId.ToString(), session);
+                    logger.sendLogAsync(newLog);
+
                     return response;
                 }
                 catch (Exception e)

@@ -4,7 +4,7 @@ const {fillJson, checkLogSpace} = require('../services/loggingService')
 const {generateSignature} = require ('../services/authorizationService.js')
 const {editData, query} = require('../services/analyticsService.js')
 const fetch = require('isomorphic-fetch')
-const Log = require('../models/log');
+const Log = require('../models/log')
 const Error = require('../models/error')
 
 router.post('/log', (req, res) => { //POST ROUTE FOR ADDING AN ANALYTICS LOG

@@ -40,7 +40,7 @@ namespace WebApi_PointMap.Controllers
 		public HttpResponseMessage Get(string guid)
 		{
 			HttpResponseMessage response;
-
+            
 			try
 			{ 
 				var pointId = ControllerHelpers.ParseAndCheckId(guid);     

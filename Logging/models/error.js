@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-let errorSchema = mongoose.Schema({
+const errorSchema = mongoose.Schema({
     details: {
         type: String,
         required: true

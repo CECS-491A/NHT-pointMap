@@ -20,7 +20,7 @@ namespace ServiceLayer.Services
         //private const string LOG_POST_URL = "https://julianjp.com/logging/log";
         private const string LOG_POST_URL = "http://localhost:3000/log";
         private const string ERROR_POST_URL = "http://localhost:3000/error";
-        public static string LOGGER_API_SECRET = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP";
+        private readonly string LOGGER_API_SECRET = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP";
 
         /// <summary>
         /// Generates a signature to authenticate logging request using SHA256 and HMAC
@@ -29,9 +29,10 @@ namespace ServiceLayer.Services
         /// <returns>Returns a hash in base64</returns>
         public string GenerateSignature(string plaintext)
         {
-            HMACSHA256 hmacsha1 = new HMACSHA256(Encoding.ASCII.GetBytes(LOGGER_API_SECRET));
+            var hmacsha256 = new HMACSHA256(Encoding.ASCII.GetBytes(LOGGER_API_SECRET));
             byte[] SignatureBuffer = Encoding.ASCII.GetBytes(plaintext);//ASCII or Hex for NIST standard
-            byte[] signatureBytes = hmacsha1.ComputeHash(SignatureBuffer);
+            byte[] signatureBytes = hmacsha256.ComputeHash(SignatureBuffer);
+
             return Convert.ToBase64String(signatureBytes);
         }
 
@@ -75,7 +76,7 @@ namespace ServiceLayer.Services
                     return result.StatusCode;
                 }
             }
-            catch (System.AggregateException)
+            catch (Exception)
             {
                 return System.Net.HttpStatusCode.InternalServerError;
             }
