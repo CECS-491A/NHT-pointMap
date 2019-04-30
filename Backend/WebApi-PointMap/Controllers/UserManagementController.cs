@@ -33,18 +33,7 @@ namespace WebApi_PointMap.Controllers
                     var user = _userManager.GetUser(session.UserId);
                     if (user.IsAdministrator)
                     {
-                        var users = _db.Users
-                        .Select(u => new GetAllUsersResponseDataItem
-                        {
-                            id = u.Id,
-                            username = u.Username,
-                            manager = u.ManagerId,
-                            city = u.City,
-                            state = u.State,
-                            country = u.Country,
-                            disabled = u.Disabled,
-                            isAdmin = u.IsAdministrator
-                        }).ToList();
+                        var users = _userManager.GetUsers();
                         _db.SaveChanges();
                         var responseUsers = Content(HttpStatusCode.OK, users);
                         return responseUsers;
@@ -143,7 +132,7 @@ namespace WebApi_PointMap.Controllers
                     {
                         _userManager.DeleteUser(UserId);
                         _db.SaveChanges();
-                        var responseDeleted = Content(HttpStatusCode.OK, "User was delted.");
+                        var responseDeleted = Content(HttpStatusCode.OK, "User was deleted.");
                         return responseDeleted;
                     }
                     else
@@ -249,6 +238,7 @@ namespace WebApi_PointMap.Controllers
                     var user = _userManager.GetUser(session.UserId);
                     if (user.IsAdministrator)
                     {
+                        // throws exception, invalid username, invalid manager guid
                         var newUser = _userManager.CreateUser(payload);
                         _db.SaveChanges();
                         var responseCreated = Content(HttpStatusCode.Created, "User created.");

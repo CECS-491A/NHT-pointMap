@@ -363,56 +363,7 @@ namespace UnitTesting.IntegrationTests
             Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
         }
 
-        [TestMethod]
-        public void UpdateUser_InvalidModelPayload_400()
-        {
-            var controller = new UserManagementController();
-            var admin = _ut.CreateUserObject();
-            admin.IsAdministrator = true;
-            var adminSession = _ut.CreateSessionObject(admin);
-            _ut.CreateSessionInDb(adminSession);
-            var existingUser = _ut.CreateUserInDb();
-
-            // modify user 
-            var modifiedUser = _ut.CreateUserObject();
-            modifiedUser.Id = existingUser.Id;
-            modifiedUser.IsAdministrator = existingUser.IsAdministrator;
-            modifiedUser.Disabled = true;
-            modifiedUser.City = "Long Beach";
-
-            // mock payload - missing isAdmin and manager attribute
-            var mock_payload = new UpdateUserRequestDTO
-            {
-                Id = modifiedUser.Id.ToString(),
-                City = modifiedUser.City,
-                State = modifiedUser.State,
-                Country = modifiedUser.Country,
-                Disabled = modifiedUser.Disabled
-            };
-
-            var expectedStatusCode = HttpStatusCode.BadRequest;
-
-            var endpoint = API_Route_Local + "/user/update";
-            controller.Request = new HttpRequestMessage
-            {
-                RequestUri = new Uri(endpoint)
-            };
-            controller.Request.Headers.Add("token", adminSession.Token);
-
-            IHttpActionResult actionresult = controller.UpdateUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
-
-            // persistence test
-            using (var _db = _ut.CreateDataBaseContext())
-            {
-                var getUser = _db.Users.Find(modifiedUser.Id);
-                Assert.AreNotEqual(existingUser, getUser);
-                Assert.AreEqual(existingUser.Id, getUser.Id);
-                Assert.AreEqual(existingUser.IsAdministrator, getUser.IsAdministrator);
-            }
-        }
+      
 
         [TestMethod]
         public void UpdateUser_NonexistingManager_404()

@@ -1,9 +1,10 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
-using DTO.DTO;
 using DTO.UserManagementAPI;
 using ServiceLayer.Services;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.UserManagement
@@ -60,13 +61,20 @@ namespace ManagerLayer.UserManagement
                 var newUser = CreateUser(user.Username, newUserId);
                 if (user.Manager != "")
                 {
-                    var managerId = Guid.Parse(user.Manager);
-                    var manager = _userService.GetUser(managerId);
-                    if (manager == null)
+                    try
                     {
-                        throw new UserNotFoundException("Manager does not exist.");
+                        var managerId = Guid.Parse(user.Manager);
+                        var manager = _userService.GetUser(managerId);
+                        if (manager == null)
+                        {
+                            throw new UserNotFoundException("Manager does not exist.");
+                        }
+                        newUser.ManagerId = managerId;
                     }
-                    newUser.ManagerId = managerId;
+                    catch (FormatException)
+                    {
+                        throw new InvalidGuidException("Invalid Manager ID.");
+                    }
                 }
                 newUser.IsAdministrator = user.IsAdmin;
                 newUser.City = user.City;
@@ -79,7 +87,7 @@ namespace ManagerLayer.UserManagement
             }
             catch (FormatException)
             {
-                throw new InvalidEmailException("Invalid username.");
+                throw new InvalidEmailException("Invalid Username.");
             }
         }
 
@@ -112,7 +120,7 @@ namespace ManagerLayer.UserManagement
             user.Disabled = requestChanges.Disabled;
             user.IsAdministrator = requestChanges.IsAdmin;
             user.ManagerId = null;
-            if (requestChanges.Manager != "")
+            if (requestChanges.Manager != "" && requestChanges.Manager != null)
             {
                 // check if manager id is valid ssoid
                 Guid managerId;
@@ -145,6 +153,23 @@ namespace ManagerLayer.UserManagement
         {
             var user = _userService.GetUser(email);
             return user;
+        }
+
+        public List<GetAllUsersResponseDataItem> GetUsers()
+        {
+            var users = _db.Users
+                .Select(u => new GetAllUsersResponseDataItem
+                {
+                    id = u.Id,
+                    username = u.Username,
+                    manager = u.ManagerId,
+                    city = u.City,
+                    state = u.State,
+                    country = u.Country,
+                    disabled = u.Disabled,
+                    isAdmin = u.IsAdministrator
+                }).ToList();
+            return users;
         }
 
         public void DisableUser(User user)
