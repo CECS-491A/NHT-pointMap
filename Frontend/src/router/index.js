@@ -6,6 +6,7 @@ import Dashboard from '../views/Dashboard'
 import AdminDashboard from '../views/AdminDashboard'
 import MapView from '../views/MapView'
 import PointDetails from '../views/PointDetails'
+import PointEditor from '../views/PointEditor'
 import Account from '@/views/Account'
 
 Vue.use(Router)
@@ -36,6 +37,11 @@ export default new Router({
       path: '/pointdetails',
       name: 'PointDetails',
       component: PointDetails
+    },
+    {
+      path: '/pointeditor',
+      name: 'PointEditor',
+      component: PointEditor
     },
     {
       path: '/account',
