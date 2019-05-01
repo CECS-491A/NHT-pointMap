@@ -1,7 +1,6 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -19,7 +18,9 @@ namespace DataAccessLayer.Repositories
         {
             if (point.Longitude > 180 || point.Longitude < -180 ||
                 point.Latitude > 90 || point.Latitude < -90)
+            {
                 throw new ArgumentOutOfRangeException();
+            }
         }
 
         public Point CreatePoint(Point point)
@@ -42,7 +43,8 @@ namespace DataAccessLayer.Repositories
 
         public Point GetPoint(Guid Id)
         {
-            return _db.Points.Find(Id);
+            var point = _db.Points.Find(Id);
+            return point;
         }
 
         public Point UpdatePoint(Point point)
@@ -68,7 +70,9 @@ namespace DataAccessLayer.Repositories
                 .Where(p => p.Id == Id)
                 .FirstOrDefault<Point>();
             if (point == null)
+            {
                 return null;
+            }
             point.UpdatedAt = DateTime.UtcNow;
             _db.Points.Remove(point);
             return point;

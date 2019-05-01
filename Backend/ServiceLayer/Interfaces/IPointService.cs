@@ -8,7 +8,6 @@ namespace ServiceLayer.Services
     {
         Point CreatePoint(Point point);
         Point DeletePoint(Guid Id);
-        Point GetPoint(float longitude, float latitude);
         Point GetPoint(Guid Id);
         Point UpdatePoint(Point point);
     }

@@ -34,7 +34,8 @@ namespace ManagerLayer
 
         public Point GetPoint(Guid pointId)
         {
-            return _ps.GetPoint(pointId);
+            var point = _ps.GetPoint(pointId);
+            return point;
         }
 
         public Point UpdatePoint(Guid pointId, float longitude, float latitude, 

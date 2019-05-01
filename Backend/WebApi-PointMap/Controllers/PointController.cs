@@ -6,9 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net;
 using System.Text;
-using ManagerLayer.AccessControl;
 using System.Web.Script.Serialization;
-using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
@@ -36,9 +34,8 @@ namespace WebApi_PointMap.Controllers
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);     
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                Guid id = new Guid(guid);
 
-                var point = _pm.GetPoint(id);
+                var point = _pm.GetPoint(pointId);
                 _db.SaveChanges();
 
                 return Ok(point);
@@ -80,9 +77,9 @@ namespace WebApi_PointMap.Controllers
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                Guid id = ControllerHelpers.ParseAndCheckId(pointId);
+                var pointGuid = ControllerHelpers.ParseAndCheckId(pointId);
 
-                var point = _pm.UpdatePoint(id, pointPost.Longitude, pointPost.Latitude,
+                var point = _pm.UpdatePoint(pointGuid, pointPost.Longitude, pointPost.Latitude,
                                             pointPost.Description, pointPost.Name,
                                             pointPost.CreatedAt);
 
@@ -110,9 +107,9 @@ namespace WebApi_PointMap.Controllers
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                var id = new Guid(guid);
+                var pointId = ControllerHelpers.ParseAndCheckId(guid);
 
-                _pm.DeletePoint(id);
+                _pm.DeletePoint(pointId);
                 _db.SaveChanges();
 
                 return Ok();

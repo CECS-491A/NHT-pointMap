@@ -45,28 +45,28 @@ namespace ManagerLayer.AccessControl
 
         public Session ValidateAndUpdateSession(string token)
         {
-            var response = _sessionService.ValidateSession(token);
+            var session = _sessionService.ValidateSession(token);
 
-            if(response != null)
+            if(session != null)
             {
-                response = _sessionService.UpdateSession(response);
+                session = _sessionService.UpdateSession(session);
             }
 
-            return response;
+            return session;
         }
 
         public Session ExpireSession(string token)
         {
-            var response = _sessionService.ExpireSession(token);
+            var session = _sessionService.ExpireSession(token);
 
-            return response;
+            return session;
         }
 
         public Session DeleteSession(string token)
         {
-            var response = _sessionService.DeleteSession(token);
+            var session = _sessionService.DeleteSession(token);
 
-            return response;
+            return session;
         }
     }
 }

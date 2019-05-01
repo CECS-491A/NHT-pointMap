@@ -155,20 +155,20 @@ namespace UnitTesting
             var expectedResult = newSession;
 
             // ACT
-                newSession = ss.CreateSession(newSession, newUser.Id);
-                _db.SaveChanges();
-                newSession.CreatedAt = newSession.CreatedAt.AddYears(60);
-                var response = ss.UpdateSession(newSession);
-                _db.SaveChanges();
-                var result = _db.Sessions.Find(expectedResult.Id);
+            newSession = ss.CreateSession(newSession, newUser.Id);
+            _db.SaveChanges();
+            newSession.CreatedAt = newSession.CreatedAt.AddYears(60);
+            var response = ss.UpdateSession(newSession);
+            _db.SaveChanges();
+            var result = _db.Sessions.Find(expectedResult.Id);
 
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.IsNotNull(result);
-                Assert.AreEqual(result.Id, expectedResult.Id);
-                Assert.AreEqual(result.UpdatedAt, expectedResult.UpdatedAt);
-                Assert.AreEqual(result.ExpiresAt, expectedResult.ExpiresAt);
-                Assert.AreNotEqual(result.CreatedAt, expectedResultTime);
+            // Assert
+            Assert.IsNotNull(response);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(result.Id, expectedResult.Id);
+            Assert.AreEqual(result.UpdatedAt, expectedResult.UpdatedAt);
+            Assert.AreEqual(result.ExpiresAt, expectedResult.ExpiresAt);
+            Assert.AreNotEqual(result.CreatedAt, expectedResultTime);
         }
 
         [TestMethod]
@@ -180,61 +180,22 @@ namespace UnitTesting
             Session expectedResult = newSession;
 
             // ACT
-            using (_db = tu.CreateDataBaseContext())
+            var response = ss.UpdateSession(newSession);
+            try
             {
-                var response = ss.UpdateSession(newSession);
-                try
-                {
-                    _db.SaveChanges();
-                }
-                catch (Exception)
-                {
-                    // catch error
-                    // rollback changes
-                    _db.Entry(newSession).State = System.Data.Entity.EntityState.Detached;
-                }
-                var result = _db.Sessions.Find(expectedResult.Id);
-
-                // Assert
-                Assert.IsNotNull(response);
-                Assert.IsNull(result);
+                _db.SaveChanges();
             }
-        }
-
-        [TestMethod]
-        public void Get_Session_Success()
-        {
-            // Arrange 
-            newUser = tu.CreateUserObject();
-            newSession = tu.CreateSessionObject(newUser);
-            var expectedResult = newSession;
-
-            // ACT
-            newSession = ss.CreateSession(newSession, newUser.Id);
-            _db.SaveChanges();
-            var result = ss.GetSession(newSession.Token);
+            catch (Exception)
+            {
+                // catch error
+                // rollback changes
+                _db.Entry(newSession).State = System.Data.Entity.EntityState.Detached;
+            }
+            var result = _db.Sessions.Find(expectedResult.Id);
 
             // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expectedResult.Id, result.Id);
-        }
-
-        [TestMethod]
-        public void Get_Session_NonExisting()
-        {
-            // Arrange
-            string nonExistingToken = Guid.NewGuid().ToString();
-            Session expectedResult = null;
-
-            // Act
-            using (_db = tu.CreateDataBaseContext())
-            {
-                var result = ss.GetSession(nonExistingToken);
-
-                // Assert
-                Assert.IsNull(result);
-                Assert.AreEqual(expectedResult, result);
-            }
+            Assert.IsNull(response);
+            Assert.IsNull(result);
         }
 
         [TestMethod]

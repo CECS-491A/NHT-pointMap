@@ -33,17 +33,14 @@ namespace ServiceLayer.Services
 
         public Point DeletePoint(Guid Id)
         {
-            return _PointRepo.DeletePoint(Id);
-        }
-
-        public Point GetPoint(float longitude, float latitude)
-        {
-            return _PointRepo.GetPoint(longitude, latitude);
+            var point = _PointRepo.DeletePoint(Id);
+            return point;
         }
 
         public Point GetPoint(Guid Id)
         {
-            return _PointRepo.GetPoint(Id);
+           var point = _PointRepo.GetPoint(Id);
+            return point;
         }
 
         public Point UpdatePoint(Point point)

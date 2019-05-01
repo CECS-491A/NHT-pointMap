@@ -19,17 +19,20 @@ namespace ServiceLayer.Services
 
         public Session CreateSession(Session session, Guid userId)
         {
-            return _SessionRepo.CreateSession(session, userId);
+            var sessionResponse = _SessionRepo.CreateSession(session, userId);
+            return sessionResponse;
         }
 
         public Session ValidateSession(string token)
         {
-            return _SessionRepo.ValidateSession(token);
+            var session = _SessionRepo.ValidateSession(token);
+            return session;
         }
 
         public Session UpdateSession(Session session)
         {
-            return _SessionRepo.UpdateSession(session);
+            var sessionResponse = _SessionRepo.UpdateSession(session);
+            return sessionResponse;
         }
 
         public Session ExpireSession(string token)
@@ -39,18 +42,14 @@ namespace ServiceLayer.Services
 
         public Session DeleteSession(string token)
         {
-            return _SessionRepo.DeleteSession(token);
+            var session = _SessionRepo.DeleteSession(token);
+            return session;
         }
 
         public void DeleteSessionsOfUser(Guid userId)
         {
             var sessionsOfUser = _SessionRepo.GetSessions(userId);
             _db.Sessions.RemoveRange(sessionsOfUser);
-        }
-
-        public Session GetSession(string token)
-        {
-            return _SessionRepo.GetSession(token);
         }
 
         public List<Session> GetSessions(Guid userId)

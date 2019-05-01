@@ -1,7 +1,6 @@
 ﻿using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -54,28 +53,37 @@ namespace DataAccessLayer.Repositories
                 .Where(s => s.Token == token)
                 .FirstOrDefault<Session>();
             if (session == null)
+            {
                 return null;
+            }
             _db.Sessions.Remove(session);
             return session;
         }
 
         public Session UpdateSession(Session session)
         {
-            session.UpdatedAt = DateTime.UtcNow;
-            session.ExpiresAt = DateTime.UtcNow.AddMinutes(Session.MINUTES_UNTIL_EXPIRATION);
-            _db.Entry(session).State = EntityState.Modified;
-            return session;
+            var oldSession = GetSession(session.Token);
+
+            if (oldSession == null)
+            {
+                return null;
+            }
+
+            oldSession.UpdatedAt = DateTime.UtcNow;
+            oldSession.ExpiresAt = DateTime.UtcNow.AddMinutes(Session.MINUTES_UNTIL_EXPIRATION);
+            return oldSession;
         }
 
         public Session ExpireSession(string token)
         {
             var session = GetSession(token);
             if (session == null)
+            {
                 return null;
+            }
 
             session.UpdatedAt = DateTime.UtcNow;
             session.ExpiresAt = DateTime.UtcNow;
-            _db.Entry(session).State = EntityState.Modified;
             return session;
         }
 
