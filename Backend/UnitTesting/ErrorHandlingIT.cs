@@ -29,7 +29,7 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void DeleteUser_NoUserId_412()
+        public void DeleteUser_NoUserId_400()
         {
             newUser = _tu.CreateUserObject();
             Session newSession = _tu.CreateSessionObject(newUser);
@@ -47,12 +47,12 @@ namespace UnitTesting
             _umController.Request = request;
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
-            //  and return a 412
+            //  and return a 400
             IHttpActionResult response = _umController.DeleteUser((string)null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
-            Assert.AreEqual(HttpStatusCode.PreconditionFailed, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual("Invalid payload.", result.Content.ReadAsStringAsync().Result);
         }
 
@@ -142,7 +142,7 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void DeleteUser_NoUserIdProvided_412()
+        public void DeleteUser_NoUserIdProvided_400()
         {
             newUser = _tu.CreateUserObject();
             Session newSession = _tu.CreateSessionObject(newUser);
@@ -160,12 +160,12 @@ namespace UnitTesting
             _umController.Request = request;
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
-            //  and return a 412
+            //  and return a 400
             IHttpActionResult response = _umController.DeleteUser((string)null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
-            Assert.AreEqual(HttpStatusCode.PreconditionFailed, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
             Assert.AreEqual("Invalid payload.", result.Content.ReadAsStringAsync().Result);
         }
 

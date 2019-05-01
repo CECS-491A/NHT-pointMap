@@ -9,6 +9,7 @@ using ServiceLayer.Services;
 using DataAccessLayer.Database;
 using System.Threading;
 using System.Web.Http.Results;
+using System.Net;
 
 namespace UnitTesting
 {
@@ -60,6 +61,84 @@ namespace UnitTesting
         }
 
         [TestMethod]
+        public void ReadPoint_NonExisting_404()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var point = _tu.CreatePointObject(179, 81);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Get(point.Id.ToString());
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.NotFound);
+        }
+
+        [TestMethod]
+        public void ReadPoint_Unauthorized_401()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+
+            var point = _tu.CreatePointObject(179, 81);
+            point = _tu.CreatePointInDb(point);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response =(ResponseMessageResult)controller.Get(point.Id.ToString());
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public void ReadPoint_InvalidPayload_400()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var point = _tu.CreatePointObject(179, 81);
+            point = _tu.CreatePointInDb(point);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Get(null);
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+        }
+
+
+
+        [TestMethod]
         public void DeletePoint_200()
         {
             newUser = _tu.CreateUserObject();
@@ -81,10 +160,86 @@ namespace UnitTesting
             controller.Request = request;
 
             OkResult response = (OkResult)controller.Delete(point.Id.ToString());
-            OkNegotiatedContentResult<Point> expectedNullResponse = (OkNegotiatedContentResult<Point>)controller.Get(point.Id.ToString());
+            ResponseMessageResult result404 = (ResponseMessageResult)controller.Get(point.Id.ToString());
 
             Assert.IsInstanceOfType(response, typeof(OkResult));
-            Assert.IsNull(expectedNullResponse.Content);
+            Assert.AreEqual(result404.Response.StatusCode, HttpStatusCode.NotFound);
+        }
+
+        [TestMethod]
+        public void DeletePoint_Unauthorized_401()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+
+            var point = _tu.CreatePointObject(179, 81);
+            point = _tu.CreatePointInDb(point);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Delete(point.Id.ToString());
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public void DeletePoint_InvalidPayload_400()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var point = _tu.CreatePointObject(179, 81);
+            point = _tu.CreatePointInDb(point);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Delete(null);
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+        }
+
+        [TestMethod]
+        public void DeletePoint_NonExisting_404()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var point = _tu.CreatePointObject(179, 81);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Delete(point.Id.ToString());
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
@@ -126,7 +281,7 @@ namespace UnitTesting
             Assert.AreEqual(point.Longitude, response.Content.Longitude);
             Assert.AreEqual(point.Latitude, response.Content.Latitude);
 
-            OkNegotiatedContentResult<Point> result = (OkNegotiatedContentResult<Point>)controller.Put(pointPost.Id.ToString(), pointPost);
+            OkNegotiatedContentResult<Point> result = (OkNegotiatedContentResult<Point>)controller.Put(pointPost);
 
             Assert.AreEqual(pointPost.Name, result.Content.Name);
             Assert.AreEqual(pointPost.Description, result.Content.Description);
@@ -137,7 +292,105 @@ namespace UnitTesting
         }
 
         [TestMethod]
-        public void Create_Read_Update_Delete_200()
+        public void UpdatePoint_Unauthorized_401()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+
+            var point = _tu.CreatePointObject(179, 81);
+            point = _tu.CreatePointInDb(point);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            PointPOST pointPost = new PointPOST
+            {
+                Longitude = point.Longitude,
+                Latitude = point.Latitude,
+                Description = "updatedDescription",
+                Name = "updatedName",
+                CreatedAt = point.CreatedAt,
+                UpdatedAt = point.UpdatedAt,
+                Id = point.Id
+            };
+
+            ResponseMessageResult result = (ResponseMessageResult)controller.Put(pointPost);
+
+            Assert.AreEqual(result.Response.StatusCode, HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public void UpdatePoint_InvalidPayload_400()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var point = _tu.CreatePointObject(179, 81);
+            point = _tu.CreatePointInDb(point);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult result = (ResponseMessageResult)controller.Put(null);
+
+            Assert.AreEqual(result.Response.StatusCode, HttpStatusCode.BadRequest);
+        }
+
+        [TestMethod]
+        public void UpdatePoint_NonExisting_404()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var point = _tu.CreatePointObject(179, 81);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            PointPOST pointPost = new PointPOST
+            {
+                Longitude = point.Longitude,
+                Latitude = point.Latitude,
+                Description = "updatedDescription",
+                Name = "updatedName",
+                CreatedAt = point.CreatedAt,
+                UpdatedAt = point.UpdatedAt,
+                Id = point.Id
+            };
+
+            ResponseMessageResult result = (ResponseMessageResult)controller.Put(pointPost);
+
+            Assert.AreEqual(result.Response.StatusCode, HttpStatusCode.NotFound);
+        }
+
+        [TestMethod]
+        public void Create_Read_Update_Delete_201_200()
         {
             newUser = _tu.CreateUserObject();
             Session newSession = _tu.CreateSessionObject(newUser);
@@ -163,8 +416,9 @@ namespace UnitTesting
             controller.Request = request;
 
             //Create Test
-            OkNegotiatedContentResult<Point> response = (OkNegotiatedContentResult<Point>)controller.Post(pointPost);
+            NegotiatedContentResult<Point> response = (NegotiatedContentResult<Point>)controller.Post(pointPost);
 
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.Created);
             Assert.AreEqual(pointPost.Name, response.Content.Name);
             Assert.AreEqual(pointPost.Description, response.Content.Description);
             Assert.AreEqual(pointPost.Longitude, response.Content.Longitude);
@@ -191,7 +445,7 @@ namespace UnitTesting
                 Id = readResponse.Content.Id
             };
 
-            OkNegotiatedContentResult<Point> updateResponse = (OkNegotiatedContentResult<Point>)controller.Put(pointPost.Id.ToString(), pointPost);
+            OkNegotiatedContentResult<Point> updateResponse = (OkNegotiatedContentResult<Point>)controller.Put(pointPost);
 
             Assert.AreEqual(pointPost.Name, updateResponse.Content.Name);
             Assert.AreEqual(pointPost.Description, updateResponse.Content.Description);
@@ -214,13 +468,13 @@ namespace UnitTesting
 
             Assert.IsInstanceOfType(deleteResponse, typeof(OkResult));
 
-            OkNegotiatedContentResult<Point> readResponse3 = (OkNegotiatedContentResult<Point>)controller.Get(readResponse2.Content.Id.ToString());
+            ResponseMessageResult readResponse3 = (ResponseMessageResult)controller.Get(readResponse2.Content.Id.ToString());
 
-            Assert.IsNull(readResponse3.Content);
+            Assert.AreEqual(readResponse3.Response.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
-        public void CreatePoint_200()
+        public void CreatePoint_201()
         {
             newUser = _tu.CreateUserObject();
             Session newSession = _tu.CreateSessionObject(newUser);
@@ -245,12 +499,74 @@ namespace UnitTesting
 
             controller.Request = request;
 
-            OkNegotiatedContentResult<Point> response = (OkNegotiatedContentResult<Point>)controller.Post(point);
+            NegotiatedContentResult<Point> response = (NegotiatedContentResult<Point>)controller.Post(point);
 
+            Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.Created);
             Assert.AreEqual(point.Name, response.Content.Name);
             Assert.AreEqual(point.Description, response.Content.Description);
             Assert.AreEqual(point.Longitude, response.Content.Longitude);
             Assert.AreEqual(point.Latitude, response.Content.Latitude);
+        }
+
+        [TestMethod]
+        public void CreatePoint_Unauthorized_401()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point";
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            PointPOST point = new PointPOST
+            {
+                Longitude = 179,
+                Latitude = 85,
+                Description = "desc",
+                Name = "name",
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Post(point);
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.Unauthorized);
+        }
+
+        [TestMethod]
+        public void CreatePoint_InvalidPayload_400()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point";
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            PointPOST point = new PointPOST
+            {
+                Longitude = 179,
+                Latitude = 85,
+                Description = "desc",
+                Name = "name",
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Post(null);
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
         }
 
         [TestMethod]

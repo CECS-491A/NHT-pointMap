@@ -56,12 +56,13 @@ namespace WebApi_PointMap.Controllers
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                 var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
 
                 _db.SaveChanges();
 
-                return Ok(point);
+                return Content(HttpStatusCode.Created, point);
             }
             catch(Exception e)
             {
@@ -71,13 +72,14 @@ namespace WebApi_PointMap.Controllers
 
         // updates a point
         [HttpPut]
-        [Route("api/point/{guid}")]
+        [Route("api/point")]
         public IHttpActionResult Put([FromBody] PointPOST pointPost)
         {
             try
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                 var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
                 var point = _pm.UpdatePoint(pointId, pointPost.Longitude, pointPost.Latitude,

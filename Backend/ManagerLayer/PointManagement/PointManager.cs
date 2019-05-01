@@ -3,6 +3,7 @@ using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using System;
 using System.Collections.Generic;
+using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer
 {
@@ -35,6 +36,10 @@ namespace ManagerLayer
         public Point GetPoint(Guid pointId)
         {
             var point = _ps.GetPoint(pointId);
+            if(point == null)
+            {
+                throw new PointNotFoundException();
+            }
             return point;
         }
 
@@ -52,12 +57,22 @@ namespace ManagerLayer
             };
 
             point = _ps.UpdatePoint(point);
+
+            if(point == null)
+            {
+                throw new PointNotFoundException();
+            }
             return point;
         }
 
         public Point DeletePoint(Guid pointId)
         {
             var point = _ps.DeletePoint(pointId);
+
+            if(point == null)
+            {
+                throw new PointNotFoundException();
+            }
 
             return point;
         }
