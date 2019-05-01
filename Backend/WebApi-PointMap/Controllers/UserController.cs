@@ -40,14 +40,9 @@ namespace WebApi_PointMap.Controllers
                         userSSOID,
                         requestPayload.Timestamp,
                         requestPayload.Signature);
-
                     _db.SaveChanges();
-
-                    var redirectURL = "localhost:8080/#/login/?token=" + loginSession.Token;
-                    var response = new HttpResponseMessage();
-                    response.StatusCode = HttpStatusCode.Redirect;
-                    response.Content = new StringContent(redirectURL);
-                    //var response = SSOLoginResponse.ResponseRedirect(this, redirectURL);
+                    var redirectURL = "https://pointmap.net/#/login/?token=" + loginSession.Token;
+                    var response = SSOLoginResponse.ResponseRedirect(Request, redirectURL);
                     return response;
                 }
                 catch (Exception e)
