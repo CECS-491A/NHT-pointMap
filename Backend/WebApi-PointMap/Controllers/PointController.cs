@@ -36,6 +36,7 @@ namespace WebApi_PointMap.Controllers
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                 var point = _pm.GetPoint(pointId);
+
                 _db.SaveChanges();
 
                 return Ok(point);
@@ -55,6 +56,7 @@ namespace WebApi_PointMap.Controllers
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
                 var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
 
                 _db.SaveChanges();
@@ -70,16 +72,15 @@ namespace WebApi_PointMap.Controllers
         // updates a point
         [HttpPut]
         [Route("api/point/{guid}")]
-        public IHttpActionResult Put(string pointId, [FromBody] PointPOST pointPost)
+        public IHttpActionResult Put([FromBody] PointPOST pointPost)
         {
             try
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                var pointGuid = ControllerHelpers.ParseAndCheckId(pointId);
-
-                var point = _pm.UpdatePoint(pointGuid, pointPost.Longitude, pointPost.Latitude,
+                var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
+                var point = _pm.UpdatePoint(pointId, pointPost.Longitude, pointPost.Latitude,
                                             pointPost.Description, pointPost.Name,
                                             pointPost.CreatedAt);
 
@@ -110,6 +111,7 @@ namespace WebApi_PointMap.Controllers
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);
 
                 _pm.DeletePoint(pointId);
+
                 _db.SaveChanges();
 
                 return Ok();

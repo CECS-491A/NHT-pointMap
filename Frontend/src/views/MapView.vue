@@ -1,6 +1,10 @@
 <template>
   <div>
     <div v-on:click="requestPoints" id="map"></div> 
+    <v-btn v-on:click="createPoint" fab dark color="teal" 
+id="addPointBtn">
+      <v-icon>add</v-icon>
+    </v-btn>
   </div>
 </template>
 
@@ -8,7 +12,7 @@
 import {getPoints} from '../services/pointServices'
 import {gmapApi} from 'vue2-google-maps'
 import {checkSession} from '../services/authorizationService'
-import MarkerClusterer from "@google/markerclusterer"
+  import MarkerClusterer from "@google/markerclusterer"
 
 export default {
   name: "MapView",
@@ -37,8 +41,17 @@ export default {
     checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
-      zoom: this.zoom
+      zoom: this.zoom,
+      zoomControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+      },
+      streetViewControlOptions: {
+        position: google.maps.ControlPosition.LEFT_BOTTOM
+      },
     });
+    //places add point button on bottom right of map
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById("addPointBtn"));
+    
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
   },
@@ -101,9 +114,9 @@ export default {
                 map: this.map,
                 title: point.Id
               });
-              this.marker.addListener('click', function() { //Adds an event listener to each point to reroute to pointDetails page
-                window.location.href = 'http://pointmap.net/#/pointdetails/?pointId=' + point.Id
-              });
+              this.marker.addListener('click', function () { //Adds an event listener to each point to reroute to pointDetails page
+                this.$router.push({ path: 'pointdetails', query: { pointId: point.Id } });
+              }.bind(this));
               this.markers.push(this.marker)
               resolve()
             })
@@ -117,6 +130,9 @@ export default {
     createCluster(){
       this.markerCluster = new MarkerClusterer(this.map, this.markers, //Creates a cluster object which clusters all markers on the map
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+    },
+    createPoint(){ //called when add point button is clicked
+	this.$router.push('pointeditor');
     }
   }  
 };
@@ -130,5 +146,4 @@ export default {
       margin: 0 auto;
       background: gray;
   }
-
 </style>
