@@ -12,7 +12,7 @@ namespace WebApi_PointMap.Controllers
     {
         // Check the health of the application
         //  - return status code based on internal applicaiton errors
-        [HttpOptions]
+        [HttpGet]
         [Route("api/utility/applicationhealth")]
         public IHttpActionResult ApplicationHealthCheck()
         {
