@@ -17,9 +17,9 @@ namespace ServiceLayer.Services
             _db = db;
         }
 
-        public Session CreateSession(Session session, Guid userId)
+        public Session CreateSession(Session session)
         {
-            var sessionResponse = _SessionRepo.CreateSession(session, userId);
+            var sessionResponse = _SessionRepo.CreateSession(session);
             return sessionResponse;
         }
 

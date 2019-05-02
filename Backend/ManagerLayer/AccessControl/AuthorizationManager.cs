@@ -39,7 +39,8 @@ namespace ManagerLayer.AccessControl
             }
             var session = new Session();
             session.Token = GenerateSessionToken();
-            session = _sessionService.CreateSession(session, userResponse.Id);
+            session.UserId = userResponse.Id;
+            session = _sessionService.CreateSession(session);
             return session;
         }
 

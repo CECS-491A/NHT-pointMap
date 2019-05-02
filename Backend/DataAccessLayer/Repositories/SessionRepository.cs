@@ -25,11 +25,10 @@ namespace DataAccessLayer.Repositories
             return session;
         }
         
-        public Session CreateSession(Session session, Guid userId)
+        public Session CreateSession(Session session)
         {
-            session.UserId = userId;
-            _db.Sessions.Add(session);
-            return session;
+            var sessionResponse = _db.Sessions.Add(session);
+            return sessionResponse;
         }
 
         public Session ValidateSession(string token)

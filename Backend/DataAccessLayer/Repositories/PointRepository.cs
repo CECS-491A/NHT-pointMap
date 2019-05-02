@@ -29,8 +29,8 @@ namespace DataAccessLayer.Repositories
 
             point.CreatedAt = DateTime.UtcNow;
             point.UpdatedAt = DateTime.UtcNow;
-            _db.Points.Add(point);
-            return point;
+            var pointResponse =  _db.Points.Add(point);
+            return pointResponse;
         }
 
         public Point GetPoint(float longitude, float latitude)

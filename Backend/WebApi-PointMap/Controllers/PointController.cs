@@ -37,8 +37,6 @@ namespace WebApi_PointMap.Controllers
 
                 var point = _pm.GetPoint(pointId);
 
-                _db.SaveChanges();
-
                 return Ok(point);
             }
             catch (Exception e)

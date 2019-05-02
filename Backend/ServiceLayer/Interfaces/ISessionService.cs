@@ -9,7 +9,7 @@ namespace ServiceLayer.Services
 {
     public interface ISessionService
     {
-        Session CreateSession(Session session, Guid userId);
+        Session CreateSession(Session session);
         Session ValidateSession(string token);
         Session UpdateSession(Session session);
         Session ExpireSession(string  token);
