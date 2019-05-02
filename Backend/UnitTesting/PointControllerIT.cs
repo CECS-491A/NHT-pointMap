@@ -354,6 +354,55 @@ namespace UnitTesting
         }
 
         [TestMethod]
+        public void UpdatePoint_Invalid_Long_Lat_400()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var pointToPost = _tu.CreatePointObject(179, 81);
+            var point = _tu.CreatePointInDb(pointToPost);
+
+            var pointPost = new PointPOST
+            {
+                Name = point.Name,
+                Description = point.Description,
+                Longitude = 181,
+                Latitude = point.Latitude
+            };
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point/" + point.Id;
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Put(pointPost);
+
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+
+            pointPost.Longitude = -181;
+
+            response = (ResponseMessageResult)controller.Post(pointPost);
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+
+            pointPost.Latitude = 91;
+
+            response = (ResponseMessageResult)controller.Post(pointPost);
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+
+            pointPost.Latitude = -91;
+
+            response = (ResponseMessageResult)controller.Post(pointPost);
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+        }
+
+        [TestMethod]
         public void UpdatePoint_NonExisting_404()
         {
             newUser = _tu.CreateUserObject();
@@ -566,6 +615,51 @@ namespace UnitTesting
 
             ResponseMessageResult response = (ResponseMessageResult)controller.Post(null);
 
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+        }
+
+        [TestMethod]
+        public void CreatePoint_Invalid_Lat_Long_400()
+        {
+            newUser = _tu.CreateUserObject();
+            Session newSession = _tu.CreateSessionObject(newUser);
+            _tu.CreateSessionInDb(newSession);
+
+            var endpoint = API_ROUTE_LOCAL + "/api/point";
+            controller.Request = new HttpRequestMessage
+            {
+                RequestUri = new Uri(endpoint)
+            };
+
+            PointPOST point = new PointPOST
+            {
+                Longitude = 181,
+                Latitude = 85,
+                Description = "desc",
+                Name = "name",
+            };
+
+            var request = new HttpRequestMessage();
+            request.Headers.Add("token", newSession.Token);
+
+            controller.Request = request;
+
+            ResponseMessageResult response = (ResponseMessageResult)controller.Post(point);
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+
+            point.Longitude = -181;
+
+            response = (ResponseMessageResult)controller.Post(point);
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+
+            point.Latitude = 91;
+
+            response = (ResponseMessageResult)controller.Post(point);
+            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+
+            point.Latitude = -91;
+
+            response = (ResponseMessageResult)controller.Post(point);
             Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
         }
 
