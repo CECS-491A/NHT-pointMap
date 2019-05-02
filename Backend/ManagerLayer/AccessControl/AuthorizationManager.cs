@@ -51,21 +51,18 @@ namespace ManagerLayer.AccessControl
             {
                 response = _sessionService.UpdateSession(_db, response);
             }
-
             return response;
         }
 
         public Session ExpireSession(DatabaseContext _db, string token)
         {
             Session response = _sessionService.ExpireSession(_db, token);
-
             return response;
         }
 
         public Session DeleteSession(DatabaseContext _db, string token)
         {
             Session response = _sessionService.DeleteSession(_db, token);
-
             return response;
         }
     }

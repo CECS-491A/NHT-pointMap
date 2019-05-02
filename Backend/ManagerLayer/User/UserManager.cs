@@ -4,7 +4,9 @@ using DTO;
 using ManagerLayer.AccessControl;
 using ManagerLayer.Logging;
 using ManagerLayer.UserManagement;
+using ServiceLayer.Services;
 using System;
+using System.Collections.Generic;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.Users
@@ -35,7 +37,6 @@ namespace ManagerLayer.Users
 
         public Session Register(string Username, Guid ssoID)
         {
-
             var _userManagementManager = new UserManagementManager(_db);
             try
             {
@@ -58,6 +59,25 @@ namespace ManagerLayer.Users
                 _loggingManager.sendLogSync(newLog);
                 throw new UserAlreadyExistsException(e.Message);
             }
+        }
+
+        // Logout a user by deleteing their session, single session logout
+        public void Logout(string token)
+        {
+            var _sessionService = new SessionService();
+            var session = _sessionService.GetSession(_db, token);
+            if (session == null)
+            {
+                return;
+            }
+            _sessionService.DeleteSession(_db, session.Token);
+        }
+
+        // Logout a user by their user ID, delete all sessions of that user
+        public void Logout(User user)
+        {
+            var _sessionService = new SessionService();
+            _sessionService.DeleteSessionsOfUser(_db, user.Id);
         }
     }
 }

@@ -110,7 +110,6 @@
     <Compile Include="Controllers\ControllerHelpers.cs" />
     <Compile Include="Controllers\PointController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
-    <Compile Include="Controllers\TesterController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="ErrorHandling\AuthorizationErrorHandler.cs" />
     <Compile Include="ErrorHandling\GeneralErrorHandler.cs" />

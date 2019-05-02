@@ -8,6 +8,8 @@ using ManagerLayer.AccessControl;
 using System.Text;
 using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
+using static ServiceLayer.Services.ExceptionService;
+using ManagerLayer.Users;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -47,17 +49,19 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     var token = ControllerHelpers.GetToken(Request);
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-                    _am.DeleteSession(_db, token);
+                    var _userManager = new UserManager(_db);
+                    _userManager.Logout(token);
                     _db.SaveChanges();
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
-
                     return response;
                 }
                 catch (Exception e)
                 {
+                    if (e is NoTokenProvidedException)
+                    {
+                        return AuthorizationErrorHandler.HandleException(e);
+                    }
                     return DatabaseErrorHandler.HandleException(e, _db);
                 }
             }

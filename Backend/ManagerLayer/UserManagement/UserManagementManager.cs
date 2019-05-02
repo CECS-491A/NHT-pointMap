@@ -63,10 +63,6 @@ namespace ManagerLayer.UserManagement
         public User GetUser(Guid id)
         {
             var user = _userService.GetUser(id);
-            if (user == null)
-            {
-                throw new UserNotFoundException("User does not exist.");
-            }
             return user;
         }
 

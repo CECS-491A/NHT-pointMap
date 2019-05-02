@@ -12,13 +12,18 @@ using System.Net.Http;
 using DTO.KFCSSO_API;
 using ManagerLayer.UserManagement;
 using ServiceLayer.KFC_API_Services;
+using ManagerLayer.Users;
 
 namespace WebApi_PointMap.Controllers
 {
     public class UserController : ApiController
     {
 
-        // POST api/user/login
+        /// <summary>
+        /// SSO Service: User login via SSO App launch.
+        /// </summary>
+        /// <param name="requestPayload"></param>
+        /// <returns> redirect to Pointmap landing page with url token param </returns>
         [HttpPost]
         [Route("api/user/login")]
         public HttpResponseMessage LoginFromSSO([FromBody] LoginRequestPayload requestPayload)
@@ -66,7 +71,12 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        // user delete self from pointmap and sso
+        /// <summary>
+        /// Pointmap Service: 
+        /// 
+        /// Delete request from user within Pointmap. Delete self from Pointmap and SSO.
+        /// </summary>
+        /// <returns> success of delete, 404 if user does not exist. </returns>
         [HttpDelete]
         [Route("api/user/deletefromsso")]
         public async Task<IHttpActionResult> DeleteFromSSO()
@@ -87,7 +97,7 @@ namespace WebApi_PointMap.Controllers
                     {
                         return Content(HttpStatusCode.NotFound, "User does not exists.");
                     }
-                    var _ssoAPIManager = new KFC_SSO_Manager();
+                    var _ssoAPIManager = new KFC_SSO_Manager(_db);
                     var requestSuccessful = await _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);
                     if (requestSuccessful)
                     {
@@ -120,6 +130,12 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
+        /// <summary>
+        /// Pointmap Service: 
+        /// 
+        /// User delete request to delete self from Pointmap
+        /// </summary>
+        /// <returns> status </returns>
         [HttpDelete]
         [Route("api/user/delete")]
         public IHttpActionResult Delete() // user delete self from pointmap
@@ -165,6 +181,14 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
+        /// <summary>
+        /// SSO Service: 
+        /// 
+        /// User delete request sent within SSO to delete self from SSO when 
+        ///     deleted from all apps.
+        /// </summary>
+        /// <param name="requestPayload"></param>
+        /// <returns> delete status </returns>
         [HttpPost]
         [Route("sso/user/delete")] // request from sso to delete user self from sso to all apps
         public IHttpActionResult DeleteViaSSO([FromBody, Required] LoginRequestPayload requestPayload)
@@ -203,6 +227,53 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    if (e is InvalidModelPayloadException || e is InvalidGuidException)
+                    {
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
+                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                }
+            }
+        }
+
+        /// <summary>
+        /// SSO Service: 
+        /// 
+        /// User request logout from within SSO, logout propagates to all apps.
+        /// </summary>
+        /// <param name="requestPayload"></param>
+        /// <returns> logout status </returns>
+        [HttpPost]
+        [Route("sso/user/logout")]
+        public IHttpActionResult LogoutViaSSO([FromBody] LogoutRequestPayload requestPayload)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                try
+                {
+                    // throws ExceptionService.InvalidModelPayloadException
+                    ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
+
+                    // throws ExceptionService.InvalidGuidException
+                    var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
+
+                    var _userManagementManager = new UserManagementManager(_db);
+                    var user = _userManagementManager.GetUser(userSSOID);
+                    if (user == null)
+                    {
+                        return Content(HttpStatusCode.NotFound, "User does not exist.");
+                    }
+                    var _userManager = new UserManager(_db);
+                    _userManager.Logout(user);
+                    _db.SaveChanges();
+                    return Ok("User was logged out.");
+                }
+                catch (Exception e)
+                {
+                    if (e is InvalidTokenSignatureException)
+                    {
+                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    }
                     if (e is InvalidModelPayloadException || e is InvalidGuidException)
                     {
                         return ResponseMessage(GeneralErrorHandler.HandleException(e));
