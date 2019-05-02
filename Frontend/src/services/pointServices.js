@@ -1,5 +1,6 @@
 import axios from "axios";
 import { api_url } from "@/const.js";
+import { deleteSession } from "./authorizationService.js"
 
 function getPoints(minLng, maxLng, minLat, maxLat, callback) {
   let urlString = `${api_url}/api/points/`;
@@ -13,30 +14,26 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback) {
     }
   };
 
-  let arr = [];
-  axios
-    .get(urlString, content)
-    .then(response => {
-      let data = response.data;
-      if (data) {
-        data.forEach(point => {
-          let tempPoint = {
-            Latitude: point.Latitude,
-            Longitude: point.Longitude,
-            Id: point.Id
-          };
-          arr.push(tempPoint);
-        });
-      }
-      return callback(arr);
-    })
-    .catch(err => {
-      console.log(err);
-      if (err.response.status == 401) {
-        localStorage.removeItem("token");
-        window.location.href = "https://kfc-sso.com/#/login";
-      }
-    });
+    let arr = []
+    axios.get(urlString, content).then((response) => {
+        let data = response.data
+        if(data){
+            data.forEach(point => {
+                let tempPoint = {
+                    Latitude: point.Latitude, 
+                    Longitude: point.Longitude,
+                    Id: point.Id
+                }
+                arr.push(tempPoint);
+            });
+        }
+        return callback(arr);
+    }).catch((err) => {
+        console.log(err);
+        if(err.response.status == 401){
+            deleteSession();
+        }
+      });
   return null;
 }
 
@@ -45,7 +42,7 @@ function getPoint(pointId, callback) {
     headers: {
       token: localStorage.getItem("token")
     }
-  };
+  }
   let arr = [];
   let urlString = `${api_url}/api/point/` + pointId;
   axios
@@ -58,11 +55,53 @@ function getPoint(pointId, callback) {
     .catch(err => {
       console.log(err);
       if (err.response.status == 401) {
-        localStorage.removeItem("token");
-        window.location.href = "https://kfc-sso.com/#/login";
+        deleteSession();
       }
     });
   return null;
 }
 
-export { getPoints, getPoint };
+function updatePoint(point){
+    let content = {
+        'headers':{
+            'token': localStorage.getItem('token')
+        },
+    }
+    axios.put(`${api_url}/api/point`, point, content)
+        .then((response) => {
+            return response.data;
+        
+        }).catch((err) => {
+            console.log(err);
+            if (err.response.status == 401) {
+                deleteSession();
+            }
+        })
+    return null;
+};
+
+function createPoint(point){
+    let content = {
+        'headers':{
+            'token': localStorage.getItem('token')
+        },
+    }
+    axios.post(`${api_url}/api/point`, point, content)
+        .then((response) => {
+            return response.data;
+            
+        }).catch((err) => {
+            console.log(err);
+            if (err.response.status == 401) {
+                deleteSession();
+            }
+        })
+    return null;
+};
+
+export{
+    getPoints,
+    getPoint,
+    updatePoint,
+    createPoint
+}

@@ -16,6 +16,7 @@ project.lock.json
 *.userosscache
 *.sln.docstates
 .vs/
+.DS_Store
 
 # Build results
 [Dd]ebug/
