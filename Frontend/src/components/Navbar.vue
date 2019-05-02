@@ -3,7 +3,8 @@
     <v-menu  
         bottom 
         offset-y
-        transition="slide-x-transition">
+        transition="slide-x-transition"
+        v-if="stored.state.isLogin">
         <template v-if="true" v-slot:activator="{ on }">
             <v-btn
                 dark
@@ -65,7 +66,8 @@ export default {
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account'},
-          { title: 'Logout', action: deleteSession, link: '/' }
+          { title: 'Logout', action: deleteSession, link: '/' },
+          { title: 'Privacy Policy', link: '/legal'}
       ],
       user: {},
       stored: store
