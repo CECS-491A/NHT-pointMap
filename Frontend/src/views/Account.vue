@@ -28,7 +28,8 @@
 
 <script>
 
-import { DeleteAccountFromSSO, getUser, deleteAccountfromPointmap} from '@/services/accountServices'
+import { deleteAccountFromSSO, getUser, deleteAccountfromPointmap} from '@/services/accountServices'
+import { httpResponseCodes } from '@/services/services.const.js'
 import Loading from '@/components/dialogs/Loading.vue'
 import PopupDialog from '@/components/dialogs/PopupDialog.vue'
 
@@ -62,7 +63,7 @@ export default {
       .then(response => {
         this.loading = false;
         switch(response.status){
-          case 200: // status OK
+          case httpResponseCodes.OK: // status OK
             this.user = response.data;
             break;
         }
@@ -70,7 +71,7 @@ export default {
       .catch( err => {
         this.loading = false;
         switch(err.response.status){
-          case 401: // status Unauthorized
+          case httpResponseCodes.Unauthorized: // status Unauthorized
             this.doRedirect = true;
             this.popupMessage = 'Session has expired.';
             this.popup = true;
@@ -83,13 +84,17 @@ export default {
       this.$router.push( "/home" )
     },
     deleteFromPointmapAndSSO () {
+        this.loadingText = 'Deleteting from SSO and Pointmap...';
         this.loading = true;
-        DeleteAccountFromSSO()
+        deleteAccountFromSSO()
             .then(response => {
-                this.doRedirect = true;
-              this.popupMessage = 'User has been deleted.';
-              this.popup = true;
-              localStorage.removeItem('token');
+              switch(response.status){
+                case httpResponseCodes.OK:
+                  this.doRedirect = true;
+                  this.popupMessage = response.data;
+                  this.popup = true;
+                  localStorage.removeItem('token');
+              }
             })
             .catch(e => { this.error = "Failed to delete user, try again" })
             .finally(() => { this.loading = false; })
@@ -101,7 +106,7 @@ export default {
         .then(response => {
           this.loading = false;
           switch(response.status){
-            case 200: // status OK
+            case httpResponseCodes.OK:
               this.doRedirect = true;
               this.popupMessage = 'User has been deleted.';
               this.popup = true;

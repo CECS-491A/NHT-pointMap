@@ -101,9 +101,9 @@ namespace WebApi_PointMap.Controllers
                     {
                         _userManager.DeleteUserAndSessions(user.Id);
                         _db.SaveChanges();
-                        return Ok("User was deleted");
+                        return Ok("User was deleted from Pointmap and SSO");
                     }
-                    var response = Content(HttpStatusCode.InternalServerError, "User was not deleted.");
+                    var response = Content(HttpStatusCode.InternalServerError, "User was not able to be deleted from SSO.");
                     return response;
                 }
                 catch (KFCSSOAPIRequestException ex)
