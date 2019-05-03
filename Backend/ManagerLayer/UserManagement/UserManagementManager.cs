@@ -1,7 +1,10 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
+using DTO.UserManagementAPI;
 using ServiceLayer.Services;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace ManagerLayer.UserManagement
@@ -48,8 +51,53 @@ namespace ManagerLayer.UserManagement
             return user;
         }
 
+        public User CreateUser(CreateUserRequestDTO user)
+        {
+            // update user with given values
+            try
+            {
+                var newUserUsername = new System.Net.Mail.MailAddress(user.Username);
+                var newUserId = Guid.NewGuid();
+                var newUser = CreateUser(user.Username, newUserId);
+                if (user.Manager != "")
+                {
+                    try
+                    {
+                        var managerId = Guid.Parse(user.Manager);
+                        var manager = _userService.GetUser(managerId);
+                        if (manager == null)
+                        {
+                            throw new UserNotFoundException("Manager does not exist.");
+                        }
+                        newUser.ManagerId = managerId;
+                    }
+                    catch (FormatException)
+                    {
+                        throw new InvalidGuidException("Invalid Manager ID.");
+                    }
+                }
+                newUser.IsAdministrator = user.IsAdmin;
+                newUser.City = user.City;
+                newUser.Country = user.Country;
+                newUser.State = user.State;
+                newUser.Disabled = user.Disabled;
+                // update new user with changes
+                _userService.CreateUser(newUser);
+                return newUser;
+            }
+            catch (FormatException)
+            {
+                throw new InvalidEmailException("Invalid Username.");
+            }
+        }
+
         public void DeleteUser(Guid id)
         {
+            var user = _userService.GetUser(id);
+            if (user == null)
+            {
+                throw new UserNotFoundException("User does not exist.");
+            }
             _userService.DeleteUser(id);
         }
 
@@ -58,6 +106,37 @@ namespace ManagerLayer.UserManagement
             var _sessionService = new SessionService();
             _sessionService.DeleteSessionsOfUser(_db, id);
             var user = _userService.GetUser(id);
+        }
+
+        public User ToUpdateUser(User user, UpdateUserRequestDTO requestChanges)
+        {
+            if (user == null)
+            {
+                throw new UserNotFoundException("User does not exist.");
+            }
+            user.City = requestChanges.City;
+            user.State = requestChanges.State;
+            user.Country = requestChanges.Country;
+            user.Disabled = requestChanges.Disabled;
+            user.IsAdministrator = requestChanges.IsAdmin;
+            user.ManagerId = null;
+            if (requestChanges.Manager != "" && requestChanges.Manager != null)
+            {
+                // check if manager id is valid ssoid
+                Guid managerId;
+                var validParse = Guid.TryParse(requestChanges.Manager, out managerId);
+                if (!validParse)
+                {
+                    throw new InvalidGuidException("Invalid Manager Id.");
+                }
+                var manager = GetUser(managerId);
+                if (manager == null)
+                {
+                    throw new UserNotFoundException("Manager does not exist.");
+                }
+                user.ManagerId = managerId;
+            }
+            return user;
         }
 
         public User GetUser(Guid id)
@@ -70,6 +149,23 @@ namespace ManagerLayer.UserManagement
         {
             var user = _userService.GetUser(email);
             return user;
+        }
+
+        public List<GetAllUsersResponseDataItem> GetUsers()
+        {
+            var users = _db.Users
+                .Select(u => new GetAllUsersResponseDataItem
+                {
+                    id = u.Id,
+                    username = u.Username,
+                    manager = u.ManagerId,
+                    city = u.City,
+                    state = u.State,
+                    country = u.Country,
+                    disabled = u.Disabled,
+                    isAdmin = u.IsAdministrator
+                }).ToList();
+            return users;
         }
 
         public void DisableUser(User user)

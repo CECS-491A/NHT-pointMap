@@ -8,7 +8,7 @@ using static UnitTesting.TestingUtils;
 using System.Net;
 using DTO.KFCSSO_API;
 
-namespace UnitTesting
+namespace UnitTesting.IntegrationTests
 {
     /// <summary>
     /// Summary description for UserControllerUT
