@@ -60,21 +60,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ErrorHandlingIT.cs" />
-    <Compile Include="ITestingUtils.cs" />
-    <Compile Include="LoggingServicesIT.cs" />
-    <Compile Include="PointControllerIT.cs" />
-    <Compile Include="UserControllerIT.cs" />
-    <Compile Include="UserLoginManagerUT.cs" />
-    <Compile Include="PointServiceUT.cs" />
-    <Compile Include="TestingUtils.cs" />
-    <Compile Include="ClaimServiceUT.cs" />
-    <Compile Include="PasswordServiceUT.cs" />
-    <Compile Include="SessionServiceUT.cs" />
+    <Compile Include="IntegrationTests\ErrorHandlingIT.cs" />
+    <Compile Include="IntegrationTests\UserManagementControllerIT.cs" />
+    <Compile Include="TestingUtility\ITestingUtils.cs" />
+    <Compile Include="IntegrationTests\LoggingServicesIT.cs" />
+    <Compile Include="IntegrationTests\PointControllerIT.cs" />
+    <Compile Include="IntegrationTests\UserControllerIT.cs" />
+    <Compile Include="UnitTests\UserLoginManagerUT.cs" />
+    <Compile Include="UnitTests\PointServiceUT.cs" />
+    <Compile Include="TestingUtility\TestingUtils.cs" />
+    <Compile Include="UnitTests\ClaimServiceUT.cs" />
+    <Compile Include="UnitTests\PasswordServiceUT.cs" />
+    <Compile Include="UnitTests\SessionServiceUT.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="OperationServiceUT.cs" />
-    <Compile Include="ClientServiceUT.cs" />
-    <Compile Include="UserServiceUT.cs" />
+    <Compile Include="UnitTests\OperationServiceUT.cs" />
+    <Compile Include="UnitTests\ClientServiceUT.cs" />
+    <Compile Include="UnitTests\UserServiceUT.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DTO\DTO.csproj">
@@ -104,6 +105,7 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

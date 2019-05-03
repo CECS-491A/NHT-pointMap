@@ -13,6 +13,7 @@
         >
           <v-list>
             <v-list-tile
+              id="navagationItem"
               v-for="item in DashboardMenuItems"
               :key="item.title"
               @click="SelectedComponent(item.title)"

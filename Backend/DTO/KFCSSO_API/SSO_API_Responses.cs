@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace DTO.KFCSSO_API
@@ -15,9 +11,9 @@ namespace DTO.KFCSSO_API
 
     public class SSOLoginResponse
     {
-        public static HttpResponseMessage ResponseRedirect(ApiController controller, string redirectURL)
+        public static HttpResponseMessage ResponseRedirect(HttpRequestMessage request, string redirectURL)
         {
-            var redirect = controller.Request.CreateResponse(HttpStatusCode.SeeOther);
+            var redirect = request.CreateResponse(HttpStatusCode.SeeOther);
             redirect.Headers.Location = new Uri(redirectURL);
             return redirect;
         }

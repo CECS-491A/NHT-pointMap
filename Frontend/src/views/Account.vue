@@ -62,7 +62,7 @@ export default {
       .then(response => {
         this.loading = false;
         switch(response.status){
-          case 200:
+          case 200: // status OK
             this.user = response.data;
             break;
         }
@@ -70,7 +70,7 @@ export default {
       .catch( err => {
         this.loading = false;
         switch(err.response.status){
-          case 401:
+          case 401: // status Unauthorized
             this.doRedirect = true;
             this.popupMessage = 'Session has expired.';
             this.popup = true;
@@ -101,7 +101,7 @@ export default {
         .then(response => {
           this.loading = false;
           switch(response.status){
-            case 200:
+            case 200: // status OK
               this.doRedirect = true;
               this.popupMessage = 'User has been deleted.';
               this.popup = true;
