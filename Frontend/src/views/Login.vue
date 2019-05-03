@@ -14,6 +14,7 @@ import axios from 'axios'
 import Loading from '@/components/dialogs/Loading'
 import PopupDialog from '@/components/dialogs/PopupDialog'
 import { GetUser } from '@/services/userManagementServices'
+import { store } from '@/services/accountServices.js'
 import { httpResponseCodes } from '@/services/services.const.js'
 
 export default {
@@ -44,6 +45,8 @@ export default {
           switch(response.status){
             case httpResponseCodes.OK: // status OK
               var user = response.data;
+              store.state.isLogin = true;
+              store.getEmail();
               localStorage.setItem('token', this.token);
               this.loading = false;
               this.loadingText = '';
