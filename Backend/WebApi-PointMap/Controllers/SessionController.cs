@@ -17,6 +17,7 @@ namespace WebApi_PointMap.Controllers
     public class SessionController : ApiController
     {
         AuthorizationManager _am;
+<<<<<<< HEAD
         DatabaseContext _db;
         Logger logger;
         LogRequestDTO newLog;
@@ -28,6 +29,8 @@ namespace WebApi_PointMap.Controllers
             logger = new Logger();
             newLog = new LogRequestDTO();
         }
+=======
+>>>>>>> ba10c9942d47f8e170a95c16f4779a8e0ed0571c
 
         [HttpGet]
         [Route("api/session")]

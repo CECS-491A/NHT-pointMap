@@ -47,6 +47,7 @@
            
         </v-form>
 
+        <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
     </div>
 
 
@@ -91,11 +92,14 @@ export default {
                 }
          })
      },
+     pointEditor: function() {
+       this.$router.push({ path: 'pointeditor', query: { pointId: this.id } });
+    }
   },
    beforeMount: function() {
       checkSession()
       this.getPointDetails()
-  }
+  },
 }
 </script>
 

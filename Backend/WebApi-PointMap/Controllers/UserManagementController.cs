@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using DataAccessLayer.Database;
 using DTO.DTO;
 using ManagerLayer.UserManagement;
@@ -32,6 +33,25 @@ namespace WebApi_PointMap.Controllers
         [HttpGet]
         [Route("users")]
         public IHttpActionResult GetAllUsers()
+=======
+﻿using DataAccessLayer.Database;
+using DTO.UserManagementAPI;
+using ManagerLayer.UserManagement;
+using System;
+using System.Linq;
+using System.Net;
+using System.Web.Http;
+using WebApi_PointMap.ErrorHandling;
+using static ServiceLayer.Services.ExceptionService;
+
+namespace WebApi_PointMap.Controllers
+{
+    public class UserManagementController : ApiController
+    {
+        [HttpGet]
+        [Route("users")]
+        public IHttpActionResult GetAllUsers()
+>>>>>>> ba10c9942d47f8e170a95c16f4779a8e0ed0571c
         {
             using (var _db = new DatabaseContext())
             {
@@ -74,6 +94,10 @@ namespace WebApi_PointMap.Controllers
                 {
                     return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
                 }
+                catch (UserNotFoundException e)
+                {
+                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                }
                 catch (Exception e)
                 {
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
@@ -109,7 +133,14 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+<<<<<<< HEAD
 
+=======
+                    if (e is UserNotFoundException)
+                    {
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
+>>>>>>> ba10c9942d47f8e170a95c16f4779a8e0ed0571c
                     if (e is SessionNotFoundException || e is NoTokenProvidedException)
                     {
                         return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
@@ -161,6 +192,10 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
+                    if (e is UserNotFoundException)
+                    {
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }

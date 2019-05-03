@@ -66,7 +66,7 @@
     <Compile Include="LoggingServicesIT.cs" />
     <Compile Include="LoggingServiceUT.cs" />
     <Compile Include="PointControllerIT.cs" />
-    <Compile Include="UserControllerUT.cs" />
+    <Compile Include="UserControllerIT.cs" />
     <Compile Include="UserLoginManagerUT.cs" />
     <Compile Include="PointServiceUT.cs" />
     <Compile Include="TestingUtils.cs" />
