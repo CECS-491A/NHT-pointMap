@@ -32,7 +32,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    return DatabaseErrorHandler.HandleException(e, _db);
+                    return ErrorHandler.HandleException(e, _db);
                 }
             }
         }
@@ -58,7 +58,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    return DatabaseErrorHandler.HandleException(e, _db);
+                    return ErrorHandler.HandleException(e, _db);
                 }
             }
         }

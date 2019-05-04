@@ -26,10 +26,6 @@ namespace WebApi_PointMap
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
-
-            config.Filters.Add(new GlobalExceptionFilter());
-
-            config.Services.Add(typeof(IExceptionLogger), new GlobalErrorLogger());
         }
     }
 }

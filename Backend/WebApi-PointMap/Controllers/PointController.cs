@@ -29,10 +29,8 @@ namespace WebApi_PointMap.Controllers
         // GET api/point/get
         [HttpGet]
         [Route("api/point/{guid}")]
-        public HttpResponseMessage Get(string guid)
+        public IHttpActionResult Get(string guid)
         {
-            HttpResponseMessage response;
-
             try
             { 
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);     
@@ -42,17 +40,14 @@ namespace WebApi_PointMap.Controllers
                 var point = _pm.GetPoint(_db, pointId);
                 _db.SaveChanges();
 
-                response = Request.CreateResponse(HttpStatusCode.OK);
-                var jsonContent = new JavaScriptSerializer().Serialize(point);
-                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                return Ok(point);
 
             }
             catch (Exception e)
             {
-                response = PointErrorHandler.HandleException(e, _db);
+                var response = ResponseMessage(ErrorHandler.HandleException(e, _db));
+                return response;
             }
-
-            return response;
         }
 
         //Post api/point
@@ -72,7 +67,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch(Exception e)
             {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                return ResponseMessage(ErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -95,7 +90,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                return ResponseMessage(ErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -117,7 +112,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch (Exception e)
             {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                return ResponseMessage(ErrorHandler.HandleException(e, _db));
             }
         }
 
@@ -145,9 +140,9 @@ namespace WebApi_PointMap.Controllers
                         float maxLat = float.Parse(headers.GetValues("maxLat").First());
                         pointList = _pm.GetAllPoints(_db, minLat, minLng, maxLat, maxLng);
                     }
-                    catch(FormatException)
+                    catch(FormatException e)
                     {
-                        throw new InvalidHeaderException("Invalid field formatting.");
+                        throw new InvalidHeaderException("Invalid field formatting.", e);
                     }
                             
                     if (pointList != null)
@@ -162,7 +157,7 @@ namespace WebApi_PointMap.Controllers
             }
             catch(Exception e)
             {
-                return PointErrorHandler.HandleException(e, _db);
+                return ErrorHandler.HandleException(e, _db);
             }
         }
     }

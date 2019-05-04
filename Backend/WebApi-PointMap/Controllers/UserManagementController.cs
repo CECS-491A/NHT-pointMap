@@ -47,17 +47,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    if (e is NoTokenProvidedException || e is InvalidModelPayloadException || e is UserIsNotAdministratorException || e is SessionNotFoundException)
-                    {
-                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                        return responseUnauthorized;
-                    }
-                    if (e is UserNotFoundException)
-                    {
-                        _db.RevertDatabaseChanges(_db);
-                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
-                    }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return ResponseMessage(ErrorHandler.HandleException(e, _db));
                 }
             }
         }
@@ -91,16 +81,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    if (e is UserNotFoundException)
-                    {
-                        _db.RevertDatabaseChanges(_db);
-                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
-                    }
-                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
-                    {
-                        return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                    }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return ResponseMessage(ErrorHandler.HandleException(e, _db));
                 }
             }
 
@@ -143,17 +124,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    if (e is NoTokenProvidedException || e is InvalidModelPayloadException || e is UserIsNotAdministratorException || e is SessionNotFoundException)
-                    {
-                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                        return responseUnauthorized;
-                    }
-                    if (e is UserNotFoundException)
-                    {
-                        _db.RevertDatabaseChanges(_db);
-                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
-                    }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return ResponseMessage(ErrorHandler.HandleException(e, _db));
                 }
             }
 
@@ -198,21 +169,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    if (e is NoTokenProvidedException || 
-                        e is InvalidModelPayloadException || 
-                        e is UserIsNotAdministratorException || 
-                        e is SessionNotFoundException)
-                    {
-                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                        return responseUnauthorized;
-                    }
-                    if (e is UserNotFoundException ||
-                        e is InvalidGuidException)
-                    {
-                        _db.RevertDatabaseChanges(_db);
-                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
-                    }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return ResponseMessage(ErrorHandler.HandleException(e, _db));
                 }
             }
         }
@@ -249,19 +206,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    if (e is UserIsNotAdministratorException)
-                    {
-                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                        return responseUnauthorized;
-                    }
-                    if (e is InvalidEmailException || e is InvalidGuidException || e is UserNotFoundException)
-                    {
-                        _db.RevertDatabaseChanges(_db);
-                        var responseInvalidEmail = ResponseMessage(GeneralErrorHandler.HandleException(e));
-                        return responseInvalidEmail;
-                    }
-                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-                    return responseInternalError;
+                    return ResponseMessage(ErrorHandler.HandleException(e, _db));
                 }
             }
         }

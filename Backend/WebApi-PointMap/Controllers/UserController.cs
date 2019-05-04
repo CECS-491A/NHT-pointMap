@@ -47,18 +47,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    var response = new HttpResponseMessage();
-                    if (e is InvalidTokenSignatureException)
-                    {
-                        response = AuthorizationErrorHandler.HandleException(e);
-                        return response;
-                    }
-                    if (e is InvalidGuidException || e is InvalidEmailException)
-                    {
-                        response = GeneralErrorHandler.HandleException(e);
-                        return response;
-                    }
-                    response = DatabaseErrorHandler.HandleException(e, _db);
+                    var response = ErrorHandler.HandleException(e, _db);
                     return response;
                 }
             }
@@ -96,23 +85,9 @@ namespace WebApi_PointMap.Controllers
                     var response = Content(HttpStatusCode.InternalServerError, "User was not deleted.");
                     return response;
                 }
-                catch (KFCSSOAPIRequestException ex)
-                {
-                    var response = Content(HttpStatusCode.ServiceUnavailable, ex.Message);
-                    return response;
-                }
-                catch (UserNotFoundException e)
-                {
-                    return Content(HttpStatusCode.NotFound, e.Message);
-                }
                 catch (Exception e)
-                {
-                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
-                    {
-                        var responseAuthError = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                        return responseAuthError;
-                    }
-                    var response = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                { 
+                    var response = ResponseMessage(ErrorHandler.HandleException(e, _db));
                     return response;
                 }
             }
@@ -141,24 +116,10 @@ namespace WebApi_PointMap.Controllers
                     var response = Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
                     return response;
                 }
-                catch (KFCSSOAPIRequestException ex)
-                {
-                    var responseAPIError = Content(HttpStatusCode.ServiceUnavailable, ex.Message);
-                    return responseAPIError;
-                }
-                catch (UserNotFoundException e)
-                {
-                    return Content(HttpStatusCode.NotFound, e.Message);
-                }
                 catch (Exception e)
                 {
-                    if (e is SessionNotFoundException || e is NoTokenProvidedException)
-                    {
-                        var responseAuthError = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                        return responseAuthError;
-                    }
-                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-                    return responseInternalError;
+                    var response = ResponseMessage(ErrorHandler.HandleException(e, _db));
+                    return response;
                 }
             }
         }
@@ -191,21 +152,10 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     return Ok("User was deleted");
                 }
-                catch (InvalidTokenSignatureException e)
-                {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                }
-                catch (UserNotFoundException e)
-                {
-                    return Content(HttpStatusCode.NotFound, e.Message);
-                }
                 catch (Exception e)
                 {
-                    if (e is InvalidModelPayloadException || e is InvalidGuidException)
-                    {
-                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
-                    }
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    var response = ResponseMessage(ErrorHandler.HandleException(e, _db));
+                    return response;
                 }
             }
         }
