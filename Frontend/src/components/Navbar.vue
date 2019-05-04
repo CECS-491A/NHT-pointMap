@@ -67,7 +67,8 @@ export default {
       UserMenuItems: [
           { title: 'Account', link: '/account'},
           { title: 'Logout', action: deleteSession, link: '/' },
-          { title: 'Privacy Policy', link: '/legal'}
+          { title: 'Privacy Policy', link: '/legal'},
+          { title: 'Facts and Questions', link: '/faq'}
       ],
       user: {},
       stored: store
