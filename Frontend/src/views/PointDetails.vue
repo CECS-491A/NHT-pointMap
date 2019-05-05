@@ -47,7 +47,7 @@
            
         </v-form>
 
-        <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
+        <v-btn id='editButton' color="success" v-on:click="pointEditor">Edit Point</v-btn>
     </div>
 
 
@@ -97,7 +97,7 @@ export default {
     }
   },
    beforeMount: function() {
-      checkSession()
+    //   checkSession()
       this.getPointDetails()
   },
 }

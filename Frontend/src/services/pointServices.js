@@ -31,7 +31,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback) {
     }).catch((err) => {
         console.log(err);
         if(err.response.status == 401){
-            deleteSession();
+            // deleteSession();
         }
       });
   return null;
@@ -55,7 +55,7 @@ function getPoint(pointId, callback) {
     .catch(err => {
       console.log(err);
       if (err.response.status == 401) {
-        deleteSession();
+        // deleteSession();
       }
     });
   return null;
@@ -74,7 +74,7 @@ function updatePoint(point){
         }).catch((err) => {
             console.log(err);
             if (err.response.status == 401) {
-                deleteSession();
+                // deleteSession();
             }
         })
     return null;
@@ -93,7 +93,7 @@ function createPoint(point){
         }).catch((err) => {
             console.log(err);
             if (err.response.status == 401) {
-                deleteSession();
+                // deleteSession();
             }
         })
     return null;

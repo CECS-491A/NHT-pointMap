@@ -20,13 +20,13 @@
           id="longitude"
           v-model.number="point.longitude"
           label="Longitude" 
-          @change="updateMarkerPosition"/><br />
+          @change="updateMarkerPosition(false)"/><br />
         <v-text-field
           name="latitude"
           id="latitude"
           v-model.number="point.latitude"
           label="Latitude" 
-          @change="updateMarkerPosition"/><br />
+          @change="updateMarkerPosition(true)"/><br />
         <v-alert
           :value="error"
           type="error"
@@ -34,7 +34,7 @@
         >
           {{error}}
         </v-alert><br />
-        <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
+        <v-btn id='saveButton' color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
 
       </v-form>
       <div v-if="loading">
@@ -90,7 +90,7 @@ export default {
     }
   },
   mounted() {
-    checkSession();
+    // checkSession();
     let promise = new Promise((resolve, reject) => {
       this.getPointData(resolve);
     });
@@ -155,18 +155,27 @@ export default {
       });
     },
     //updates the postion of the marker if the form fields are edited
-    updateMarkerPosition: function() {
+    updateMarkerPosition: function(latitudeModified) {
+      var badData = false;
       //ensures that latitude longitude fields cannot be edited to an empty string
       //  or longitude/latitude values that cannot exist
       //  this prevents an error caused when updating the marker location
-      if(this.point.latitude == "" || this.point.longitude == "" || 
-          this.point.latitude < -90 || this.point.latitude > 90 ||
-          this.point.longitude < -180 || this.point.longitude > 180) {
-        this.point.latitude = this.center.lat;
-        this.point.longitude = this.center.lng;
-
+      if(latitudeModified) {
+        if(this.point.latitude == "" || this.point.latitude < -90 || this.point.latitude > 90) {
+          this.point.latitude = this.center.lat;
+          this.error = "Latitude values cannot be empty.";
+          badData = true;
+        }
+      } else {
+        if(this.point.longitude == "" || this.point.longitude < -180 || this.point.longitude > 180) {
+          this.point.longitude = this.center.lng;
+          this.error = "Longitude values cannot be empty.";
+          badData = true;
+        }
+      }
+        
+      if(badData) {
         //displays an error message
-        this.error = "Latitude/longitude values cannot be empty.";
         var promise = new Promise((resolve, reject) => {
           setTimeout(() => { //error messages is displayed for 2 seconds
             resolve()
@@ -258,7 +267,7 @@ export default {
 
       //calls the pointServices.[func(point)] to call the backend and perform the operation
       let promise = new Promise((resolve, reject) => {
-        func(this.point);
+        // func(this.point);
         resolve();
       });
 

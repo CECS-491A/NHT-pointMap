@@ -34,11 +34,21 @@ export default {
       markers: [],
       marker: null,
       markerCluster: null,
-      title: null
+      title: null,
+      fromPointEditor: false
     }
   },
   mounted: function () {
-    checkSession()
+    // checkSession()
+    var longitude = this.$route.query.longitude;
+    var latitude = this.$route.query.latitude;
+    if(longitude !== undefined && latitude != undefined) {
+      this.center = {
+        lat: latitude,
+        lng: longitude
+      }
+      this.fromPointEditor = true;
+    }
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom,
@@ -57,13 +67,15 @@ export default {
   },
   methods:{
     geolocate: function() {
-      navigator.geolocation.getCurrentPosition(position => {
-        this.center = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        };
-        this.map.setCenter(this.center); //Needs timeout for the map to get a chance to center
-      })
+      if(!fromPointEditor) {
+        navigator.geolocation.getCurrentPosition(position => {
+          this.center = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          this.map.setCenter(this.center); //Needs timeout for the map to get a chance to center
+        })
+      }
       var promise = new Promise((resolve, reject) => { //Sets a timeout for 1 second when called
         setTimeout(() => { 
           resolve()
