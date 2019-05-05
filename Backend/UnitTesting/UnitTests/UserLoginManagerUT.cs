@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ServiceLayer.Services.ExceptionService;
-using static UnitTesting.TestingUtils;
+using static Testing.TestingUtils;
 using ManagerLayer.KFC_SSO_Utility;
-using ServiceLayer.Services;
 using ServiceLayer.KFC_API_Services;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     /// <summary>
     /// Summary description for LoginManagerUT

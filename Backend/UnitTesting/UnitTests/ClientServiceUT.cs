@@ -7,7 +7,7 @@ using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
    
     [TestClass]

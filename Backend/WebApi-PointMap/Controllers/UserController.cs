@@ -31,7 +31,7 @@ namespace WebApi_PointMap.Controllers
                     ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
 
                     //throws ExceptionService.InvalidGuidException
-                    var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
+                    Guid userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     var _ssoLoginManager = new KFC_SSO_Manager(_db);
                     // user will get logged in or registered
@@ -40,11 +40,9 @@ namespace WebApi_PointMap.Controllers
                         userSSOID,
                         requestPayload.Timestamp,
                         requestPayload.Signature);
-
                     _db.SaveChanges();
-
                     var redirectURL = "https://pointmap.net/#/login/?token=" + loginSession.Token;
-                    var response = SSOLoginResponse.ResponseRedirect(this, redirectURL);
+                    var response = SSOLoginResponse.ResponseRedirect(Request, redirectURL);
                     return response;
                 }
                 catch (Exception e)

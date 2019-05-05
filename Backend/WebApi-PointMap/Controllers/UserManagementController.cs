@@ -1,9 +1,12 @@
 ﻿using DataAccessLayer.Database;
+using DTO.DTO;
 using DTO.UserManagementAPI;
 using ManagerLayer.UserManagement;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Web.Http;
 using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
@@ -30,20 +33,10 @@ namespace WebApi_PointMap.Controllers
                     var user = _userManager.GetUser(session.UserId);
                     if (user.IsAdministrator)
                     {
-                        var users = _db.Users
-                        .Select(u => new
-                        {
-                            id = u.Id,
-                            username = u.Username,
-                            manager = u.ManagerId,
-                            city = u.City,
-                            state = u.State,
-                            country = u.Country,
-                            disabled = u.Disabled,
-                            isAdmin = u.IsAdministrator
-                        }).ToList();
+                        var users = _userManager.GetUsers();
                         _db.SaveChanges();
-                        return Ok(users);
+                        var responseUsers = Content(HttpStatusCode.OK, users);
+                        return responseUsers;
                     }
                     else
                     {
@@ -52,16 +45,18 @@ namespace WebApi_PointMap.Controllers
                     }
 
                 }
-                catch (UserIsNotAdministratorException e)
-                {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                }
-                catch (UserNotFoundException e)
-                {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
-                }
                 catch (Exception e)
                 {
+                    if (e is NoTokenProvidedException || e is InvalidModelPayloadException || e is UserIsNotAdministratorException || e is SessionNotFoundException)
+                    {
+                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseUnauthorized;
+                    }
+                    if (e is UserNotFoundException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
                 }
             }
@@ -84,19 +79,21 @@ namespace WebApi_PointMap.Controllers
                     UserManagementManager _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
                     _db.SaveChanges();
-
-                    return Ok(new
+                    var responseData = new GetUserResponseData
                     {
                         id = user.Id,
                         username = user.Username,
                         disabled = user.Disabled,
                         isAdmin = user.IsAdministrator
-                    });
+                    };
+                    var responseUser = Content(HttpStatusCode.OK, responseData);
+                    return responseUser;
                 }
                 catch (Exception e)
                 {
                     if (e is UserNotFoundException)
                     {
+                        _db.RevertDatabaseChanges(_db);
                         return ResponseMessage(GeneralErrorHandler.HandleException(e));
                     }
                     if (e is SessionNotFoundException || e is NoTokenProvidedException)
@@ -135,7 +132,8 @@ namespace WebApi_PointMap.Controllers
                     {
                         _userManager.DeleteUser(UserId);
                         _db.SaveChanges();
-                        return Ok("User was deleted");
+                        var responseDeleted = Content(HttpStatusCode.OK, "User was deleted.");
+                        return responseDeleted;
                     }
                     else
                     {
@@ -143,14 +141,16 @@ namespace WebApi_PointMap.Controllers
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     }
                 }
-                catch (UserIsNotAdministratorException e)
-                {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                }
                 catch (Exception e)
                 {
+                    if (e is NoTokenProvidedException || e is InvalidModelPayloadException || e is UserIsNotAdministratorException || e is SessionNotFoundException)
+                    {
+                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseUnauthorized;
+                    }
                     if (e is UserNotFoundException)
                     {
+                        _db.RevertDatabaseChanges(_db);
                         return ResponseMessage(GeneralErrorHandler.HandleException(e));
                     }
                     return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
@@ -180,28 +180,13 @@ namespace WebApi_PointMap.Controllers
                     var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                     var _userManager = new UserManagementManager(_db);
-                    var manager = _userManager.GetUser(session.UserId);
-                    if (manager.IsAdministrator)
+                    var user = _userManager.GetUser(session.UserId);
+                    if (user.IsAdministrator)
                     {
-                        var user = _userManager.GetUser(UserId);
-                        if (user == null)
-                        {
-                            throw new UserNotFoundException("User does not exist.");
-                        }
-                        user.City = payload.City;
-                        user.State = payload.State;
-                        user.Country = payload.Country;
-                        user.Disabled = payload.Disabled;
-                        user.IsAdministrator = payload.IsAdmin;
-                        user.ManagerId = null;
-                        if (payload.Manager != null)
-                        {
-                            //no need to check for parse error here (managerId is already in the database)
-                            var managerId = Guid.Parse(payload.Manager);
-                            user.ManagerId = managerId;
-                        }
+                        var userToUpdate = _userManager.GetUser(UserId);
+                        _userManager.ToUpdateUser(userToUpdate, payload);
 
-                        _userManager.UpdateUser(user);
+                        _userManager.UpdateUser(userToUpdate);
                         _db.SaveChanges();
                         return Content(HttpStatusCode.OK, "User updated");
                     }
@@ -211,13 +196,72 @@ namespace WebApi_PointMap.Controllers
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     };
                 }
-                catch (UserNotFoundException e)
+                catch (Exception e)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    if (e is NoTokenProvidedException || 
+                        e is InvalidModelPayloadException || 
+                        e is UserIsNotAdministratorException || 
+                        e is SessionNotFoundException)
+                    {
+                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseUnauthorized;
+                    }
+                    if (e is UserNotFoundException ||
+                        e is InvalidGuidException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                        return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    }
+                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                }
+            }
+        }
+
+        [HttpPost]
+        [Route("user/create")]
+        public IHttpActionResult CreateNewUser([FromBody, Required] CreateUserRequestDTO payload)
+        {
+            using (var _db = new DatabaseContext())
+            {
+                try
+                {
+                    //throws ExceptionService.NoTokenProvidedException
+                    var token = ControllerHelpers.GetToken(Request);
+
+                    //throws ExceptionService.InvalidModelPayloadException
+                    ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
+
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    var _userManager = new UserManagementManager(_db);
+                    var user = _userManager.GetUser(session.UserId);
+                    if (user.IsAdministrator)
+                    {
+                        // throws exception, invalid username, invalid manager guid
+                        var newUser = _userManager.CreateUser(payload);
+                        _db.SaveChanges();
+                        var responseCreated = Content(HttpStatusCode.Created, "User created.");
+                        return responseCreated;
+                    }
+                    _db.SaveChanges();
+                    throw new UserIsNotAdministratorException("Non-administrators can not create users.");
                 }
                 catch (Exception e)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    if (e is UserIsNotAdministratorException)
+                    {
+                        var responseUnauthorized = ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                        return responseUnauthorized;
+                    }
+                    if (e is InvalidEmailException || e is InvalidGuidException || e is UserNotFoundException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                        var responseInvalidEmail = ResponseMessage(GeneralErrorHandler.HandleException(e));
+                        return responseInvalidEmail;
+                    }
+                    var responseInternalError = ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return responseInternalError;
                 }
             }
         }

@@ -11,7 +11,7 @@ using System.Threading;
 using System.Web.Http.Results;
 using System.Net;
 
-namespace UnitTesting
+namespace Testing.IntegrationTests
 {
     [TestClass]
     public class PointControllerIT
