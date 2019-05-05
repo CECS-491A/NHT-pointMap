@@ -6,9 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net;
 using System.Text;
-using ManagerLayer.AccessControl;
 using System.Web.Script.Serialization;
-using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
@@ -17,45 +15,37 @@ namespace WebApi_PointMap.Controllers
 {
     public class PointController : ApiController
     {
-        PointManager _pm;
-	    DatabaseContext _db;
+        private PointManager _pm;
+	    private DatabaseContext _db;
 
         public PointController()
         {
-            _pm = new PointManager();
-	        _db = new DatabaseContext();
+            _db = new DatabaseContext();
+            _pm = new PointManager(_db);
         }
 
-        // GET api/point/get
+        // retrieves a point
         [HttpGet]
         [Route("api/point/{guid}")]
-        public HttpResponseMessage Get(string guid)
+        public IHttpActionResult Get(string guid)
         {
-            HttpResponseMessage response;
-
             try
             { 
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);     
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                var point = _pm.GetPoint(_db, pointId);
-                _db.SaveChanges();
+                var point = _pm.GetPoint(pointId);
 
-                response = Request.CreateResponse(HttpStatusCode.OK);
-                var jsonContent = new JavaScriptSerializer().Serialize(point);
-                response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
+                return Ok(point);
             }
             catch (Exception e)
             {
-                response = PointErrorHandler.HandleException(e, _db);
+                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
             }
-
-            return response;
         }
 
-        //Post api/point
+        // creates a point
         [HttpPost]
         [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointPOST pointPost)
@@ -64,11 +54,13 @@ namespace WebApi_PointMap.Controllers
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                var point = _pm.CreatePoint(_db, pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
+                ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
+
+                var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
 
                 _db.SaveChanges();
 
-                return Ok(point);
+                return Content(HttpStatusCode.Created, point);
             }
             catch(Exception e)
             {
@@ -76,6 +68,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
+        // updates a point
         [HttpPut]
         [Route("api/point")]
         public IHttpActionResult Put([FromBody] PointPOST pointPost)
@@ -84,11 +77,17 @@ namespace WebApi_PointMap.Controllers
             {
                 var token = ControllerHelpers.GetToken(Request);
                 ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                 var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
-                var point = _pm.UpdatePoint(_db, pointId, pointPost.Longitude, pointPost.Latitude,
+                var point = _pm.UpdatePoint(pointId, pointPost.Longitude, pointPost.Latitude,
                                             pointPost.Description, pointPost.Name,
                                             pointPost.CreatedAt);
+
+                if(point == null)
+                {
+                    throw new PointNotFoundException("Point not found.");
+                }
                 _db.SaveChanges();
 
                 return Ok(point);
@@ -99,6 +98,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
+        //Deletes a point
         [HttpDelete]
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
@@ -110,7 +110,8 @@ namespace WebApi_PointMap.Controllers
 
                 var pointId = ControllerHelpers.ParseAndCheckId(guid);
 
-                _pm.DeletePoint(_db, pointId);
+                _pm.DeletePoint(pointId);
+
                 _db.SaveChanges();
 
                 return Ok();
@@ -143,7 +144,7 @@ namespace WebApi_PointMap.Controllers
                         float minLat = float.Parse(headers.GetValues("minLat").First());
                         float maxLng = float.Parse(headers.GetValues("maxLng").First());
                         float maxLat = float.Parse(headers.GetValues("maxLat").First());
-                        pointList = _pm.GetAllPoints(_db, minLat, minLng, maxLat, maxLng);
+                        pointList = _pm.GetAllPoints(minLat, minLng, maxLat, maxLng);
                     }
                     catch(FormatException)
                     {

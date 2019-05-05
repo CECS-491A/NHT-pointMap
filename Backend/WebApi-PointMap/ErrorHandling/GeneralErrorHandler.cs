@@ -19,7 +19,7 @@ namespace WebApi_PointMap.ErrorHandling
                 httpResponse.StatusCode = HttpStatusCode.BadRequest;
                 httpResponse.Content = new StringContent(e.Message);
             }
-            else if(e is UserNotFoundException)
+            else if(e is UserNotFoundException || e is PointNotFoundException)
             {
                 httpResponse.StatusCode = HttpStatusCode.NotFound;
                 httpResponse.Content = new StringContent(e.Message);

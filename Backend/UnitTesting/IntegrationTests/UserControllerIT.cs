@@ -4,11 +4,11 @@ using WebApi_PointMap.Controllers;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
-using static UnitTesting.TestingUtils;
+using static Testing.TestingUtils;
 using System.Net;
 using DTO.KFCSSO_API;
 
-namespace UnitTesting.IntegrationTests
+namespace Testing.IntegrationTests
 {
     /// <summary>
     /// Summary description for UserControllerUT
