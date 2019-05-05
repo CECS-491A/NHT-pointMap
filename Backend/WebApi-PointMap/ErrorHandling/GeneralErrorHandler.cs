@@ -29,9 +29,10 @@ namespace WebApi_PointMap.ErrorHandling
                 httpResponse.StatusCode = HttpStatusCode.Conflict;
                 httpResponse.Content = new StringContent(e.Message);
             }
-            else
+            else if(e is KFCSSOAPIRequestException)
             {
-                throw new Exception(e.Message, e);
+                httpResponse.StatusCode = HttpStatusCode.ServiceUnavailable;
+                httpResponse.Content = new StringContent(e.Message);
             }
             return httpResponse;
         }

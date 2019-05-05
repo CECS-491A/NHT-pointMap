@@ -83,7 +83,7 @@ namespace Testing.IntegrationTests
             var result = response.ExecuteAsync(CancellationToken.None).Result;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("Non-administrators cannot delete users.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual("Non-administrators cannot view all users.", result.Content.ReadAsStringAsync().Result);
         }
 
         [TestMethod]

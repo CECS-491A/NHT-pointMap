@@ -11,17 +11,13 @@ namespace WebApi_PointMap.ErrorHandling
 {
     public class PointErrorHandler
     {
-        public static HttpResponseMessage HandleException(Exception e, DatabaseContext _db)
+        public static HttpResponseMessage HandleException(Exception e)
         {
             HttpResponseMessage httpResponse = new HttpResponseMessage();
             if (e is InvalidPointException)
             {
                 httpResponse.StatusCode = HttpStatusCode.BadRequest;
                 httpResponse.Content = new StringContent(e.Message);
-            }
-            else
-            {
-                httpResponse = DatabaseErrorHandler.HandleException(e, _db);
             }
             return httpResponse;
         }

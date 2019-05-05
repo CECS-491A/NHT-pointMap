@@ -19,10 +19,6 @@ namespace WebApi_PointMap.ErrorHandling
                 httpResponse.StatusCode = HttpStatusCode.BadRequest;
                 httpResponse.Content = new StringContent(e.Message);
             }
-            else
-            {
-                httpResponse = AuthorizationErrorHandler.HandleException(e);
-            }
             return httpResponse;
         }
     }

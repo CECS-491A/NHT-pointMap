@@ -56,7 +56,7 @@ namespace ManagerLayer.Users
                    "Line 51 Register in UserManager\n" +
                    "Route Reference UserController in WebApi-PointMap");
                 _loggingManager.sendLogSync(newLog);
-                throw new UserAlreadyExistsException(e.Message);
+                throw new UserAlreadyExistsException(e.Message, e);
             }
         }
     }

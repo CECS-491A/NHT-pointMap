@@ -35,10 +35,6 @@ namespace WebApi_PointMap.ErrorHandling
                 httpResponse.StatusCode = HttpStatusCode.Unauthorized;
                 httpResponse.Content = new StringContent(e.Message);
             }
-            else
-            {
-                httpResponse = GeneralErrorHandler.HandleException(e);
-            }
             return httpResponse;
         }
     }

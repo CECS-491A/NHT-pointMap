@@ -21,10 +21,6 @@ namespace WebApi_PointMap.ErrorHandling
                 httpResponse.StatusCode = HttpStatusCode.InternalServerError;
                 httpResponse.Content = new StringContent("The database operation failed.");
             }
-            else
-            {
-                httpResponse = HttpErrorHandler.HandleException(e);
-            }
             return httpResponse;
         }
     }

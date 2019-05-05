@@ -8,6 +8,9 @@ using ManagerLayer.AccessControl;
 using System.Text;
 using DataAccessLayer.Database;
 using WebApi_PointMap.ErrorHandling;
+using static ServiceLayer.Services.ExceptionService;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -34,9 +37,20 @@ namespace WebApi_PointMap.Controllers
                 response.Content = new StringContent(token, Encoding.Unicode);
                 return response;
             }
-            catch (Exception e)
+            catch (Exception e) when (e is NoTokenProvidedException ||
+                                        e is SessionNotFoundException)
+            {
+                return AuthorizationErrorHandler.HandleException(e);
+            }
+            catch (Exception e) when (e is DbUpdateException ||
+                                        e is DbEntityValidationException)
             {
                 return DatabaseErrorHandler.HandleException(e, _db);
+            }
+            catch (Exception)
+            {
+                var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return response;
             }
         }
 
@@ -57,9 +71,20 @@ namespace WebApi_PointMap.Controllers
 
                 return response;
             }
-            catch (Exception e)
+            catch (Exception e) when (e is NoTokenProvidedException ||
+                                        e is SessionNotFoundException)
+            {
+                return AuthorizationErrorHandler.HandleException(e);
+            }
+            catch (Exception e) when (e is DbUpdateException ||
+                                        e is DbEntityValidationException)
             {
                 return DatabaseErrorHandler.HandleException(e, _db);
+            }
+            catch (Exception)
+            {
+                var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return response;
             }
         }
     }
