@@ -91,6 +91,10 @@ namespace WebApi_PointMap.Controllers
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
+                    if(user == null)
+                    {
+                        return Ok();
+                    }
 
                     var _ssoAPIManager = new KFC_SSO_Manager();
                     var requestSuccessful = await _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);

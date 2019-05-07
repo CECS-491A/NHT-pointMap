@@ -43,7 +43,7 @@ namespace WebApi_PointMap.Controllers
                     else
                     {
                         _db.SaveChanges(); // save updated user session
-                        throw new UserIsNotAdministratorException("Non-administrators cannot view all users.");
+                        return Unauthorized();
                     }
 
                 }
