@@ -7,7 +7,6 @@ using System.Web.Http;
 using ManagerLayer.AccessControl;
 using System.Text;
 using DataAccessLayer.Database;
-using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
@@ -30,25 +29,26 @@ namespace WebApi_PointMap.Controllers
         {
             try
             {
-                var token = ControllerHelpers.GetToken(Request);
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                var session = ControllerHelpers.ValidateAndUpdateSession(Request);
+
                 _db.SaveChanges();
                 var response = Request.CreateResponse(HttpStatusCode.OK);
-                response.Content = new StringContent(token, Encoding.Unicode);
+                response.Content = new StringContent(session.Token, Encoding.Unicode);
                 return response;
             }
             catch (Exception e) when (e is NoTokenProvidedException ||
                                         e is SessionNotFoundException)
             {
-                return AuthorizationErrorHandler.HandleException(e);
+                var response = Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message);
+                return response;
             }
-            catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+            catch (Exception e)
             {
-                return DatabaseErrorHandler.HandleException(e, _db);
-            }
-            catch (Exception)
-            {
+                if(e is DbUpdateException ||
+                    e is DbEntityValidationException)
+                {
+                    _db.RevertDatabaseChanges(_db);
+                }
                 var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
                 return response;
             }
@@ -61,10 +61,9 @@ namespace WebApi_PointMap.Controllers
             _am = new AuthorizationManager(_db);
             try
             {
-                var token = ControllerHelpers.GetToken(Request);
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
-                _am.DeleteSession(token);
+                _am.DeleteSession(session.Token);
                 _db.SaveChanges();
                 var response = Request.CreateResponse(HttpStatusCode.OK);
                 response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
@@ -74,15 +73,16 @@ namespace WebApi_PointMap.Controllers
             catch (Exception e) when (e is NoTokenProvidedException ||
                                         e is SessionNotFoundException)
             {
-                return AuthorizationErrorHandler.HandleException(e);
+                var response = Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message);
+                return response;
             }
-            catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+            catch (Exception e)
             {
-                return DatabaseErrorHandler.HandleException(e, _db);
-            }
-            catch (Exception)
-            {
+                if (e is DbUpdateException ||
+                    e is DbEntityValidationException)
+                {
+                    _db.RevertDatabaseChanges(_db);
+                }
                 var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
                 return response;
             }

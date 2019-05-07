@@ -1,16 +1,12 @@
 ﻿using DataAccessLayer.Database;
-using DTO.DTO;
 using DTO.UserManagementAPI;
 using ManagerLayer.UserManagement;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
-using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
-using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
 
 namespace WebApi_PointMap.Controllers
@@ -26,10 +22,8 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
-
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -42,29 +36,31 @@ namespace WebApi_PointMap.Controllers
                     }
                     else
                     {
-                        _db.SaveChanges(); // save updated user session
                         return Content(HttpStatusCode.Unauthorized, "Non-administrators cannot view all users.");
                     }
 
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is UserNotFoundException)
+                catch (Exception e) when (e is InvalidGuidException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException ||
                                             e is UserIsNotAdministratorException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -79,10 +75,8 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
-
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     UserManagementManager _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -97,23 +91,27 @@ namespace WebApi_PointMap.Controllers
                     var responseUser = Content(HttpStatusCode.OK, responseData);
                     return responseUser;
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is UserNotFoundException)
+                catch (Exception e) when (e is InvalidGuidException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
-                                            e is SessionNotFoundException)
+                                            e is SessionNotFoundException ||
+                                            e is UserIsNotAdministratorException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -129,16 +127,14 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     //throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, userId);
 
                     //throws ExceptionService.InvalidGuidException
                     var UserId = ControllerHelpers.ParseAndCheckId(userId);
-
-                    //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -151,33 +147,37 @@ namespace WebApi_PointMap.Controllers
                     }
                     else
                     {
-                        _db.SaveChanges(); // save updated user session
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
                     }
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is UserNotFoundException)
+                catch (Exception e) when (e is InvalidGuidException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException ||
-                                            e is InvalidModelPayloadException ||
                                             e is UserIsNotAdministratorException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
+                catch (Exception e) when (e is InvalidModelPayloadException)
+                {
+                    return Content(HttpStatusCode.PreconditionFailed, e.Message);
                 }
                 catch (Exception e)
                 {
-                    return InternalServerError(e);
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return InternalServerError();
                 }
             }
-
         }
 
         [HttpPut]
@@ -189,7 +189,8 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     //throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
@@ -197,8 +198,6 @@ namespace WebApi_PointMap.Controllers
                     //throws ExceptionService.InvalidGuidException
                     var UserId = ControllerHelpers.ParseAndCheckId(payload.Id);
 
-                    //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -213,29 +212,34 @@ namespace WebApi_PointMap.Controllers
                     }
                     else
                     {
-                        _db.SaveChanges(); // save updated user session
                         throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
-                    };
+                    }
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is UserNotFoundException)
+                catch (Exception e) when (e is InvalidGuidException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
-                                            e is SessionNotFoundException || 
-                                            e is UserIsNotAdministratorException ||
-                                            e is InvalidModelPayloadException)
+                                            e is SessionNotFoundException ||
+                                            e is UserIsNotAdministratorException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e) when (e is InvalidModelPayloadException)
                 {
+                    return Content(HttpStatusCode.PreconditionFailed, e.Message);
+                }
+                catch (Exception e)
+                {
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -250,13 +254,11 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
+                    //throws ExceptionService.SessionNotFoundException
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     //throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
-
-                    //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
@@ -268,31 +270,39 @@ namespace WebApi_PointMap.Controllers
                         var responseCreated = Content(HttpStatusCode.Created, "User created.");
                         return responseCreated;
                     }
-                    _db.SaveChanges();
                     throw new UserIsNotAdministratorException("Non-administrators can not create users.");
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is InvalidGuidException ||
-                                            e is UserNotFoundException ||
-                                            e is UserAlreadyExistsException ||
                                             e is InvalidEmailException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException ||
-                                            e is UserIsNotAdministratorException ||
-                                            e is InvalidModelPayloadException)
+                                            e is UserIsNotAdministratorException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
+                catch (Exception e) when (e is InvalidModelPayloadException)
+                {
+                    return Content(HttpStatusCode.PreconditionFailed, e.Message);
+                }
+                catch (Exception e) when (e is UserAlreadyExistsException)
+                {
+                    return Content(HttpStatusCode.Conflict, e.Message);
                 }
                 catch (Exception e)
                 {
-                    return InternalServerError(e);
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return InternalServerError();
                 }
             }
         }

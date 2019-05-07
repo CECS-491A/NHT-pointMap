@@ -2,9 +2,7 @@
 using System;
 using System.Net;
 using System.Web.Http;
-using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
-using ServiceLayer.Services;
 using System.ComponentModel.DataAnnotations;
 using ManagerLayer.KFC_SSO_Utility;
 using System.Threading.Tasks;
@@ -47,28 +45,34 @@ namespace WebApi_PointMap.Controllers
                     var response = SSOLoginResponse.ResponseRedirect(Request, redirectURL);
                     return response;
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
-                {
-                    return DatabaseErrorHandler.HandleException(e, _db);
-                }
                 catch (Exception e) when (e is InvalidGuidException ||
-                                            e is UserAlreadyExistsException ||
+                                            e is InvalidModelPayloadException ||
                                             e is InvalidEmailException)
                 {
-                    return GeneralErrorHandler.HandleException(e);
+                    var response = new HttpResponseMessage(HttpStatusCode.BadRequest);
+                    response.Content = new StringContent(e.Message);
+                    return response;
+                }
+                catch (Exception e) when (e is UserAlreadyExistsException)
+                {
+                    var response = new HttpResponseMessage(HttpStatusCode.Conflict);
+                    response.Content = new StringContent(e.Message);
+                    return response;
                 }
                 catch (Exception e) when (e is InvalidTokenSignatureException)
                 {
-                    return AuthorizationErrorHandler.HandleException(e);
+                    var response = new HttpResponseMessage(HttpStatusCode.Unauthorized);
+                    response.Content = new StringContent(e.Message);
+                    return response;
                 }
-                catch (Exception e) when (e is InvalidModelPayloadException)
+                catch (Exception e)
                 {
-                    return HttpErrorHandler.HandleException(e);
-                }
-                catch (Exception)
-                {
-                    var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
+                    if(e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    var response = new HttpResponseMessage(HttpStatusCode.InternalServerError);
                     return response;
                 }
             }
@@ -84,14 +88,12 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
-
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
-                    if(user == null)
+                    if (user == null)
                     {
                         return Ok();
                     }
@@ -107,25 +109,31 @@ namespace WebApi_PointMap.Controllers
                     var response = Content(HttpStatusCode.InternalServerError, "User was not deleted.");
                     return response;
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidGuidException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                        e is KFCSSOAPIRequestException ||
-                                        e is UserNotFoundException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e) when (e is KFCSSOAPIRequestException)
                 {
-                    return InternalServerError();
+                    return Content(HttpStatusCode.ServiceUnavailable, e.Message);
+                }
+                catch (Exception e)
+                {
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return Content(HttpStatusCode.InternalServerError, e.Message);
                 }
             }
         }
@@ -139,10 +147,8 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     //throws ExceptionService.NoTokenProvidedException
-                    var token = ControllerHelpers.GetToken(Request);
-
                     //throws ExceptionService.SessionNotFoundException
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var _userManager = new UserManagementManager(_db);
                     // throw exception if user not found
@@ -153,23 +159,27 @@ namespace WebApi_PointMap.Controllers
                     var response = Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
                     return response;
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidGuidException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    return InternalServerError();
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return Content(HttpStatusCode.InternalServerError, e.Message);
                 }
             }
         }
@@ -202,27 +212,33 @@ namespace WebApi_PointMap.Controllers
                     _db.SaveChanges();
                     return Ok("User was deleted");
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                        e is DbEntityValidationException)
-                {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
-                }
-                catch (Exception e) when (e is InvalidTokenSignatureException)
-                {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
-                }
                 catch (Exception e) when (e is InvalidGuidException ||
-                                        e is UserNotFoundException)
+                                            e is InvalidModelPayloadException)
                 {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidModelPayloadException)
+                catch (Exception e) when (e is UserNotFoundException)
                 {
-                    return ResponseMessage(HttpErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e) when (e is NoTokenProvidedException ||
+                                            e is SessionNotFoundException || 
+                                            e is InvalidTokenSignatureException)
                 {
-                    return InternalServerError();
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
+                catch (Exception e) when (e is KFCSSOAPIRequestException)
+                {
+                    return Content(HttpStatusCode.ServiceUnavailable, e.Message);
+                }
+                catch (Exception e)
+                {
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return Content(HttpStatusCode.InternalServerError, e.Message);
                 }
             }
         }

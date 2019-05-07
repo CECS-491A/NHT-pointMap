@@ -23,7 +23,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        public static string GetToken(HttpRequestMessage request)
+        private static string GetToken(HttpRequestMessage request)
         {
             var token = GetHeader(request, "token");
 
@@ -64,15 +64,20 @@ namespace WebApi_PointMap.Controllers
             return guid;
         }
 
-        public static Session ValidateAndUpdateSession(DatabaseContext _db, string token)
+        public static Session ValidateAndUpdateSession(HttpRequestMessage request)
         {
-            AuthorizationManager _authorizationManager = new AuthorizationManager(_db);
-            var session = _authorizationManager.ValidateAndUpdateSession(token);
-            if (session == null)
-            {
-                throw new SessionNotFoundException("Session is no longer available.");
+            var token = GetToken(request);
+            using (var _sessionDb = new DatabaseContext())
+            { 
+                AuthorizationManager _authorizationManager = new AuthorizationManager(_sessionDb);
+                var session = _authorizationManager.ValidateAndUpdateSession(token);
+                if (session == null)
+                {
+                    throw new SessionNotFoundException("Session is no longer available.");
+                }
+                _sessionDb.SaveChanges();
+                return session;
             }
-            return session;
         }
     }
 }

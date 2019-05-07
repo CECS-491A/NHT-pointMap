@@ -8,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Web.Script.Serialization;
 using DataAccessLayer.Database;
-using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
@@ -30,35 +29,35 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     var pointId = ControllerHelpers.ParseAndCheckId(guid);
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     _pm = new PointManager(_db);
                     var point = _pm.GetPoint(pointId);
 
                     return Ok(point);
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                            e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidPointException)
+                catch (Exception e) when (e is PointNotFoundException)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e));
-                }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is PointNotFoundException)
-                {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    //Revert database changes if necessary
+                    if(e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -73,8 +72,7 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
                     ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                     _pm = new PointManager(_db);
@@ -84,31 +82,29 @@ namespace WebApi_PointMap.Controllers
 
                     return Content(HttpStatusCode.Created, point);
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                            e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException ||
+                                            e is InvalidModelPayloadException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidPointException)
+                catch (Exception e) when (e is PointNotFoundException)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e));
-                }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is PointNotFoundException)
-                {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception e) when (e is InvalidModelPayloadException)
+                catch (Exception e)
                 {
-                    return ResponseMessage(HttpErrorHandler.HandleException(e));
-                }
-                catch (Exception)
-                {
+                    //Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -123,8 +119,7 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request); ;
                     ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                     var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
@@ -138,31 +133,29 @@ namespace WebApi_PointMap.Controllers
 
                     return Ok(point);
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                            e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException ||
+                                            e is InvalidModelPayloadException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidPointException)
+                catch (Exception e) when (e is PointNotFoundException)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e));
-                }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is PointNotFoundException)
-                {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception e) when (e is InvalidModelPayloadException)
+                catch (Exception e)
                 {
-                    return ResponseMessage(HttpErrorHandler.HandleException(e));
-                }
-                catch (Exception)
-                {
+                    //Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -177,8 +170,7 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var pointId = ControllerHelpers.ParseAndCheckId(guid);
 
@@ -189,27 +181,28 @@ namespace WebApi_PointMap.Controllers
 
                     return Ok();
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                            e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException)
                 {
-                    return ResponseMessage(DatabaseErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidPointException)
+                catch (Exception e) when (e is PointNotFoundException)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e));
-                }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is PointNotFoundException)
-                {
-                    return ResponseMessage(GeneralErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return ResponseMessage(AuthorizationErrorHandler.HandleException(e));
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    //Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
                     return InternalServerError();
                 }
             }
@@ -223,9 +216,7 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var headers = Request.Headers;
 
@@ -257,33 +248,31 @@ namespace WebApi_PointMap.Controllers
                     }
                     throw new InvalidHeaderException("Invalid field formatting.");
                 }
-                catch (Exception e) when (e is DbUpdateException ||
-                                            e is DbEntityValidationException)
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException ||
+                                            e is InvalidModelPayloadException ||
+                                            e is InvalidHeaderException)
                 {
-                    return DatabaseErrorHandler.HandleException(e, _db);
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, e.Message);
                 }
-                catch (Exception e) when (e is InvalidPointException)
+                catch (Exception e) when (e is PointNotFoundException)
                 {
-                    return PointErrorHandler.HandleException(e);
-                }
-                catch (Exception e) when (e is InvalidGuidException ||
-                                            e is PointNotFoundException)
-                {
-                    return GeneralErrorHandler.HandleException(e);
+                    return Request.CreateResponse(HttpStatusCode.NotFound, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)
                 {
-                    return AuthorizationErrorHandler.HandleException(e);
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message);
                 }
-                catch (Exception e) when (e is InvalidModelPayloadException)
+                catch (Exception e)
                 {
-                    return HttpErrorHandler.HandleException(e);
-                }
-                catch (Exception)
-                {
-                    var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
-                    return response;
+                    //Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
                 }
             }
         }
