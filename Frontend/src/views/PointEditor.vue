@@ -247,20 +247,20 @@ export default {
       if(this.creatingPoint) {
           func = createPoint;
           payload = {
-            Name = this.point.name,
-            Description = this.point.description,
-            Longitude = this.point.longitude,
-            Latitude = this.point.latitude
+            Name: this.point.name,
+            Description: this.point.description,
+            Longitude: this.point.longitude,
+            Latitude: this.point.latitude
           }
           this.loadingText = "Creating point."
       } else {
           func = updatePoint;
           payload = {
-            Name = this.point.name,
-            Description = this.point.description,
-            Longitude = this.point.longitude,
-            Latitude = this.point.latitude,
-            Id = this.point.Id
+            Namw: this.point.name,
+            Description: this.point.description,
+            Longitude: this.point.longitude,
+            Latitude: this.point.latitude,
+            Id: this.point.Id
           }
           this.loadingText = "Updating point."
       }
