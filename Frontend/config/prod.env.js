@@ -1,9 +1,9 @@
-'use strict'
+"use strict";
 const api_url = '"https://api.pointmap.net"';
-const sso_login_url = '"https://kfc-sso.com/#/login"';
+const sso_login_url = '"https://kfc-sso.com/#/"';
 
 module.exports = {
   NODE_ENV: '"production"',
   API_URL: api_url,
   SSO_LOGIN_URL: sso_login_url
-}
+};
