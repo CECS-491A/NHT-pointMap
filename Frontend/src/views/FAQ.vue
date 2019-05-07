@@ -3,6 +3,7 @@
         <v-layout>
             <v-flex>
                 <h1 id="FAQ">Facts and Questions</h1>
+                <v-divider class='my-3'></v-divider>
                 <p>
                     <b>What is Pointmap?</b>
                     <br>
