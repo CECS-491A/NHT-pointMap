@@ -12,7 +12,7 @@ using DataAccessLayer.Models;
 using ManagerLayer.UserManagement;
 using DTO.UserManagementAPI;
 
-namespace UnitTesting.IntegrationTests
+namespace Testing.IntegrationTests
 {
     /// <summary>
     /// Summary description for UserManagementControllerIT

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     /// <summary>
     /// Unit testing for Password Service.
