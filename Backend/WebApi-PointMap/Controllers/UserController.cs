@@ -27,14 +27,14 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.InvalidModelPayloadException
+                    // Throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
 
-                    //throws ExceptionService.InvalidGuidException
+                    // Throws ExceptionService.InvalidGuidException
                     Guid userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
                     var _ssoLoginManager = new KFC_SSO_Manager(_db);
-                    // user will get logged in or registered
+                    // User will get logged in or registered
                     var loginSession = _ssoLoginManager.LoginFromSSO(
                         requestPayload.Email,
                         userSSOID,
@@ -78,7 +78,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        // user delete self from pointmap and sso
+        // User delete self from pointmap and sso
         [HttpDelete]
         [Route("api/user/deletefromsso")]
         public async Task<IHttpActionResult> DeleteFromSSO()
@@ -87,8 +87,8 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var _userManager = new UserManagementManager(_db);
@@ -140,20 +140,20 @@ namespace WebApi_PointMap.Controllers
 
         [HttpDelete]
         [Route("api/user/delete")]
-        public IHttpActionResult Delete() // user delete self from pointmap
+        public IHttpActionResult Delete() // User delete self from pointmap
         {
             using (var _db = new DatabaseContext())
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var _userManager = new UserManagementManager(_db);
-                    // throw exception if user not found
+                    // Throw exception if user not found
                     var user = _userManager.GetUser(session.UserId);
-                    //delete user self and their sessions
+                    // Delete user self and their sessions
                     _userManager.DeleteUserAndSessions(user.Id);
                     _db.SaveChanges();
                     var response = Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
@@ -185,20 +185,20 @@ namespace WebApi_PointMap.Controllers
         }
 
         [HttpPost]
-        [Route("sso/user/delete")] // request from sso to delete user self from sso to all apps
+        [Route("sso/user/delete")] // Request from sso to delete user self from sso to all apps
         public IHttpActionResult DeleteViaSSO([FromBody, Required] LoginRequestPayload requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
                 try
                 {
-                    //throws ExceptionService.InvalidModelPayloadException
+                    // Throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, requestPayload);
 
-                    //throws ExceptionService.InvalidGuidException
+                    // Throws ExceptionService.InvalidGuidException
                     var userSSOID = ControllerHelpers.ParseAndCheckId(requestPayload.SSOUserId);
 
-                    // check valid signature
+                    // Check valid signature
                     var _ssoServiceAuth = new SignatureService();
                     if (!_ssoServiceAuth.IsValidClientRequest(userSSOID.ToString(), requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature))
                     {
@@ -206,7 +206,7 @@ namespace WebApi_PointMap.Controllers
                     }
 
                     var _userManagementManager = new UserManagementManager(_db);
-                    // throw exception if user does not exist
+                    // Throw exception if user does not exist
                     var user = _userManagementManager.GetUser(userSSOID);
                     _userManagementManager.DeleteUserAndSessions(userSSOID);
                     _db.SaveChanges();

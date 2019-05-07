@@ -19,7 +19,7 @@ namespace WebApi_PointMap.Controllers
         private PointManager _pm;
 	    private DatabaseContext _db;
 
-        // retrieves a point
+        // Retrieves a point
         [HttpGet]
         [Route("api/point/{guid}")]
         public IHttpActionResult Get(string guid)
@@ -52,7 +52,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    //Revert database changes if necessary
+                    // Revert database changes if necessary
                     if(e is DbUpdateException ||
                         e is DbEntityValidationException)
                     {
@@ -63,7 +63,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        // creates a point
+        // Creates a point
         [HttpPost]
         [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointRequestDTO pointPost)
@@ -99,7 +99,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    //Revert database changes if necessary
+                    // Revert database changes if necessary
                     if (e is DbUpdateException ||
                         e is DbEntityValidationException)
                     {
@@ -110,7 +110,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        // updates a point
+        // Updates a point
         [HttpPut]
         [Route("api/point")]
         public IHttpActionResult Put([FromBody] PointRequestDTO pointPost)
@@ -150,7 +150,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    //Revert database changes if necessary
+                    // Revert database changes if necessary
                     if (e is DbUpdateException ||
                         e is DbEntityValidationException)
                     {
@@ -161,7 +161,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        //Deletes a point
+        // Deletes a point
         [HttpDelete]
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
@@ -197,7 +197,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    //Revert database changes if necessary
+                    // Revert database changes if necessary
                     if (e is DbUpdateException ||
                         e is DbEntityValidationException)
                     {
@@ -266,7 +266,7 @@ namespace WebApi_PointMap.Controllers
                 }
                 catch (Exception e)
                 {
-                    //Revert database changes if necessary
+                    // Revert database changes if necessary
                     if (e is DbUpdateException ||
                         e is DbEntityValidationException)
                     {

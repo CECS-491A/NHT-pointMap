@@ -21,8 +21,8 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var _userManager = new UserManagementManager(_db);
@@ -74,8 +74,8 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     UserManagementManager _userManager = new UserManagementManager(_db);
@@ -126,14 +126,14 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
-                    //throws ExceptionService.InvalidModelPayloadException
+                    // Throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, userId);
 
-                    //throws ExceptionService.InvalidGuidException
+                    // Throws ExceptionService.InvalidGuidException
                     var UserId = ControllerHelpers.ParseAndCheckId(userId);
 
                     var _userManager = new UserManagementManager(_db);
@@ -187,14 +187,14 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
-                    //throws ExceptionService.InvalidModelPayloadException
+                    // Throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
 
-                    //throws ExceptionService.InvalidGuidException
+                    // Throws ExceptionService.InvalidGuidException
                     var UserId = ControllerHelpers.ParseAndCheckId(payload.Id);
 
 
@@ -251,18 +251,18 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    //throws ExceptionService.NoTokenProvidedException
-                    //throws ExceptionService.SessionNotFoundException
+                    // Throws ExceptionService.NoTokenProvidedException
+                    // Throws ExceptionService.SessionNotFoundException
                     var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
-                    //throws ExceptionService.InvalidModelPayloadException
+                    // Throws ExceptionService.InvalidModelPayloadException
                     ControllerHelpers.ValidateModelAndPayload(ModelState, payload);
 
                     var _userManager = new UserManagementManager(_db);
                     var user = _userManager.GetUser(session.UserId);
                     if (user.IsAdministrator)
                     {
-                        // throws exception, invalid username, invalid manager guid
+                        // Throws exception, invalid username, invalid manager guid
                         var newUser = _userManager.CreateUser(payload);
                         _db.SaveChanges();
                         var responseCreated = Content(HttpStatusCode.Created, "User created.");
