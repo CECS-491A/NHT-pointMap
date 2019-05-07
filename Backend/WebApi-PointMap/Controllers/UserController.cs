@@ -26,7 +26,7 @@ namespace WebApi_PointMap.Controllers
         /// <returns> redirect to Pointmap landing page with url token param </returns>
         [HttpPost]
         [Route("api/user/login")]
-        public HttpResponseMessage LoginFromSSO([FromBody] LoginRequestPayload requestPayload)
+        public async Task<HttpResponseMessage> LoginFromSSO([FromBody] LoginRequestPayload requestPayload)
         {
             using (var _db = new DatabaseContext())
             {
@@ -40,7 +40,7 @@ namespace WebApi_PointMap.Controllers
 
                     var _ssoLoginManager = new KFC_SSO_Manager(_db);
                     // user will get logged in or registered
-                    var loginSession = _ssoLoginManager.LoginFromSSO(
+                    var loginSession = await _ssoLoginManager.LoginFromSSO(
                         requestPayload.Email,
                         userSSOID,
                         requestPayload.Timestamp,
@@ -203,9 +203,10 @@ namespace WebApi_PointMap.Controllers
 
                     // check valid signature
                     var _ssoServiceAuth = new SignatureService();
-                    if (!_ssoServiceAuth.IsValidClientRequest(userSSOID.ToString(), requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature))
+                    var validSignature = _ssoServiceAuth.IsValidClientRequest(userSSOID.ToString(), requestPayload.Email, requestPayload.Timestamp, requestPayload.Signature);
+                    if (!validSignature)
                     {
-                        throw new InvalidTokenSignatureException("Session is not valid.");
+                        return Content(HttpStatusCode.Unauthorized, "Invalid Token signature.");
                     }
 
                     var _userManagementManager = new UserManagementManager(_db);

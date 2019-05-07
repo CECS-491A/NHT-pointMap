@@ -8,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 using static ServiceLayer.Services.ExceptionService;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     [TestClass]
     public class UserServiceUT

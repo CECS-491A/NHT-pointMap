@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLayer", "ServiceLaye
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccessLayer", "DataAccessLayer\DataAccessLayer.csproj", "{F4772F25-0116-413B-BC7F-43EFF8A04F2E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{69F3E1D0-DAD5-4078-B839-97C80CE94A65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "UnitTesting\Testing.csproj", "{69F3E1D0-DAD5-4078-B839-97C80CE94A65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dev", "Dev\Dev.csproj", "{1057EA55-30CA-4B6D-83B5-232F2791456B}"
 EndProject

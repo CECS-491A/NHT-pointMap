@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ServiceLayer.KFC_API_Services;
 
-namespace UnitTesting
+namespace Testing
 {
     public class TestingUtils
     {

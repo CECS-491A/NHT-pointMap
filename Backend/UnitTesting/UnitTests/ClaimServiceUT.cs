@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     [TestClass]
     public class ClaimServiceUT

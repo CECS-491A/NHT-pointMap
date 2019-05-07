@@ -9,8 +9,9 @@ using System.Net;
 using System.Threading;
 using DTO.UserManagementAPI;
 using DTO.KFCSSO_API;
+using System.Web.Http.Results;
 
-namespace UnitTesting.IntegrationTests
+namespace Testing.IntegrationTests
 {
     [TestClass]
     public class ErrorHandlingIT
@@ -47,7 +48,7 @@ namespace UnitTesting.IntegrationTests
             _umController.Request = request;
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
-            //  and return a 412
+            //  and return a 400
             IHttpActionResult response = _umController.DeleteUser((string)null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -160,7 +161,7 @@ namespace UnitTesting.IntegrationTests
             _umController.Request = request;
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
-            //  and return a 412
+            //  and return a 400
             IHttpActionResult response = _umController.DeleteUser((string)null);
 
             var result = response.ExecuteAsync(CancellationToken.None).Result;
@@ -267,7 +268,7 @@ namespace UnitTesting.IntegrationTests
             //  and return a 401
             IHttpActionResult response = _userController.DeleteViaSSO(loginDTO);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
+            var result = response as NegotiatedContentResult<string>;
 
             Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
         }
@@ -280,7 +281,7 @@ namespace UnitTesting.IntegrationTests
             _tu.CreateSessionInDb(newSession);
 
             var endpoint = API_ROUTE_LOCAL + "/api/point";
-            _umController.Request = new HttpRequestMessage
+            _pointController.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(endpoint)
             };

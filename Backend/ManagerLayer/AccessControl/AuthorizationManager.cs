@@ -11,11 +11,11 @@ namespace ManagerLayer.AccessControl
     {
         private ISessionService _sessionService;
         private IUserService _userService;
-        DatabaseContext _db;
+        private DatabaseContext _db;
 
         public AuthorizationManager(DatabaseContext db)
         {
-             _sessionService = new SessionService();
+             _sessionService = new SessionService(db);
             _db = db;
         }
 
@@ -37,33 +37,37 @@ namespace ManagerLayer.AccessControl
             {
                 throw new UserNotFoundException("User does not exist. Session can not be created.");
             }
-            Session session = new Session();
+            var session = new Session();
             session.Token = GenerateSessionToken();
-            session = _sessionService.CreateSession(_db, session, userResponse.Id);
+            session.UserId = userResponse.Id;
+            session = _sessionService.CreateSession(session);
             return session;
         }
 
-        public Session ValidateAndUpdateSession(DatabaseContext _db, string token)
+        public Session ValidateAndUpdateSession(string token)
         {
-            Session response = _sessionService.ValidateSession(_db, token);
+            var session = _sessionService.ValidateSession(token);
 
-            if(response != null)
+            if(session != null)
             {
-                response = _sessionService.UpdateSession(_db, response);
+                session = _sessionService.UpdateSession(session);
             }
-            return response;
+
+            return session;
         }
 
-        public Session ExpireSession(DatabaseContext _db, string token)
+        public Session ExpireSession(string token)
         {
-            Session response = _sessionService.ExpireSession(_db, token);
-            return response;
+            var session = _sessionService.ExpireSession(token);
+
+            return session;
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token)
+        public Session DeleteSession(string token)
         {
-            Session response = _sessionService.DeleteSession(_db, token);
-            return response;
+            var session = _sessionService.DeleteSession(token);
+
+            return session;
         }
     }
 }

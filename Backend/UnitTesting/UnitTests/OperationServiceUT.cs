@@ -8,7 +8,7 @@ using DataAccessLayer.Database;
 using System.Data.Entity;
 using System.Linq;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     [TestClass]
     public class OperationServiceUT

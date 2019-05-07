@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ServiceLayer.Services.ExceptionService;
-using static UnitTesting.TestingUtils;
+using static Testing.TestingUtils;
 using ManagerLayer.KFC_SSO_Utility;
-using ServiceLayer.Services;
 using ServiceLayer.KFC_API_Services;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     /// <summary>
     /// Summary description for LoginManagerUT
@@ -24,7 +23,7 @@ namespace UnitTesting
 
         [TestMethod]
         [ExpectedException(typeof(InvalidEmailException))]
-        public void Login_NewUser_InvalidUserName_Failure_ExceptionThrown()
+        public async void Login_NewUser_InvalidUserName_Failure_ExceptionThrown()
         {
             var invalid_username = Guid.NewGuid() + ".com";
             var valid_ssoID = Guid.NewGuid();
@@ -42,7 +41,7 @@ namespace UnitTesting
             using (var _db = ut.CreateDataBaseContext())
             {
                 _ssoLoginManager = new KFC_SSO_Manager(_db);
-                _ssoLoginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, signature);
+                var result = await _ssoLoginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, signature);
             }
 
             //Assert - catch exception
