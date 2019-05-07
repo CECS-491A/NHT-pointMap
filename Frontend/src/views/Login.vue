@@ -14,6 +14,8 @@ import axios from 'axios'
 import Loading from '@/components/dialogs/Loading'
 import PopupDialog from '@/components/dialogs/PopupDialog'
 import { GetUser } from '@/services/userManagementServices'
+import { store } from '@/services/accountServices.js'
+import { httpResponseCodes } from '@/services/services.const.js'
 
 export default {
   name: 'Login',
@@ -41,8 +43,10 @@ export default {
       GetUser()
         .then( response => {
           switch(response.status){
-            case 200: // status OK
+            case httpResponseCodes.OK: // status OK
               var user = response.data;
+              store.state.isLogin = true;
+              store.getEmail();
               localStorage.setItem('token', this.token);
               this.loading = false;
               this.loadingText = '';
@@ -60,8 +64,8 @@ export default {
           this.loadingText = '';
           if (err.response){
             switch(err.response.status){
-              case 404: // status Not Found
-              case 401: // status Unauthorized
+              case httpResponseCodes.NotFound: // status Not Found
+              case httpResponseCodes.Unauthorized: // status Unauthorized
                 this.loading = false;
                 this.popupMessage = 'The session has expired...';
                 this.validSession = false;

@@ -7,15 +7,12 @@ let config = {
   }
 };
 
-const DeleteAccountFromSSO = () => {
+export const deleteAccountFromSSO = () => {
   config.headers.Token = localStorage.getItem("token");
-  return axios.post(`${api_url}/api/user/deletefromsso`).then(response => {
-    return response;
-  });
+  return axios.delete(`${api_url}/api/user/deletefromsso`, config);
 };
 
 export const deleteAccountfromPointmap = () => {
-  console.log("deleting");
   config.headers.Token = localStorage.getItem("token");
   return axios.delete(`${api_url}/api/user/delete`, config);
 };
@@ -47,5 +44,3 @@ export const store = {
     });
   }
 };
-
-export { DeleteAccountFromSSO };

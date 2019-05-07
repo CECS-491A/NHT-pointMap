@@ -23,6 +23,11 @@ namespace DTO.KFCSSO_API
         public string Signature { get; set; }
     }
 
+    public class LogoutRequestPayload : LoginRequestPayload
+    {
+
+    }
+
     public class DeleteUserFromSSO_DTO
     {
         [Required]

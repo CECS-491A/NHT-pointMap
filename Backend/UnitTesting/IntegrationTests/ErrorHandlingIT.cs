@@ -264,13 +264,12 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            var point = new PointRequestDTO
+            var point = new PointCreateDTO
             {
                 Longitude = 185,
                 Latitude = 85,
                 Description = "bad longitude value",
                 Name = "test bad point",
-                Id = Guid.NewGuid()
             };
 
             var request = new HttpRequestMessage();
