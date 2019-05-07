@@ -37,6 +37,11 @@
                     <br>
                     Pointmap's user manual can be viewed 
                     <a href='/usermanual'>here</a>.
+                    <br><br>
+
+                    <b>How can I delete my account?</b>
+                    <br>
+                    A user's account can be deleted by using the user avatar in the upper right hand corner and clicking on 'Account'. From there, the user can choose to delete their account from either Pointmap alone or Pointmap and the single sign on application.
                 </p>
             </v-flex>
         </v-layout>
