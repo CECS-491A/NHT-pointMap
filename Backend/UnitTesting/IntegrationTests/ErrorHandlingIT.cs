@@ -9,6 +9,7 @@ using System.Net;
 using System.Threading;
 using DTO.UserManagementAPI;
 using DTO.KFCSSO_API;
+using System.Web.Http.Results;
 
 namespace Testing.IntegrationTests
 {
@@ -78,12 +79,10 @@ namespace Testing.IntegrationTests
             //user is not adminstrator and therefore cannot return all users.
             //  should result in an UserIsNotAdministratorException
             //  and return a 401
-            IHttpActionResult response = _umController.GetAllUsers();
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.GetAllUsers();
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("Non-administrators cannot view all users.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.AreEqual("Non-administrators cannot view all users.", response.Content.ToString());
         }
 
         [TestMethod]

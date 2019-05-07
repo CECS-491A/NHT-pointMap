@@ -113,10 +113,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.GetAllUsers();
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.GetAllUsers();
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
