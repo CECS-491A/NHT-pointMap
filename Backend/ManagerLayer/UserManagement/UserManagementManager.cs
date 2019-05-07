@@ -71,9 +71,9 @@ namespace ManagerLayer.UserManagement
                         }
                         newUser.ManagerId = managerId;
                     }
-                    catch (FormatException)
+                    catch (FormatException e)
                     {
-                        throw new InvalidGuidException("Invalid Manager ID.");
+                        throw new InvalidGuidException("Invalid Manager ID.", e);
                     }
                 }
                 newUser.IsAdministrator = user.IsAdmin;

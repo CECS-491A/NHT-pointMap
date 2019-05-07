@@ -1,15 +1,16 @@
 ﻿using ManagerLayer;
 using System;
 using System.Web.Http;
-using WebApi_PointMap.Models;
 using System.Linq;
 using System.Net.Http;
 using System.Net;
 using System.Text;
 using System.Web.Script.Serialization;
 using DataAccessLayer.Database;
-using WebApi_PointMap.ErrorHandling;
 using static ServiceLayer.Services.ExceptionService;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
+using DTO.PointAPI;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -18,7 +19,7 @@ namespace WebApi_PointMap.Controllers
         private PointManager _pm;
 	    private DatabaseContext _db;
 
-        // retrieves a point
+        // Retrieves a point
         [HttpGet]
         [Route("api/point/{guid}")]
         public IHttpActionResult Get(string guid)
@@ -28,32 +29,50 @@ namespace WebApi_PointMap.Controllers
                 try
                 {
                     var pointId = ControllerHelpers.ParseAndCheckId(guid);
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     _pm = new PointManager(_db);
                     var point = _pm.GetPoint(pointId);
 
                     return Ok(point);
                 }
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException)
+                {
+                    return Content(HttpStatusCode.BadRequest, e.Message);
+                }
+                catch (Exception e) when (e is PointNotFoundException)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
+                }
+                catch (Exception e) when (e is NoTokenProvidedException ||
+                                            e is SessionNotFoundException)
+                {
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
                 catch (Exception e)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
-                } 
+                    // Revert database changes if necessary
+                    if(e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return InternalServerError();
+                }
             }
         }
 
-        // creates a point
+        // Creates a point
         [HttpPost]
         [Route("api/point")]
-        public IHttpActionResult Post([FromBody] PointPOST pointPost)
+        public IHttpActionResult Post([FromBody] PointRequestDTO pointPost)
         {
             using (_db = new DatabaseContext())
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
                     ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                     _pm = new PointManager(_db);
@@ -63,24 +82,44 @@ namespace WebApi_PointMap.Controllers
 
                     return Content(HttpStatusCode.Created, point);
                 }
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException ||
+                                            e is InvalidModelPayloadException)
+                {
+                    return Content(HttpStatusCode.BadRequest, e.Message);
+                }
+                catch (Exception e) when (e is PointNotFoundException)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
+                }
+                catch (Exception e) when (e is NoTokenProvidedException ||
+                                            e is SessionNotFoundException)
+                {
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
                 catch (Exception e)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
-                } 
+                    // Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return InternalServerError();
+                }
             }
         }
 
-        // updates a point
+        // Updates a point
         [HttpPut]
         [Route("api/point")]
-        public IHttpActionResult Put([FromBody] PointPOST pointPost)
+        public IHttpActionResult Put([FromBody] PointRequestDTO pointPost)
         {
             using (_db = new DatabaseContext())
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request); ;
                     ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
                     var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
@@ -90,22 +129,39 @@ namespace WebApi_PointMap.Controllers
                                                 pointPost.Description, pointPost.Name,
                                                 pointPost.CreatedAt);
 
-                    if (point == null)
-                    {
-                        throw new PointNotFoundException("Point not found.");
-                    }
                     _db.SaveChanges();
 
                     return Ok(point);
                 }
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException ||
+                                            e is InvalidModelPayloadException)
+                {
+                    return Content(HttpStatusCode.BadRequest, e.Message);
+                }
+                catch (Exception e) when (e is PointNotFoundException)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
+                }
+                catch (Exception e) when (e is NoTokenProvidedException ||
+                                            e is SessionNotFoundException)
+                {
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
                 catch (Exception e)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
-                } 
+                    // Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return InternalServerError();
+                }
             }
         }
 
-        //Deletes a point
+        // Deletes a point
         [HttpDelete]
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
@@ -114,8 +170,7 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var pointId = ControllerHelpers.ParseAndCheckId(guid);
 
@@ -126,10 +181,30 @@ namespace WebApi_PointMap.Controllers
 
                     return Ok();
                 }
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException)
+                {
+                    return Content(HttpStatusCode.BadRequest, e.Message);
+                }
+                catch (Exception e) when (e is PointNotFoundException)
+                {
+                    return Content(HttpStatusCode.NotFound, e.Message);
+                }
+                catch (Exception e) when (e is NoTokenProvidedException ||
+                                            e is SessionNotFoundException)
+                {
+                    return Content(HttpStatusCode.Unauthorized, e.Message);
+                }
                 catch (Exception e)
                 {
-                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
-                } 
+                    // Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return InternalServerError();
+                }
             }
         }
 
@@ -141,9 +216,7 @@ namespace WebApi_PointMap.Controllers
             {
                 try
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-
-                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
                     var headers = Request.Headers;
 
@@ -162,7 +235,7 @@ namespace WebApi_PointMap.Controllers
                         }
                         catch (FormatException)
                         {
-                            throw new InvalidHeaderException("Invalid field formatting.");
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid field formatting");
                         }
 
                         if (pointList != null)
@@ -173,12 +246,34 @@ namespace WebApi_PointMap.Controllers
                             return response;
                         }
                     }
-                    throw new InvalidHeaderException("Invalid field formatting.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid field formatting");
+                }
+                catch (Exception e) when (e is InvalidPointException ||
+                                            e is InvalidGuidException ||
+                                            e is InvalidModelPayloadException ||
+                                            e is InvalidHeaderException)
+                {
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, e.Message);
+                }
+                catch (Exception e) when (e is PointNotFoundException)
+                {
+                    return Request.CreateResponse(HttpStatusCode.NotFound, e.Message);
+                }
+                catch (Exception e) when (e is NoTokenProvidedException ||
+                                            e is SessionNotFoundException)
+                {
+                    return Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message);
                 }
                 catch (Exception e)
                 {
-                    return PointErrorHandler.HandleException(e, _db);
-                } 
+                    // Revert database changes if necessary
+                    if (e is DbUpdateException ||
+                        e is DbEntityValidationException)
+                    {
+                        _db.RevertDatabaseChanges(_db);
+                    }
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError);
+                }
             }
         }
     }
