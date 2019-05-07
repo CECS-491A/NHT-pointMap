@@ -263,14 +263,12 @@ namespace Testing.IntegrationTests
 
             OkNegotiatedContentResult<Point> response = (OkNegotiatedContentResult<Point>)controller.Get(point.Id.ToString());
 
-            var pointPost = new PointRequestDTO
+            var pointPost = new PointUpdateDTO
             {
                 Longitude = response.Content.Longitude,
                 Latitude = response.Content.Latitude,
                 Description = "updatedDescription",
                 Name = "updatedName",
-                CreatedAt = response.Content.CreatedAt,
-                UpdatedAt = response.Content.UpdatedAt,
                 Id = response.Content.Id
             };
 
@@ -285,8 +283,8 @@ namespace Testing.IntegrationTests
             Assert.AreEqual(pointPost.Description, result.Content.Description);
             Assert.AreEqual(pointPost.Longitude, result.Content.Longitude);
             Assert.AreEqual(pointPost.Latitude, result.Content.Latitude);
-            Assert.AreEqual(pointPost.CreatedAt, result.Content.CreatedAt);
-            Assert.AreNotEqual(pointPost.UpdatedAt, result.Content.UpdatedAt);
+            Assert.AreEqual(response.Content.CreatedAt, result.Content.CreatedAt);
+            Assert.AreNotEqual(response.Content.UpdatedAt, result.Content.UpdatedAt);
         }
 
         [TestMethod]
@@ -309,14 +307,12 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            PointRequestDTO pointPost = new PointRequestDTO
+            var pointPost = new PointUpdateDTO
             {
                 Longitude = point.Longitude,
                 Latitude = point.Latitude,
                 Description = "updatedDescription",
                 Name = "updatedName",
-                CreatedAt = point.CreatedAt,
-                UpdatedAt = point.UpdatedAt,
                 Id = point.Id
             };
 
@@ -361,7 +357,7 @@ namespace Testing.IntegrationTests
             var pointToPost = _tu.CreatePointObject(179, 81);
             var point = _tu.CreatePointInDb(pointToPost);
 
-            var pointPost = new PointRequestDTO
+            var pointPost = new PointUpdateDTO
             {
                 Name = point.Name,
                 Description = point.Description,
@@ -386,17 +382,17 @@ namespace Testing.IntegrationTests
 
             pointPost.Longitude = -181;
 
-            response = (NegotiatedContentResult<string>)controller.Post(pointPost);
+            response = (NegotiatedContentResult<string>)controller.Put(pointPost);
             Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             pointPost.Latitude = 91;
 
-            response = (NegotiatedContentResult<string>)controller.Post(pointPost);
+            response = (NegotiatedContentResult<string>)controller.Put(pointPost);
             Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             pointPost.Latitude = -91;
 
-            response = (NegotiatedContentResult<string>)controller.Post(pointPost);
+            response = (NegotiatedContentResult<string>)controller.Put(pointPost);
             Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
@@ -420,14 +416,12 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            PointRequestDTO pointPost = new PointRequestDTO
+            var pointPost = new PointUpdateDTO
             {
                 Longitude = point.Longitude,
                 Latitude = point.Latitude,
                 Description = "updatedDescription",
                 Name = "updatedName",
-                CreatedAt = point.CreatedAt,
-                UpdatedAt = point.UpdatedAt,
                 Id = point.Id
             };
 
@@ -449,7 +443,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(createEndpoint)
             };
 
-            PointRequestDTO pointPost = new PointRequestDTO
+            var pointPost = new PointCreateDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -481,25 +475,23 @@ namespace Testing.IntegrationTests
             Assert.AreEqual(response.Content.CreatedAt, readResponse.Content.CreatedAt);
             Assert.AreEqual(response.Content.UpdatedAt, readResponse.Content.UpdatedAt);
 
-            pointPost = new PointRequestDTO
+            var pointUpdatePost = new PointUpdateDTO
             {
                 Longitude = readResponse.Content.Longitude,
                 Latitude = response.Content.Latitude,
                 Description = "updatedDescription",
                 Name = "updatedName",
-                CreatedAt = readResponse.Content.CreatedAt,
-                UpdatedAt = readResponse.Content.UpdatedAt,
                 Id = readResponse.Content.Id
             };
 
-            OkNegotiatedContentResult<Point> updateResponse = (OkNegotiatedContentResult<Point>)controller.Put(pointPost);
+            OkNegotiatedContentResult<Point> updateResponse = (OkNegotiatedContentResult<Point>)controller.Put(pointUpdatePost);
 
-            Assert.AreEqual(pointPost.Name, updateResponse.Content.Name);
-            Assert.AreEqual(pointPost.Description, updateResponse.Content.Description);
-            Assert.AreEqual(pointPost.Longitude, updateResponse.Content.Longitude);
-            Assert.AreEqual(pointPost.Latitude, updateResponse.Content.Latitude);
-            Assert.AreEqual(pointPost.CreatedAt, updateResponse.Content.CreatedAt);
-            Assert.AreNotEqual(pointPost.UpdatedAt, updateResponse.Content.UpdatedAt);
+            Assert.AreEqual(pointUpdatePost.Name, updateResponse.Content.Name);
+            Assert.AreEqual(pointUpdatePost.Description, updateResponse.Content.Description);
+            Assert.AreEqual(pointUpdatePost.Longitude, updateResponse.Content.Longitude);
+            Assert.AreEqual(pointUpdatePost.Latitude, updateResponse.Content.Latitude);
+            Assert.AreEqual(response.Content.CreatedAt, updateResponse.Content.CreatedAt);
+            Assert.AreNotEqual(response.Content.UpdatedAt, updateResponse.Content.UpdatedAt);
 
             //Read Test2
             OkNegotiatedContentResult<Point> readResponse2 = (OkNegotiatedContentResult<Point>)controller.Get(updateResponse.Content.Id.ToString());
@@ -533,7 +525,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointRequestDTO point = new PointRequestDTO
+            var point = new PointCreateDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -567,7 +559,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointRequestDTO point = new PointRequestDTO
+            var point = new PointCreateDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -598,7 +590,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointRequestDTO point = new PointRequestDTO
+            var point = new PointCreateDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -629,7 +621,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointRequestDTO point = new PointRequestDTO
+            var point = new PointCreateDTO
             {
                 Longitude = 181,
                 Latitude = 85,
