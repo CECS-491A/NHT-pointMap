@@ -7,10 +7,6 @@ using System.Threading.Tasks;
 
 namespace DTO.UserManagementAPI
 {
-    class UserManagementRequests
-    {
-    }
-
     public class UpdateUserRequestDTO
     {
         [Required]

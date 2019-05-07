@@ -3,13 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApi_PointMap.Controllers;
 using DataAccessLayer.Models;
 using System.Net.Http;
-using System.Web.Http;
 using System.Net;
-using System.Threading;
 using DTO.UserManagementAPI;
 using DTO.KFCSSO_API;
 using System.Web.Http.Results;
-using DTO;
+using DTO.PointAPI;
 
 namespace Testing.IntegrationTests
 {
@@ -266,7 +264,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointDTO point = new PointDTO
+            var point = new PointRequestDTO
             {
                 Longitude = 185,
                 Latitude = 85,

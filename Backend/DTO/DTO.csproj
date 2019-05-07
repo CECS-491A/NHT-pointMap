@@ -52,11 +52,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DTO\PointDTO.cs" />
     <Compile Include="DTO\RecoverableErrorDTO.cs" />
     <Compile Include="DTO\LogRequestDTO.cs" />
     <Compile Include="KFCSSO_API\SSO_API_Requests.cs" />
     <Compile Include="KFCSSO_API\SSO_API_Responses.cs" />
+    <Compile Include="PointAPI\PointRequests.cs" />
+    <Compile Include="PointAPI\PointResponses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserManagementAPI\UserManagementRequests.cs" />
     <Compile Include="UserManagementAPI\UserManagementResponses.cs" />
