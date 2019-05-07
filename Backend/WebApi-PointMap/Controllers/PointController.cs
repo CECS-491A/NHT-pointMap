@@ -1,7 +1,6 @@
 ﻿using ManagerLayer;
 using System;
 using System.Web.Http;
-using WebApi_PointMap.Models;
 using System.Linq;
 using System.Net.Http;
 using System.Net;
@@ -11,6 +10,7 @@ using DataAccessLayer.Database;
 using static ServiceLayer.Services.ExceptionService;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
+using DTO;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -66,7 +66,7 @@ namespace WebApi_PointMap.Controllers
         // creates a point
         [HttpPost]
         [Route("api/point")]
-        public IHttpActionResult Post([FromBody] PointPOST pointPost)
+        public IHttpActionResult Post([FromBody] PointDTO pointPost)
         {
             using (_db = new DatabaseContext())
             {
@@ -113,7 +113,7 @@ namespace WebApi_PointMap.Controllers
         // updates a point
         [HttpPut]
         [Route("api/point")]
-        public IHttpActionResult Put([FromBody] PointPOST pointPost)
+        public IHttpActionResult Put([FromBody] PointDTO pointPost)
         {
             using (_db = new DatabaseContext())
             {

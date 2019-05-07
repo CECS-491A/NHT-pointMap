@@ -4,12 +4,12 @@ using WebApi_PointMap.Controllers;
 using DataAccessLayer.Models;
 using System.Net.Http;
 using System.Web.Http;
-using WebApi_PointMap.Models;
 using ServiceLayer.Services;
 using DataAccessLayer.Database;
 using System.Threading;
 using System.Web.Http.Results;
 using System.Net;
+using DTO;
 
 namespace Testing.IntegrationTests
 {
@@ -265,7 +265,7 @@ namespace Testing.IntegrationTests
 
             OkNegotiatedContentResult<Point> response = (OkNegotiatedContentResult<Point>)controller.Get(point.Id.ToString());
 
-            PointPOST pointPost = new PointPOST
+            PointDTO pointPost = new PointDTO
             {
                 Longitude = response.Content.Longitude,
                 Latitude = response.Content.Latitude,
@@ -311,7 +311,7 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            PointPOST pointPost = new PointPOST
+            PointDTO pointPost = new PointDTO
             {
                 Longitude = point.Longitude,
                 Latitude = point.Latitude,
@@ -363,7 +363,7 @@ namespace Testing.IntegrationTests
             var pointToPost = _tu.CreatePointObject(179, 81);
             var point = _tu.CreatePointInDb(pointToPost);
 
-            var pointPost = new PointPOST
+            var pointPost = new PointDTO
             {
                 Name = point.Name,
                 Description = point.Description,
@@ -422,7 +422,7 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            PointPOST pointPost = new PointPOST
+            PointDTO pointPost = new PointDTO
             {
                 Longitude = point.Longitude,
                 Latitude = point.Latitude,
@@ -451,7 +451,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(createEndpoint)
             };
 
-            PointPOST pointPost = new PointPOST
+            PointDTO pointPost = new PointDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -483,7 +483,7 @@ namespace Testing.IntegrationTests
             Assert.AreEqual(response.Content.CreatedAt, readResponse.Content.CreatedAt);
             Assert.AreEqual(response.Content.UpdatedAt, readResponse.Content.UpdatedAt);
 
-            pointPost = new PointPOST
+            pointPost = new PointDTO
             {
                 Longitude = readResponse.Content.Longitude,
                 Latitude = response.Content.Latitude,
@@ -535,7 +535,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointDTO point = new PointDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -569,7 +569,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointDTO point = new PointDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -600,7 +600,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointDTO point = new PointDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -631,7 +631,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointDTO point = new PointDTO
             {
                 Longitude = 181,
                 Latitude = 85,

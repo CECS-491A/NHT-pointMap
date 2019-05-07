@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace WebApi_PointMap.Models
+namespace DTO
 {
-    public class PointPOST
+    public class PointDTO
     {
         public float Longitude { get; set; }
         public float Latitude { get; set; }

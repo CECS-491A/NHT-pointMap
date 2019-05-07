@@ -4,12 +4,12 @@ using WebApi_PointMap.Controllers;
 using DataAccessLayer.Models;
 using System.Net.Http;
 using System.Web.Http;
-using WebApi_PointMap.Models;
 using System.Net;
 using System.Threading;
 using DTO.UserManagementAPI;
 using DTO.KFCSSO_API;
 using System.Web.Http.Results;
+using DTO;
 
 namespace Testing.IntegrationTests
 {
@@ -266,7 +266,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointDTO point = new PointDTO
             {
                 Longitude = 185,
                 Latitude = 85,
