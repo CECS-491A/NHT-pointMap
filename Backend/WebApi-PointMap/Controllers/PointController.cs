@@ -18,30 +18,28 @@ namespace WebApi_PointMap.Controllers
         private PointManager _pm;
 	    private DatabaseContext _db;
 
-        public PointController()
-        {
-            _db = new DatabaseContext();
-            _pm = new PointManager(_db);
-        }
-
         // retrieves a point
         [HttpGet]
         [Route("api/point/{guid}")]
         public IHttpActionResult Get(string guid)
         {
-            try
-            { 
-                var pointId = ControllerHelpers.ParseAndCheckId(guid);     
-                var token = ControllerHelpers.GetToken(Request);
-                ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-                var point = _pm.GetPoint(pointId);
-
-                return Ok(point);
-            }
-            catch (Exception e)
+            using (_db = new DatabaseContext())
             {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                try
+                {
+                    var pointId = ControllerHelpers.ParseAndCheckId(guid);
+                    var token = ControllerHelpers.GetToken(Request);
+                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    _pm = new PointManager(_db);
+                    var point = _pm.GetPoint(pointId);
+
+                    return Ok(point);
+                }
+                catch (Exception e)
+                {
+                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                } 
             }
         }
 
@@ -50,21 +48,25 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point")]
         public IHttpActionResult Post([FromBody] PointPOST pointPost)
         {
-            try
+            using (_db = new DatabaseContext())
             {
-                var token = ControllerHelpers.GetToken(Request);
-                ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
+                try
+                {
+                    var token = ControllerHelpers.GetToken(Request);
+                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
-                var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
+                    _pm = new PointManager(_db);
+                    var point = _pm.CreatePoint(pointPost.Longitude, pointPost.Latitude, pointPost.Description, pointPost.Name);
 
-                _db.SaveChanges();
+                    _db.SaveChanges();
 
-                return Content(HttpStatusCode.Created, point);
-            }
-            catch(Exception e)
-            {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                    return Content(HttpStatusCode.Created, point);
+                }
+                catch (Exception e)
+                {
+                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                } 
             }
         }
 
@@ -73,28 +75,33 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point")]
         public IHttpActionResult Put([FromBody] PointPOST pointPost)
         {
-            try
+            using (_db = new DatabaseContext())
             {
-                var token = ControllerHelpers.GetToken(Request);
-                ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
-
-                var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
-                var point = _pm.UpdatePoint(pointId, pointPost.Longitude, pointPost.Latitude,
-                                            pointPost.Description, pointPost.Name,
-                                            pointPost.CreatedAt);
-
-                if(point == null)
+                try
                 {
-                    throw new PointNotFoundException("Point not found.");
-                }
-                _db.SaveChanges();
+                    var token = ControllerHelpers.GetToken(Request);
+                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                    ControllerHelpers.ValidateModelAndPayload(ModelState, pointPost);
 
-                return Ok(point);
-            }
-            catch (Exception e)
-            {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                    var pointId = ControllerHelpers.ParseAndCheckId(pointPost.Id.ToString());
+
+                    _pm = new PointManager(_db);
+                    var point = _pm.UpdatePoint(pointId, pointPost.Longitude, pointPost.Latitude,
+                                                pointPost.Description, pointPost.Name,
+                                                pointPost.CreatedAt);
+
+                    if (point == null)
+                    {
+                        throw new PointNotFoundException("Point not found.");
+                    }
+                    _db.SaveChanges();
+
+                    return Ok(point);
+                }
+                catch (Exception e)
+                {
+                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                } 
             }
         }
 
@@ -103,22 +110,26 @@ namespace WebApi_PointMap.Controllers
         [Route("api/point/{guid}")]
         public IHttpActionResult Delete(string guid)
         {
-            try
+            using (_db = new DatabaseContext())
             {
-                var token = ControllerHelpers.GetToken(Request);
-                ControllerHelpers.ValidateAndUpdateSession(_db, token);
+                try
+                {
+                    var token = ControllerHelpers.GetToken(Request);
+                    ControllerHelpers.ValidateAndUpdateSession(_db, token);
 
-                var pointId = ControllerHelpers.ParseAndCheckId(guid);
+                    var pointId = ControllerHelpers.ParseAndCheckId(guid);
 
-                _pm.DeletePoint(pointId);
+                    _pm = new PointManager(_db);
+                    _pm.DeletePoint(pointId);
 
-                _db.SaveChanges();
+                    _db.SaveChanges();
 
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                    return Ok();
+                }
+                catch (Exception e)
+                {
+                    return ResponseMessage(PointErrorHandler.HandleException(e, _db));
+                } 
             }
         }
 
@@ -126,44 +137,48 @@ namespace WebApi_PointMap.Controllers
         [Route("api/points")]
         public HttpResponseMessage GetPoints()
         {
-            try
+            using (_db = new DatabaseContext())
             {
-                var token = ControllerHelpers.GetToken(Request);
-
-                var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-                var headers = Request.Headers;
-
-                if(headers.Contains("minLng") && headers.Contains("maxLng") && 
-                    headers.Contains("minLat") && headers.Contains("maxLat"))
+                try
                 {
-                    object pointList;
-                    try
+                    var token = ControllerHelpers.GetToken(Request);
+
+                    var session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
+
+                    var headers = Request.Headers;
+
+                    if (headers.Contains("minLng") && headers.Contains("maxLng") &&
+                        headers.Contains("minLat") && headers.Contains("maxLat"))
                     {
-                        float minLng = float.Parse(headers.GetValues("minLng").First());
-                        float minLat = float.Parse(headers.GetValues("minLat").First());
-                        float maxLng = float.Parse(headers.GetValues("maxLng").First());
-                        float maxLat = float.Parse(headers.GetValues("maxLat").First());
-                        pointList = _pm.GetAllPoints(minLat, minLng, maxLat, maxLng);
+                        object pointList;
+                        try
+                        {
+                            float minLng = float.Parse(headers.GetValues("minLng").First());
+                            float minLat = float.Parse(headers.GetValues("minLat").First());
+                            float maxLng = float.Parse(headers.GetValues("maxLng").First());
+                            float maxLat = float.Parse(headers.GetValues("maxLat").First());
+                            _pm = new PointManager(_db);
+                            pointList = _pm.GetAllPoints(minLat, minLng, maxLat, maxLng);
+                        }
+                        catch (FormatException)
+                        {
+                            throw new InvalidHeaderException("Invalid field formatting.");
+                        }
+
+                        if (pointList != null)
+                        {
+                            var jsonContent = new JavaScriptSerializer().Serialize(pointList);
+                            var response = Request.CreateResponse(HttpStatusCode.OK);
+                            response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+                            return response;
+                        }
                     }
-                    catch(FormatException)
-                    {
-                        throw new InvalidHeaderException("Invalid field formatting.");
-                    }
-                            
-                    if (pointList != null)
-                    {
-                        var jsonContent = new JavaScriptSerializer().Serialize(pointList);
-                        var response = Request.CreateResponse(HttpStatusCode.OK);
-                        response.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-                        return response;
-                    }
+                    throw new InvalidHeaderException("Invalid field formatting.");
                 }
-                throw new InvalidHeaderException("Invalid field formatting.");
-            }
-            catch(Exception e)
-            {
-                return PointErrorHandler.HandleException(e, _db);
+                catch (Exception e)
+                {
+                    return PointErrorHandler.HandleException(e, _db);
+                } 
             }
         }
     }
