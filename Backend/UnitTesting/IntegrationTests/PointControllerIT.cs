@@ -3,13 +3,11 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApi_PointMap.Controllers;
 using DataAccessLayer.Models;
 using System.Net.Http;
-using System.Web.Http;
-using WebApi_PointMap.Models;
 using ServiceLayer.Services;
 using DataAccessLayer.Database;
-using System.Threading;
 using System.Web.Http.Results;
 using System.Net;
+using DTO.PointAPI;
 
 namespace Testing.IntegrationTests
 {
@@ -80,9 +78,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Get(point.Id.ToString());
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Get(point.Id.ToString());
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
@@ -105,9 +103,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response =(ResponseMessageResult)controller.Get(point.Id.ToString());
+            NegotiatedContentResult<string> response =(NegotiatedContentResult<string>)controller.Get(point.Id.ToString());
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.Unauthorized);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.Unauthorized);
         }
 
         [TestMethod]
@@ -131,9 +129,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Get(null);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Get(null);
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
 
@@ -160,10 +158,10 @@ namespace Testing.IntegrationTests
             controller.Request = request;
 
             OkResult response = (OkResult)controller.Delete(point.Id.ToString());
-            ResponseMessageResult result404 = (ResponseMessageResult)controller.Get(point.Id.ToString());
+            NegotiatedContentResult<string> result404 = (NegotiatedContentResult<string>)controller.Get(point.Id.ToString());
 
             Assert.IsInstanceOfType(response, typeof(OkResult));
-            Assert.AreEqual(result404.Response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(result404.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
@@ -186,9 +184,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Delete(point.Id.ToString());
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Delete(point.Id.ToString());
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.Unauthorized);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.Unauthorized);
         }
 
         [TestMethod]
@@ -212,9 +210,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Delete(null);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Delete(null);
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
         [TestMethod]
@@ -237,9 +235,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Delete(point.Id.ToString());
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Delete(point.Id.ToString());
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
@@ -265,7 +263,7 @@ namespace Testing.IntegrationTests
 
             OkNegotiatedContentResult<Point> response = (OkNegotiatedContentResult<Point>)controller.Get(point.Id.ToString());
 
-            PointPOST pointPost = new PointPOST
+            var pointPost = new PointRequestDTO
             {
                 Longitude = response.Content.Longitude,
                 Latitude = response.Content.Latitude,
@@ -311,7 +309,7 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            PointPOST pointPost = new PointPOST
+            PointRequestDTO pointPost = new PointRequestDTO
             {
                 Longitude = point.Longitude,
                 Latitude = point.Latitude,
@@ -322,9 +320,9 @@ namespace Testing.IntegrationTests
                 Id = point.Id
             };
 
-            ResponseMessageResult result = (ResponseMessageResult)controller.Put(pointPost);
+            NegotiatedContentResult<string> result = (NegotiatedContentResult<string>)controller.Put(pointPost);
 
-            Assert.AreEqual(result.Response.StatusCode, HttpStatusCode.Unauthorized);
+            Assert.AreEqual(result.StatusCode, HttpStatusCode.Unauthorized);
         }
 
         [TestMethod]
@@ -348,9 +346,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult result = (ResponseMessageResult)controller.Put(null);
+            NegotiatedContentResult<string> result = (NegotiatedContentResult<string>)controller.Put(null);
 
-            Assert.AreEqual(result.Response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(result.StatusCode, HttpStatusCode.BadRequest);
         }
 
         [TestMethod]
@@ -363,7 +361,7 @@ namespace Testing.IntegrationTests
             var pointToPost = _tu.CreatePointObject(179, 81);
             var point = _tu.CreatePointInDb(pointToPost);
 
-            var pointPost = new PointPOST
+            var pointPost = new PointRequestDTO
             {
                 Name = point.Name,
                 Description = point.Description,
@@ -382,24 +380,24 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Put(pointPost);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Put(pointPost);
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             pointPost.Longitude = -181;
 
-            response = (ResponseMessageResult)controller.Post(pointPost);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            response = (NegotiatedContentResult<string>)controller.Post(pointPost);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             pointPost.Latitude = 91;
 
-            response = (ResponseMessageResult)controller.Post(pointPost);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            response = (NegotiatedContentResult<string>)controller.Post(pointPost);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             pointPost.Latitude = -91;
 
-            response = (ResponseMessageResult)controller.Post(pointPost);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            response = (NegotiatedContentResult<string>)controller.Post(pointPost);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
         [TestMethod]
@@ -422,7 +420,7 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            PointPOST pointPost = new PointPOST
+            PointRequestDTO pointPost = new PointRequestDTO
             {
                 Longitude = point.Longitude,
                 Latitude = point.Latitude,
@@ -433,9 +431,9 @@ namespace Testing.IntegrationTests
                 Id = point.Id
             };
 
-            ResponseMessageResult result = (ResponseMessageResult)controller.Put(pointPost);
+            NegotiatedContentResult<string> result = (NegotiatedContentResult<string>)controller.Put(pointPost);
 
-            Assert.AreEqual(result.Response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(result.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
@@ -451,7 +449,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(createEndpoint)
             };
 
-            PointPOST pointPost = new PointPOST
+            PointRequestDTO pointPost = new PointRequestDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -483,7 +481,7 @@ namespace Testing.IntegrationTests
             Assert.AreEqual(response.Content.CreatedAt, readResponse.Content.CreatedAt);
             Assert.AreEqual(response.Content.UpdatedAt, readResponse.Content.UpdatedAt);
 
-            pointPost = new PointPOST
+            pointPost = new PointRequestDTO
             {
                 Longitude = readResponse.Content.Longitude,
                 Latitude = response.Content.Latitude,
@@ -517,9 +515,9 @@ namespace Testing.IntegrationTests
 
             Assert.IsInstanceOfType(deleteResponse, typeof(OkResult));
 
-            ResponseMessageResult readResponse3 = (ResponseMessageResult)controller.Get(readResponse2.Content.Id.ToString());
+            NegotiatedContentResult<string> readResponse3 = (NegotiatedContentResult<string>)controller.Get(readResponse2.Content.Id.ToString());
 
-            Assert.AreEqual(readResponse3.Response.StatusCode, HttpStatusCode.NotFound);
+            Assert.AreEqual(readResponse3.StatusCode, HttpStatusCode.NotFound);
         }
 
         [TestMethod]
@@ -535,7 +533,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointRequestDTO point = new PointRequestDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -569,7 +567,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointRequestDTO point = new PointRequestDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -582,9 +580,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Post(point);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Post(point);
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.Unauthorized);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.Unauthorized);
         }
 
         [TestMethod]
@@ -600,7 +598,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointRequestDTO point = new PointRequestDTO
             {
                 Longitude = 179,
                 Latitude = 85,
@@ -613,9 +611,9 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Post(null);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Post(null);
 
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
         [TestMethod]
@@ -631,7 +629,7 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            PointRequestDTO point = new PointRequestDTO
             {
                 Longitude = 181,
                 Latitude = 85,
@@ -644,23 +642,23 @@ namespace Testing.IntegrationTests
 
             controller.Request = request;
 
-            ResponseMessageResult response = (ResponseMessageResult)controller.Post(point);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)controller.Post(point);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             point.Longitude = -181;
 
-            response = (ResponseMessageResult)controller.Post(point);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            response = (NegotiatedContentResult<string>)controller.Post(point);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             point.Latitude = 91;
 
-            response = (ResponseMessageResult)controller.Post(point);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            response = (NegotiatedContentResult<string>)controller.Post(point);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
 
             point.Latitude = -91;
 
-            response = (ResponseMessageResult)controller.Post(point);
-            Assert.AreEqual(response.Response.StatusCode, HttpStatusCode.BadRequest);
+            response = (NegotiatedContentResult<string>)controller.Post(point);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.BadRequest);
         }
 
         [TestMethod]

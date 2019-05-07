@@ -43,10 +43,8 @@ namespace Testing.IntegrationTests
 
             // no token header was added to request
 
-            IHttpActionResult actionresult = controller.GetAllUsers();
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.GetAllUsers();
+            Assert.AreEqual(expectedStatusCode,actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -65,10 +63,8 @@ namespace Testing.IntegrationTests
             // fake token header added
             controller.Request.Headers.Add("token", "thisisafaketoken");
 
-            IHttpActionResult actionresult = controller.GetAllUsers();
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.GetAllUsers();
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -113,10 +109,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.GetAllUsers();
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.GetAllUsers();
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -193,10 +187,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.DeleteUser(userToDelete);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.DeleteUser(userToDelete);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -218,10 +210,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.DeleteUser(nonexistingUserToDelete);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.DeleteUser(nonexistingUserToDelete);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -315,10 +305,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.UpdateUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.UpdateUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -357,10 +345,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.UpdateUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.UpdateUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
       
@@ -403,10 +389,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.UpdateUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.UpdateUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -446,10 +430,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.UpdateUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.UpdateUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -550,10 +532,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.CreateNewUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.CreateNewUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -600,10 +580,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.CreateNewUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.CreateNewUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -650,10 +628,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.CreateNewUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.CreateNewUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
 
         [TestMethod]
@@ -700,10 +676,8 @@ namespace Testing.IntegrationTests
             };
             controller.Request.Headers.Add("token", adminSession.Token);
 
-            IHttpActionResult actionresult = controller.CreateNewUser(mock_payload);
-            Assert.IsInstanceOfType(actionresult, typeof(ResponseMessageResult));
-            var contentresult = actionresult as ResponseMessageResult;
-            Assert.AreEqual(expectedStatusCode, contentresult.Response.StatusCode);
+            NegotiatedContentResult<string> actionresult = (NegotiatedContentResult<string>)controller.CreateNewUser(mock_payload);
+            Assert.AreEqual(expectedStatusCode, actionresult.StatusCode);
         }
     }
 }
