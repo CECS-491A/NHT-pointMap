@@ -147,7 +147,7 @@ namespace WebApi_PointMap.Controllers
                     }
                     else
                     {
-                        throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                        return Content(HttpStatusCode.Unauthorized, "Non-administrators cannot delete users.");
                     }
                 }
                 catch (Exception e) when (e is UserNotFoundException)
@@ -159,8 +159,7 @@ namespace WebApi_PointMap.Controllers
                     return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
-                                            e is SessionNotFoundException ||
-                                            e is UserIsNotAdministratorException)
+                                            e is SessionNotFoundException)
                 {
                     return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
@@ -212,7 +211,7 @@ namespace WebApi_PointMap.Controllers
                     }
                     else
                     {
-                        throw new UserIsNotAdministratorException("Non-administrators cannot delete users.");
+                        return Content(HttpStatusCode.Unauthorized, "Non-administrators cannot delete users.");
                     }
                 }
                 catch (Exception e) when (e is UserNotFoundException)
@@ -224,8 +223,7 @@ namespace WebApi_PointMap.Controllers
                     return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
-                                            e is SessionNotFoundException ||
-                                            e is UserIsNotAdministratorException)
+                                            e is SessionNotFoundException)
                 {
                     return Content(HttpStatusCode.Unauthorized, e.Message);
                 }
@@ -270,7 +268,7 @@ namespace WebApi_PointMap.Controllers
                         var responseCreated = Content(HttpStatusCode.Created, "User created.");
                         return responseCreated;
                     }
-                    throw new UserIsNotAdministratorException("Non-administrators can not create users.");
+                    return Content(HttpStatusCode.Unauthorized, "Non-administrators cannot delete users.");
                 }
                 catch (Exception e) when (e is UserNotFoundException)
                 {
@@ -282,8 +280,7 @@ namespace WebApi_PointMap.Controllers
                     return Content(HttpStatusCode.BadRequest, e.Message);
                 }
                 catch (Exception e) when (e is NoTokenProvidedException ||
-                                            e is SessionNotFoundException ||
-                                            e is UserIsNotAdministratorException)
+                                            e is SessionNotFoundException)
                 {
                     return Content(HttpStatusCode.Unauthorized, e.Message);
                 }

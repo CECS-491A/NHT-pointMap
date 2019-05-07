@@ -235,7 +235,7 @@ namespace WebApi_PointMap.Controllers
                         }
                         catch (FormatException)
                         {
-                            throw new InvalidHeaderException("Invalid field formatting.");
+                            return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid field formatting");
                         }
 
                         if (pointList != null)
@@ -246,7 +246,7 @@ namespace WebApi_PointMap.Controllers
                             return response;
                         }
                     }
-                    throw new InvalidHeaderException("Invalid field formatting.");
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, "Invalid field formatting");
                 }
                 catch (Exception e) when (e is InvalidPointException ||
                                             e is InvalidGuidException ||
