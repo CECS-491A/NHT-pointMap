@@ -44,11 +44,10 @@ namespace ManagerLayer
         }
 
         public Point UpdatePoint(Guid pointId, float longitude, float latitude, 
-                                string description, string name, DateTime createdAt)
+                                string description, string name)
         {
             var point = new Point
             {
-                CreatedAt = createdAt,
                 Id = pointId,
                 Longitude = longitude,
                 Latitude = latitude,

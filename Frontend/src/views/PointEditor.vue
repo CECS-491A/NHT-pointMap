@@ -80,9 +80,7 @@ export default {
 	      latitude: '',
         description: '',
 	      name: '',
-	      id: '',
-        createdAt: null,
-        updatedAt: null
+	      id: ''
       },
       zoom: 18,
       marker: null,
@@ -202,8 +200,6 @@ export default {
         getPoint(pointId, (arr) => {
           if (arr != null) {
             //sets the local point data
-            this.point.createdAt = arr[0].CreatedAt;
-            this.point.updatedAt = arr[0].UpdatedAt;
             this.point.name = arr[0].Name;
             this.point.description = arr[0].Description;
             this.point.longitude = arr[0].Longitude;
@@ -245,13 +241,27 @@ export default {
       if (this.error) return;
 
       var func = null;
+      var payload;
       //Dynamically loads either the create or update functions based upon whether a point is 
       //  being created or updated. Also displays a specific message for each case.
       if(this.creatingPoint) {
           func = createPoint;
+          payload = {
+            Name: this.point.name,
+            Description: this.point.description,
+            Longitude: this.point.longitude,
+            Latitude: this.point.latitude
+          }
           this.loadingText = "Creating point."
       } else {
           func = updatePoint;
+          payload = {
+            Namw: this.point.name,
+            Description: this.point.description,
+            Longitude: this.point.longitude,
+            Latitude: this.point.latitude,
+            Id: this.point.Id
+          }
           this.loadingText = "Updating point."
       }
       this.loading = true;

@@ -7,6 +7,7 @@ using System.Web.Http.Results;
 using static Testing.TestingUtils;
 using System.Net;
 using DTO.KFCSSO_API;
+using System.Threading.Tasks;
 
 namespace Testing.IntegrationTests
 {
@@ -52,10 +53,10 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
             var actionresult = controller.LoginFromSSO(payload);
-            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
-            Assert.IsNotNull(actionresult as HttpResponseMessage);
-            var result = actionresult as HttpResponseMessage;
-            Assert.AreEqual(expectedStatusCode, result.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(Task<HttpResponseMessage>));
+            Assert.IsNotNull(actionresult as Task<HttpResponseMessage>);
+            var result = actionresult as Task<HttpResponseMessage>;
+            Assert.AreEqual(expectedStatusCode, result.Result.StatusCode);
         }
 
         [TestMethod]
@@ -89,8 +90,8 @@ namespace Testing.IntegrationTests
                 RequestUri = new Uri(endpoint)
             };
             var actionresult = controller.LoginFromSSO(payload);
-            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
-            var contentresult = actionresult as HttpResponseMessage;
+            Assert.IsInstanceOfType(actionresult, typeof(Task<HttpResponseMessage>));
+            var contentresult = actionresult as Task<HttpResponseMessage>;
             Assert.IsNotNull(contentresult);
         }
 
@@ -131,9 +132,9 @@ namespace Testing.IntegrationTests
 
             var actionresult = controller.LoginFromSSO(payload);
             // returns a HTTPResponseMessage
-            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
-            var contentresult = actionresult as HttpResponseMessage;
-            Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(Task<HttpResponseMessage>));
+            var contentresult = actionresult as Task<HttpResponseMessage>;
+            Assert.AreEqual(expectedStatusCode, contentresult.Result.StatusCode);
         }
 
         [TestMethod]
@@ -169,9 +170,9 @@ namespace Testing.IntegrationTests
 
             var actionresult = controller.LoginFromSSO(payload);
             // returns a HTTPResponseMessage
-            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
-            var contentresult = actionresult as HttpResponseMessage;
-            Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(Task<HttpResponseMessage>));
+            var contentresult = actionresult as Task<HttpResponseMessage>;
+            Assert.AreEqual(expectedStatusCode, contentresult.Result.StatusCode);
         }
 
         [TestMethod]
@@ -209,9 +210,9 @@ namespace Testing.IntegrationTests
 
             var actionresult = controller.LoginFromSSO(payload);
             // returns a HTTPResponseMessage
-            Assert.IsInstanceOfType(actionresult, typeof(HttpResponseMessage));
-            var contentresult = actionresult as HttpResponseMessage;
-            Assert.AreEqual(expectedStatusCode, contentresult.StatusCode);
+            Assert.IsInstanceOfType(actionresult, typeof(Task<HttpResponseMessage>));
+            var contentresult = actionresult as Task<HttpResponseMessage>;
+            Assert.AreEqual(expectedStatusCode, contentresult.Result.StatusCode);
         }
     }
 }
