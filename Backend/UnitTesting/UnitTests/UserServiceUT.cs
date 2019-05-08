@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity.Validation;
 using DataAccessLayer.Database;
 using DataAccessLayer.Models;
@@ -7,7 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 using static ServiceLayer.Services.ExceptionService;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     [TestClass]
     public class UserServiceUT
@@ -476,6 +477,16 @@ namespace UnitTesting
         [TestMethod]
         public void Get_All_Users_Success()
         {
+            Type expectedType = typeof(IEnumerable<User>);
+
+            using (var _db = new DatabaseContext())
+            {
+                us = new UserService(_db);
+
+                var users = us.GetAllUsers();
+                Assert.IsNotNull(users);
+                Assert.IsInstanceOfType(users, expectedType);
+            }
             
         }
     }

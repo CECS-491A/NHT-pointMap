@@ -7,54 +7,50 @@ using System.Web.Http;
 using ManagerLayer.AccessControl;
 using System.Text;
 using DataAccessLayer.Database;
-using WebApi_PointMap.ErrorHandling;
-using DTO;
-using DataAccessLayer.Models;
-using Logging.Logging;
+using static ServiceLayer.Services.ExceptionService;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Validation;
 
 namespace WebApi_PointMap.Controllers
 {
     public class SessionController : ApiController
     {
-        AuthorizationManager _am;
-<<<<<<< HEAD
-        DatabaseContext _db;
-        Logger logger;
-        LogRequestDTO newLog;
-
-        private Session session;
+        private AuthorizationManager _am;
+        private DatabaseContext _db;
 
         public SessionController()
         {
-            logger = new Logger();
-            newLog = new LogRequestDTO();
+            _db = new DatabaseContext();
         }
-=======
->>>>>>> ba10c9942d47f8e170a95c16f4779a8e0ed0571c
 
         [HttpGet]
         [Route("api/session")]
         public HttpResponseMessage ValidateSession()
-        { 
-            using (var _db = new DatabaseContext())
+        {
+            try
             {
-                try
-                {
-                    var token = ControllerHelpers.GetToken(Request);
-                    session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-                    _db.SaveChanges();
-                    var response = Request.CreateResponse(HttpStatusCode.OK);
-                    response.Content = new StringContent(token, Encoding.Unicode);
+                var session = ControllerHelpers.ValidateAndUpdateSession(Request);
 
-                    newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.Login, session.UserId.ToString(), session);
-                    logger.sendLogAsync(newLog);
-
-                    return response;
-                }
-                catch (Exception e)
+                _db.SaveChanges();
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(session.Token, Encoding.Unicode);
+                return response;
+            }
+            catch (Exception e) when (e is NoTokenProvidedException ||
+                                        e is SessionNotFoundException)
+            {
+                var response = Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message);
+                return response;
+            }
+            catch (Exception e)
+            {
+                if(e is DbUpdateException ||
+                    e is DbEntityValidationException)
                 {
-                    return DatabaseErrorHandler.HandleException(e, _db);
+                    _db.RevertDatabaseChanges(_db);
                 }
+                var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return response;
             }
         }
 
@@ -62,26 +58,33 @@ namespace WebApi_PointMap.Controllers
         [Route("api/logout/session")]
         public HttpResponseMessage DeleteSession()
         {
-            using (var _db = new DatabaseContext())
+            _am = new AuthorizationManager(_db);
+            try
             {
-                _am = new AuthorizationManager(_db);
-                try
+                var session = ControllerHelpers.ValidateAndUpdateSession(Request);
+
+                _am.DeleteSession(session.Token);
+                _db.SaveChanges();
+                var response = Request.CreateResponse(HttpStatusCode.OK);
+                response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
+
+                return response;
+            }
+            catch (Exception e) when (e is NoTokenProvidedException ||
+                                        e is SessionNotFoundException)
+            {
+                var response = Request.CreateResponse(HttpStatusCode.Unauthorized, e.Message);
+                return response;
+            }
+            catch (Exception e)
+            {
+                if (e is DbUpdateException ||
+                    e is DbEntityValidationException)
                 {
-                    var token = ControllerHelpers.GetToken(Request);
-                    session = ControllerHelpers.ValidateAndUpdateSession(_db, token);
-
-                    _am.DeleteSession(_db, token);
-                    _db.SaveChanges();
-
-                    var response = Request.CreateResponse(HttpStatusCode.OK);
-                    response.Content = new StringContent(ControllerHelpers.Redirect, Encoding.Unicode);
-
-                    return response;
+                    _db.RevertDatabaseChanges(_db);
                 }
-                catch (Exception e)
-                {
-                    return DatabaseErrorHandler.HandleException(e, _db);
-                }
+                var response = Request.CreateResponse(HttpStatusCode.InternalServerError);
+                return response;
             }
         }
     }

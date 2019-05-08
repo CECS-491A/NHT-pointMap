@@ -78,6 +78,13 @@ namespace ServiceLayer.Services
             public UserNotFoundException(string message, Exception innerException) : base(message, innerException) { }
         }
 
+        public class PointNotFoundException : Exception
+        {
+            public PointNotFoundException() { }
+            public PointNotFoundException(string message) : base(message) { }
+            public PointNotFoundException(string message, Exception innerException) : base(message, innerException) { }
+        }
+
         public class UserAlreadyExistsException : Exception
         {
             public UserAlreadyExistsException() { }

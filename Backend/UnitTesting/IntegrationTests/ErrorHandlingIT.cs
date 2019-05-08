@@ -3,14 +3,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApi_PointMap.Controllers;
 using DataAccessLayer.Models;
 using System.Net.Http;
-using System.Web.Http;
-using WebApi_PointMap.Models;
 using System.Net;
-using System.Threading;
 using DTO.UserManagementAPI;
 using DTO.KFCSSO_API;
+using System.Web.Http.Results;
+using DTO.PointAPI;
 
-namespace UnitTesting
+namespace Testing.IntegrationTests
 {
     [TestClass]
     public class ErrorHandlingIT
@@ -47,13 +46,10 @@ namespace UnitTesting
             _umController.Request = request;
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
-            //  and return a 412
-            IHttpActionResult response = _umController.DeleteUser((string)null);
+            //  and return a 400
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.DeleteUser((string)null);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.PreconditionFailed, result.StatusCode);
-            Assert.AreEqual("Invalid payload.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.PreconditionFailed, response.StatusCode);
         }
 
         [TestMethod]
@@ -78,12 +74,10 @@ namespace UnitTesting
             //user is not adminstrator and therefore cannot return all users.
             //  should result in an UserIsNotAdministratorException
             //  and return a 401
-            IHttpActionResult response = _umController.GetAllUsers();
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.GetAllUsers();
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
-            Assert.AreEqual("Non-administrators cannot delete users.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.AreEqual("Non-administrators cannot view all users.", response.Content.ToString());
         }
 
         [TestMethod]
@@ -107,12 +101,9 @@ namespace UnitTesting
 
             //passing a incorrectly formatted user Id should result in an InvalidGuidException
             //  and return a 400
-            IHttpActionResult response = _umController.DeleteUser(badId);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.DeleteUser(badId);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
-            Assert.AreEqual("Invalid Id.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [TestMethod]
@@ -134,11 +125,9 @@ namespace UnitTesting
 
             //no token provided should result in NoTokenProvidedException
             //  and return a 401
-            IHttpActionResult response = _umController.DeleteUser(newUser.Id.ToString());
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.DeleteUser(newUser.Id.ToString());
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [TestMethod]
@@ -160,13 +149,10 @@ namespace UnitTesting
             _umController.Request = request;
 
             //passing null parameter creates InvalidModelPayloadException that should be caught
-            //  and return a 412
-            IHttpActionResult response = _umController.DeleteUser((string)null);
+            //  and return a 400
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.DeleteUser((string)null);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.PreconditionFailed, result.StatusCode);
-            Assert.AreEqual("Invalid payload.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.PreconditionFailed, response.StatusCode);
         }
 
         [TestMethod]
@@ -189,11 +175,9 @@ namespace UnitTesting
 
             //passing user with no session should result in SessionNotFoundException
             // and return a 401
-            IHttpActionResult response = _umController.DeleteUser(newUser.Id.ToString());
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.DeleteUser(newUser.Id.ToString());
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [TestMethod]
@@ -228,12 +212,9 @@ namespace UnitTesting
 
             //non existent userID should result in UserNotFoundException
             //  and return a 404
-            IHttpActionResult response = _umController.UpdateUser(userDTO);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_umController.UpdateUser(userDTO);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.NotFound, result.StatusCode);
-            Assert.AreEqual("User does not exist.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [TestMethod]
@@ -265,11 +246,9 @@ namespace UnitTesting
 
             //invalid signature should throw and InvalidTokenSignatureException
             //  and return a 401
-            IHttpActionResult response = _userController.DeleteViaSSO(loginDTO);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_userController.DeleteViaSSO(loginDTO);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.Unauthorized, result.StatusCode);
+            Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [TestMethod]
@@ -280,12 +259,12 @@ namespace UnitTesting
             _tu.CreateSessionInDb(newSession);
 
             var endpoint = API_ROUTE_LOCAL + "/api/point";
-            _umController.Request = new HttpRequestMessage
+            _pointController.Request = new HttpRequestMessage
             {
                 RequestUri = new Uri(endpoint)
             };
 
-            PointPOST point = new PointPOST
+            var point = new PointRequestDTO
             {
                 Longitude = 185,
                 Latitude = 85,
@@ -301,12 +280,10 @@ namespace UnitTesting
 
             //out of range Longitude should throw InvalidPointException
             //  and return a 400
-            IHttpActionResult response = _pointController.Post(point);
+            NegotiatedContentResult<string> response = (NegotiatedContentResult<string>)_pointController.Post(point);
 
-            var result = response.ExecuteAsync(CancellationToken.None).Result;
-
-            Assert.AreEqual(HttpStatusCode.BadRequest, result.StatusCode);
-            Assert.AreEqual("Longitude/Latitude value invalid.", result.Content.ReadAsStringAsync().Result);
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual("Longitude/Latitude value invalid.", response.Content.ToString());
         }
     }
 }

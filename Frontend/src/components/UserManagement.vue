@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="usermanagement">
     <v-toolbar flat color="white">
       <v-toolbar-title>User Management</v-toolbar-title>
       <v-divider
@@ -8,8 +8,9 @@
         vertical
       ></v-divider>
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog id ="userModal" v-model="dialog" max-width="700px">
         <template v-slot:activator="{ on }">
+          <v-btn color="primary" dark class="mb-2" v-on="on">New User</v-btn>
         </template>
         <v-card>
           <v-card-title>
@@ -20,22 +21,25 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm12 md12>
-                  <v-text-field v-model="editedItem.manager" label="Manager ID"></v-text-field>
+                  <v-text-field id="userModalUsername" small :readonly="usernameReadonly" v-model="editedItem.username" label="Username"></v-text-field>
+                </v-flex>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field id="userModalID" v-model="editedItem.manager" label="Manager ID"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.city" label="City"></v-text-field>
+                  <v-text-field id="userModalCity" v-model="editedItem.city" label="City"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.state" label="State"></v-text-field>
+                  <v-text-field id="userModalState" v-model="editedItem.state" label="State"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.country" label="Country"></v-text-field>
+                  <v-text-field id="userModalCountry" v-model="editedItem.country" label="Country"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-checkbox v-model="editedItem.disabled" label="Disabled"/>
+                  <v-checkbox id="userModalDisabled" v-model="editedItem.disabled" label="Disabled"/>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-checkbox v-model="editedItem.isAdmin" label="Administrator"/>
+                  <v-checkbox id="userModalAdmin" v-model="editedItem.isAdmin" label="Administrator"/>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -43,13 +47,14 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-            <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
+            <v-btn id="userModalCancel" color="blue darken-1" flat @click="close">Cancel</v-btn>
+            <v-btn id="userModalSave" color="blue darken-1" flat @click="save">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-toolbar>
     <v-data-table
+      id="usertable"
       :headers="headers"
       :items="users"
       class="elevation-1"
@@ -81,13 +86,13 @@
       </template>
       <template v-slot:no-data>
         <h2> {{ StatusOfData }} </h2>
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
+        <v-btn id="resetButton" color="primary" @click="initialize">Reset</v-btn>
       </template>
     </v-data-table>
-    <div v-if="loading">
+    <div id="loader" v-if="loading">
       <Loading :dialog="loading" :text="loadingText"/>
     </div>
-    <div>
+    <div id="alert">
       <v-snackbar
         v-model="alertDialog.alert"
         :color="alertDialog.alertType"
@@ -107,7 +112,7 @@
 </template>
 
 <script>
-import { GetUsers, UpdateUser, DeleteUser } from '@/services/userManagementServices';
+import { GetUsers, UpdateUser, DeleteUser, createNewUser } from '@/services/userManagementServices';
 import Loading from '@/components/dialogs/Loading.vue'
 import AlertDialog from '@/components/dialogs/AlertDialog.vue'
 
@@ -145,12 +150,14 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
       ],
       users: [],
       editedIndex: -1,
+      usernameReadonly: true,
       editedItem: {
         id: '',
         city: '',
         state: '',
         country: '',
-        managerId: '',
+        manager: '',
+        username: '',
         disabled: false,
         isAdmin: false
       },
@@ -159,7 +166,8 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
         city: '',
         state: '',
         country: '',
-        managerId: '',
+        manager: '',
+        username: '',
         disabled: false,
         isAdmin: false
       },
@@ -168,12 +176,13 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New User' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New User' : 'Update User'
       }
     },
 
     watch: {
       dialog (val) {
+        this.editedIndex < 0 ? this.usernameReadonly = false : this.usernameReadonly = true;
         val || this.close()
       }
     },
@@ -216,9 +225,20 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
           this.loadingText = 'Deleting User...'
           DeleteUser(item.id)
             .then(response => {
-              this.alertDialog.alert = true
-              this.alertDialog.alertText = 'User was deleted'
-              this.alertDialog.alertType = 'success'
+              const statusCode = response.status;
+              switch(statusCode){
+                case 200: // status OK
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = 'User was deleted'
+                  this.alertDialog.alertType = 'success'
+                  break;
+                case 404: // status Unauthorized
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = response.data
+                  this.alertDialog.alertType = 'error'
+                  break;
+                default:
+              }
             })
             .catch(err => {
               this.alertDialog.alert = true
@@ -251,8 +271,8 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
             })
             .catch(err => {
               this.alertDialog.alert = true
-              this.alertDialog.alertText = 'User was not updated'
-              this.AlertDialog.alertType = 'error'
+              this.alertDialog.alertText = `User was not updated. ${err.response.data}`
+              this.alertDialog.alertType = 'error'
             })
             .finally(() => {
               this.loading = false
@@ -260,7 +280,39 @@ import AlertDialog from '@/components/dialogs/AlertDialog.vue'
             })
           Object.assign(this.users[this.editedIndex], this.editedItem)
         } else {
-          this.users.push(this.editedItem)
+          this.loading = true;
+          this.loadingText = 'Creating user...';
+          createNewUser(this.editedItem)
+            .then(response => {
+              const status = response.status;
+              switch(status){
+                case 201: // status Created
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = 'User was created.'
+                  this.alertDialog.alertType = 'success'
+                  this.users.push(this.editedItem)
+                  this.initialize()
+                  break;
+                default:
+              }
+            })
+            .catch(err => {
+              const status = err.response.status;
+              switch(status){
+                case 409: // status Conflict, (ex. user already exists)
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = err.response.data
+                  this.alertDialog.alertType = 'error'
+                  break;
+                default:
+                  this.alertDialog.alert = true
+                  this.alertDialog.alertText = `User was not created. ${err.response.data}`
+                  this.alertDialog.alertType = 'error'
+              }
+            })
+            .finally(() =>{
+              this.loading = false;
+            })
         }
         this.close()
       }

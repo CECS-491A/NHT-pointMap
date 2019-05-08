@@ -9,51 +9,52 @@ namespace ServiceLayer.Services
     public class SessionService : ISessionService
     {
         private SessionRepository _SessionRepo;
+        private DatabaseContext _db;
 
-        public SessionService()
+        public SessionService(DatabaseContext db)
         {
-            _SessionRepo = new SessionRepository();
+            _SessionRepo = new SessionRepository(db);
+            _db = db;
         }
 
-        public Session CreateSession(DatabaseContext _db, Session session, Guid userId)
+        public Session CreateSession(Session session)
         {
-            return _SessionRepo.CreateSession(_db, session, userId);
+            var sessionResponse = _SessionRepo.CreateSession(session);
+            return sessionResponse;
         }
 
-        public Session ValidateSession(DatabaseContext _db, string token)
+        public Session ValidateSession(string token)
         {
-            return _SessionRepo.ValidateSession(_db, token);
+            var session = _SessionRepo.ValidateSession(token);
+            return session;
         }
 
-        public Session UpdateSession(DatabaseContext _db, Session session)
+        public Session UpdateSession(Session session)
         {
-            return _SessionRepo.UpdateSession(_db, session);
+            var sessionResponse = _SessionRepo.UpdateSession(session);
+            return sessionResponse;
         }
 
-        public Session ExpireSession(DatabaseContext _db, string token)
+        public Session ExpireSession(string token)
         {
-            return _SessionRepo.ExpireSession(_db, token);
+            return _SessionRepo.ExpireSession(token);
         }
 
-        public Session DeleteSession(DatabaseContext _db, string token)
+        public Session DeleteSession(string token)
         {
-            return _SessionRepo.DeleteSession(_db, token);
+            var session = _SessionRepo.DeleteSession(token);
+            return session;
         }
 
-        public void DeleteSessionsOfUser(DatabaseContext _db, Guid userId)
+        public void DeleteSessionsOfUser(Guid userId)
         {
-            var sessionsOfUser = _SessionRepo.GetSessions(_db, userId);
+            var sessionsOfUser = _SessionRepo.GetSessions(userId);
             _db.Sessions.RemoveRange(sessionsOfUser);
         }
 
-        public Session GetSession(DatabaseContext _db, string token)
+        public List<Session> GetSessions(Guid userId)
         {
-            return _SessionRepo.GetSession(_db, token);
-        }
-
-        public List<Session> GetSessions(DatabaseContext _db, Guid userId)
-        {
-            return _SessionRepo.GetSessions(_db, userId);
+            return _SessionRepo.GetSessions(userId);
         }
     }
 }
