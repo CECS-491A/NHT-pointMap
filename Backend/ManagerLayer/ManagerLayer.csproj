@@ -59,7 +59,7 @@
     <Compile Include="UserManagement\UserManagementManager.cs" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
+  <ItemGroup> 
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
