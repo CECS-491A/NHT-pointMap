@@ -7,6 +7,7 @@ using DataAccessLayer.Models;
 using DataAccessLayer.Database;
 using System.Data.Entity;
 using System.Linq;
+using UnitTesting;
 
 namespace Testing.UnitTests
 {

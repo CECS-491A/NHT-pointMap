@@ -1,6 +1,4 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using UnitTesting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DTO;
 using ServiceLayer.Services;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using Logging.Logging;
 
-namespace UnitTesting
+namespace Testing.IntegrationTests
 {
     [TestClass]
     public class LoggingServicesIT

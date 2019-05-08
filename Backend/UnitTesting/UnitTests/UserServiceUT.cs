@@ -7,6 +7,7 @@ using ManagerLayer.UserManagement;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
 using static ServiceLayer.Services.ExceptionService;
+using UnitTesting;
 
 namespace Testing.UnitTests
 {

@@ -313,33 +313,6 @@ namespace UnitTesting
             return true;
         }
 
-        public class MockLoginPayload
-        {
-            public string Mock_APISecret = SSO_APIService.APISecret;
-
-            public Guid ssoUserId { get; set; }
-            public string email { get; set; }
-            public long timestamp { get; set; }
-
-            public string Signature()
-            {
-                var _ssoAuth = new SignatureService();
-                var payload = _ssoAuth.PreparePayload(ssoUserId.ToString(), email, timestamp);
-                var signature = _ssoAuth.Sign(payload);
-                return signature;
-            }
-
-            public string PreSignatureString()
-            {
-                string preSignatureString = "";
-                preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
-                preSignatureString += "email=" + email + ";";
-                preSignatureString += "timestamp=" + timestamp + ";";
-                return preSignatureString;
-            }
-
-        }
-
         public MockLoginPayload GenerateLoginPayloadWithSignature(Guid ssoUserId, string email, long timestamp)
         {
             MockLoginPayload mock_payload = new MockLoginPayload();
@@ -396,4 +369,30 @@ namespace UnitTesting
         }
     }
 
+    public class MockLoginPayload
+    {
+        public string Mock_APISecret = SSO_APIService.APISecret;
+
+        public Guid ssoUserId { get; set; }
+        public string email { get; set; }
+        public long timestamp { get; set; }
+
+        public string Signature()
+        {
+            var _ssoAuth = new SignatureService();
+            var payload = _ssoAuth.PreparePayload(ssoUserId.ToString(), email, timestamp);
+            var signature = _ssoAuth.Sign(payload);
+            return signature;
+        }
+
+        public string PreSignatureString()
+        {
+            string preSignatureString = "";
+            preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+            preSignatureString += "email=" + email + ";";
+            preSignatureString += "timestamp=" + timestamp + ";";
+            return preSignatureString;
+        }
+
+    }
 }

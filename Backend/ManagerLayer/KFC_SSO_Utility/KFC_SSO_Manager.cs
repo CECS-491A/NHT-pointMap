@@ -1,16 +1,11 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using DTO;
-using ManagerLayer.AccessControl;
-using ManagerLayer.Logging;
 using ManagerLayer.UserManagement;
 using ManagerLayer.Users;
 using ServiceLayer.KFC_API_Services;
 using ServiceLayer.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using static ServiceLayer.Services.ExceptionService;
 
@@ -19,8 +14,6 @@ namespace ManagerLayer.KFC_SSO_Utility
     public class KFC_SSO_Manager
     {
         private UserManagementManager _userManagementManager;
-        private LogRequestDTO newLog;
-        private LoggingManager loggingManager;
         private readonly DatabaseContext _db;
         private SignatureService _ssoServiceAuth;
         private UserService _userService;
@@ -30,7 +23,6 @@ namespace ManagerLayer.KFC_SSO_Utility
             _db = db;
             _ssoServiceAuth = new SignatureService();
             _userService = new UserService(_db);
-            loggingManager = new LoggingManager();
         }
 
         public async Task<Session> LoginFromSSO(string Username, Guid ssoID, long timestamp, string signature)
@@ -41,11 +33,6 @@ namespace ManagerLayer.KFC_SSO_Utility
             var validSignature = _ssoServiceAuth.IsValidClientRequest(ssoID.ToString(), Username, timestamp, signature);
             if (!validSignature)
             {
-                newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                        "Login/Registration API", Username, "Invalid signing attempt",
-                        "Line 35 UserLoginManager in ManagerLayer\n" +
-                        "Route Reference UserController in WebApi-PointMap");
-                await loggingManager.sendLogAsync(newLog);
                 throw new InvalidTokenSignatureException("Session is not valid.");
             }
             ////////////////////////////////////////
@@ -77,11 +64,6 @@ namespace ManagerLayer.KFC_SSO_Utility
             var validSignature = _ssoServiceAuth.IsValidClientRequest(ssoID.ToString(), Username, timestamp, signature);
             if (!validSignature)
             {
-                newLog = new LogRequestDTO(ssoID.ToString(), Username,
-                       "Logout/SSO API", Username, "Invalid logout attempt",
-                       "Line 79 KFC_SSO_Manager in ManagerLayer\n" +
-                       "Route Reference UserController in WebApi-PointMap");
-                await loggingManager.sendLogAsync(newLog);
                 throw new InvalidTokenSignatureException("Session is not valid.");
             }
             _userManagementManager = new UserManagementManager(_db);

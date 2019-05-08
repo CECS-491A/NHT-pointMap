@@ -1,9 +1,10 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ServiceLayer.Services.ExceptionService;
-using static Testing.TestingUtils;
 using ManagerLayer.KFC_SSO_Utility;
 using ServiceLayer.KFC_API_Services;
+using UnitTesting;
+
 
 namespace Testing.UnitTests
 {
