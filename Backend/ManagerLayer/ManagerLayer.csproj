@@ -52,11 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="KFC_SSO_Utility\KFC_SSO_Manager.cs" />
-<<<<<<< HEAD
-=======
-    <Compile Include="Logging\LoggingManager.cs" />
     <Compile Include="User\UserManager.cs" />
->>>>>>> ba10c9942d47f8e170a95c16f4779a8e0ed0571c
     <Compile Include="PointManagement\PointManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccessControl\AuthorizationManager.cs" />
