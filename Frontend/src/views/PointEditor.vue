@@ -1,54 +1,56 @@
 <template>
-  <div id="flexcontainer">
-    <div id="pointeditor">
-      <h1>Point Editor</h1>
-      <v-form>
-        <v-text-field
-          name="name"
-          id="name"
-          v-model="point.name"
-          type="name"
-          label="Name" /> <br />
-        <v-text-field
-          name="description"
-          id="description"
-          type="description"
-          v-model="point.description"
-          label="Description" /><br />
-        <v-text-field
-          name="longitude"
-          id="longitude"
-          v-model.number="point.longitude"
-          label="Longitude" 
-          @change="updateMarkerPosition"/><br />
-        <v-text-field
-          name="latitude"
-          id="latitude"
-          v-model.number="point.latitude"
-          label="Latitude" 
-          @change="updateMarkerPosition"/><br />
-        <v-alert
-          :value="error"
-          type="error"
-          transition="scale-transition"
-        >
-          {{error}}
-        </v-alert><br />
-        <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
+  <v-container id="container" fluid grid-list-md>
+    <v-layout row wrap>
+      <v-flex xs12 sm12 md6 lg6 xl6 id="editor">
+        <h1>Point Editor</h1>
+        <v-form>
+          <v-text-field
+            name="name"
+            id="name"
+            v-model="point.name"
+            type="name"
+            label="Name" /> <br />
+          <v-text-field
+            name="description"
+            id="description"
+            type="description"
+            v-model="point.description"
+            label="Description" /><br />
+          <v-text-field
+            name="longitude"
+            id="longitude"
+            v-model.number="point.longitude"
+            label="Longitude" 
+            @change="updateMarkerPosition"/><br />
+          <v-text-field
+            name="latitude"
+            id="latitude"
+            v-model.number="point.latitude"
+            label="Latitude" 
+            @change="updateMarkerPosition"/><br />
+          <v-alert
+            :value="error"
+            type="error"
+            transition="scale-transition"
+          >
+            {{error}}
+          </v-alert><br />
+          <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
 
-      </v-form>
-      <div v-if="loading">
-        <Loading :dialog="loading" :text="loadingText"/>
-      </div>
-      <br />
-      <div id="instruction">
-        <h2>Drag the marker on the map to the desired location. </h2>
-      </div>
-    </div>
-    <div>
-      <div id="map"></div> 
-    </div>
-  </div>
+        </v-form>
+        <div v-if="loading">
+          <Loading :dialog="loading" :text="loadingText"/>
+        </div>
+        <br />
+        <div id="instruction">
+          <h2>Drag the marker on the map to the desired location. </h2>
+        </div>
+      </v-flex>
+      <v-flex xs12 sm12 md6 lg6 xl6>
+        <div id="map"></div> 
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -162,11 +164,16 @@ export default {
       if(this.point.latitude == "" || this.point.longitude == "" || 
           this.point.latitude < -90 || this.point.latitude > 90 ||
           this.point.longitude < -180 || this.point.longitude > 180) {
+
+        //determines error type and corresponding display message
+        if(this.point.latitude == "" || this.point.longitude == "") {
+          this.error = "Latitude/longitude value cannot be empty.";
+        } else {
+          this.error = "Latitude/Longitude value invalid."
+        }
         this.point.latitude = this.center.lat;
         this.point.longitude = this.center.lng;
-
-        //displays an error message
-        this.error = "Latitude/longitude values cannot be empty.";
+        
         var promise = new Promise((resolve, reject) => {
           setTimeout(() => { //error messages is displayed for 2 seconds
             resolve()
@@ -285,24 +292,14 @@ export default {
 </script>
 
 <style scoped>
+  #container{
+    padding: 0px;
+  }
+  #editor{
+    padding: 12px;
+  }
   #map{
-      margin-bottom: 20px;
-      width: 650px;
-      height: 650px;
-      margin: 0 auto;
-      background: gray;
-  }
-  #flexcontainer{
-    display: flex;
-    flex-flow: wrap;
-    flex-direction: row;
-    align-content: stretch;
-    flex: 2;
-    justify-content: space-between;
-  }
-  #pointeditor{
-    width: 590px;
-    margin: 20px;
+    min-height: 500px;
   }
   #instruction{
     text-align: center;
