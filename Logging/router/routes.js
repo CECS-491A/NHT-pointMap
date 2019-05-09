@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {fillJson, checkLogSpace} = require('../services/loggingService')
 const {generateSignature} = require ('../services/authorizationService.js')
-const {editData, query} = require('../services/analyticsService.js')
+const {editData, query, addLoginAttempts} = require('../services/analyticsService.js')
 const fetch = require('isomorphic-fetch')
 const Log = require('../models/log')
 const Error = require('../models/error')
@@ -46,7 +46,6 @@ router.post('/log', (req, res) => { //POST ROUTE FOR ADDING AN ANALYTICS LOG
                     console.log(err)
                     res.status(500).send({'Error': 'Something went wrong'});
                 }else{ //Successful log creation
-                    console.log(newLog)
                     res.status(200).send(newLog)
                 }
             })
@@ -94,7 +93,6 @@ router.post('/error', (req, res) => { //POST ROUTE FOR ADDING AN ERROR
                     console.log(err)
                     res.status(500).send({'Error': 'Something went wrong'});
                 }else{ //Successful log creation
-                    console.log(newError)
                     res.status(200).send(newError)
                 }
             })
@@ -105,7 +103,8 @@ router.post('/error', (req, res) => { //POST ROUTE FOR ADDING AN ERROR
 });
 
 router.get('/analytics', (req, res) => { //GET ROUTE FOR ANALYTICS DATA
-    fetch(req.protocol + '://' + req.get('host') + req.originalUrl + 'graphql', { //Makes a request for information from graphql
+    console.log(req.protocol + '://' + req.get('host') + 'graphql')
+    fetch(req.protocol + '://' + req.get('host') + '/graphql', { //Makes a request for information from graphql
         method:'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -116,6 +115,7 @@ router.get('/analytics', (req, res) => { //GET ROUTE FOR ANALYTICS DATA
         })
     }).then(r => r.json()).then(rawdata => { //Gets the raw request
         data = rawdata['data']
+        data['loginAttempts'] = addLoginAttempts()
         if(data['successfulLoginsxRegisteredUsers'] == ""){
             return data
         }
@@ -126,11 +126,12 @@ router.get('/analytics', (req, res) => { //GET ROUTE FOR ANALYTICS DATA
                 return
             }
             res.status(200).send(finishedData)
-            return callback(data)
+            return
         })
     }).catch(err => {
         console.log(err)
         res.status(500).send('Internal Server Error')
+        return
     })
 });
 

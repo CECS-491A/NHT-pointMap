@@ -70,39 +70,5 @@ namespace Logging.Logging
             newLog.signature = signature;
             return newLog;
         }
-
-        /// <summary>
-        /// Initalizes and fills a LogRequestDTO object
-        /// </summary>
-        /// <param name="source">A DTO.Constants.Constants.Sources enum value</param>
-        /// <param name="userId">A string of a userId</param>
-        /// <param name="session">A DataAccessLayer.Models.Session object</param>
-        /// <returns>An initalized LogRequestDTO object</returns>
-        public LogRequestDTO initalizeAnalyticsLog(DTO.Constants.Constants.Sources source, string userId, Session session = null)
-        {
-            LogRequestDTO newLog = new LogRequestDTO(userId, source);
-            if(session != null)
-            {
-                newLog.sessionCreatedAt = session.CreatedAt;
-                newLog.sessionExpiredAt = session.ExpiresAt;
-                newLog.sessionUpdatedAt = session.UpdatedAt;
-                newLog.token = session.Token;
-            }
-
-            return newLog;
-        }
-
-        /// <summary>
-        /// Initalizes and fills an ErrorRequestDTO object
-        /// </summary>
-        /// <param name="details">A string stack trace of the error</param>
-        /// <param name="source">A DTO.Constants.Constants.Sources enum value</param>
-        /// <returns>An initalized ErrorRequestDTO object</returns>
-        public ErrorRequestDTO initalizeErrorLog(string details, DTO.Constants.Constants.Sources source)
-        {
-            ErrorRequestDTO newError = new ErrorRequestDTO(details, source);
-
-            return newError;
-        }
     }
 }

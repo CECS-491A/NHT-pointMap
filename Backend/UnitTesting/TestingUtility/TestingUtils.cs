@@ -25,7 +25,7 @@ namespace UnitTesting
             return salt;
         }
 
-        public void createLogs()
+        public void SendAnalytics()
         {
             LogRequestDTO newLog = new LogRequestDTO();
             LoggingService _ls = new LoggingService();
@@ -38,10 +38,11 @@ namespace UnitTesting
                 Session newSession = CreateSessionObject(newUser);
                 CreateSessionInDb(newSession);
                 newLog.ssoUserId = newUser.Id.ToString();
-                newLog.logCreatedAt = new DateTime(2018, 11, 21);
                 newLog.setPage(DTO.Constants.Constants.Pages.PointDetails);
                 for (var j = 0; j < 3; j++)
                 {
+                    var month = rand.Next(1, 12);
+                    newLog.logCreatedAt = new DateTime(2018, month, 21);
                     newLog.setSource(DTO.Constants.Constants.Sources.Login);
                     if (j == 0)
                     {
@@ -67,6 +68,44 @@ namespace UnitTesting
                     newLog.token = newSession.Token;
                     newLog = (LogRequestDTO)getLogContent(newLog);
                     _ls.sendLogSync(newLog);
+                }
+            }
+
+        }
+
+        public void SendErrors()
+        {
+            ErrorRequestDTO newError = new ErrorRequestDTO();
+            LoggingService _ls = new LoggingService();
+            newError.setSource(DTO.Constants.Constants.Sources.Session);
+            newError.details = "testing stacktrace";
+            Random rand = new Random();
+            for (var i = 0; i < 20; i++)
+            {
+                User newUser = CreateUserObject();
+                Session newSession = CreateSessionObject(newUser);
+                CreateSessionInDb(newSession);
+                newError.ssoUserId = newUser.Id.ToString();
+                newError.logCreatedAt = new DateTime(2018, 11, 21);
+                for (var j = 0; j < 3; j++)
+                {
+                    newError.setSource(DTO.Constants.Constants.Sources.Login);
+                    if (j == 0)
+                    {
+                        newError.setSource(DTO.Constants.Constants.Sources.Registration);
+                    }
+                    var duration = rand.Next(1, 1000);
+                    if (duration < 300)
+                    {
+                        newError.setSource(DTO.Constants.Constants.Sources.PointEditor);
+                    }
+                    else if (duration < 500)
+                    {
+                        newError.setSource(DTO.Constants.Constants.Sources.Mapview);
+                    }
+
+                    newError = (ErrorRequestDTO)getLogContent(newError);
+                    _ls.sendLogSync(newError);
                 }
             }
 

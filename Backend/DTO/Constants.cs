@@ -13,16 +13,19 @@ namespace DTO.Constants
     {
         public enum Pages
         {
-            None,
+            None = 0,
             MapView,
             PointDetails,
             AdminDash,
-            PointEditor
+            PointEditor,
+            Policies,
+            FAQ,
+            Account
         }
 
         public enum Sources
         {
-            None,
+            None = 0,
             Registration,
             Logout,
             Login,

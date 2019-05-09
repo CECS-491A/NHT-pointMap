@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using DTO.DTOBase;
+using DataAccessLayer.Models;
 
 namespace DTO
 {
@@ -31,11 +32,21 @@ namespace DTO
         /// </summary>
         /// <param name="ssoUserId">A string of a GUID of a User object</param>
         /// <param name="source">A Constants.Constants.Sources enumeration for the source the error originated</param>
-        public LogRequestDTO(string ssoUserId, Constants.Constants.Sources source)
+        public LogRequestDTO(Constants.Constants.Sources source, string userId)
         {
             this.ssoUserId = ssoUserId;
             this.source = source.ToString();
             logCreatedAt = DateTime.UtcNow;
+        }
+
+        public LogRequestDTO(Constants.Constants.Sources source, string userId, Session session)
+        {
+            this.ssoUserId = userId;
+            this.source = source.ToString();
+            this.token = session.Token;
+            this.sessionCreatedAt = session.CreatedAt;
+            this.sessionExpiredAt = session.ExpiresAt;
+            this.sessionUpdatedAt = session.UpdatedAt;
         }
 
         /// <summary>

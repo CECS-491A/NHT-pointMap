@@ -11,6 +11,7 @@ using static ServiceLayer.Services.ExceptionService;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
 using DTO.PointAPI;
+using DTO;
 
 namespace WebApi_PointMap.Controllers
 {

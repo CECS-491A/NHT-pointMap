@@ -1,5 +1,6 @@
-let graphql = require('graphql');
+const graphql = require('graphql');
 const Log = require('../models/log');
+const Error = require('../models/error');
 const {GraphQLDate} = require('graphql-iso-date');
 const {GraphQLObjectType, 
     GraphQLString, 
@@ -9,6 +10,12 @@ const {GraphQLObjectType,
     GraphQLInt,
     GraphQLFloat
  } = graphql;
+ const _ = require('lodash');
+
+ let comparisonDate = new Date();
+ comparisonDate.setMonth(-6);
+ let comparisonYear = comparisonDate.getFullYear();
+ let comparisonMonth = comparisonDate.getMonth();
 
 let SessionType = new GraphQLObjectType({ //Type used for grabbing user duration data
     name: 'SessionType',
@@ -16,6 +23,12 @@ let SessionType = new GraphQLObjectType({ //Type used for grabbing user duration
         return{
             sessionDuration: {
                 type: GraphQLString
+            },
+            month: {
+                type: GraphQLID
+            },
+            year: {
+                type: GraphQLID
             }
         }
     }
@@ -35,6 +48,23 @@ let LoginRegisteredUsers = new GraphQLObjectType({ //Type used for grabbing user
                 type: GraphQLID
             },
             loginAttempts:{
+                type: GraphQLID,
+            }
+        }
+    }
+});
+
+let LoggedInUsers = new GraphQLObjectType({ //Type used for grabbing user duration data
+    name: 'LoggedInUsers',
+    fields: () => {
+        return{
+            month: {
+                type: GraphQLID
+            },
+            year: {
+                type: GraphQLID
+            },
+            numLogins:{
                 type: GraphQLID,
             }
         }
@@ -61,6 +91,12 @@ let loginSuccessFail = new GraphQLObjectType({
             },
             successfulLoginAttempts:{
                 type: GraphQLInt
+            },
+            month: {
+                type: GraphQLID
+            },
+            year: {
+                type: GraphQLID
             }
         }
     }
@@ -84,16 +120,35 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(SessionType),
             resolve(parent, args){
                 let logs = Log.aggregate([
+                    {
+                        $match: {"json.token": {"$exists": true, "$ne": null}}
+                    },
                     { $group: { //Gets the duration of every token
-                            _id: "$json.token", 
-                            "sessionDuration" :  {$max : '$json.sessionDuration'}
+                            _id: {
+                                "token": "$json.token",
+                                "year" : {$year : {$toDate : "$logCreatedAt"}},
+                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+
+                            },
+                            "sessionDuration" :  {$max : '$json.sessionDuration'},
+                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
+                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+
                         }
                     },
                     {
                         $group: { //groups together the tokens to find the average 
-                            _id: "sessionDuration",
-                            "sessionDuration" : {$avg : "$sessionDuration"}
+                            _id: {
+                                "year" : "$year",
+                                "month": "$month"
+                            },
+                            "sessionDuration" : {$avg : "$sessionDuration"},
+                            "year": {$max: "$year"},
+                            "month": {$max: "$month"}
                         }
+                    },
+                    {
+                        $sort: {year: 1, month : 1}
                     }
                 ]);
                 return logs
@@ -113,19 +168,13 @@ const RootQuery = new GraphQLObjectType({
                                 "year": {$year : {$toDate : "$logCreatedAt"}}
                             },
                             totalRegisteredUsers:{$sum: {$cond : [//Counts successful registration users during month and year
-                                {$and: [
-                                    {$eq : ["$source", "Registration"]},
-                                    {$eq: ["$json.success", true]}
-                                ]}, 1, 0]}
+                                {$eq : ["$source", "Registration"]}, 1, 0]}
                             }, 
                             month: {$max : {$month : {$toDate : "$logCreatedAt"}}}, //Gets the month
                             year: {$max : {$year : {$toDate : "$logCreatedAt"}}}, //Gets the year
                             loginAttempts: {$sum : 
                                 {$cond : [
-                                    {$and : [
-                                        {$eq : ["$source", "Login"]}, //successful login attempt
-                                        {$eq : [true, "$json.success"]}
-                                    ]}, 1, 0]
+                                    {$eq : ["$source", "Login"]}, 1, 0]
                                 }
                             } //Counts successful logins
                         }
@@ -147,14 +196,99 @@ const RootQuery = new GraphQLObjectType({
                     {
                         $group: {
                             _id: {
-                                "login": "$source"
+                                "year" : {$year : {$toDate : "$logCreatedAt"}},
+                                "month" : {$month : {$toDate : "$logCreatedAt"}}
                             },
-                            successfulLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", true]}, 1, 0]}}, //Sums every successful login
-                            failedLoginAttempts: {$sum : {$cond: [{$eq: ["$json.success", false]}, 1, 0]}} //Sums every unsuccessful login
+                            successfulLoginAttempts: {$sum : 1}, //Sums every successful login
+                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
+                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                        }
+                    },
+                    {
+                        $sort: {year: 1, month : 1}
+                    },
+                    {
+                        $project:{
+                            month: "$month",
+                            year: "$year",
+                            successfulLoginAttempts: "$successfulLoginAttempts",
+                            _id: 0
                         }
                     }
                 ])
-                return logs
+                let errors = Error.aggregate([
+                    {
+                        $match: {"source": "Login"}
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                "year" : {$year : {$toDate : "$logCreatedAt"}},
+                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+                            },
+                            failedLoginAttempts: {$sum : 1}, //Sums every successful login
+                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
+                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                        }
+                    },
+                    {
+                        $sort: {year: 1, month : 1}
+                    },
+                    {
+                        $project:{
+                            month: "$month",
+                            year: "$year",
+                            failedLoginAttempts: "$failedLoginAttempts",
+                            _id: 0
+                        }
+                    }
+                ])
+                logs.exec((err, logData) => {
+                    if(err){
+                        console.log(err)
+                        return null
+                    }else{
+                        errors.exec((err, errorData) => {
+                            if(err){
+                                console.log(err)
+                                return null
+                            }else{
+                                let errjson = {};
+                                let analyticsJson = {};
+                                let temp = {}
+                                for(var i = 0; i < logData.length; i++){
+                                    temp = {}
+                                    temp['successfulLoginAttempts'] = logData[i].successfulLoginAttempts
+                                    temp['month'] = logData[i].month
+                                    temp['year'] = logData[i].year
+                                    let key = logData[i].year.toString() + "-" + logData[i].month.toString()
+                                    analyticsJson[key] = temp
+                                }
+                                for(var i = 0; i < errorData.length; i++){
+                                    temp = {}
+                                    temp['failedLoginAttempts'] = errorData[i].failedLoginAttempts
+                                    temp['month'] = errorData[i].month
+                                    temp['year'] = errorData[i].year
+                                    temp['successfulLoginAttempts'] = 0
+                                    let key = errorData[i].year.toString() + "-" + errorData[i].month.toString()
+                                    errjson[key] = temp
+                                }
+                                Object.keys(analyticsJson).forEach((key) => {
+                                    if(errjson[key] == null){
+                                        temp = {}
+                                        temp['failedLoginAttempts'] = 0
+                                        errjson[key] = temp
+                                    }
+                                    errjson[key].month = analyticsJson[key].month
+                                    errjson[key].year = analyticsJson[key].year
+                                    errjson[key].successfulLoginAttempts = analyticsJson[key].successfulLoginAttempts
+                                })
+                                console.log('final result: ', errjson)
+                            }
+                        })
+                    }
+                })
+                return errors
             }
         },
         topFeaturesByPageVisits: {
@@ -168,7 +302,9 @@ const RootQuery = new GraphQLObjectType({
                     },
                     {
                         $group: {
-                            _id: "$json.page",
+                            _id: {
+                                page: "$json.page",
+                            },
                             topfeature: {$max: "$json.page"},
                             numUses: {$sum : 1} //Counts the number every page was pinged
                         }
@@ -214,6 +350,93 @@ const RootQuery = new GraphQLObjectType({
                         $sort: {duration: -1}
                     },
                 ])
+                return logs
+            }
+        },
+        averageUserLogin6Months: {
+            type: new GraphQLList(LoggedInUsers),
+            resolve(parent, args){
+                let logs = Log.aggregate([
+                    {
+                        $match: {
+                            $and: [
+                                {
+                                    "source": "Login"
+                                }, 
+                                {
+                                    $expr: { //Ensures that the query only deals with logs in the most recent 6 months
+                                        $and: [
+                                            {$gte: [{$month : {$toDate : "$logCreatedAt"}}, comparisonMonth]},
+                                            {$gte: [{$year : {$toDate : "$logCreatedAt"}}, comparisonYear]}
+                                        ]
+                                    }
+                                }
+                            ]
+                        } //Gets only pages that were login or register
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                "month": {$month : {$toDate : "$logCreatedAt"}}, //Groups by month and year
+                                "year": {$year : {$toDate : "$logCreatedAt"}}
+                            },
+                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}, //Gets the month
+                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}}, //Gets the year
+                            numLogins: {$sum : 1 } //Counts successful logins
+                        }
+                    },
+                    {
+                        $sort: {year: 1, month : 1}
+                    }
+                ])
+                return logs
+            }
+        },
+        averageSessionDuration6Months:{
+            type: new GraphQLList(SessionType),
+            resolve(parent, args){
+                let logs = Log.aggregate([
+                    {
+                        $match: {$and :[
+                            {"json.token": {"$exists": true, "$ne": null}},
+                            {
+                                $expr: { //Ensures that the query only deals with logs in the most recent 6 months
+                                    $and: [
+                                        {$gte: [{$month : {$toDate : "$logCreatedAt"}}, comparisonMonth]},
+                                        {$gte: [{$year : {$toDate : "$logCreatedAt"}}, comparisonYear]}
+                                    ]
+                                }
+                            }
+                        ]}
+                    },
+                    { $group: { //Gets the duration of every token
+                            _id: {
+                                "token": "$json.token",
+                                "year" : {$year : {$toDate : "$logCreatedAt"}},
+                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+
+                            },
+                            "sessionDuration" :  {$max : '$json.sessionDuration'},
+                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
+                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+
+                        }
+                    },
+                    {
+                        $group: { //groups together the tokens to find the average 
+                            _id: {
+                                "year" : "$year",
+                                "month": "$month"
+                            },
+                            "sessionDuration" : {$avg : "$sessionDuration"},
+                            "year": {$max: "$year"},
+                            "month": {$max: "$month"}
+                        }
+                    },
+                    {
+                        $sort: {year: 1, month : 1}
+                    }
+                ]);
                 return logs
             }
         }
