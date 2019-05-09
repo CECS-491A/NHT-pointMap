@@ -62,12 +62,11 @@ export default {
   name: 'Navbar',
   data: () => ({
       ApplicationMenuItems: [
-        {title: 'Map View', link: "/mapview"}
+        {title: 'Map View', link: '/mapview'},
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account'},
-          { title: 'Logout', action: deleteSession, link: '/' },
-          { title: 'Privacy Policy', link: '/policies'}
+          { title: 'Logout', action: deleteSession, link: '/' }
       ],
       user: {},
       stored: store

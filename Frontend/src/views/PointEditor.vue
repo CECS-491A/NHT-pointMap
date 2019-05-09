@@ -1,7 +1,7 @@
 <template>
   <v-container id="container" fluid grid-list-md>
     <v-layout row wrap>
-      <v-flex xs12 sm12 md6 lg6 xl6 id="editor">
+      <v-flex xs12 sm12 md12 lg6 xl6 id="editor">
         <h1>Point Editor</h1>
         <v-form>
           <v-text-field
@@ -46,7 +46,7 @@
           <h2>Drag the marker on the map to the desired location. </h2>
         </div>
       </v-flex>
-      <v-flex xs12 sm12 md6 lg6 xl6>
+      <v-flex xs12 sm12 md12 lg6 xl6>
         <div id="map"></div> 
       </v-flex>
     </v-layout>
@@ -309,7 +309,8 @@ export default {
     padding: 12px;
   }
   #map{
-    min-height: 500px;
+    height: 100%;
+    min-height: 550px;
   }
   #instruction{
     text-align: center;
