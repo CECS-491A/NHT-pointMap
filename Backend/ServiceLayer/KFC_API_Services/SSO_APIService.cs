@@ -9,6 +9,10 @@ using static ServiceLayer.Services.ExceptionService;
 
 namespace ServiceLayer.KFC_API_Services
 {
+    /// <summary>
+    /// SPG SSO API's: Open Endpoints
+    /// 
+    /// </summary>
     public class SSO_APIService
     {
         const string API_URL = "https://api.kfc-sso.com";

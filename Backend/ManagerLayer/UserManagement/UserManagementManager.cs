@@ -71,9 +71,9 @@ namespace ManagerLayer.UserManagement
                         }
                         newUser.ManagerId = managerId;
                     }
-                    catch (FormatException)
+                    catch (FormatException e)
                     {
-                        throw new InvalidGuidException("Invalid Manager ID.");
+                        throw new InvalidGuidException("Invalid Manager ID.", e);
                     }
                 }
                 newUser.IsAdministrator = user.IsAdmin;
@@ -142,10 +142,6 @@ namespace ManagerLayer.UserManagement
         public User GetUser(Guid id)
         {
             var user = _userService.GetUser(id);
-            if (user == null)
-            {
-                throw new UserNotFoundException("User does not exist.");
-            }
             return user;
         }
 

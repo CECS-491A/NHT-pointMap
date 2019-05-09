@@ -99,7 +99,7 @@
 
 <script>
 export default {
-    name: 'PrivacyPolicy'
+    name: 'LegalAndPrivacy'
 }
 </script>
 
