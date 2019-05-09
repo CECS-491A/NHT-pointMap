@@ -19,25 +19,25 @@
                     <b>How do I register?</b>
                     <br>
                     Registration is completed through the single sign on application 
-                    <a href='http://kfc-sso.com'>here</a>.
+                    <a v-on:click="goToDocument(sso_registration)" class="link">here</a>.
                     <br><br>
 
                     <b>How do I log in?</b>
                     <br>
                     Login is completed after registration through the single sign on application 
-                    <a href='http://kfc-sso.com'>here</a>.
+                    <a v-on:click="goToDocument(sso_login)" class="link">here</a>.
                     <br><br>
 
                     <b>What is Pointmap's privacy policy?</b>
                     <br>
                     Pointmap's privacy policy can be viewed 
-                    <a href='/legal'>here</a>.
+                    <router-link to='legal'>here</router-link>.
                     <br><br>
 
                     <b>Where can I find detailed information about how to use Pointmap?</b>
                     <br>
                     Pointmap's user manual can be viewed 
-                    <a href='/usermanual'>here</a>.
+                    <a v-on:click="goToDocument(user_man)" class="link">here</a>.
                     <br><br>
 
                     <b>How can I delete my account?</b>
@@ -50,13 +50,44 @@
 </template>
 
 <script>
+
+import { user_man_url, sso_login_url, sso_registration_url } from "@/const.js"
+
 export default {
-    name: 'FAQ'
+    name: 'FAQ',
+    data: () => {
+        return {
+            user_man: user_man_url,
+            sso_login: sso_login_url,
+            sso_registration: sso_registration_url
+        }
+    },
+    methods: {
+        goToDocument: function(url) {
+            var form = document.createElement("form");
+
+            // Opens in new tab
+            form.target = "_blank";
+
+            form.method = 'GET';
+            // Where the form is redirecting
+            form.action = url;
+            // Appends the child the the form can be submitted
+            document.body.appendChild(form);
+            // Submits the form
+            form.submit();
+            // Removes the childs so it cannot be accessed after it is submitted
+            document.body.removeChild(form);
+        }
+    }
 }
 </script>
 
 <style scoped>
-    #FAQ{
-        text-align: center;
-    }
+#FAQ{
+    text-align: center;
+}
+.link{
+    text-decoration: underline;
+}
 </style>

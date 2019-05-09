@@ -63,14 +63,10 @@ export default {
   data: () => ({
       ApplicationMenuItems: [
         {title: 'Map View', link: '/mapview'},
-        {title: 'FAQ', link: '/faq'},
-        // {title: 'User Manual', link: '/userman'},
-        // {title: 'Developer Documents', link: '/devdocs'}
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account'},
-          { title: 'Logout', action: deleteSession, link: '/' },
-          { title: 'Privacy Policy', link: '/legal'}
+          { title: 'Logout', action: deleteSession, link: '/' }
       ],
       user: {},
       stored: store
