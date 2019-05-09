@@ -1,21 +1,35 @@
 <template>
   <v-layout id="Account" xs>
   <div id="Account" v-if="user.id">
+    <h1 class="display-1">Account Settings</h1>
+    <v-divider class="my-3"></v-divider>
     <v-flex>
       <v-card>
         <v-card-title primary-title>
           <div>
             <h3 class="headline mb-0">{{this.user.username}}</h3>
-            <h4>ID: {{this.user.id}}</h4>
           </div>
         </v-card-title>
       </v-card>
-        <div id="Delete">
-          <h2>Account Deletion</h2>
-          <v-btn color="error" @click="deleteFromPointmapAction">Delete From Pointmap</v-btn>
-          <v-btn wrap color="error" @click="deleteFromPointmapAndSSO">Delete From Pointmap and KFC SSO</v-btn>
-        </div>
-    </v-flex>
+      <br/>
+       <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h2 class="headline">Information</h2>
+            <v-divider class="my-2"></v-divider>
+            <br/>
+            <h4 class="subheading">User ID: {{this.user.id}}</h4>
+            <v-checkbox v-model="this.user.isAdmin" height="1" readonly label="Administrator" value="Admin"></v-checkbox>
+            <v-checkbox v-model="this.user.disabled" height="1" readonly label="Disabled" value="Disabled"></v-checkbox>
+          </div>
+        </v-card-title>
+      </v-card>
+      <div id="Delete">
+        <h2 class="headline">Account Deletion</h2>
+        <v-btn id="deleteButton" color="error" @click="deleteFromPointmapAction">Delete From Pointmap</v-btn>
+        <v-btn id="deleteButton"  wrap color="error" @click="deleteFromPointmapAndSSO">Delete From Pointmap and KFC SSO</v-btn>
+      </div>
+    </v-flex> 
   </div>
   <div v-if="loading">
     <Loading :dialog="loading" :text="loadingText"/>
@@ -25,7 +39,6 @@
   </div>
   </v-layout>
 </template>
-
 <script>
 
 import { deleteAccountFromSSO, getUser, deleteAccountfromPointmap} from '@/services/accountServices'
@@ -130,14 +143,20 @@ export default {
 <style>
 #Account{
   width: 100%;
+  padding: 15px;
   margin-top: 20px;
-  max-width: 700px;
-  margin: 1px auto;
+  max-width: 800px;
+  margin: 1px auto;	  
+  align: center;
 }
 
 #Delete {
   padding-top: 15px;
-  padding-left: 15px;
   align: center;
+}
+
+#deleteButton {
+  margin: 0px;
+  margin-top: 10px;
 }
 </style>
