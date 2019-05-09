@@ -66,7 +66,7 @@ namespace WebApi_PointMap.Controllers
         // Creates a point
         [HttpPost]
         [Route("api/point")]
-        public IHttpActionResult Post([FromBody] PointRequestDTO pointPost)
+        public IHttpActionResult Post([FromBody] PointCreateDTO pointPost)
         {
             using (_db = new DatabaseContext())
             {
@@ -113,7 +113,7 @@ namespace WebApi_PointMap.Controllers
         // Updates a point
         [HttpPut]
         [Route("api/point")]
-        public IHttpActionResult Put([FromBody] PointRequestDTO pointPost)
+        public IHttpActionResult Put([FromBody] PointUpdateDTO pointPost)
         {
             using (_db = new DatabaseContext())
             {
@@ -126,8 +126,7 @@ namespace WebApi_PointMap.Controllers
 
                     _pm = new PointManager(_db);
                     var point = _pm.UpdatePoint(pointId, pointPost.Longitude, pointPost.Latitude,
-                                                pointPost.Description, pointPost.Name,
-                                                pointPost.CreatedAt);
+                                                pointPost.Description, pointPost.Name);
 
                     _db.SaveChanges();
 
