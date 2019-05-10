@@ -55,16 +55,14 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void sendErrorSyncPass()
         {
-            newError = new ErrorRequestDTO();
-            newError = logger.initalizeErrorLog("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
+            newError = new ErrorRequestDTO("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
             Assert.IsTrue(logger.sendLogSync(newError));
         }
 
         [TestMethod]
         public async Task sendErrorAsyncPass()
         {
-            newError = new ErrorRequestDTO();
-            newError = logger.initalizeErrorLog("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
+            newError = new ErrorRequestDTO("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
             Assert.IsTrue(await logger.sendLogAsync(newError));
         }
 
@@ -85,9 +83,7 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void sendLogSyncPass()
         {
-            newLog = new LogRequestDTO();
-            newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(),
-                newSession);
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession);
             Assert.IsTrue(logger.sendLogSync(newLog));
         }
 
@@ -106,9 +102,7 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public async Task sendLogAsyncPass()
         {
-            newLog = new LogRequestDTO();
-            newLog = logger.initalizeAnalyticsLog(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(),
-                newSession);
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession);
             Assert.IsTrue(await logger.sendLogAsync(newLog));
         }
 
