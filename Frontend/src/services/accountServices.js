@@ -27,19 +27,21 @@ let token = localStorage.getItem("token");
 export const store = {
   state: {
     isLogin: false,
-    email: ""
+    email: "",
+    notification: false
   },
   isUserLogin() {
     if (token !== null) {
       this.state.isLogin = true;
+      this.state.notification = true;
     } else {
       this.state.isLogin = false;
+      this.state.notification = false;
     }
   },
   getEmail() {
     config.headers.Token = localStorage.getItem("token");
     axios.get(`${api_url}/user`, config).then(resp => {
-      console.log(resp);
       this.state.email = resp.data.username;
     });
   }
