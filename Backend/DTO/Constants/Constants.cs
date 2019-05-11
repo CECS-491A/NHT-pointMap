@@ -15,7 +15,7 @@ namespace DTO.Constants
             PointDetails,
             AdminDashboard,
             PointEditor,
-            Policies,
+            LegalAndPrivacy,
             FAQ,
             Account
         }

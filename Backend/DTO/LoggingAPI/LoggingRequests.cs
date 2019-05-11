@@ -9,6 +9,7 @@ namespace DTO.LoggingAPI
 {
     public class LogWebpageUsageRequest
     {
+
         [Required]
         public string Page { get; set; }
 
@@ -27,7 +28,10 @@ namespace DTO.LoggingAPI
         // TODO: Make Required
         public string Salt { get; set; }
 
-        public long Duration { get; set; }
+        public long GetDuration()
+        {
+            return DurationEnd - DurationStart;
+        }
     }
 
 }

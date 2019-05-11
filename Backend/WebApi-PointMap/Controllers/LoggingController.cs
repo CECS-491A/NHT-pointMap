@@ -23,10 +23,13 @@ namespace WebApi_PointMap.Controllers
             try
             {
                 // Throws SessionNotFound
-                var session = ControllerHelpers.ValidateSession(Request);
-                Enum.IsDefined(typeof(Constants.Pages), payload.Page);
-
-                return Ok();
+                //var session = ControllerHelpers.ValidateSession(Request);
+                var isValidPage = Enum.IsDefined(typeof(Constants.Pages), payload.Page);
+                if (!isValidPage)
+                {
+                    return Content(HttpStatusCode.PreconditionFailed, "Webpage is not valid.");
+                }
+                return Ok("Webpage (" + payload.Page + ") usage has been logged.");
             }
             catch (Exception e) when (e is NoTokenProvidedException ||
                                             e is SessionNotFoundException)

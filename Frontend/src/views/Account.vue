@@ -43,6 +43,7 @@
 
 import { deleteAccountFromSSO, getUser, deleteAccountfromPointmap} from '@/services/accountServices'
 import { httpResponseCodes } from '@/services/services.const.js'
+import { LogWebpageUsage } from '@/services/loggingServices'
 import Loading from '@/components/dialogs/Loading.vue'
 import PopupDialog from '@/components/dialogs/PopupDialog.vue'
 
@@ -63,10 +64,23 @@ export default {
         message: "",
         user: {},
         loading: false,
+        logging: {
+          webpage: '',
+          webpageDurationStart: 0,
+        }
       }
   },
   created() {
+    // Browser logger, listener if used switches/closes tab
+    document.addEventListener('beforeunload', this.userBrowserTabSession)
+    this.logging.webpage = this.$options.name;
+    this.logging.webpageDurationStart = Date.now();
+    window.addEventListener('beforeunload', this.userBrowserTabSession)
     this.getUserAccount();
+  },
+  destroyed() {
+    const webpageDurationEnd = Date.now();
+    LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
   },
   methods: {
     getUserAccount () {
@@ -135,6 +149,10 @@ export default {
               this.popup = true;
           }
         })
+    },
+    userBrowserTabSession(){
+      const webpageDurationEnd = Date.now();
+      LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
     }
   }
 }
