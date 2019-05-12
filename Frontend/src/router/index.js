@@ -8,7 +8,6 @@ import PointDetails from '../views/PointDetails'
 import PointEditor from '../views/PointEditor'
 import Account from '@/views/Account'
 import PrivacyPolicy from '@/views/PrivacyPolicy'
-import FAQ from '@/views/FAQ'
 
 Vue.use(Router);
 
@@ -58,10 +57,5 @@ export default new Router({
       name: "LegalAndPrivacy",
       component: PrivacyPolicy
     },
-    {
-      path: '/faq',
-      name: 'FAQ',
-      component: FAQ
-    }
   ]
 });

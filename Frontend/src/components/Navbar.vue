@@ -62,7 +62,7 @@ export default {
   name: 'Navbar',
   data: () => ({
       ApplicationMenuItems: [
-        {title: 'Map View', link: '/mapview'},
+        {title: 'Map View', link: '/mapview'}
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account'},
