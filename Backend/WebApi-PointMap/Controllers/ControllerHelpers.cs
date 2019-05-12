@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using ManagerLayer.AccessControl;
+using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,22 @@ namespace WebApi_PointMap.Controllers
                 throw new InvalidGuidException("Invalid Id.");
             }
             return guid;
+        }
+
+        // Verify if token is valid session
+        public static Session ValidateSession(HttpRequestMessage request)
+        {
+            var token = GetToken(request);
+            using (var _db = new DatabaseContext())
+            {
+                var _sessionService = new SessionService(_db);
+                var session = _sessionService.ValidateSession(token);
+                if (session == null)
+                {
+                    throw new SessionNotFoundException("Session is no longer available.");
+                }
+                return session;
+            }
         }
 
         public static Session ValidateAndUpdateSession(HttpRequestMessage request)

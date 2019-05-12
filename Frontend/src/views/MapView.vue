@@ -9,10 +9,11 @@ id="addPointBtn">
 </template>
 
 <script>
-import {getPoints} from '../services/pointServices'
-import {gmapApi} from 'vue2-google-maps'
-import {checkSession} from '../services/authorizationService'
-  import MarkerClusterer from "@google/markerclusterer"
+import {getPoints} from '../services/pointServices';
+import { LogWebpageUsage } from '@/services/loggingServices';
+import {gmapApi} from 'vue2-google-maps';
+import {checkSession} from '../services/authorizationService';
+import MarkerClusterer from "@google/markerclusterer";
 
 export default {
   name: "MapView",
@@ -34,7 +35,11 @@ export default {
       markers: [],
       marker: null,
       markerCluster: null,
-      title: null
+      title: null,
+      logging: {
+        webpage: '',
+        webpageDurationStart: 0,
+      }
     }
   },
   mounted: function () {
@@ -54,6 +59,14 @@ export default {
     
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
+  },
+  created() {
+    this.logging.webpage = this.$options.name;
+    this.logging.webpageDurationStart = Date.now();
+  },
+  destroyed() {
+    const webpageDurationEnd = Date.now();
+    LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
   },
   methods:{
     geolocate: function() {

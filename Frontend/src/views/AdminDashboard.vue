@@ -44,30 +44,41 @@ import axios from 'axios'
 import UserManagement from '@/components/UserManagement.vue'
 import AppPublish from '@/components/AppPublish'
 import {checkSession} from '../services/authorizationService'
+import { LogWebpageUsage } from '@/services/loggingServices';
 
-    export default {
-        name: 'AdminDashboard',
-        components: {
-          UserManagement,
-          AppPublish
-        },
-        mounted(){
-          checkSession();
-        },
-        data: () => ({
-          selectedItem: 'User Management',
-          DashboardMenuItems: [
-              {title: 'User Management', icon: 'account_box'},
-              {title: 'Analytics', icon: 'timeline'},
-              {title: 'App Publish', icon: 'build'}
-          ]
-        }),
-        methods: {
-          SelectedComponent (component){
-            this.$data.selectedItem = component;
-          }
-        },
+export default {
+  name: 'AdminDashboard',
+  components: {
+    UserManagement,
+    AppPublish
+  },
+  mounted(){
+    checkSession();
+  },
+  data: () => ({
+    selectedItem: 'User Management',
+    DashboardMenuItems: [
+        {title: 'User Management', icon: 'account_box'},
+        {title: 'Analytics', icon: 'timeline'},
+        {title: 'App Publish', icon: 'build'}
+    ],
+    logging: {
+      webpageDurationStart: 0,
     }
+  }),
+  created() {
+    this.logging.webpageDurationStart = Date.now();
+  },
+  destroyed() {
+    const webpageDurationEnd = Date.now();
+    LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.$options.name)
+  },
+  methods: {
+    SelectedComponent (component){
+      this.$data.selectedItem = component;
+    }
+  },
+}
 </script>
 
 <style>
