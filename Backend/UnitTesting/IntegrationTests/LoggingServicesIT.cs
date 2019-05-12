@@ -35,7 +35,8 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void validLogRequestDTO()
         {
-            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession);
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession.CreatedAt,
+                newSession.ExpiresAt, newSession.UpdatedAt, newSession.Token);
             newLog = (LogRequestDTO)_tu.getLogContent(newLog); //Valid after initalization and retrieving auth contents
 
             Assert.IsTrue(newLog.isValid());
@@ -83,7 +84,8 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void sendLogSyncPass()
         {
-            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession);
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession.CreatedAt,
+                newSession.ExpiresAt, newSession.UpdatedAt, newSession.Token);
             Assert.IsTrue(logger.sendLogSync(newLog));
         }
 
@@ -102,7 +104,8 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public async Task sendLogAsyncPass()
         {
-            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession);
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession.CreatedAt,
+                newSession.ExpiresAt, newSession.UpdatedAt, newSession.Token);
             Assert.IsTrue(await logger.sendLogAsync(newLog));
         }
 

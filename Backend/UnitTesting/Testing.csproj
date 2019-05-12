@@ -67,6 +67,7 @@
     <Compile Include="IntegrationTests\LoggingServicesIT.cs" />
     <Compile Include="IntegrationTests\PointControllerIT.cs" />
     <Compile Include="IntegrationTests\UserControllerIT.cs" />
+    <Compile Include="UnitTests\LoggingServiceUT.cs" />
     <Compile Include="UnitTests\UserLoginManagerUT.cs" />
     <Compile Include="UnitTests\PointServiceUT.cs" />
     <Compile Include="TestingUtility\TestingUtils.cs" />

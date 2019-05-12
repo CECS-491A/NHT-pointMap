@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel.DataAnnotations;
 using DTO.DTOBase;
-using DataAccessLayer.Models;
 
 namespace DTO
 {
@@ -39,14 +38,15 @@ namespace DTO
             logCreatedAt = DateTime.UtcNow;
         }
 
-        public LogRequestDTO(Constants.Constants.Sources source, string userId, Session session)
+        public LogRequestDTO(Constants.Constants.Sources source, string userId, DateTime createdAt, 
+            DateTime updatedAt, DateTime expiredAt, string token)
         {
             this.ssoUserId = userId;
             this.source = source.ToString();
-            this.token = session.Token;
-            this.sessionCreatedAt = session.CreatedAt;
-            this.sessionExpiredAt = session.ExpiresAt;
-            this.sessionUpdatedAt = session.UpdatedAt;
+            this.token = token;
+            this.sessionCreatedAt = createdAt;
+            this.sessionExpiredAt = expiredAt;
+            this.sessionUpdatedAt = updatedAt;
         }
 
         /// <summary>
