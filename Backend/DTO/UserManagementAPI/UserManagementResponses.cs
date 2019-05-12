@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace DTO.UserManagementAPI
 {
-    public class UserManagementResponses
-    {
-    }
-
     public class GetAllUsersResponseDataItem
     {
         public Guid id { get; set; }

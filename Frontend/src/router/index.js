@@ -9,59 +9,67 @@ import PointEditor from '../views/PointEditor'
 import Account from '@/views/Account'
 import PrivacyPolicy from '@/views/PrivacyPolicy'
 import FAQ from '@/views/FAQ'
+import Documents from '@/views/Documents'
 
-Vue.use(Router)
+
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'HelloWorld',
+      path: "/",
+      name: "HelloWorld",
       component: HelloWorld
     },
     {
       path: '/admindashboard',
       name: 'AdminDashboard',
+
       component: AdminDashboard
     },
     {
-      path: '/mapview',
-      name: 'MapView',
+      path: "/mapview",
+      name: "MapView",
       component: MapView
     },
     {
-      path: '/pointdetails',
-      name: 'PointDetails',
+      path: "/pointdetails",
+      name: "PointDetails",
       component: PointDetails
     },
     {
-      path: '/pointeditor',
-      name: 'PointEditor',
+      path: "/pointeditor",
+      name: "PointEditor",
       component: PointEditor
     },
     {
-      path: '/account',
-      name: 'Account',
+      path: "/account",
+      name: "Account",
       component: Account
     },
     {
-      path: '*',
+      path: "*",
       component: HelloWorld
     },
     {
-      path: '/login',
-      name: 'Login',
+      path: "/login",
+      name: "Login",
       component: Login
     },
     {
-      path: '/legal',
-      name: 'Legal',
+      path: "/policies",
+      name: "LegalAndPrivacy",
       component: PrivacyPolicy
     },
     {
       path: '/faq',
       name: 'FAQ',
       component: FAQ
+    },
+    {
+      path: '/documents',
+      name: 'Documents',
+      component: Documents
     }
   ]
-})
+});

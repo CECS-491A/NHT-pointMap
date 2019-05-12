@@ -1,4 +1,5 @@
 <template>
+  <div>
   <v-toolbar dark color="primary">
     <v-menu  
         bottom 
@@ -50,7 +51,18 @@
             </v-list-tile>
         </v-list>
     </v-menu>
+    <div v-if="stored.state.notification">
+      <v-snackbar
+        v-model="stored.state.notification"
+        :top="true"
+        :timeout="2500"
+      >
+      <h3 class="body-2">Hello, {{stored.state.email}}</h3>
+      <v-icon color="success">person</v-icon>
+    </v-snackbar>
+    </div>
   </v-toolbar>
+  </div>
 </template>
 
 <script>
@@ -63,24 +75,15 @@ export default {
   data: () => ({
       ApplicationMenuItems: [
         {title: 'Map View', link: '/mapview'},
+        {title: 'Documents', link: '/documents'}
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account'},
-          { title: 'Logout', action: deleteSession, link: '/' }
+          { title: 'Logout', action: deleteSession, link: '/' },
       ],
       user: {},
-      stored: store
+      stored: store,
   }),
-  updated() {
-    getUser()
-      .then(response => {
-        switch(response.status){
-          case 200:
-            this.user = response.data;
-            break;
-        }
-      })
-  },
   mounted() {
     store.isUserLogin()
       if (store.state.isLogin === true) {
@@ -102,4 +105,5 @@ export default {
     height: 40px;
     width: 40px
 }
+
 </style>

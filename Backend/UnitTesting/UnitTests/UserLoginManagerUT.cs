@@ -23,7 +23,7 @@ namespace Testing.UnitTests
 
         [TestMethod]
         [ExpectedException(typeof(InvalidEmailException))]
-        public void Login_NewUser_InvalidUserName_Failure_ExceptionThrown()
+        public async void Login_NewUser_InvalidUserName_Failure_ExceptionThrown()
         {
             var invalid_username = Guid.NewGuid() + ".com";
             var valid_ssoID = Guid.NewGuid();
@@ -41,7 +41,7 @@ namespace Testing.UnitTests
             using (var _db = ut.CreateDataBaseContext())
             {
                 _ssoLoginManager = new KFC_SSO_Manager(_db);
-                _ssoLoginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, signature);
+                var result = await _ssoLoginManager.LoginFromSSO(invalid_username, valid_ssoID, timestamp, signature);
             }
 
             //Assert - catch exception

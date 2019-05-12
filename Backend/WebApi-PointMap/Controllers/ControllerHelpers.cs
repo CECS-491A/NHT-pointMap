@@ -1,6 +1,7 @@
 ﻿using DataAccessLayer.Database;
 using DataAccessLayer.Models;
 using ManagerLayer.AccessControl;
+using ServiceLayer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace WebApi_PointMap.Controllers
             }
         }
 
-        public static string GetToken(HttpRequestMessage request)
+        private static string GetToken(HttpRequestMessage request)
         {
             var token = GetHeader(request, "token");
 
@@ -64,15 +65,36 @@ namespace WebApi_PointMap.Controllers
             return guid;
         }
 
-        public static Session ValidateAndUpdateSession(DatabaseContext _db, string token)
+        // Verify if token is valid session
+        public static Session ValidateSession(HttpRequestMessage request)
         {
-            AuthorizationManager _authorizationManager = new AuthorizationManager(_db);
-            var session = _authorizationManager.ValidateAndUpdateSession(token);
-            if (session == null)
+            var token = GetToken(request);
+            using (var _db = new DatabaseContext())
             {
-                throw new SessionNotFoundException("Session is no longer available.");
+                var _sessionService = new SessionService(_db);
+                var session = _sessionService.ValidateSession(token);
+                if (session == null)
+                {
+                    throw new SessionNotFoundException("Session is no longer available.");
+                }
+                return session;
             }
-            return session;
+        }
+
+        public static Session ValidateAndUpdateSession(HttpRequestMessage request)
+        {
+            var token = GetToken(request);
+            using (var _sessionDb = new DatabaseContext())
+            { 
+                AuthorizationManager _authorizationManager = new AuthorizationManager(_sessionDb);
+                var session = _authorizationManager.ValidateAndUpdateSession(token);
+                if (session == null)
+                {
+                    throw new SessionNotFoundException("Session is no longer available.");
+                }
+                _sessionDb.SaveChanges();
+                return session;
+            }
         }
     }
 }

@@ -1,21 +1,35 @@
 <template>
   <v-layout id="Account" xs>
   <div id="Account" v-if="user.id">
+    <h1 class="display-1">Account Settings</h1>
+    <v-divider class="my-3"></v-divider>
     <v-flex>
       <v-card>
         <v-card-title primary-title>
           <div>
             <h3 class="headline mb-0">{{this.user.username}}</h3>
-            <h4>ID: {{this.user.id}}</h4>
           </div>
         </v-card-title>
       </v-card>
-        <div id="Delete">
-          <h2>Account Deletion</h2>
-          <v-btn color="error" @click="deleteFromPointmapAction">Delete From Pointmap</v-btn>
-          <v-btn wrap color="error" @click="deleteFromPointmapAndSSO">Delete From Pointmap and KFC SSO</v-btn>
-        </div>
-    </v-flex>
+      <br/>
+       <v-card>
+        <v-card-title primary-title>
+          <div>
+            <h2 class="headline">Information</h2>
+            <v-divider class="my-2"></v-divider>
+            <br/>
+            <h4 class="subheading">User ID: {{this.user.id}}</h4>
+            <v-checkbox v-model="this.user.isAdmin" height="1" readonly label="Administrator" value="Admin"></v-checkbox>
+            <v-checkbox v-model="this.user.disabled" height="1" readonly label="Disabled" value="Disabled"></v-checkbox>
+          </div>
+        </v-card-title>
+      </v-card>
+      <div id="Delete">
+        <h2 class="headline">Account Deletion</h2>
+        <v-btn id="deleteButton" color="error" @click="deleteFromPointmapAction">Delete From Pointmap</v-btn>
+        <v-btn id="deleteButton"  wrap color="error" @click="deleteFromPointmapAndSSO">Delete From Pointmap and KFC SSO</v-btn>
+      </div>
+    </v-flex> 
   </div>
   <div v-if="loading">
     <Loading :dialog="loading" :text="loadingText"/>
@@ -25,10 +39,11 @@
   </div>
   </v-layout>
 </template>
-
 <script>
 
-import { DeleteAccountFromSSO, getUser, deleteAccountfromPointmap} from '@/services/accountServices'
+import { deleteAccountFromSSO, getUser, deleteAccountfromPointmap} from '@/services/accountServices'
+import { httpResponseCodes } from '@/services/services.const.js'
+import { LogWebpageUsage } from '@/services/loggingServices'
 import Loading from '@/components/dialogs/Loading.vue'
 import PopupDialog from '@/components/dialogs/PopupDialog.vue'
 
@@ -49,10 +64,21 @@ export default {
         message: "",
         user: {},
         loading: false,
+        logging: {
+          webpage: '',
+          webpageDurationStart: 0,
+        }
       }
   },
   created() {
+    // Browser logger, listener if used switches/closes tab
+    this.logging.webpage = this.$options.name;
+    this.logging.webpageDurationStart = Date.now();
     this.getUserAccount();
+  },
+  destroyed() {
+    const webpageDurationEnd = Date.now();
+    LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
   },
   methods: {
     getUserAccount () {
@@ -62,7 +88,7 @@ export default {
       .then(response => {
         this.loading = false;
         switch(response.status){
-          case 200: // status OK
+          case httpResponseCodes.OK: // status OK
             this.user = response.data;
             break;
         }
@@ -70,7 +96,7 @@ export default {
       .catch( err => {
         this.loading = false;
         switch(err.response.status){
-          case 401: // status Unauthorized
+          case httpResponseCodes.Unauthorized: // status Unauthorized
             this.doRedirect = true;
             this.popupMessage = 'Session has expired.';
             this.popup = true;
@@ -83,13 +109,17 @@ export default {
       this.$router.push( "/home" )
     },
     deleteFromPointmapAndSSO () {
+        this.loadingText = 'Deleteting from SSO and Pointmap...';
         this.loading = true;
-        DeleteAccountFromSSO()
+        deleteAccountFromSSO()
             .then(response => {
-                this.doRedirect = true;
-              this.popupMessage = 'User has been deleted.';
-              this.popup = true;
-              localStorage.removeItem('token');
+              switch(response.status){
+                case httpResponseCodes.OK:
+                  this.doRedirect = true;
+                  this.popupMessage = response.data;
+                  this.popup = true;
+                  localStorage.removeItem('token');
+              }
             })
             .catch(e => { this.error = "Failed to delete user, try again" })
             .finally(() => { this.loading = false; })
@@ -101,7 +131,7 @@ export default {
         .then(response => {
           this.loading = false;
           switch(response.status){
-            case 200: // status OK
+            case httpResponseCodes.OK:
               this.doRedirect = true;
               this.popupMessage = 'User has been deleted.';
               this.popup = true;
@@ -117,6 +147,10 @@ export default {
               this.popup = true;
           }
         })
+    },
+    userBrowserTabSession(){
+      const webpageDurationEnd = Date.now();
+      LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
     }
   }
 }
@@ -125,14 +159,20 @@ export default {
 <style>
 #Account{
   width: 100%;
+  padding: 15px;
   margin-top: 20px;
-  max-width: 700px;
-  margin: 1px auto;
+  max-width: 800px;
+  margin: 1px auto;	  
+  align: center;
 }
 
 #Delete {
   padding-top: 15px;
-  padding-left: 15px;
   align: center;
+}
+
+#deleteButton {
+  margin: 0px;
+  margin-top: 10px;
 }
 </style>
