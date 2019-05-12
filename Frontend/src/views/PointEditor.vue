@@ -56,6 +56,7 @@
 import Loading from '@/components/dialogs/Loading.vue'
 import {checkSession} from '../services/authorizationService'
 import {updatePoint, createPoint, getPoint} from '../services/pointServices'
+import { LogWebpageUsage } from '@/services/loggingServices';
 
 export default {
   name: 'PointEditor',
@@ -84,7 +85,11 @@ export default {
       },
       zoom: 18,
       marker: null,
-      saveButtonText: "Create Point"
+      saveButtonText: "Create Point",
+      logging: {
+        webpage: '',
+        webpageDurationStart: 0,
+      }
     }
   },
   mounted() {
@@ -95,6 +100,14 @@ export default {
     promise.then(() => {
       this.setupMap();
     })
+  },
+  created() {
+    this.logging.webpage = this.$options.name;
+    this.logging.webpageDurationStart = Date.now();
+  },
+  destroyed() {
+    const webpageDurationEnd = Date.now();
+    LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
   },
   methods: {
     setupMap: function() {
