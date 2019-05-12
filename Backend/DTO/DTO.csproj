@@ -52,13 +52,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Compile Include="Constants.cs" />
     <Compile Include="DTOBase\BaseLogDTO.cs" />
     <Compile Include="DTO\ErrorRequestDTO.cs" />
+=======
+    <Compile Include="Constants\Constants.cs" />
+>>>>>>> 3f4086a1d7e2957189c7a2d342adc522f1e60936
     <Compile Include="DTO\RecoverableErrorDTO.cs" />
     <Compile Include="DTO\LogRequestDTO.cs" />
     <Compile Include="KFCSSO_API\SSO_API_Requests.cs" />
     <Compile Include="KFCSSO_API\SSO_API_Responses.cs" />
+    <Compile Include="LoggingAPI\LoggingRequests.cs" />
+    <Compile Include="LoggingAPI\LoggingResponses.cs" />
     <Compile Include="PointAPI\PointRequests.cs" />
     <Compile Include="PointAPI\PointResponses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

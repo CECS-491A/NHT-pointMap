@@ -98,8 +98,26 @@
 </template>
 
 <script>
+import { LogWebpageUsage } from '@/services/loggingServices';
+
 export default {
-    name: 'LegalAndPrivacy'
+    name: 'LegalAndPrivacy',
+    data: function() {
+      return {
+        logging: {
+        webpage: '',
+        webpageDurationStart: 0,
+      }
+      }
+    },
+    created() {
+      this.logging.webpage = this.$options.name;
+      this.logging.webpageDurationStart = Date.now();
+    },
+    destroyed() {
+      const webpageDurationEnd = Date.now();
+      LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
+    },
 }
 </script>
 

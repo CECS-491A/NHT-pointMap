@@ -108,6 +108,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ApplicationUtilityController.cs" />
     <Compile Include="Controllers\ControllerHelpers.cs" />
+    <Compile Include="Controllers\LoggingController.cs" />
     <Compile Include="Controllers\PointController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Controllers\UserController.cs" />

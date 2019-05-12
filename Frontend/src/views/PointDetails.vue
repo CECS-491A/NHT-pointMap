@@ -57,6 +57,7 @@
 
 import {getPoint} from '../services/pointServices'
 import { checkSession } from '../services/authorizationService';
+import { LogWebpageUsage } from '@/services/loggingServices';
 
 export default {
   name: 'PointDetails',
@@ -69,10 +70,21 @@ export default {
       name: null,
       description: null,
       long: null,
-      lat: null
-
+      lat: null,
+      logging: {
+        webpage: '',
+        webpageDurationStart: 0,
+      }
     }
-  }, 
+  },
+  created() {
+    this.logging.webpage = this.$options.name;
+    this.logging.webpageDurationStart = Date.now();
+  },
+  destroyed() {
+    const webpageDurationEnd = Date.now();
+    LogWebpageUsage(this.logging.webpageDurationStart, webpageDurationEnd, this.logging.webpage);
+  },
   methods: {
      getPointDetails: function()
      { 
