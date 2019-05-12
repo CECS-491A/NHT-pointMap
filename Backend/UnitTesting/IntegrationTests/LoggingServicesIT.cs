@@ -35,7 +35,7 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void validLogRequestDTO()
         {
-            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession.CreatedAt,
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDashboard, newUser.Id.ToString(), newSession.CreatedAt,
                 newSession.ExpiresAt, newSession.UpdatedAt, newSession.Token);
             newLog = (LogRequestDTO)_tu.getLogContent(newLog); //Valid after initalization and retrieving auth contents
 
@@ -56,14 +56,14 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void sendErrorSyncPass()
         {
-            newError = new ErrorRequestDTO("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
+            newError = new ErrorRequestDTO("This is a new error log", DTO.Constants.Constants.Sources.AdminDashboard);
             Assert.IsTrue(logger.sendLogSync(newError));
         }
 
         [TestMethod]
         public async Task sendErrorAsyncPass()
         {
-            newError = new ErrorRequestDTO("This is a new error log", DTO.Constants.Constants.Sources.AdminDash);
+            newError = new ErrorRequestDTO("This is a new error log", DTO.Constants.Constants.Sources.AdminDashboard);
             Assert.IsTrue(await logger.sendLogAsync(newError));
         }
 
@@ -84,7 +84,7 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public void sendLogSyncPass()
         {
-            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession.CreatedAt,
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDashboard, newUser.Id.ToString(), newSession.CreatedAt,
                 newSession.ExpiresAt, newSession.UpdatedAt, newSession.Token);
             Assert.IsTrue(logger.sendLogSync(newLog));
         }
@@ -104,7 +104,7 @@ namespace Testing.IntegrationTests
         [TestMethod]
         public async Task sendLogAsyncPass()
         {
-            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDash, newUser.Id.ToString(), newSession.CreatedAt,
+            newLog = new LogRequestDTO(DTO.Constants.Constants.Sources.AdminDashboard, newUser.Id.ToString(), newSession.CreatedAt,
                 newSession.ExpiresAt, newSession.UpdatedAt, newSession.Token);
             Assert.IsTrue(await logger.sendLogAsync(newLog));
         }

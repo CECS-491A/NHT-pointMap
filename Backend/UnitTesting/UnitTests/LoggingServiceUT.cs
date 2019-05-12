@@ -48,7 +48,7 @@ namespace UnitTesting
         public void dontNotifySystemAdmin()
         {
             newLog = new LogRequestDTO();
-            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newLog.details = "testing stacktrace";
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
@@ -65,7 +65,7 @@ namespace UnitTesting
         public void ErrorSyncResponse200()
         {
             newError = new ErrorRequestDTO();
-            newError.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newError.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newError.details = "This is a test error";
             newError = (ErrorRequestDTO)_tu.getLogContent(newError);
             var responseStatus = _ls.sendLogSync(newError);
@@ -76,7 +76,7 @@ namespace UnitTesting
         public void ErrorSyncResponse400()
         {
             newError = new ErrorRequestDTO();
-            newError.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newError.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newError = (ErrorRequestDTO)_tu.getLogContent(newError);
             var responseStatus = _ls.sendLogSync(newError);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.BadRequest);
@@ -86,7 +86,7 @@ namespace UnitTesting
         public void ErrorSyncResponse401()
         {
             newError = new ErrorRequestDTO();
-            newError.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newError.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newError.details = "This is a test error";
             var responseStatus = _ls.sendLogSync(newError);
             Assert.AreEqual(responseStatus, System.Net.HttpStatusCode.Unauthorized);
@@ -96,7 +96,7 @@ namespace UnitTesting
         public void LogSyncResponse200()
         {
             newLog = new LogRequestDTO();
-            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newLog.details = "testing stacktrace";
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
@@ -128,7 +128,7 @@ namespace UnitTesting
         public void LogSyncResponse401()
         {
             newLog = new LogRequestDTO();
-            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newLog.details = "testing stacktrace";
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;
@@ -144,7 +144,7 @@ namespace UnitTesting
         public async Task LogAsyncResponse200()
         {
             newLog = new LogRequestDTO();
-            newLog.setSource(DTO.Constants.Constants.Sources.AdminDash);
+            newLog.setSource(DTO.Constants.Constants.Sources.AdminDashboard);
             newLog.details = "testing stacktrace";
             newLog.ssoUserId = newUser.Id.ToString();
             newLog.sessionCreatedAt = newSession.CreatedAt;

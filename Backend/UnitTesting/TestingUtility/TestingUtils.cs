@@ -51,7 +51,7 @@ namespace UnitTesting
                     }
                     var duration = rand.Next(1, 1000);
                     if(duration < 300){
-                        newLog.setPage(DTO.Constants.Constants.Pages.AdminDash);
+                        newLog.setPage(DTO.Constants.Constants.Pages.AdminDashboard);
                     }
                     else if (duration < 500)
                     {
