@@ -26,6 +26,8 @@ namespace DTO
 
         public string page{ get; private set; }
 
+        public long pageDuration { get; set; }
+
         /// <summary>
         /// Constructor for the LogRequestDTO class
         /// </summary>

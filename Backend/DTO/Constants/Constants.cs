@@ -31,7 +31,8 @@ namespace DTO.Constants
             AdminDashboard,
             PointEditor,
             Session,
-            SSO
+            SSO,
+            Analytics
         }
     }
 }

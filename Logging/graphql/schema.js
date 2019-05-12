@@ -325,7 +325,7 @@ const RootQuery = new GraphQLObjectType({
                 let logs = Log.aggregate([
                     {
                         $match: {
-                            "json.page" : {"$exists": true, "$ne": null}
+                            "json.pageDuration" : {"$exists": true, "$ne": null}
                         }
                     },
                     {
@@ -334,7 +334,7 @@ const RootQuery = new GraphQLObjectType({
                                 "page" : "$json.page",
                                 "token" : "$json.token"
                             },
-                            "duration" :  {$max : '$json.sessionDuration'},
+                            "duration" :  {$max : '$json.pageDuration'},
                             "token" :  {$max : '$json.token'},
                             "pageName": {$max: "$json.page"}
                         }
@@ -344,6 +344,11 @@ const RootQuery = new GraphQLObjectType({
                             _id: "$pageName", //Combines all durations on each page
                             "pageName": {$max: "$pageName"},
                             "duration": {$sum : "$duration"}
+                        }
+                    },
+                    {
+                        $match: {
+                            "pageName" : {"$exists": true, "$ne": null}
                         }
                     },
                     { //Sorts by duration in descending order

@@ -4,6 +4,8 @@ using System;
 using System.Net;
 using System.Web.Http;
 using static ServiceLayer.Services.ExceptionService;
+using DTO;
+using Logging.Logging;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -15,6 +17,9 @@ namespace WebApi_PointMap.Controllers
     /// </summary>
     public class LoggingController : ApiController
     {
+        LogRequestDTO newLog;
+        Logger logger;
+
         // Token is passed in header of request
         [Route("api/log/webpageusage")]
         [HttpPost]
@@ -29,6 +34,16 @@ namespace WebApi_PointMap.Controllers
                 {
                     return Content(HttpStatusCode.PreconditionFailed, "Webpage is not valid.");
                 }
+
+                var session = ControllerHelpers.ValidateAndUpdateSession(Request);
+                newLog = new LogRequestDTO(Constants.Sources.Analytics, session.UserId.ToString(), session.CreatedAt, session.UpdatedAt,
+                    session.ExpiresAt, session.Token);
+                Constants.Pages page;
+                Enum.TryParse(payload.Page, out page);
+                newLog.setPage(page);
+                newLog.pageDuration = payload.GetDuration();
+                logger.sendLogAsync(newLog);
+
                 return Ok("Webpage (" + payload.Page + ") usage has been logged.");
             }
             catch (Exception e) when (e is NoTokenProvidedException ||

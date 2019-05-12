@@ -58,26 +58,29 @@
     <Compile Include="AccessControl\AuthorizationManager.cs" />
     <Compile Include="UserManagement\UserManagementManager.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <ItemGroup> 
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
-      <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
+      <Project>{f4772f25-0116-413b-bc7f-43eff8a04f2e}</Project>
       <Name>DataAccessLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\DTO\DTO.csproj">
       <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
       <Name>DTO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{62d0d976-da3b-4c5a-bd81-474f528c1567}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
-      <Project>{98446D55-4697-4C80-90D7-C9E63A34C847}</Project>
+      <Project>{41ade765-973a-4155-b3d6-2c24648cbc7a}</Project>
       <Name>ServiceLayer</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

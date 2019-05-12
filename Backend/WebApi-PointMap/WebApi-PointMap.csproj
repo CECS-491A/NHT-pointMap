@@ -133,7 +133,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
-      <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
+      <Project>{f4772f25-0116-413b-bc7f-43eff8a04f2e}</Project>
       <Name>DataAccessLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\DTO\DTO.csproj">
@@ -149,7 +149,7 @@
       <Name>ManagerLayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
-      <Project>{41ADE765-973A-4155-B3D6-2C24648CBC7A}</Project>
+      <Project>{41ade765-973a-4155-b3d6-2c24648cbc7a}</Project>
       <Name>ServiceLayer</Name>
     </ProjectReference>
   </ItemGroup>

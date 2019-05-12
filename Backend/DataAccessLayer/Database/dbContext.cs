@@ -17,7 +17,7 @@ namespace DataAccessLayer.Database
         public DatabaseContext()
         {
             var connectionString = Environment.GetEnvironmentVariable("NW_POINTMAP_DEV_DATABASE", EnvironmentVariableTarget.User);
-            this.Database.Connection.ConnectionString = connectionString;
+            this.Database.Connection.ConnectionString = productionDB;
         }
 
         public void RevertDatabaseChanges(DatabaseContext _db)

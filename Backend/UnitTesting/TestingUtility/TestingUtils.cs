@@ -44,6 +44,8 @@ namespace UnitTesting
                     var month = rand.Next(1, 12);
                     newLog.logCreatedAt = new DateTime(2018, month, 21);
                     newLog.setSource(DTO.Constants.Constants.Sources.Login);
+                    var pageDuration = rand.Next(1, 600);
+                    newLog.pageDuration = pageDuration;
                     if (j == 0)
                     {
                         newLog.setSource(DTO.Constants.Constants.Sources.Registration);

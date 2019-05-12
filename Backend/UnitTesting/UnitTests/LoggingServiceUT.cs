@@ -4,8 +4,9 @@ using DTO;
 using ServiceLayer.Services;
 using DataAccessLayer.Models;
 using System.Threading.Tasks;
+using UnitTesting;
 
-namespace UnitTesting
+namespace Testing.UnitTests
 {
     [TestClass]
     public class LoggingServiceUT
