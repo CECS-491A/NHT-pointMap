@@ -72,10 +72,8 @@ export default {
   },
   created() {
     // Browser logger, listener if used switches/closes tab
-    document.addEventListener('beforeunload', this.userBrowserTabSession)
     this.logging.webpage = this.$options.name;
     this.logging.webpageDurationStart = Date.now();
-    window.addEventListener('beforeunload', this.userBrowserTabSession)
     this.getUserAccount();
   },
   destroyed() {
