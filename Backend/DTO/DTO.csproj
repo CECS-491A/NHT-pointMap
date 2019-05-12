@@ -58,7 +58,6 @@
     <Compile Include="KFCSSO_API\SSO_API_Requests.cs" />
     <Compile Include="KFCSSO_API\SSO_API_Responses.cs" />
     <Compile Include="LoggingAPI\LoggingRequests.cs" />
-    <Compile Include="LoggingAPI\LoggingResponses.cs" />
     <Compile Include="PointAPI\PointRequests.cs" />
     <Compile Include="PointAPI\PointResponses.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
