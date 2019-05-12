@@ -5,6 +5,9 @@
                 <h1 id="Documents">Documents</h1>
                 <v-divider class='my-3'></v-divider>
                 <p>
+                    <router-link to='faq'>Facts and Questions</router-link>
+                    <br><br>
+
                     <router-link to='policies'>Privacy Policy</router-link>
                     <br><br>
 

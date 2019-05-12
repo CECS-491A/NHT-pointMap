@@ -19,13 +19,13 @@
                     <b>How do I register?</b>
                     <br>
                     Registration is completed through the single sign on application 
-                    <router-link to='documents'>here</router-link>.
+                    <a v-on:click="goToDocument(sso_registration)" class="link">here</a>.
                     <br><br>
 
                     <b>How do I log in?</b>
                     <br>
                     Login is completed after registration through the single sign on application 
-                    <router-link to='documents'>here</router-link>.
+                    <a v-on:click="goToDocument(sso_login)" class="link">here</a>.
                     <br><br>
 
                     <b>What is Pointmap's privacy policy?</b>
@@ -36,7 +36,7 @@
 
                     <b>Where can I find detailed information about how to use Pointmap?</b>
                     <br>
-                    Pointmap's user manual can be viewed 
+                    Additional documentation for Pointmap can be found 
                     <router-link to='documents'>here</router-link>.
                     <br><br>
 

@@ -79,7 +79,7 @@ export default {
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account'},
-          { title: 'Logout', action: deleteSession, link: '/' },
+          { title: 'Logout', action: deleteSession, link: '/' }
       ],
       user: {},
       stored: store,
