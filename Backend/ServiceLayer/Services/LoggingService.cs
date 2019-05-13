@@ -17,9 +17,9 @@ namespace ServiceLayer.Services
     /// </summary>
     public class LoggingService : ILoggingService
     {
-        //private const string LOG_POST_URL = "https://julianjp.com/logging/log";
-        private const string LOG_POST_URL = "http://localhost:3000/log";
-        private const string ERROR_POST_URL = "http://localhost:3000/error";
+        private const string LOG_POST_URL = "https://julianjp.com/logging/log";
+        private const string ERROR_POST_URL = "https://julianjp.com/logging/error";
+
         private readonly string LOGGER_API_SECRET = "CHRISTOPHER-123456-NIGHTWATCH-POINTMAP";
 
         /// <summary>

@@ -13,8 +13,7 @@ namespace ServiceLayer.Services
 {
     public class AnalyticsService : IAnalyticsService
     {
-        //private const string ANALYTICS_SERVER_URL = "https://julianjp.com/logging/analytics";
-        private const string ANALYTICS_SERVER_URL = "http://localhost:3000/analytics";
+        private const string ANALYTICS_SERVER_URL = "https://julianjp.com/logging/analytics";
 
         public HttpResponseMessage getAnalyticsData()
         {

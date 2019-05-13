@@ -79,7 +79,6 @@ namespace UnitTesting
         {
             ErrorRequestDTO newError = new ErrorRequestDTO();
             LoggingService _ls = new LoggingService();
-            newError.setSource(DTO.Constants.Constants.Sources.Session);
             newError.details = "testing stacktrace";
             Random rand = new Random();
             for (var i = 0; i < 20; i++)
@@ -88,7 +87,8 @@ namespace UnitTesting
                 Session newSession = CreateSessionObject(newUser);
                 CreateSessionInDb(newSession);
                 newError.ssoUserId = newUser.Id.ToString();
-                newError.logCreatedAt = new DateTime(2018, 11, 21);
+                var month = rand.Next(1, 12);
+                newError.logCreatedAt = new DateTime(2018, month, 21);
                 for (var j = 0; j < 3; j++)
                 {
                     newError.setSource(DTO.Constants.Constants.Sources.Login);

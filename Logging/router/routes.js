@@ -103,7 +103,6 @@ router.post('/error', (req, res) => { //POST ROUTE FOR ADDING AN ERROR
 });
 
 router.get('/analytics', (req, res) => { //GET ROUTE FOR ANALYTICS DATA
-    console.log(req.protocol + '://' + req.get('host') + 'graphql')
     fetch(req.protocol + '://' + req.get('host') + '/graphql', { //Makes a request for information from graphql
         method:'POST',
         headers: {
@@ -115,18 +114,21 @@ router.get('/analytics', (req, res) => { //GET ROUTE FOR ANALYTICS DATA
         })
     }).then(r => r.json()).then(rawdata => { //Gets the raw request
         data = rawdata['data']
-        data['loginAttempts'] = addLoginAttempts()
-        if(data['successfulLoginsxRegisteredUsers'] == ""){
-            return data
-        }
-        editData(data, (finishedData, err) => { //Performs an operation on the request
-            if(err){
-                console.log(err)
-                res.status(500).send('Internal Server Error')
-                return
+        addLoginAttempts(logData => {
+            data['loginAttempts'] = logData
+            if(data['successfulLoginsxRegisteredUsers'] == ""){
+                res.status(200).send(data)
+                return data
             }
-            res.status(200).send(finishedData)
-            return
+            editData(data, (finishedData, err) => { //Performs an operation on the request
+                if(err){
+                    console.log(err)
+                    res.status(500).send('Internal Server Error')
+                    return
+                }
+                res.status(200).send(finishedData)
+                return
+            })
         })
     }).catch(err => {
         console.log(err)

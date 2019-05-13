@@ -35,6 +35,8 @@ module.exports.query = `query RootQueryType{
 module.exports.editData = function(data, callback){ //Adds the users of each previous month together so totalusers displays totalUsers and not newly registered users
     let users = 0
     let count = 0
+    if(data['successfulLoginsxRegisteredUsers'] == null)
+        return callback(data)
     data['successfulLoginsxRegisteredUsers'].forEach((ele => {
         count++
         users += parseInt(ele['totalRegisteredUsers'])
@@ -44,7 +46,7 @@ module.exports.editData = function(data, callback){ //Adds the users of each pre
     }))
 }
 
-module.exports.addLoginAttempts = function(){
+module.exports.addLoginAttempts = function(callback){
     let logs = Log.aggregate([
         {
             $match: {"source" : "Login"}
@@ -52,12 +54,12 @@ module.exports.addLoginAttempts = function(){
         {
             $group: {
                 _id: {
-                    "year" : {$year : {$toDate : "$logCreatedAt"}},
-                    "month" : {$month : {$toDate : "$logCreatedAt"}}
+                    "year" : {$year : "$logCreatedAt"},
+                    "month" : {$month : "$logCreatedAt"}
                 },
                 successfulLoginAttempts: {$sum : 1}, //Sums every successful login
-                year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
-                month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                year: {$max : {$year : "$logCreatedAt"}},
+                month: {$max : {$month : "$logCreatedAt"}}
             }
         },
         {
@@ -79,12 +81,12 @@ module.exports.addLoginAttempts = function(){
         {
             $group: {
                 _id: {
-                    "year" : {$year : {$toDate : "$logCreatedAt"}},
-                    "month" : {$month : {$toDate : "$logCreatedAt"}}
+                    "year" : {$year : "$logCreatedAt"},
+                    "month" : {$month : "$logCreatedAt"}
                 },
                 failedLoginAttempts: {$sum : 1}, //Sums every successful login
-                year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
-                month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                year: {$max : {$year : "$logCreatedAt"}},
+                month: {$max : {$month : "$logCreatedAt"}}
             }
         },
         {
@@ -107,7 +109,7 @@ module.exports.addLoginAttempts = function(){
             errors.exec((err, errorData) => {
                 if(err){
                     console.log(err)
-                    return {}
+                    return callback({})
                 }else{
                     let errjson = {};
                     let analyticsJson = {};
@@ -139,7 +141,7 @@ module.exports.addLoginAttempts = function(){
                         errjson[key].year = analyticsJson[key].year
                         errjson[key].successfulLoginAttempts = analyticsJson[key].successfulLoginAttempts
                     })
-                    return errjson
+                    return callback(errjson)
                 }
             })
         }

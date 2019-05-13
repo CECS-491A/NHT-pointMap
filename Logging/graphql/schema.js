@@ -126,13 +126,13 @@ const RootQuery = new GraphQLObjectType({
                     { $group: { //Gets the duration of every token
                             _id: {
                                 "token": "$json.token",
-                                "year" : {$year : {$toDate : "$logCreatedAt"}},
-                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+                                "year" : {$year :  "$logCreatedAt"},
+                                "month" : {$month : "$logCreatedAt"}
 
                             },
                             "sessionDuration" :  {$max : '$json.sessionDuration'},
-                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
-                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                            year: {$max : {$year :  "$logCreatedAt"}},
+                            month: {$max : {$month :  "$logCreatedAt"}}
 
                         }
                     },
@@ -164,14 +164,14 @@ const RootQuery = new GraphQLObjectType({
                     {
                         $group: {
                             _id: {
-                                "month": {$month : {$toDate : "$logCreatedAt"}}, //Groups by month and year
-                                "year": {$year : {$toDate : "$logCreatedAt"}}
+                                "month": {$month : "$logCreatedAt"}, //Groups by month and year
+                                "year": {$year : "$logCreatedAt"}
                             },
                             totalRegisteredUsers:{$sum: {$cond : [//Counts successful registration users during month and year
                                 {$eq : ["$source", "Registration"]}, 1, 0]}
                             }, 
-                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}, //Gets the month
-                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}}, //Gets the year
+                            month: {$max : {$month : "$logCreatedAt"}}, //Gets the month
+                            year: {$max : {$year : "$logCreatedAt"}}, //Gets the year
                             loginAttempts: {$sum : 
                                 {$cond : [
                                     {$eq : ["$source", "Login"]}, 1, 0]
@@ -196,12 +196,12 @@ const RootQuery = new GraphQLObjectType({
                     {
                         $group: {
                             _id: {
-                                "year" : {$year : {$toDate : "$logCreatedAt"}},
-                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+                                "year" : {$year : "$logCreatedAt"},
+                                "month" : {$month : "$logCreatedAt"}
                             },
                             successfulLoginAttempts: {$sum : 1}, //Sums every successful login
-                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
-                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                            year: {$max : {$year : "$logCreatedAt"}},
+                            month: {$max : {$month : "$logCreatedAt"}}
                         }
                     },
                     {
@@ -223,12 +223,12 @@ const RootQuery = new GraphQLObjectType({
                     {
                         $group: {
                             _id: {
-                                "year" : {$year : {$toDate : "$logCreatedAt"}},
-                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+                                "year" : {$year : "$logCreatedAt"},
+                                "month" : {$month : "$logCreatedAt"}
                             },
                             failedLoginAttempts: {$sum : 1}, //Sums every successful login
-                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
-                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                            year: {$max : {$year : "$logCreatedAt"}},
+                            month: {$max : {$month : "$logCreatedAt"}}
                         }
                     },
                     {
@@ -371,8 +371,8 @@ const RootQuery = new GraphQLObjectType({
                                 {
                                     $expr: { //Ensures that the query only deals with logs in the most recent 6 months
                                         $and: [
-                                            {$gte: [{$month : {$toDate : "$logCreatedAt"}}, comparisonMonth]},
-                                            {$gte: [{$year : {$toDate : "$logCreatedAt"}}, comparisonYear]}
+                                            {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
                                         ]
                                     }
                                 }
@@ -382,11 +382,11 @@ const RootQuery = new GraphQLObjectType({
                     {
                         $group: {
                             _id: {
-                                "month": {$month : {$toDate : "$logCreatedAt"}}, //Groups by month and year
-                                "year": {$year : {$toDate : "$logCreatedAt"}}
+                                "month": {$month : "$logCreatedAt"}, //Groups by month and year
+                                "year": {$year : "$logCreatedAt"}
                             },
-                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}, //Gets the month
-                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}}, //Gets the year
+                            month: {$max : {$month : "$logCreatedAt"}}, //Gets the month
+                            year: {$max : {$year : "$logCreatedAt"}}, //Gets the year
                             numLogins: {$sum : 1 } //Counts successful logins
                         }
                     },
@@ -407,8 +407,8 @@ const RootQuery = new GraphQLObjectType({
                             {
                                 $expr: { //Ensures that the query only deals with logs in the most recent 6 months
                                     $and: [
-                                        {$gte: [{$month : {$toDate : "$logCreatedAt"}}, comparisonMonth]},
-                                        {$gte: [{$year : {$toDate : "$logCreatedAt"}}, comparisonYear]}
+                                        {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                        {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
                                     ]
                                 }
                             }
@@ -417,13 +417,13 @@ const RootQuery = new GraphQLObjectType({
                     { $group: { //Gets the duration of every token
                             _id: {
                                 "token": "$json.token",
-                                "year" : {$year : {$toDate : "$logCreatedAt"}},
-                                "month" : {$month : {$toDate : "$logCreatedAt"}}
+                                "year" : {$year : "$logCreatedAt"},
+                                "month" : {$month : "$logCreatedAt"}
 
                             },
                             "sessionDuration" :  {$max : '$json.sessionDuration'},
-                            year: {$max : {$year : {$toDate : "$logCreatedAt"}}},
-                            month: {$max : {$month : {$toDate : "$logCreatedAt"}}}
+                            year: {$max : {$year : "$logCreatedAt"}},
+                            month: {$max : {$month : "$logCreatedAt"}}
 
                         }
                     },
