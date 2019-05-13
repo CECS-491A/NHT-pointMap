@@ -50,6 +50,13 @@
         <div id="map"></div> 
       </v-flex>
     </v-layout>
+    <v-snackbar
+      v-model="snackbar.visible"
+      :timeout="timeout"
+      :top="true"
+    >
+      {{ snackText }}
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -66,6 +73,11 @@ export default {
   },
   data: () => {
     return {
+      snackbar: {
+        visible: false,
+        timeout: 3000,
+        snackText: ""
+      },
       responseError: null,
       loadingText: "",
       error: "",
@@ -259,7 +271,8 @@ export default {
             Longitude: this.point.longitude,
             Latitude: this.point.latitude
           }
-          this.loadingText = "Creating point."
+          this.loadingText = "Creating point.";
+          this.snackbar.snackText = "Point created.";
       } else {
           func = updatePoint;
           payload = {
@@ -270,6 +283,7 @@ export default {
             Id: this.point.Id
           }
           this.loadingText = "Updating point."
+          this.snackbar.snackText = "Point updated";
       }
       this.loading = true;
 
@@ -282,6 +296,7 @@ export default {
       promise.then(() => {
         //after operation, sends the user back to the mapview
         this.$router.push('/mapview');
+        this.snackbar.visible = true;
       }).catch(err => {
           switch(err.response.status) {
           case 401: 
