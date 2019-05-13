@@ -1,52 +1,55 @@
 <template>
   <v-container id="container" fluid grid-list-md>
-    <v-layout row wrap>
-      <v-flex xs12 sm12 md12 lg6 xl6 id="editor">
-        <h1>Point Editor</h1>
-        <v-form>
-          <v-text-field
-            name="name"
-            id="name"
-            v-model="point.name"
-            type="name"
-            label="Name" /> <br />
-          <v-text-field
-            name="description"
-            id="description"
-            type="description"
-            v-model="point.description"
-            label="Description" /><br />
-          <v-text-field
-            name="longitude"
-            id="longitude"
-            v-model.number="point.longitude"
-            label="Longitude" 
-            @change="updateMarkerPosition"/><br />
-          <v-text-field
-            name="latitude"
-            id="latitude"
-            v-model.number="point.latitude"
-            label="Latitude" 
-            @change="updateMarkerPosition"/><br />
-          <v-alert
-            :value="error"
-            type="error"
-            transition="scale-transition"
-          >
-            {{error}}
-          </v-alert><br />
-          <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
+    <v-layout id="editorPage" row wrap fill-height>
+      <v-flex xs12 sm12 md12 lg6 xl6 id="editorForm">
+        <div id="editorForm">
+          <h1 class="display-1">Point Editor</h1>
+          <v-divider class='my-3'></v-divider>
+          <v-form>
+            <v-text-field
+              name="name"
+              id="name"
+              v-model="point.name"
+              type="name"
+              label="Name" /> <br />
+            <v-text-field
+              name="description"
+              id="description"
+              type="description"
+              v-model="point.description"
+              label="Description" /><br />
+            <v-text-field
+              name="longitude"
+              id="longitude"
+              v-model.number="point.longitude"
+              label="Longitude" 
+              @change="updateMarkerPosition"/><br />
+            <v-text-field
+              name="latitude"
+              id="latitude"
+              v-model.number="point.latitude"
+              label="Latitude" 
+              @change="updateMarkerPosition"/><br />
+            <v-alert
+              :value="error"
+              type="error"
+              transition="scale-transition"
+            >
+              {{error}}
+            </v-alert><br />
+            <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
 
-        </v-form>
-        <div v-if="loading">
-          <Loading :dialog="loading" :text="loadingText"/>
-        </div>
-        <br />
-        <div id="instruction">
-          <h2>Drag the marker on the map to the desired location. </h2>
+          </v-form>
+          <div v-if="loading">
+            <Loading :dialog="loading" :text="loadingText"/>
+          </div>
+          <br />
+          <div id="instruction">
+            <h2>Drag the marker on the map to the desired location. </h2>
+          </div>
         </div>
       </v-flex>
-      <v-flex xs12 sm12 md12 lg6 xl6>
+      <v-flex id="editorMap" xs12 sm12 md12 lg6 xl6>
         <div id="map"></div> 
       </v-flex>
     </v-layout>
@@ -304,15 +307,34 @@ export default {
 <style scoped>
   #container{
     padding: 0px;
+    height: 100%;
   }
+  #editorPage {
+    margin: 0px
+  }
+
   #editor{
     padding: 12px;
   }
+
   #map{
     height: 100%;
     min-height: 550px;
   }
   #instruction{
     text-align: center;
+  }
+
+  #editorForm{
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    max-width: 800px;
+    margin: 1px auto;
+    align: center;
+}
+
+  #editorMap {
+    padding: 15px;
   }
 </style>
