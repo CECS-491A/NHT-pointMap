@@ -97,7 +97,7 @@ export default {
       this.$router.push( "/home" )
     },
     deleteFromPointmapAndSSO () {
-        this.loadingText = 'Deleteting from SSO and Pointmap...';
+        this.loadingText = 'Deleting from SSO and Pointmap...';
         this.loading = true;
         deleteAccountFromSSO()
             .then(response => {
