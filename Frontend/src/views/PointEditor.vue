@@ -44,7 +44,13 @@
             <Loading :dialog="loading" :text="loadingText"/>
           </div>
           <div v-if="notification">
-            <Dialog :dialog="notification" :text="notificationText"/>
+            <v-snackbar
+	      v-model="notification" 
+	      :top="true"
+	      :timeout="2000"
+	    >
+		<h3 class="body-2"> {{ this.notificationText }} </h3>
+	    </v-snackbar>
           </div>
           <br />
           <div id="instruction">
