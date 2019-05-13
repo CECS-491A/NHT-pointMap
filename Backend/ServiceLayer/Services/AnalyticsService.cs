@@ -15,6 +15,7 @@ namespace ServiceLayer.Services
     {
         private const string ANALYTICS_SERVER_URL = "https://julianjp.com/logging/analytics";
 
+
         public HttpResponseMessage getAnalyticsData()
         {
             try

@@ -13,7 +13,7 @@ const {GraphQLObjectType,
  const _ = require('lodash');
 
  let comparisonDate = new Date();
- comparisonDate.setMonth(-6);
+ comparisonDate.setMonth(comparisonDate.getMonth() - 6);
  let comparisonYear = comparisonDate.getFullYear();
  let comparisonMonth = comparisonDate.getMonth();
 
@@ -186,111 +186,6 @@ const RootQuery = new GraphQLObjectType({
                 return logs
             }
         },
-        loginAttempts: {
-            type: new GraphQLList(loginSuccessFail),
-            resolve(parent, args){
-                let logs = Log.aggregate([
-                    {
-                        $match: {"source" : "Login"}
-                    },
-                    {
-                        $group: {
-                            _id: {
-                                "year" : {$year : "$logCreatedAt"},
-                                "month" : {$month : "$logCreatedAt"}
-                            },
-                            successfulLoginAttempts: {$sum : 1}, //Sums every successful login
-                            year: {$max : {$year : "$logCreatedAt"}},
-                            month: {$max : {$month : "$logCreatedAt"}}
-                        }
-                    },
-                    {
-                        $sort: {year: 1, month : 1}
-                    },
-                    {
-                        $project:{
-                            month: "$month",
-                            year: "$year",
-                            successfulLoginAttempts: "$successfulLoginAttempts",
-                            _id: 0
-                        }
-                    }
-                ])
-                let errors = Error.aggregate([
-                    {
-                        $match: {"source": "Login"}
-                    },
-                    {
-                        $group: {
-                            _id: {
-                                "year" : {$year : "$logCreatedAt"},
-                                "month" : {$month : "$logCreatedAt"}
-                            },
-                            failedLoginAttempts: {$sum : 1}, //Sums every successful login
-                            year: {$max : {$year : "$logCreatedAt"}},
-                            month: {$max : {$month : "$logCreatedAt"}}
-                        }
-                    },
-                    {
-                        $sort: {year: 1, month : 1}
-                    },
-                    {
-                        $project:{
-                            month: "$month",
-                            year: "$year",
-                            failedLoginAttempts: "$failedLoginAttempts",
-                            _id: 0
-                        }
-                    }
-                ])
-                logs.exec((err, logData) => {
-                    if(err){
-                        console.log(err)
-                        return null
-                    }else{
-                        errors.exec((err, errorData) => {
-                            if(err){
-                                console.log(err)
-                                return null
-                            }else{
-                                let errjson = {};
-                                let analyticsJson = {};
-                                let temp = {}
-                                for(var i = 0; i < logData.length; i++){
-                                    temp = {}
-                                    temp['successfulLoginAttempts'] = logData[i].successfulLoginAttempts
-                                    temp['month'] = logData[i].month
-                                    temp['year'] = logData[i].year
-                                    let key = logData[i].year.toString() + "-" + logData[i].month.toString()
-                                    analyticsJson[key] = temp
-                                }
-                                for(var i = 0; i < errorData.length; i++){
-                                    temp = {}
-                                    temp['failedLoginAttempts'] = errorData[i].failedLoginAttempts
-                                    temp['month'] = errorData[i].month
-                                    temp['year'] = errorData[i].year
-                                    temp['successfulLoginAttempts'] = 0
-                                    let key = errorData[i].year.toString() + "-" + errorData[i].month.toString()
-                                    errjson[key] = temp
-                                }
-                                Object.keys(analyticsJson).forEach((key) => {
-                                    if(errjson[key] == null){
-                                        temp = {}
-                                        temp['failedLoginAttempts'] = 0
-                                        errjson[key] = temp
-                                    }
-                                    errjson[key].month = analyticsJson[key].month
-                                    errjson[key].year = analyticsJson[key].year
-                                    errjson[key].successfulLoginAttempts = analyticsJson[key].successfulLoginAttempts
-                                })
-                                console.log('final result: ', errjson)
-                            }
-                        })
-                    }
-                })
-                return errors
-            }
-        },
         topFeaturesByPageVisits: {
             type: new GraphQLList(mostUsedFeature),
             resolve(parent, args){
@@ -363,30 +258,68 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent, args){
                 let logs = Log.aggregate([
                     {
-                        $match: {
-                            $and: [
-                                {
-                                    "source": "Login"
-                                }, 
-                                {
-                                    $expr: { //Ensures that the query only deals with logs in the most recent 6 months
-                                        $and: [
+                        $match: {"source": "Login"}
+                    },
+                    {
+                        $group: {
+                            _id: {
+                                "token": "$json.token",
+                                "year": {$year : "$logCreatedAt"},
+                                "month" : {$month : "$logCreatedAt"},
+                            },
+                            month: {$max: { 
+                                $cond: [
+                                    //logMonth > compMonth && logYear >= comparisonYear || logMonth < compMonth && logYear > compYear
+                                    {$or : [
+                                        {$and : [
                                             {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
                                             {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
-                                        ]
-                                    }
-                                }
+                                        ]}, 
+                                        {$and : [
+                                            {$lt: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gt: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                    ]},
+                                    {$month : "$logCreatedAt"},
+                                    "0"
+                                ]}
+                            },
+                            year: {$max: { 
+                                $cond: [
+                                    {$or : [
+                                        {$and : [
+                                            {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                        {$and : [
+                                            {$lt: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gt: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                    ]},
+                                    {$year : "$logCreatedAt"},
+                                    "0"
+                                ]}
+                            },
+                            source: {$max: "$source"}
+                        }
+                    },
+                    {
+                        $match: {
+                            $and: [
+                                {"source": "Login"},
+                                {"month": {"$exists": true, "$ne": "0"}},
+                                {"year": {"$exists": true, "$ne": "0"}}
                             ]
                         } //Gets only pages that were login or register
                     },
                     {
                         $group: {
                             _id: {
-                                "month": {$month : "$logCreatedAt"}, //Groups by month and year
-                                "year": {$year : "$logCreatedAt"}
+                                "month": "$month", //Groups by month and year
+                                "year": "$year"
                             },
-                            month: {$max : {$month : "$logCreatedAt"}}, //Gets the month
-                            year: {$max : {$year : "$logCreatedAt"}}, //Gets the year
+                            "year": {$max: "$year"},
+                            "month": {$max: "$month"},
                             numLogins: {$sum : 1 } //Counts successful logins
                         }
                     },
@@ -397,35 +330,61 @@ const RootQuery = new GraphQLObjectType({
                 return logs
             }
         },
+
         averageSessionDuration6Months:{
             type: new GraphQLList(SessionType),
             resolve(parent, args){
                 let logs = Log.aggregate([
                     {
-                        $match: {$and :[
-                            {"json.token": {"$exists": true, "$ne": null}},
-                            {
-                                $expr: { //Ensures that the query only deals with logs in the most recent 6 months
-                                    $and: [
-                                        {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
-                                        {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
-                                    ]
-                                }
-                            }
-                        ]}
-                    },
-                    { $group: { //Gets the duration of every token
+                        $group: {
                             _id: {
                                 "token": "$json.token",
-                                "year" : {$year : "$logCreatedAt"},
+                                "year": {$year : "$logCreatedAt"},
                                 "month" : {$month : "$logCreatedAt"}
-
                             },
-                            "sessionDuration" :  {$max : '$json.sessionDuration'},
-                            year: {$max : {$year : "$logCreatedAt"}},
-                            month: {$max : {$month : "$logCreatedAt"}}
-
+                            month: {$max: { 
+                                $cond: [
+                                    //logMonth > compMonth && logYear >= comparisonYear || logMonth < compMonth && logYear > compYear
+                                    {$or : [
+                                        {$and : [
+                                            {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                        {$and : [
+                                            {$lt: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gt: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                    ]},
+                                    {$month : "$logCreatedAt"},
+                                    "0"
+                                ]}
+                            },
+                            year: {$max: { 
+                                $cond: [
+                                    {$or : [
+                                        {$and : [
+                                            {$gte: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gte: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                        {$and : [
+                                            {$lt: [{$month : "$logCreatedAt"}, comparisonMonth]},
+                                            {$gt: [{$year : "$logCreatedAt"}, comparisonYear]}
+                                        ]}, 
+                                    ]},
+                                    {$year : "$logCreatedAt"},
+                                    "0"
+                                ]}
+                            },
+                            token: {$max: "$json.token"},
+                            sessionDuration: {$max: "$json.sessionDuration"}
                         }
+                    },
+                    {
+                        $match: {$and :[
+                            {"token": {"$exists": true, "$ne": null}},
+                            {"month": {"$exists": true, "$ne": "0"}},
+                            {"year": {"$exists": true, "$ne": "0"}}
+                        ]}
                     },
                     {
                         $group: { //groups together the tokens to find the average 

@@ -41,8 +41,8 @@ namespace UnitTesting
                 newLog.setPage(DTO.Constants.Constants.Pages.PointDetails);
                 for (var j = 0; j < 3; j++)
                 {
-                    var month = rand.Next(1, 12);
-                    newLog.logCreatedAt = new DateTime(2018, month, 21);
+                    var month = rand.Next(8, 12);
+                    newLog.logCreatedAt = new DateTime(2018, 12, 21);
                     newLog.setSource(DTO.Constants.Constants.Sources.Login);
                     var pageDuration = rand.Next(1, 600);
                     newLog.pageDuration = pageDuration;
@@ -87,8 +87,8 @@ namespace UnitTesting
                 Session newSession = CreateSessionObject(newUser);
                 CreateSessionInDb(newSession);
                 newError.ssoUserId = newUser.Id.ToString();
-                var month = rand.Next(1, 12);
-                newError.logCreatedAt = new DateTime(2018, month, 21);
+                var month = rand.Next(1, 5);
+                newError.logCreatedAt = new DateTime(2019, month, 21);
                 for (var j = 0; j < 3; j++)
                 {
                     newError.setSource(DTO.Constants.Constants.Sources.Login);
