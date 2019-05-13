@@ -16,7 +16,7 @@
                 <br>
                 
                 <h2 class="headline">Developer Docs</h2>
-                <p class="body-1">Visit our User Manual to learn how to learn more and get started with Pointmap's API.</p>
+                <p class="body-1">Visit our User Manual to learn more about Pointmap and to get help getting started with Pointmap's API.</p>
                 <a v-on:click="goToDocument(user_man)" class="link">Developer Docs</a>
                 <br>
             </v-flex>
