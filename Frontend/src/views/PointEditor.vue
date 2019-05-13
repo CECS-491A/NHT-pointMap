@@ -1,54 +1,69 @@
 <template>
-  <div id="flexcontainer">
-    <div id="pointeditor">
-      <h1>Point Editor</h1>
-      <v-form>
-        <v-text-field
-          name="name"
-          id="name"
-          v-model="point.name"
-          type="name"
-          label="Name" /> <br />
-        <v-text-field
-          name="description"
-          id="description"
-          type="description"
-          v-model="point.description"
-          label="Description" /><br />
-        <v-text-field
-          name="longitude"
-          id="longitude"
-          v-model.number="point.longitude"
-          label="Longitude" 
-          @change="updateMarkerPosition"/><br />
-        <v-text-field
-          name="latitude"
-          id="latitude"
-          v-model.number="point.latitude"
-          label="Latitude" 
-          @change="updateMarkerPosition"/><br />
-        <v-alert
-          :value="error"
-          type="error"
-          transition="scale-transition"
-        >
-          {{error}}
-        </v-alert><br />
-        <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
+  <v-container id="container" fluid grid-list-md>
+    <v-layout id="editorPage" row wrap fill-height>
+      <v-flex xs12 sm12 md12 lg6 xl6 id="editorForm">
+        <div id="editorForm">
+          <h1 class="display-1">Point Editor</h1>
+          <v-divider class='my-3'></v-divider>
+          <v-form>
+            <v-text-field
+              name="name"
+              id="name"
+              v-model="point.name"
+              type="name"
+              label="Name" /> <br />
+            <v-text-field
+              name="description"
+              id="description"
+              type="description"
+              v-model="point.description"
+              label="Description" /><br />
+            <v-text-field
+              name="longitude"
+              id="longitude"
+              v-model.number="point.longitude"
+              label="Longitude" 
+              @change="updateMarkerPosition"/><br />
+            <v-text-field
+              name="latitude"
+              id="latitude"
+              v-model.number="point.latitude"
+              label="Latitude" 
+              @change="updateMarkerPosition"/><br />
+            <v-alert
+              :value="error"
+              type="error"
+              transition="scale-transition"
+            >
+              {{error}}
+            </v-alert><br />
+            <v-btn color="success" v-on:click="submit"> {{ saveButtonText }} </v-btn>
 
-      </v-form>
-      <div v-if="loading">
-        <Loading :dialog="loading" :text="loadingText"/>
-      </div>
-      <br />
-      <div id="instruction">
-        <h2>Drag the marker on the map to the desired location. </h2>
-      </div>
-    </div>
-    <div>
-      <div id="map"></div> 
-    </div>
-  </div>
+          </v-form>
+          <div v-if="loading">
+            <Loading :dialog="loading" :text="loadingText"/>
+          </div>
+          <div v-if="notification">
+            <v-snackbar
+              v-model="notification"
+              :color="notificationColor" 
+              :top="true"
+              :timeout="2000"
+            >
+              <h3 class="body-2"> {{ this.notificationText }} </h3>
+            </v-snackbar>
+          </div>
+          <br />
+          <div id="instruction">
+            <h2>Drag the marker on the map to the desired location. </h2>
+          </div>
+        </div>
+      </v-flex>
+      <v-flex id="editorMap" xs12 sm12 md12 lg6 xl6>
+        <div id="map"></div> 
+      </v-flex>
+    </v-layout>
+  </v-container>
 </template>
 
 <script>
@@ -65,8 +80,12 @@ export default {
   },
   data: () => {
     return {
+      notification: false,
+      notificationText: "",
+      notificationColor: "success",
       responseError: null,
       loadingText: "",
+      pointFunctionResultText: "",
       error: "",
       creatingPoint: false,
       loading: false,
@@ -173,11 +192,16 @@ export default {
       if(this.point.latitude == "" || this.point.longitude == "" || 
           this.point.latitude < -90 || this.point.latitude > 90 ||
           this.point.longitude < -180 || this.point.longitude > 180) {
+
+        //determines error type and corresponding display message
+        if(this.point.latitude == "" || this.point.longitude == "") {
+          this.error = "Latitude/longitude value cannot be empty.";
+        } else {
+          this.error = "Latitude/Longitude value invalid."
+        }
         this.point.latitude = this.center.lat;
         this.point.longitude = this.center.lng;
-
-        //displays an error message
-        this.error = "Latitude/longitude values cannot be empty.";
+        
         var promise = new Promise((resolve, reject) => {
           setTimeout(() => { //error messages is displayed for 2 seconds
             resolve()
@@ -204,7 +228,7 @@ export default {
 
       //enters here from point details
       if (pointId !== undefined) {
-        this.loadingText = "Loading point data.";
+        this.loadingText = "Loading Point Data...";
         this.loading = true;
         this.creatingPoint = false;
         this.saveButtonText = "Update Point";
@@ -265,7 +289,8 @@ export default {
             Longitude: this.point.longitude,
             Latitude: this.point.latitude
           }
-          this.loadingText = "Creating point."
+          this.loadingText = "Creating Point...";
+	        this.notificationText = "Point Created.";
       } else {
           func = updatePoint;
           payload = {
@@ -275,7 +300,8 @@ export default {
             Latitude: this.point.latitude,
             Id: this.point.Id
           }
-          this.loadingText = "Updating point."
+          this.loadingText = "Updating point...";
+	        this.notificationText = "Point Updated.";
       }
       this.loading = true;
 
@@ -284,10 +310,23 @@ export default {
         func(this.point);
         resolve();
       });
-
+	
       promise.then(() => {
-        //after operation, sends the user back to the mapview
-        this.$router.push('/mapview');
+        this.loading = false;
+        this.notificationColor = "success";
+        this.notification = true;
+
+        let notificationPromise = new Promise((resolve, reject) => {
+          setTimeout(() => {
+          resolve()
+          }, 2000)
+        });
+
+        notificationPromise.then(() => {
+          this.notification = false;
+          //after operation and notification, sends the user back to the mapview
+          this.$router.push('/mapview');
+        });
       }).catch(err => {
           switch(err.response.status) {
           case 401: 
@@ -299,8 +338,6 @@ export default {
           case 500:
               this.error = err.response.data;
           }
-      }).finally(() => {
-          this.loading = false;
       })
     }
   }
@@ -308,26 +345,36 @@ export default {
 </script>
 
 <style scoped>
+  #container{
+    padding: 0px;
+    height: 100%;
+  }
+  #editorPage {
+    margin: 0px
+  }
+
+  #editor{
+    padding: 12px;
+  }
+
   #map{
-      margin-bottom: 20px;
-      width: 650px;
-      height: 650px;
-      margin: 0 auto;
-      background: gray;
-  }
-  #flexcontainer{
-    display: flex;
-    flex-flow: wrap;
-    flex-direction: row;
-    align-content: stretch;
-    flex: 2;
-    justify-content: space-between;
-  }
-  #pointeditor{
-    width: 590px;
-    margin: 20px;
+    height: 100%;
+    min-height: 550px;
   }
   #instruction{
     text-align: center;
+  }
+
+  #editorForm{
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    max-width: 800px;
+    margin: 1px auto;
+    align: center;
+}
+
+  #editorMap {
+    padding: 15px;
   }
 </style>
