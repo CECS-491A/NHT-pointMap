@@ -45,7 +45,8 @@
           </div>
           <div v-if="notification">
             <v-snackbar
-              v-model="notification" 
+              v-model="notification"
+              :color="notificationColor" 
               :top="true"
               :timeout="2000"
             >
@@ -80,6 +81,7 @@ export default {
     return {
       notification: false,
       notificationText: "",
+      notificationColor: "success",
       responseError: null,
       loadingText: "",
       pointFunctionResultText: "",
@@ -298,6 +300,7 @@ export default {
 	
       promise.then(() => {
         this.loading = false;
+        this.notificationColor = "success";
         this.notification = true;
 
         let notificationPromise = new Promise((resolve, reject) => {
