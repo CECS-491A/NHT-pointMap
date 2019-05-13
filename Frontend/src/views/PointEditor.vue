@@ -213,7 +213,7 @@ export default {
 
       //enters here from point details
       if (pointId !== undefined) {
-        this.loadingText = "Loading point data.";
+        this.loadingText = "Loading Point Data...";
         this.loading = true;
         this.creatingPoint = false;
         this.saveButtonText = "Update Point";
@@ -274,8 +274,8 @@ export default {
             Longitude: this.point.longitude,
             Latitude: this.point.latitude
           }
-          this.loadingText = "Creating point.";
-	        this.notificationText = "Point created.";
+          this.loadingText = "Creating Point...";
+	        this.notificationText = "Point Created.";
       } else {
           func = updatePoint;
           payload = {
@@ -285,8 +285,8 @@ export default {
             Latitude: this.point.latitude,
             Id: this.point.Id
           }
-          this.loadingText = "Updating point.";
-	        this.notificationText = "Point updated.";
+          this.loadingText = "Updating point...";
+	        this.notificationText = "Point Updated.";
       }
       this.loading = true;
 
