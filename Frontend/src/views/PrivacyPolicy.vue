@@ -108,7 +108,7 @@ export default {
     width: 100%;
     padding: 15px;
     margin-top: 20px;
-    max-width: 800px;
+    max-width: 900px;
     margin: 1px auto;
     align: center;
 }
