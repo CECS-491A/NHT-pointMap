@@ -24,7 +24,6 @@ export default new Router({
     {
       path: '/admindashboard',
       name: 'AdminDashboard',
-
       component: AdminDashboard
     },
     {

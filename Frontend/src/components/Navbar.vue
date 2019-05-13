@@ -12,7 +12,7 @@
                 icon
                 v-on="on"
               >
-            <v-icon>apps</v-icon>
+            <v-icon>menu</v-icon>
             </v-btn>
         </template> 
         <v-list>
@@ -21,6 +21,7 @@
                 :key="i"
                 :to="{path: `${item.link}`}"
               >
+                <v-icon left >{{ item.icon}}</v-icon>
                 <v-list-tile-title>{{ item.title }}</v-list-tile-title>
             </v-list-tile>
         </v-list>
@@ -47,6 +48,7 @@
                 v-on:click="item.action"
                 :to="{path: `${item.link}`}"
               >
+                <v-icon left >{{ item.icon}}</v-icon>
                 <button>{{item.title}}</button>
             </v-list-tile>
         </v-list>
@@ -74,12 +76,12 @@ export default {
   name: 'Navbar',
   data: () => ({
       ApplicationMenuItems: [
-        {title: 'Map View', link: '/mapview'},
-        {title: 'Documents', link: '/documents'}
+        {title: 'Map View', link: '/mapview', icon: 'map'},
+        {title: 'Documents', link: '/documents', icon: 'info'}
       ],
       UserMenuItems: [
-          { title: 'Account', link: '/account'},
-          { title: 'Logout', action: deleteSession, link: '/' }
+          { title: 'Account', link: '/account', icon: 'account_circle'},
+          { title: 'Logout', action: deleteSession, link: '/', icon: 'exit_to_app' }
       ],
       user: {},
       stored: store,

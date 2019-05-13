@@ -1,49 +1,36 @@
 <template>
     <v-container fill-height>
         <v-layout>
-            <v-flex>
-                <h1 id="FAQ">Facts and Questions</h1>
+            <v-flex id="FAQ">
+                <h1 id="faqHeader" class="display-1">Frequently Asked Questions (FAQ)</h1>
                 <v-divider class='my-3'></v-divider>
-                <p>
-                    <b>What is Pointmap?</b>
-                    <br>
-                    Pointmap is a GeoSpatial mapping program capable of plotting and easily managing points of interest for an organization.
-                    <br><br>
+                    <b class="subheading font-weight-black">What is Pointmap?</b>
+                    <p class="answerText">Pointmap is a GeoSpatial mapping program capable of plotting and easily managing points of interest for an organization.</p>
 
-                    <b>How do I edit points?</b>
+                    <br/>
+                    <b class="subheading font-weight-black">How do I edit points?</b>
+                    <p class="answerText">Existing points can be edited by clicking on the appropriate marker that loads in the map. This will load a page
+                       which displays the details of the clicked point. From this page, editing a point or deleting a point can be selected.</p>
+                    
                     <br>
-                    Existing points can be edited by clicking on the appropriate marker that loads in the map. This will load a page
-                    which displays the details of the clicked point. From this page, editing a point or deleting a point can be selected.
-                    <br><br>
+                    <b class="subheading font-weight-black">How do I register?</b>
+                    <p class="answerText">Registration is completed through the single sign on application<a v-on:click="goToDocument(sso_registration)" class="link">here</a>.</p>
 
-                    <b>How do I register?</b>
                     <br>
-                    Registration is completed through the single sign on application 
-                    <a v-on:click="goToDocument(sso_registration)" class="link">here</a>.
-                    <br><br>
+                    <b class="subheading font-weight-black">How do I log in?</b>
+                    <p class="answerText">Login is completed after registration through the single sign on application <a v-on:click="goToDocument(sso_login)" class="link">here</a>. </p>
 
-                    <b>How do I log in?</b>
                     <br>
-                    Login is completed after registration through the single sign on application 
-                    <a v-on:click="goToDocument(sso_login)" class="link">here</a>.
-                    <br><br>
+                    <b class="subheading font-weight-black">What is Pointmap's privacy policy?</b>
+                    <p class="answerText">Pointmap's privacy policy can be viewed <router-link to='legal'>here</router-link>.</p>
 
-                    <b>What is Pointmap's privacy policy?</b>
                     <br>
-                    Pointmap's privacy policy can be viewed 
-                    <router-link to='legal'>here</router-link>.
-                    <br><br>
+                    <b class="subheading font-weight-black">Where can I find detailed information about how to use Pointmap?</b>
+                    <p class="answerText">Additional documentation for Pointmap can be found<router-link to='documents'>here</router-link>.</p>
 
-                    <b>Where can I find detailed information about how to use Pointmap?</b>
                     <br>
-                    Additional documentation for Pointmap can be found 
-                    <router-link to='documents'>here</router-link>.
-                    <br><br>
-
-                    <b>How can I delete my account?</b>
-                    <br>
-                    A user's account can be deleted by using the user avatar in the upper right hand corner and clicking on 'Account'. From there, the user can choose to delete their account from either Pointmap alone or Pointmap and the single sign on application.
-                </p>
+                    <b class="subheading font-weight-black">How can I delete my account?</b>
+                    <p class="answerText">A user's account can be deleted by using the user avatar in the upper right hand corner and clicking on 'Account'. From there, the user can choose to delete their account from either Pointmap alone or Pointmap and the single sign on application.</p>
             </v-flex>
         </v-layout>
     </v-container>
@@ -84,9 +71,23 @@ export default {
 </script>
 
 <style scoped>
-#FAQ{
+#faqHeader {
     text-align: center;
 }
+
+#FAQ{
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    max-width: 900px;
+    margin: 1px auto;
+    align: center;
+}
+
+.answerText {
+    padding-top: 15px;
+}
+
 .link{
     text-decoration: underline;
 }

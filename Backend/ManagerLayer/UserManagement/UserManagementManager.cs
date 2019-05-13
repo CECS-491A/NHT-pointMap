@@ -98,14 +98,9 @@ namespace ManagerLayer.UserManagement
             {
                 throw new UserNotFoundException("User does not exist.");
             }
-            _userService.DeleteUser(id);
-        }
-
-        public void DeleteUserAndSessions(Guid id)
-        {
             var _sessionService = new SessionService(_db);
             _sessionService.DeleteSessionsOfUser(id);
-            var user = _userService.GetUser(id);
+            _userService.DeleteUser(id);
         }
 
         public User ToUpdateUser(User user, UpdateUserRequestDTO requestChanges)

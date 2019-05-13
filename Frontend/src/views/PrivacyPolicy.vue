@@ -1,8 +1,8 @@
 <template>
     <v-container fill-height>
         <v-layout>
-            <v-flex>
-                <h1 id="PP">Privacy Policy</h1>
+            <v-flex id="PP">
+                <h1 class="display-1">Privacy Policy</h1>
                 <v-divider class='my-3'></v-divider>
                 <p>
                     <b>1. Terms</b>
@@ -123,6 +123,12 @@ export default {
 
 <style scoped>
 #PP{
-    text-align: center;
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    max-width: 900px;
+    margin: 1px auto;
+    align: center;
 }
+
 </style>

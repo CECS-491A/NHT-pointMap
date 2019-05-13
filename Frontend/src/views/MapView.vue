@@ -1,11 +1,14 @@
 <template>
-  <div>
-    <div v-on:click="requestPoints" id="map"></div> 
-    <v-btn v-on:click="createPoint" fab dark color="teal" 
-id="addPointBtn">
-      <v-icon>add</v-icon>
-    </v-btn>
-  </div>
+  <v-layout id="mapView">
+    <v-flex>
+      <div id="mapView">
+          <div v-on:click="requestPoints" id="map"></div> 
+          <v-btn v-on:click="createPoint" fab dark color="teal" id="addPointBtn">
+          <v-icon>add</v-icon>
+          </v-btn>
+      </div>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -155,8 +158,16 @@ export default {
   #map{
       margin-bottom: 20px;
       width: 100%;
-      height: 650px;
+      height: 100%;
       margin: 0 auto;
       background: gray;
+  }
+
+  #mapView {
+    height: 100%;
+  }
+
+  #addPointBtn {
+    margin: 20px;
   }
 </style>

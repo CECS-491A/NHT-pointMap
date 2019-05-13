@@ -12,4 +12,4 @@ module.exports = {
   SSO_REGISTRATION_URL: sso_registration_url,
   DEV_DOCS_URL: dev_docs_url,
   USER_MAN_URL: user_man_url
-};
+}
