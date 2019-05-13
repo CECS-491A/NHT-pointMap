@@ -15,9 +15,14 @@
                 <router-link to='policies'>Privacy Policy</router-link>
                 <br>
                 
-                <h2 class="headline">Developer Docs</h2>
+                <h2 class="headline">User Manual</h2>
                 <p class="body-1">Visit our User Manual to learn more about Pointmap and to get help getting started with Pointmap's API.</p>
-                <a v-on:click="goToDocument(user_man)" class="link">Developer Docs</a>
+                <a v-on:click="goToDocument(user_man)" class="link">User Manual</a>
+                <br>
+
+                <h2 class="headline">Developer Documents</h2>
+                <p class="body-1">Visit our Developer Documents to learn detailed information about Pointmap.</p>
+                <a v-on:click="goToDocument(dev_docs)" class="link">Developer Documents</a>
                 <br>
             </v-flex>
         </v-layout>
@@ -33,7 +38,7 @@ export default {
     data: () => {
         return {
             user_man: user_man_url,
-            dev_docs_url: dev_docs_url
+            dev_docs: dev_docs_url
         }
     },
     methods: {
