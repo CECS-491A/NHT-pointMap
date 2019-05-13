@@ -43,6 +43,9 @@
           <div v-if="loading">
             <Loading :dialog="loading" :text="loadingText"/>
           </div>
+          <div v-if="notification">
+            <Dialog :dialog="notification" :text="notificationText"/>
+          </div>
           <br />
           <div id="instruction">
             <h2>Drag the marker on the map to the desired location. </h2>
@@ -69,6 +72,8 @@ export default {
   },
   data: () => {
     return {
+      notification: false,
+      notificationText: "",
       responseError: null,
       loadingText: "",
       pointFunctionResultText: "",
@@ -264,7 +269,7 @@ export default {
             Latitude: this.point.latitude
           }
           this.loadingText = "Creating point.";
-	  this.pointFunctionResultText = "Point created.";
+	        this.notificationText = "Point created.";
       } else {
           func = updatePoint;
           payload = {
@@ -275,7 +280,7 @@ export default {
             Id: this.point.Id
           }
           this.loadingText = "Updating point.";
-	  this.pointFunctionResultText = "Point updated.";
+	        this.notificationText = "Point updated.";
       }
       this.loading = true;
 
@@ -286,21 +291,20 @@ export default {
       });
 	
       promise.then(() => {
-	this.loadingText = this.pointFunctionResultText;
-	this.loading = true;
+        this.loading = false;
+        this.notification = true;
 
-	let notificationPromise = new Promise((resolve, reject) => {
-	   setTimeout(() => {
-	   resolve()
-	  }, 2000)
-	});
+        let notificationPromise = new Promise((resolve, reject) => {
+          setTimeout(() => {
+          resolve()
+          }, 2000)
+        });
 
-	notificationPromise.then(() => {
-	  this.loading = false;
-	  //after operation and notification, sends the user back to the mapview
+        notificationPromise.then(() => {
+          this.notification = false;
+          //after operation and notification, sends the user back to the mapview
           this.$router.push('/mapview');
-
-	});
+        });
       }).catch(err => {
           switch(err.response.status) {
           case 401: 
