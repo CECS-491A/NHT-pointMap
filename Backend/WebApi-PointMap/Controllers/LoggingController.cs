@@ -6,6 +6,7 @@ using System.Web.Http;
 using static ServiceLayer.Services.ExceptionService;
 using DTO;
 using Logging.Logging;
+using System.Threading.Tasks;
 
 namespace WebApi_PointMap.Controllers
 {
@@ -23,7 +24,7 @@ namespace WebApi_PointMap.Controllers
         // Token is passed in header of request
         [Route("api/log/webpageusage")]
         [HttpPost]
-        public IHttpActionResult LogWebpageUsage(LogWebpageUsageRequest payload)
+        public async Task<IHttpActionResult> LogWebpageUsage(LogWebpageUsageRequest payload)
         {
             try
             {
@@ -42,8 +43,7 @@ namespace WebApi_PointMap.Controllers
                 Enum.TryParse(payload.Page, out page);
                 newLog.setPage(page);
                 newLog.pageDuration = payload.GetDuration();
-                logger.sendLogAsync(newLog);
-
+                bool sendLog = await logger.sendLogAsync(newLog);
                 return Ok("Webpage (" + payload.Page + ") usage has been logged.");
             }
             catch (Exception e) when (e is NoTokenProvidedException ||
