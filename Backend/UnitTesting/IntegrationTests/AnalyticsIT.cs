@@ -25,17 +25,5 @@ namespace Testing.IntegrationTests
             Console.WriteLine(response.Content.ReadAsStringAsync().Result);
             Assert.AreEqual(response.StatusCode, System.Net.HttpStatusCode.OK);
         }
-
-        [TestMethod]
-        public void SendTestAnalytics()
-        {
-            _tu.SendAnalytics();
-        }
-
-        [TestMethod]
-        public void SendTestErrors()
-        {
-            _tu.SendErrors();
-        }
     }
 }
