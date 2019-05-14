@@ -12,12 +12,11 @@ namespace DataAccessLayer.Database
     public class DatabaseContext : DbContext
     {
         // TODO: turn into enviornmental variables for dev and deploy
-        readonly string productionDB = "Data Source=pointmapdbinstance.cqugps36mcx5.us-east-2.rds.amazonaws.com;Initial Catalog=pointmapdbinstance;User ID=Administrator;Password=NightWatch_123";
 
         public DatabaseContext()
         {
             var connectionString = Environment.GetEnvironmentVariable("NW_POINTMAP_DEV_DATABASE", EnvironmentVariableTarget.User);
-            this.Database.Connection.ConnectionString = productionDB;
+            this.Database.Connection.ConnectionString = connectionString;
         }
 
         public void RevertDatabaseChanges(DatabaseContext _db)
