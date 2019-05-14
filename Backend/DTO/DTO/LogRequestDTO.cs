@@ -35,7 +35,7 @@ namespace DTO
         /// <param name="source">A Constants.Constants.Sources enumeration for the source the error originated</param>
         public LogRequestDTO(Constants.Constants.Sources source, string userId)
         {
-            this.ssoUserId = ssoUserId;
+            this.ssoUserId = userId;
             this.source = source.ToString();
             logCreatedAt = DateTime.UtcNow;
         }
@@ -75,32 +75,6 @@ namespace DTO
         public void setSource(Constants.Constants.Sources source)
         {
             this.source = source.ToString();
-        }
-
-        /// <summary>
-        /// The validation method for LogRequestDTO
-        /// </summary>
-        /// <returns>Returns true if all required fields have been filled properly</returns>
-        public override bool isValid()
-        {
-            ValidationContext context = new ValidationContext(this, serviceProvider: null, items: null); //Creates validation context
-            List<ValidationResult> results = new List<ValidationResult>(); //Initalizes validated results array
-
-            //Attempts to validate object placing results per required field in results array
-            bool isValid = Validator.TryValidateObject(this, context, results, true); 
-
-            if (isValid == false) //If object isn't valid print out error messages of required fields
-            {
-
-                StringBuilder sbrErrors = new StringBuilder();
-                foreach (var validationResult in results)
-                {
-                    sbrErrors.AppendLine(validationResult.ErrorMessage);
-                }
-                Console.WriteLine(sbrErrors.ToString());
-                
-            }
-            return isValid;
-        }
+        }   
     }
 }

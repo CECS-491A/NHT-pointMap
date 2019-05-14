@@ -21,7 +21,7 @@ export function LogWebpageUsage(startTime, endTime, webpage) {
   axios
     .post(`${api_url}/api/log/webpageusage`, payload, config)
     .then(response => {
-      console.log(response.data);
+      
     })
     .catch(err => {
       console.log(err.response.data);

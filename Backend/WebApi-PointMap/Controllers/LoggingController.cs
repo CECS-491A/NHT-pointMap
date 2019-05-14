@@ -18,7 +18,7 @@ namespace WebApi_PointMap.Controllers
     public class LoggingController : ApiController
     {
         LogRequestDTO newLog;
-        Logger logger;
+        Logger logger = new Logger();
 
         // Token is passed in header of request
         [Route("api/log/webpageusage")]
@@ -54,6 +54,10 @@ namespace WebApi_PointMap.Controllers
             catch (Exception e) when (e is ArgumentException)
             {
                 return Content(HttpStatusCode.PreconditionFailed, e.Message);
+            }
+            catch(Exception e)
+            {
+                return Content(HttpStatusCode.InternalServerError, e.Message);
             }
         }
 

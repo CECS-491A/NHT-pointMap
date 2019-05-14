@@ -111,6 +111,10 @@ namespace ServiceLayer.Services
             }
             catch (System.AggregateException)
             {
+                return System.Net.HttpStatusCode.BadRequest;
+            }
+            catch (Exception)
+            {
                 return System.Net.HttpStatusCode.InternalServerError;
             }
         }
