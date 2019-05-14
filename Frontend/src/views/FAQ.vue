@@ -14,7 +14,7 @@
                     
                     <br>
                     <b class="subheading font-weight-black">How do I register?</b>
-                    <p class="answerText">Registration is completed through the single sign on application<a v-on:click="goToDocument(sso_registration)" class="link">here</a>.</p>
+                    <p class="answerText">Registration is completed through the single sign on application <a v-on:click="goToDocument(sso_registration)" class="link">here</a>.</p>
 
                     <br>
                     <b class="subheading font-weight-black">How do I log in?</b>
@@ -22,11 +22,11 @@
 
                     <br>
                     <b class="subheading font-weight-black">What is Pointmap's privacy policy?</b>
-                    <p class="answerText">Pointmap's privacy policy can be viewed <router-link to='legal'>here</router-link>.</p>
+                    <p class="answerText">Pointmap's privacy policy can be viewed <router-link to='policies'>here</router-link>.</p>
 
                     <br>
                     <b class="subheading font-weight-black">Where can I find detailed information about how to use Pointmap?</b>
-                    <p class="answerText">Additional documentation for Pointmap can be found<router-link to='documents'>here</router-link>.</p>
+                    <p class="answerText">Additional documentation for Pointmap can be found <router-link to='documents'>here</router-link>.</p>
 
                     <br>
                     <b class="subheading font-weight-black">How can I delete my account?</b>
