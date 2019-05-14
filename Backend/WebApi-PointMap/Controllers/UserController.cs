@@ -111,7 +111,7 @@ namespace WebApi_PointMap.Controllers
                     var requestSuccessful = await _ssoAPIManager.DeleteUserFromSSOviaPointmap(user);
                     if (requestSuccessful)
                     {
-                        _userManager.DeleteUserAndSessions(user.Id);
+                        _userManager.DeleteUser(user.Id);
                         _db.SaveChanges();
                         return Ok("User was deleted from Pointmap and SSO");
                     }
@@ -169,7 +169,7 @@ namespace WebApi_PointMap.Controllers
                         return Content(HttpStatusCode.NotFound, "User does not exist.");
                     }
                     // Delete user self and their sessions
-                    _userManager.DeleteUserAndSessions(user.Id);
+                    _userManager.DeleteUser(user.Id);
                     _db.SaveChanges();
                     var response = Content(HttpStatusCode.OK, "User was deleted from Pointmap.");
                     return response;
@@ -232,7 +232,7 @@ namespace WebApi_PointMap.Controllers
                     {
                         return Content(HttpStatusCode.OK, "User does not exist");
                     }
-                    _userManagementManager.DeleteUserAndSessions(userSSOID);
+                    _userManagementManager.DeleteUser(userSSOID);
                     _db.SaveChanges();
                     return Ok("User was deleted");
                 }
