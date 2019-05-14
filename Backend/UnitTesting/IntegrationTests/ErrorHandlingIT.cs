@@ -8,6 +8,7 @@ using DTO.UserManagementAPI;
 using DTO.KFCSSO_API;
 using System.Web.Http.Results;
 using DTO.PointAPI;
+using UnitTesting;
 
 namespace Testing.IntegrationTests
 {

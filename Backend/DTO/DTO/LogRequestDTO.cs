@@ -1,39 +1,80 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using DTO.DTOBase;
 
 namespace DTO
 {
-    public class LogRequestDTO
+    /// <summary>
+    /// Data Transfer object for log analytics, derived object of BaseLogDTO
+    /// </summary>
+    public class LogRequestDTO : BaseLogDTO
     {
         [Required]
         public string ssoUserId { get; set; }
-        [Required]
-        public string email { get; set; }
 
-        [Required]
-        public string source { get; set; }
-        [Required]
-        public string user { get; set; }
-        [Required]
-        public string desc { get; set; }
-        [Required]
         public string details { get; set; }
 
-        public LogRequestDTO(string ssoUserId, string email, string source, string user, 
-            string desc, string details)
+        public string token { get; set; }
+
+        public DateTime sessionCreatedAt { get; set; }
+
+        public DateTime sessionUpdatedAt { get; set; }
+
+        public DateTime sessionExpiredAt { get; set; }
+
+        public string page{ get; private set; }
+
+        public long pageDuration { get; set; }
+
+        /// <summary>
+        /// Constructor for the LogRequestDTO class
+        /// </summary>
+        /// <param name="ssoUserId">A string of a GUID of a User object</param>
+        /// <param name="source">A Constants.Constants.Sources enumeration for the source the error originated</param>
+        public LogRequestDTO(Constants.Constants.Sources source, string userId)
         {
-            this.ssoUserId = ssoUserId;
-            this.email = email;
-            this.source = source;
-            this.user = user;
-            this.desc = desc;
-            this.details = details;
+            this.ssoUserId = userId;
+            this.source = source.ToString();
+            logCreatedAt = DateTime.UtcNow;
         }
 
-        public LogRequestDTO() { }
+        public LogRequestDTO(Constants.Constants.Sources source, string userId, DateTime createdAt, 
+            DateTime updatedAt, DateTime expiredAt, string token)
+        {
+            this.ssoUserId = userId;
+            this.source = source.ToString();
+            this.token = token;
+            this.sessionCreatedAt = createdAt;
+            this.sessionExpiredAt = expiredAt;
+            this.sessionUpdatedAt = updatedAt;
+        }
+
+        /// <summary>
+        /// Base constructor for the LogRequestDTO object
+        /// </summary>
+        public LogRequestDTO()
+        {
+            logCreatedAt = DateTime.UtcNow;
+        }
+
+        /// <summary>
+        /// Setter method converting Constants.Constants.Pages to the equivalent string value
+        /// </summary>
+        /// <param name="source">A Constants.Constants.Pages enumeration for the page the log originated</param>
+        public void setPage(Constants.Constants.Pages page)
+        {
+            this.page = page.ToString();
+        }
+
+        /// <summary>
+        /// Setter method converting Constants.Constants.Sources to the equivalent string value
+        /// </summary>
+        /// <param name="source">A Constants.Constants.Sources enumeration for the source the log originated</param>
+        public void setSource(Constants.Constants.Sources source)
+        {
+            this.source = source.ToString();
+        }   
     }
 }

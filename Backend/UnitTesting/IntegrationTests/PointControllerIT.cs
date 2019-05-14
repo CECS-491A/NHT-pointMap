@@ -8,6 +8,7 @@ using DataAccessLayer.Database;
 using System.Web.Http.Results;
 using System.Net;
 using DTO.PointAPI;
+using UnitTesting;
 
 namespace Testing.IntegrationTests
 {

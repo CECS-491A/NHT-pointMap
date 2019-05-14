@@ -2,9 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebApi_PointMap.Controllers;
 using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Results;
-using static Testing.TestingUtils;
+using UnitTesting;
 using System.Net;
 using DTO.KFCSSO_API;
 using System.Threading.Tasks;
@@ -121,7 +119,7 @@ namespace Testing.IntegrationTests
             {
                 Email = alterdEmail,
                 SSOUserId = mock_payload.ssoUserId.ToString(),
-                Timestamp = mock_payload.timestamp, 
+                Timestamp = mock_payload.timestamp,
                 Signature = mock_payload.Signature(),
             };
 

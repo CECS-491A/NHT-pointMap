@@ -1,4 +1,4 @@
-﻿using DataAccessLayer.Database;
+using DataAccessLayer.Database;
 using DTO.UserManagementAPI;
 using ManagerLayer.UserManagement;
 using System;

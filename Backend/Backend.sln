@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi-PointMap", "WebApi-P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DTO", "DTO\DTO.csproj", "{FECAA139-B3BB-4A0D-9AC7-A85499739670}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "Logging\Logging.csproj", "{62D0D976-DA3B-4C5A-BD81-474F528C1567}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +56,10 @@ Global
 		{FECAA139-B3BB-4A0D-9AC7-A85499739670}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FECAA139-B3BB-4A0D-9AC7-A85499739670}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FECAA139-B3BB-4A0D-9AC7-A85499739670}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62D0D976-DA3B-4C5A-BD81-474F528C1567}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62D0D976-DA3B-4C5A-BD81-474F528C1567}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62D0D976-DA3B-4C5A-BD81-474F528C1567}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62D0D976-DA3B-4C5A-BD81-474F528C1567}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

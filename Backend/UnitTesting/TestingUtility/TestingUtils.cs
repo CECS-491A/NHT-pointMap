@@ -3,12 +3,13 @@ using DataAccessLayer.Models;
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceLayer.Services;
-
+using DTO;
 using System.Security.Cryptography;
 using System.Text;
+using DTO.DTOBase;
 using ServiceLayer.KFC_API_Services;
 
-namespace Testing
+namespace UnitTesting
 {
     public class TestingUtils
     {
@@ -22,6 +23,94 @@ namespace Testing
                 rng.GetBytes(salt);
             }
             return salt;
+        }
+
+        public void SendAnalytics()
+        {
+            LogRequestDTO newLog = new LogRequestDTO();
+            LoggingService _ls = new LoggingService();
+            newLog.setSource(DTO.Constants.Constants.Sources.Session);
+            newLog.details = "testing stacktrace";
+            Random rand = new Random();
+            for (var i = 0; i < 20; i++)
+            {
+                User newUser = CreateUserObject();
+                Session newSession = CreateSessionObject(newUser);
+                CreateSessionInDb(newSession);
+                newLog.ssoUserId = newUser.Id.ToString();
+                newLog.setPage(DTO.Constants.Constants.Pages.PointDetails);
+                for (var j = 0; j < 3; j++)
+                {
+                    var month = rand.Next(8, 12);
+                    newLog.logCreatedAt = new DateTime(2018, 12, 21);
+                    newLog.setSource(DTO.Constants.Constants.Sources.Login);
+                    var pageDuration = rand.Next(1, 600);
+                    newLog.pageDuration = pageDuration;
+                    if (j == 0)
+                    {
+                        newLog.setSource(DTO.Constants.Constants.Sources.Registration);
+                        newLog.setPage( DTO.Constants.Constants.Pages.MapView);
+                    }
+                    var duration = rand.Next(1, 1000);
+                    if(duration < 300){
+                        newLog.setPage(DTO.Constants.Constants.Pages.AdminDashboard);
+                    }
+                    else if (duration < 500)
+                    {
+                        newLog.setPage(DTO.Constants.Constants.Pages.PointDetails);
+                    }
+                    else if (duration < 700)
+                    {
+                        newLog.setPage(DTO.Constants.Constants.Pages.PointEditor);
+                    }
+
+                    newLog.sessionCreatedAt = newSession.CreatedAt;
+                    newLog.sessionExpiredAt = newSession.ExpiresAt.AddSeconds(duration);
+                    newLog.sessionUpdatedAt = newSession.UpdatedAt.AddSeconds(duration);
+                    newLog.token = newSession.Token;
+                    newLog = (LogRequestDTO)getLogContent(newLog);
+                    _ls.sendLogSync(newLog);
+                }
+            }
+
+        }
+
+        public void SendErrors()
+        {
+            ErrorRequestDTO newError = new ErrorRequestDTO();
+            LoggingService _ls = new LoggingService();
+            newError.details = "testing stacktrace";
+            Random rand = new Random();
+            for (var i = 0; i < 20; i++)
+            {
+                User newUser = CreateUserObject();
+                Session newSession = CreateSessionObject(newUser);
+                CreateSessionInDb(newSession);
+                newError.ssoUserId = newUser.Id.ToString();
+                var month = rand.Next(1, 5);
+                newError.logCreatedAt = new DateTime(2019, month, 21);
+                for (var j = 0; j < 3; j++)
+                {
+                    newError.setSource(DTO.Constants.Constants.Sources.Login);
+                    if (j == 0)
+                    {
+                        newError.setSource(DTO.Constants.Constants.Sources.Registration);
+                    }
+                    var duration = rand.Next(1, 1000);
+                    if (duration < 300)
+                    {
+                        newError.setSource(DTO.Constants.Constants.Sources.PointEditor);
+                    }
+                    else if (duration < 500)
+                    {
+                        newError.setSource(DTO.Constants.Constants.Sources.Mapview);
+                    }
+
+                    newError = (ErrorRequestDTO)getLogContent(newError);
+                    _ls.sendLogSync(newError);
+                }
+            }
+
         }
 
         public Point CreatePointObject(float longitude, float latitude)
@@ -54,6 +143,19 @@ namespace Testing
             };
 
             return p;
+        }
+
+        public BaseLogDTO getLogContent(BaseLogDTO newLog)
+        {
+            LoggingService _ls = new LoggingService();
+            string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
+            string salt = _ls.GetSalt();
+            string plaintext = "timestamp=" + timestamp + ";salt=" + salt;
+            string signature = _ls.GenerateSignature(plaintext);
+            newLog.timestamp = timestamp;
+            newLog.salt = salt;
+            newLog.signature = signature;
+            return newLog;
         }
 
         public Point CreatePointInDb()
@@ -121,88 +223,6 @@ namespace Testing
             byte[] signatureBytes = hmacsha1.ComputeHash(launchPayloadBuffer);
             string signature = Convert.ToBase64String(signatureBytes);
             return signature;
-        }
-
-        public class MockLoginPayload
-        {
-            public string Mock_APISecret = SSO_APIService.APISecret;
-
-            public Guid ssoUserId { get; set; }
-            public string email { get; set; }
-            public long timestamp { get; set; }
-
-            public string Signature()
-            {
-                var _ssoAuth = new SignatureService();
-                var payload = _ssoAuth.PreparePayload(ssoUserId.ToString(), email, timestamp);
-                var signature = _ssoAuth.Sign(payload);
-                return signature;
-            }
-
-            public string PreSignatureString()
-            {
-                string preSignatureString = "";
-                preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
-                preSignatureString += "email=" + email + ";";
-                preSignatureString += "timestamp=" + timestamp + ";";
-                return preSignatureString;
-            }
-
-        }
-
-        public MockLoginPayload GenerateLoginPayloadWithSignature(Guid ssoUserId, string email, long timestamp)
-        {
-            MockLoginPayload mock_payload = new MockLoginPayload();
-            mock_payload.ssoUserId = ssoUserId;
-            mock_payload.email = email;
-            mock_payload.timestamp = timestamp;
-            return mock_payload;
-        }
-
-        public string GeneratePreSignatureString(Guid ssoUserId, string email, long timestamp)
-        {
-            string preSignatureString = "";
-            preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
-            preSignatureString += "email=" + email + ";";
-            preSignatureString += "timestamp=" + timestamp + ";";
-            return preSignatureString;
-        }
-
-        public User CreateSSOUserInDb()
-        {
-            User user = new User
-            {
-                Username = Guid.NewGuid() + "@mail.com",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = GetRandomness(),
-                UpdatedAt = DateTime.UtcNow,
-                Id = Guid.NewGuid()
-            };
-            return CreateUserInDb(user);
-        }
-
-        public User CreateUserObject()
-        {
-            User user = new User
-            {
-                Id = Guid.NewGuid(),
-                Username = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
-                City = "Los Angeles",
-                State = "California",
-                Country = "United States",
-                PasswordHash = (Guid.NewGuid()).ToString(),
-                PasswordSalt = GetRandomness()
-            };
-            return user;
-        }
-
-        public void DeleteUser(User user)
-        {
-            using(var _db = new DatabaseContext())
-            {
-                _db.Users.Remove(user);
-                _db.SaveChanges();
-            }
         }
         
         public Session CreateSessionObject(User user)
@@ -333,6 +353,87 @@ namespace Testing
             }
             return true;
         }
+
+        public MockLoginPayload GenerateLoginPayloadWithSignature(Guid ssoUserId, string email, long timestamp)
+        {
+            MockLoginPayload mock_payload = new MockLoginPayload();
+            mock_payload.ssoUserId = ssoUserId;
+            mock_payload.email = email;
+            mock_payload.timestamp = timestamp;
+            return mock_payload;
+        }
+
+        public string GeneratePreSignatureString(Guid ssoUserId, string email, long timestamp)
+        {
+            string preSignatureString = "";
+            preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+            preSignatureString += "email=" + email + ";";
+            preSignatureString += "timestamp=" + timestamp + ";";
+            return preSignatureString;
+        }
+
+        public User CreateSSOUserInDb()
+        {
+            User user = new User
+            {
+                Username = Guid.NewGuid() + "@mail.com",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness(),
+                UpdatedAt = DateTime.UtcNow,
+                Id = Guid.NewGuid()
+            };
+            return CreateUserInDb(user);
+        }
+
+        public User CreateUserObject()
+        {
+            User user = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = Guid.NewGuid() + "@" + Guid.NewGuid() + ".com",
+                City = "Los Angeles",
+                State = "California",
+                Country = "United States",
+                PasswordHash = (Guid.NewGuid()).ToString(),
+                PasswordSalt = GetRandomness()
+            };
+            return user;
+        }
+
+        public void DeleteUser(User user)
+        {
+            using(var _db = new DatabaseContext())
+            {
+                _db.Users.Remove(user);
+                _db.SaveChanges();
+            }
+        }
     }
 
+    public class MockLoginPayload
+    {
+        public string Mock_APISecret = SSO_APIService.APISecret;
+
+        public Guid ssoUserId { get; set; }
+        public string email { get; set; }
+        public long timestamp { get; set; }
+
+        public string Signature()
+        {
+            var _ssoAuth = new SignatureService();
+            var payload = _ssoAuth.PreparePayload(ssoUserId.ToString(), email, timestamp);
+            var signature = _ssoAuth.Sign(payload);
+            return signature;
+        }
+
+        public string PreSignatureString()
+        {
+            string preSignatureString = "";
+            preSignatureString += "ssoUserId=" + ssoUserId.ToString() + ";";
+            preSignatureString += "email=" + email + ";";
+            preSignatureString += "timestamp=" + timestamp + ";";
+            return preSignatureString;
+        }
+
+    }
 }

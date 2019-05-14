@@ -60,12 +60,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntegrationTests\AnalyticsIT.cs" />
     <Compile Include="IntegrationTests\ErrorHandlingIT.cs" />
     <Compile Include="IntegrationTests\UserManagementControllerIT.cs" />
     <Compile Include="TestingUtility\ITestingUtils.cs" />
     <Compile Include="IntegrationTests\LoggingServicesIT.cs" />
     <Compile Include="IntegrationTests\PointControllerIT.cs" />
     <Compile Include="IntegrationTests\UserControllerIT.cs" />
+    <Compile Include="UnitTests\LoggingServiceUT.cs" />
     <Compile Include="UnitTests\UserLoginManagerUT.cs" />
     <Compile Include="UnitTests\PointServiceUT.cs" />
     <Compile Include="TestingUtility\TestingUtils.cs" />
@@ -78,34 +80,37 @@
     <Compile Include="UnitTests\UserServiceUT.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DTO\DTO.csproj">
-      <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
-      <Name>DTO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
-      <Project>{DD7C51A6-44CD-4A05-9809-1171FE66F434}</Project>
-      <Name>ManagerLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
-      <Project>{98446d55-4697-4c80-90d7-c9e63a34c847}</Project>
-      <Name>ServiceLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
-      <Project>{F4772F25-0116-413B-BC7F-43EFF8A04F2E}</Project>
-      <Name>DataAccessLayer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\WebApi-PointMap\WebApi-PointMap.csproj">
-      <Project>{7060A7DF-4960-4194-9CD2-2641EAD3EFDF}</Project>
-      <Name>WebApi-PointMap</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj">
+      <Project>{f4772f25-0116-413b-bc7f-43eff8a04f2e}</Project>
+      <Name>DataAccessLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DTO\DTO.csproj">
+      <Project>{fecaa139-b3bb-4a0d-9ac7-a85499739670}</Project>
+      <Name>DTO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{62d0d976-da3b-4c5a-bd81-474f528c1567}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ManagerLayer\ManagerLayer.csproj">
+      <Project>{dd7c51a6-44cd-4a05-9809-1171fe66f434}</Project>
+      <Name>ManagerLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ServiceLayer\ServiceLayer.csproj">
+      <Project>{41ade765-973a-4155-b3d6-2c24648cbc7a}</Project>
+      <Name>ServiceLayer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\WebApi-PointMap\WebApi-PointMap.csproj">
+      <Project>{7060a7df-4960-4194-9cd2-2641ead3efdf}</Project>
+      <Name>WebApi-PointMap</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

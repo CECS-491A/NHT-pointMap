@@ -7,8 +7,7 @@ using WebApi_PointMap.Controllers;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Results;
-using DTO.DTO;
-using DataAccessLayer.Models;
+using UnitTesting;
 using ManagerLayer.UserManagement;
 using DTO.UserManagementAPI;
 

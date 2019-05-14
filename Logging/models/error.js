@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
-let logSchema = mongoose.Schema({
-    ssoUserId: {
+const errorSchema = mongoose.Schema({
+    details: {
         type: String,
         required: true
     },
@@ -16,8 +16,8 @@ let logSchema = mongoose.Schema({
     json: {}
 })
 
-let Log = module.exports = mongoose.model('Log', logSchema);
+let Error = module.exports = mongoose.model('Error', errorSchema);
 
-module.exports.saveLog = function(newLog, callback){
-    newLog.save(callback);
+module.exports.saveError = function(newError, callback){
+    newError.save(callback);
 }

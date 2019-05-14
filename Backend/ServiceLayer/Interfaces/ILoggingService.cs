@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using DTO.DTOBase;
 using System.Net.Http;
-using DTO;
 
 namespace ServiceLayer.Interfaces
 {
     interface ILoggingService
     {
-        System.Net.HttpStatusCode sendLogSync(LogRequestDTO newLog, string signature, string timestamp);
-        Task<System.Net.HttpStatusCode> sendLogAsync(LogRequestDTO newLog, string signature, string timestamp);
+        System.Net.HttpStatusCode sendLogSync(BaseLogDTO newLog);
+        Task<System.Net.HttpStatusCode> sendLogAsync(BaseLogDTO newLog);
+        string GenerateSignature(string plaintext);
+        string GetSalt();
+        StringContent getLogContent(BaseLogDTO newLog);
+        bool notifyAdmin(System.Net.HttpStatusCode status, StringContent content);
     }
 }
