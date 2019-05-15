@@ -191,11 +191,16 @@ export default {
       //  this prevents an error caused when updating the marker location
       if(this.point.latitude == "" || this.point.longitude == "" || 
           this.point.latitude < -90 || this.point.latitude > 90 ||
-          this.point.longitude < -180 || this.point.longitude > 180) {
+          this.point.longitude < -180 || this.point.longitude > 180 ||
+          Number.isNaN(Number.parseFloat(this.point.latitude)) ||
+          Number.isNaN(Number.parseFloat(this.point.longitude))) {
 
         //determines error type and corresponding display message
         if(this.point.latitude == "" || this.point.longitude == "") {
           this.error = "Latitude/longitude value cannot be empty.";
+        } else if(Number.isNaN(Number.parseFloat(this.point.latitude)) ||
+          Number.isNaN(Number.parseFloat(this.point.longitude))) {
+          this.error = "Latitude/longitude value must be a number."
         } else {
           this.error = "Latitude/Longitude value invalid."
         }
