@@ -19,8 +19,11 @@
             <v-divider class="my-2"></v-divider>
             <br/>
             <h4 class="subheading">User ID: {{this.user.id}}</h4>
-            <v-checkbox v-model="this.user.isAdmin" height="1" readonly label="Administrator" value="Admin"></v-checkbox>
-            <v-checkbox v-model="this.user.disabled" height="1" readonly label="Disabled" value="Disabled"></v-checkbox>
+            <div class="privilege-info-container">
+              <v-icon>info</v-icon>
+              <p class="p-privilege" v-if="this.isAdmin">This user has administrative privileges</p>
+              <p class="p-privilege" v-if="!this.isAdmin">This user does not have administrative privileges</p> 
+            </div>            
           </div>
         </v-card-title>
       </v-card>
@@ -64,6 +67,7 @@ export default {
         message: "",
         user: {},
         loading: false,
+        isAdmin: false,
         logging: {
           webpage: '',
           webpageDurationStart: 0,
@@ -90,6 +94,7 @@ export default {
         switch(response.status){
           case httpResponseCodes.OK: // status OK
             this.user = response.data;
+            this.isAdmin = response.data.isAdmin;
             break;
         }
       })
@@ -174,5 +179,19 @@ export default {
 #deleteButton {
   margin: 0px;
   margin-top: 10px;
+}
+
+.p-privilege{
+  padding-top: 8px;
+  padding-bottom: 8px;
+  font-size: 1.2em;
+  vertical-align: middle;
+  padding-left: 8px;
+  margin-bottom: 0;
+}
+
+.privilege-info-container{
+  display: flex;
+  align-items: center;
 }
 </style>

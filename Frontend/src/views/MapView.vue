@@ -2,10 +2,17 @@
   <v-layout id="mapView">
     <v-flex>
       <div id="mapView">
-          <div v-on:click="requestPoints" id="map"></div> 
+        <div v-on:click="requestPoints" id="map"></div>
+        <div>
           <v-btn v-on:click="createPoint" fab dark color="teal" id="addPointBtn">
-          <v-icon>add</v-icon>
+            <v-icon>add</v-icon>          
           </v-btn>
+        </div>
+        <div>
+          <v-btn v-on:click="geolocate" fab dark color="teal" id="centerMapBtn">
+            <v-icon>center_focus_strong</v-icon>
+          </v-btn>
+        </div>
       </div>
     </v-flex>
   </v-layout>
@@ -59,6 +66,7 @@ export default {
     });
     //places add point button on bottom right of map
     this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById("addPointBtn"));
+    this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(document.getElementById("centerMapBtn"));
     
     this.infoWindow = new google.maps.InfoWindow;
     this.geolocate();
@@ -170,4 +178,9 @@ export default {
   #addPointBtn {
     margin: 20px;
   }
+
+  #centerMapBtn{
+    margin: 20px;
+  }
+
 </style>
