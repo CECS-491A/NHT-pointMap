@@ -2,13 +2,13 @@
   <v-app id="inspire">
     <v-layout row justify center>
      
-          <v-dialog
+      <v-dialog
               v-model = "dialog"
               max-width = "500">
-            <v-card>
-              <v-card-title class = "headline"> Point Details</v-card-title>
+        <v-card>
+            <v-card-title class = "headline"> Point Details</v-card-title>
             
-                <v-card-text>
+              <v-card-text>
                     Created At:
                     <strong>
                         {{createdAt}}
@@ -54,11 +54,11 @@
                   
                 </v-card-text>
             <v-card-actions>
-            <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
-            
-            <v-spacer></v-spacer>
-            <v-btn color="error" v-on:click="deleteThePoint"
-                @click="dialog=false">Delete Point</v-btn>
+              <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
+              
+              <v-spacer></v-spacer>
+              <v-btn color="error" v-on:click="deleteThePoint"
+                  @click="dialog=false">Delete Point</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -132,7 +132,7 @@ export default {
      
     },
     deleteThePoint: function(){
-        deletePoint(this.$route.query.pointId);
+        deletePoint(this.id);
         this.$router.push('/mapview');
 
     }

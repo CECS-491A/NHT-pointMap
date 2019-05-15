@@ -100,13 +100,12 @@ function createPoint(point){
 };
 function deletePoint(pointId) {
   let content = {
-    'headers': {
-      'token': localStorage.getItem('token')
+    headers: {
+      token: localStorage.getItem('token')
     },
   }
-  let urlString = `${api_url}/api/point/` + pointId;
   axios
-    .delete(urlString)
+    .delete(`${api_url}/api/point/` + pointId, content)
     .then(response => {
 
       return response.data;
