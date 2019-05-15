@@ -27,6 +27,9 @@
                     <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Map View - User Manual.pdf" download>Map View</a>
                 </div>
                 <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Point Details - User Manual.pdf" download>Point Details</a>
+                </div>
+                <div  class="document-li-container">
                     <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Point Editor_ User Manual.pdf" download>Point Editor</a>
                 </div>
                 <div  class="document-li-container">
@@ -47,6 +50,9 @@
                 </div>
                 <div  class="document-li-container">
                     <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Map View_ Developer Docs.pdf" download>Map View</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Point Details - Developer Document.pdf" download>Point Details</a>
                 </div>
                 <div  class="document-li-container">
                     <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Point Editor_ Developer Documents.pdf" download>Point Editor</a>
