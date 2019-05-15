@@ -1,5 +1,5 @@
 <script>
-  //Importing Bar class from the vue-chartjs wrapper
+  //Importing Line class from the vue-chartjs wrapper
   import { Line } from 'vue-chartjs';
   import axios from 'axios';
 

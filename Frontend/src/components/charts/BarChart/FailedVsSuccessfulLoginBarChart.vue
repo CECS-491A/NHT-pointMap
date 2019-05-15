@@ -18,14 +18,14 @@
           datasets: [
             {
               label: 'Successful Logins',
-              backgroundColor: "#f87979",
+              backgroundColor: "#7C8CF8",
               borderWidth: 1,
               //Data to be represented on y-axis
               data: []
             },
             {
               label: 'Unsuccessful Logins',
-              backgroundColor: '#7C8CF8',
+              backgroundColor: '#f87979',
               borderWidth: 1,
               //Data to be represented on y-axis
               data: []

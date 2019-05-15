@@ -27,19 +27,13 @@
           datasets: [
             {
               label: 'Sucessful Logins and Registrations',
-              backgroundColor: "rgba(54, 162, 235, 0.6)",
-              pointBackgroundColor: 'white',
-              borderWidth: 1,
-              pointBorderColor: '#249EBF',
+              backgroundColor: "#7C8CF8",
               //Data to be represented on y-axis
               data: []
             },
 						 {
               label: 'Total Registered Users',
               backgroundColor: "grey",
-              pointBackgroundColor: 'white',
-              borderWidth: 1,
-              pointBorderColor: '#249EBF',
               //Data to be represented on y-axis
               data: []
             }
