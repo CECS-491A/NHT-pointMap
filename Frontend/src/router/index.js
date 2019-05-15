@@ -17,11 +17,6 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: "/",
-      name: "HelloWorld",
-      component: HelloWorld
-    },
-    {
       path: '/admindashboard',
       name: 'AdminDashboard',
       component: AdminDashboard
@@ -48,7 +43,7 @@ export default new Router({
     },
     {
       path: "*",
-      component: HelloWorld
+      component: MapView
     },
     {
       path: "/login",
