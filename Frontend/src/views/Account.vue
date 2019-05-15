@@ -19,8 +19,7 @@
             <v-divider class="my-2"></v-divider>
             <br/>
             <h4 class="subheading">User ID: {{this.user.id}}</h4>
-            <v-checkbox v-model="this.user.isAdmin" height="1" readonly label="Administrator" value="Admin"></v-checkbox>
-            <v-checkbox v-model="this.user.disabled" height="1" readonly label="Disabled" value="Disabled"></v-checkbox>
+            <v-checkbox v-model="this.isAdmin" height="1" readonly label="Administrator"></v-checkbox>
           </div>
         </v-card-title>
       </v-card>
@@ -64,6 +63,7 @@ export default {
         message: "",
         user: {},
         loading: false,
+        isAdmin: false,
         logging: {
           webpage: '',
           webpageDurationStart: 0,
@@ -90,6 +90,7 @@ export default {
         switch(response.status){
           case httpResponseCodes.OK: // status OK
             this.user = response.data;
+            this.isAdmin = response.data.isAdmin;
             break;
         }
       })

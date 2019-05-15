@@ -71,13 +71,12 @@
 import {deleteSession} from '../services/authorizationService';
 import { store, getUser } from '@/services/accountServices';
 
-
 export default {
   name: 'Navbar',
   data: () => ({
       ApplicationMenuItems: [
         {title: 'Map View', link: '/mapview', icon: 'map'},
-        {title: 'Documents', link: '/documents', icon: 'info'}
+        {title: 'Documents', link: '/documents', icon: 'help'}
       ],
       UserMenuItems: [
           { title: 'Account', link: '/account', icon: 'account_circle'},
@@ -93,6 +92,11 @@ export default {
           this.stored = store;
           this.$forceUpdate();
       }
+      getUser().then((res) => {
+        if(res.data.isAdmin){
+          this.ApplicationMenuItems.push({title: 'AdminDashboard', link: '/admindashboard', icon: 'info'})
+        }
+      })
   },
   methods:{
     logout(){
