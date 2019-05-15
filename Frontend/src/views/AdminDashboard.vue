@@ -57,7 +57,6 @@ export default {
   },
   mounted(){
     checkSession();
-    this.renderChart(data, options)
   },
   data: () => ({
     selectedItem: 'User Management',

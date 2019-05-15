@@ -9,7 +9,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">
@@ -27,7 +27,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">
@@ -45,7 +45,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">
@@ -63,7 +63,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">
@@ -81,7 +81,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">
@@ -99,7 +99,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">
@@ -117,7 +117,7 @@
           <v-card
             class="mx-auto text-xs-center"
             color="white"
-            max-width="700"
+            max-width="800"
           >
             <v-card-text>
               <v-sheet color="grey lighten-4" elevation="6">

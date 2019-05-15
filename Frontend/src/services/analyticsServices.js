@@ -47,21 +47,11 @@ export function FailedvsSucessfulLoginAttempts(data) {
 }
 
 export function GetTopFeaturesByPageVisits(data) {
-  const rank = [5, 4, 3, 2, 1];
-  const rankData = data.map((feature, i) => {
-    feature["rank"] = rank[i];
-    return feature;
-  });
-  return rankData.slice(0, 5);
+  return data.slice(0, 5);
 }
 
 export function GetTopPagesByPageTime(data) {
-  const rank = [5, 4, 3, 2, 1];
-  const rankData = data.map((page, i) => {
-    page["rank"] = rank[i];
-    return page;
-  });
-  return rankData.slice(0, 5);
+  return data.slice(0, 5);
 }
 
 export function GetAverageSessionDuration6Months(data) {

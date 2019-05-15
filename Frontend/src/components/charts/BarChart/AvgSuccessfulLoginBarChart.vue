@@ -77,7 +77,7 @@
 						let monthLabels = [];
             let monthData = [ [], [] ];
             data.map(month => {
-              monthLabels.push(months[month.date.getMonth()]);
+              monthLabels.push(`${months[month.date.getMonth()]} - ${month.date.getFullYear()}`);
               monthData[0].push(month.loginAttempts);
 							monthData[1].push(month.totalRegisteredUsers)
             })
