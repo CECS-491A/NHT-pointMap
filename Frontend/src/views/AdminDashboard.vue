@@ -33,6 +33,7 @@
           v-if="this.$data.selectedItem === 'User Management'" 
           id="UserManagement"/>
         <AppPublish v-if="this.$data.selectedItem === 'App Publish'"/>
+        <Analytics v-if="this.$data.selectedItem === 'Analytics'"/>
       </v-flex>
     </v-layout>
 
@@ -45,15 +46,18 @@ import UserManagement from '@/components/UserManagement.vue'
 import AppPublish from '@/components/AppPublish'
 import {checkSession} from '../services/authorizationService'
 import { LogWebpageUsage } from '@/services/loggingServices';
+import Analytics from '@/components/Analytics';
 
 export default {
   name: 'AdminDashboard',
   components: {
     UserManagement,
-    AppPublish
+    AppPublish,
+    Analytics,
   },
   mounted(){
     checkSession();
+    this.renderChart(data, options)
   },
   data: () => ({
     selectedItem: 'User Management',
