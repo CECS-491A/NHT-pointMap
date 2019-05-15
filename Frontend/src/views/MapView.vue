@@ -17,6 +17,7 @@ import { LogWebpageUsage } from '@/services/loggingServices';
 import {gmapApi} from 'vue2-google-maps';
 import {checkSession} from '../services/authorizationService';
 import MarkerClusterer from "@google/markerclusterer";
+import PointDetails from '../views/PointDetails';
 
 export default {
   name: "MapView",
@@ -44,9 +45,10 @@ export default {
         webpageDurationStart: 0,
       }
     }
+    
   },
   mounted: function () {
-    checkSession()
+    //checkSession()
     this.map = new google.maps.Map(document.getElementById('map'), {
       center: this.center,
       zoom: this.zoom,

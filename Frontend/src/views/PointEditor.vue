@@ -112,7 +112,7 @@ export default {
     }
   },
   mounted() {
-    checkSession();
+    //checkSession();
     let promise = new Promise((resolve, reject) => {
       this.getPointData(resolve);
     });

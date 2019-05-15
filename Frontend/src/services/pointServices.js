@@ -10,7 +10,7 @@ function getPoints(minLng, maxLng, minLat, maxLat, callback) {
       maxLng: maxLng,
       minLat: minLat,
       maxLat: maxLat,
-      token: localStorage.getItem("token")
+      token: "56BBAB4728645FF8EE005D8E49A465F0CB195D2F505C08EC81457AAD5F4966B5"
     }
   };
 
@@ -99,9 +99,28 @@ function createPoint(point){
     return null;
 };
 
+function deletePoint(pointId) {
+ 
+  let urlString = `${api_url}/api/point/` + pointId;
+  axios
+    .delete(urlString)
+    .then(response => {
+      
+      return response.data;
+    })
+    .catch(err => {
+      console.log(err);
+      if (err.response.status == 401) {
+        deleteSession();
+      }
+    });
+  return null;
+};
+
 export{
     getPoints,
     getPoint,
     updatePoint,
-    createPoint
+    createPoint,
+    deletePoint
 }
