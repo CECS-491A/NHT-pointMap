@@ -77,6 +77,9 @@ let mostUsedFeature = new GraphQLObjectType({
         return{
             topfeature : {
                 type: GraphQLString
+            },
+            numUses: {
+                type: GraphQLID
             }
         }
     }
@@ -107,6 +110,9 @@ let pageUse = new GraphQLObjectType({
     fields: () => {
         return{
             pageName: {
+                type: GraphQLID
+            },
+            duration:{
                 type: GraphQLID
             }
         }
@@ -249,6 +255,9 @@ const RootQuery = new GraphQLObjectType({
                     { //Sorts by duration in descending order
                         $sort: {duration: -1}
                     },
+                    {
+                        $limit: 5 //Takes the top 5 results
+                    }
                 ])
                 return logs
             }
