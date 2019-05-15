@@ -33,6 +33,15 @@
               pointBorderColor: '#249EBF',
               //Data to be represented on y-axis
               data: []
+            },
+						 {
+              label: 'Total Registered Users',
+              backgroundColor: "grey",
+              pointBackgroundColor: 'white',
+              borderWidth: 1,
+              pointBorderColor: '#249EBF',
+              //Data to be represented on y-axis
+              data: []
             }
           ]
         },
@@ -69,13 +78,15 @@
 						const rawData = response.data.successfulLoginsxRegisteredUsers;
 						const data = GetSuccessfulLoginsxRegisteredUsers(rawData);
 						let monthLabels = [];
-            let monthData = [];
+            let monthData = [ [], [] ];
             data.map(month => {
               monthLabels.push(months[month.date.getMonth()]);
-              monthData.push(month.totalRegisteredUsers);
+              monthData[0].push(month.loginAttempts);
+							monthData[1].push(month.totalRegisteredUsers)
             })
             this.datacollection.labels = monthLabels;
-            this.datacollection.datasets[0].data = monthData;
+            this.datacollection.datasets[0].data = monthData[0];
+						this.datacollection.datasets[1].data = monthData[1];
             this.renderChart(this.datacollection, this.options)
 					})
       }

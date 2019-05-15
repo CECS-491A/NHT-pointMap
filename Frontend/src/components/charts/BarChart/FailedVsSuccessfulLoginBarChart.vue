@@ -17,20 +17,28 @@
           labels: [],
           datasets: [
             {
-              label: 'Failed vs Successful Login Attempts',
-              backgroundColor: [
-                            "rgba(255, 99, 132, 0.6)",
-                            "rgba(75, 192, 192, 0.6)",
-                            "rgba(153, 102, 255, 0.6)",
-              ],
-              pointBackgroundColor: 'white',
+              label: 'Successful Logins',
+              backgroundColor: "#f87979",
               borderWidth: 1,
-              pointBorderColor: '#249EBF',
               //Data to be represented on y-axis
               data: []
             },
-            
-          ]
+            {
+              label: 'Unsuccessful Logins',
+              backgroundColor: '#7C8CF8',
+              borderWidth: 1,
+              //Data to be represented on y-axis
+              data: []
+            },
+            {
+              label: 'Total Login Attempts',
+              backgroundColor: "grey",
+
+              //Data to be represented on y-axis
+              data: []
+            }
+          ],
+
         },
         //Chart.js options that controls the appearance of the chart
         options: {
@@ -68,15 +76,29 @@
 					.then(response => {
 						const rawData = response.data.loginAttempts;
 						const data = FailedvsSucessfulLoginAttempts(rawData);
-            console.log(data);
 						let monthLabels = [];
-            let monthData = [];
+            let monthData = [ [], [], [] ];
             data.map(month => {
               monthLabels.push(months[month.date.getMonth()]);
-              monthData.push(month.totalRegisteredUsers);
+              const datum = {
+                total: month.totalAttempts,
+                successes: month.loginAttempts,
+                fails: month.failedAttempts
+              }
+              monthData[0].push(datum.successes);
+              monthData[1].push(datum.fails);
+              monthData[2].push(datum.total);
             })
             this.datacollection.labels = monthLabels;
-            this.datacollection.datasets[0].data = monthData;
+
+            // Login Data
+            this.datacollection.datasets[0].data = monthData[0];
+
+            // Fails Data
+            this.datacollection.datasets[1].data = monthData[1];
+
+            // Total Data
+            this.datacollection.datasets[2].data = monthData[2];
             this.renderChart(this.datacollection, this.options)
 					})
       }

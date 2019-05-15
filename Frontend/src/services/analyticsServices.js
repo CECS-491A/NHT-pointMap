@@ -7,8 +7,6 @@ export function GetAnalyticsData() {
 
 const months = 6;
 
-export function GetAverageSessionDuration(analyticsData) {}
-
 export function GetSuccessfulLoginsxRegisteredUsers(data) {
   const successData = data.map(month => {
     var monthData = {};
@@ -30,7 +28,6 @@ export function GetSuccessfulLoginsxRegisteredUsers(data) {
 export function FailedvsSucessfulLoginAttempts(data) {
   const loginData = Object.keys(data).map(key => {
     const month = data[key];
-    console.log(month);
     var monthData = {};
     const date = new Date(month.month + "-" + "1" + "-" + month.year);
     const total = month.successfulLoginAttempts + month.failedLoginAttempts;
@@ -49,20 +46,22 @@ export function FailedvsSucessfulLoginAttempts(data) {
   return loginData.slice(0, months);
 }
 
-export function GetTopFeaturesByPageVisits() {
-  axios.get(`${api_url}/api/analytics/usage`).then(response => {
-    return response.data.topFeaturesByPageVisits;
+export function GetTopFeaturesByPageVisits(data) {
+  const rank = [5, 4, 3, 2, 1];
+  const rankData = data.map((feature, i) => {
+    feature["rank"] = rank[i];
+    return feature;
   });
+  return rankData.slice(0, 5);
 }
 
-export function GetTopFeaturesByPageTime() {
-  return GetAnalyticsData().topFeaturesByPageTime;
-}
-
-export function GetAverageUserLogin6Months() {
-  const response = GetAnalyticsData();
-  const data = response.averageUserLogin6Months;
-  return data;
+export function GetTopPagesByPageTime(data) {
+  const rank = [5, 4, 3, 2, 1];
+  const rankData = data.map((page, i) => {
+    page["rank"] = rank[i];
+    return page;
+  });
+  return rankData.slice(0, 5);
 }
 
 export function GetAverageSessionDuration6Months(data) {
@@ -79,11 +78,5 @@ export function GetAverageSessionDuration6Months(data) {
   const orderedDesc = usageData.sort((a, b) => {
     return b.date - a.date;
   });
-  return orderedDesc;
-}
-
-export function GetLoginAttempts() {
-  const response = GetAnalyticsData();
-  const data = response.loginAttempts;
-  return data;
+  return orderedDesc.slice(0, months);
 }

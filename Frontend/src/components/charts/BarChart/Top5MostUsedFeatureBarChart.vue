@@ -1,6 +1,10 @@
 <script>
   //Importing Bar class from the vue-chartjs wrapper
   import { Bar } from 'vue-chartjs'
+
+  // Services
+	import { GetAnalyticsData, GetTopFeaturesByPageVisits } from '@/services/analyticsServices';
+
   //Exporting this so it can be used in other components
   export default {
     name: 'Top5MostUsedFeatureBarChart',
@@ -9,26 +13,11 @@
       return {
         datacollection: {
           //Data to be represented on x-axis
-          labels: ['Dashboard', 'Feature2', 'Feature3', 'Feature4', 'Feature5'],
+          labels: [],
           datasets: [
             {
-              label: '# of Used',
-              backgroundColor: [
-                            "rgba(255, 99, 132, 0.6)",
-                            "rgba(54, 162, 235, 0.6)",
-                            "rgba(255, 206, 86, 0.6)",
-                            "rgba(75, 192, 192, 0.6)",
-                            "rgba(153, 102, 255, 0.6)",
-              ],
-              pointBackgroundColor: 'white',
-              borderWidth: 1,
-              pointBorderColor: [
-                            "rgba(255, 99, 132, 0.6)",
-                            "rgba(54, 162, 235, 0.6)",
-                            "rgba(255, 206, 86, 0.6)",
-                            "rgba(75, 192, 192, 0.6)",
-                            "rgba(153, 102, 255, 0.6)",
-              ],
+              label: "Top 5 Features by Page Visits",
+              backgroundColor: "grey",
               //Data to be represented on y-axis
               data: [40, 20, 30, 50, 90]
             }
@@ -58,6 +47,28 @@
           maintainAspectRatio: false
         }
       }
+    },
+    methods:
+    {
+      fetchData() {
+        GetAnalyticsData()
+					.then(response => {
+						const rawData = response.data.topFeaturesByPageVisits;
+						const data = GetTopFeaturesByPageVisits(rawData);
+						let pageLabels = [];
+            let pageData = [];
+            data.map(page => {
+              pageLabels.push(page.topfeature);
+              pageData.push(page.rank);
+            })
+            this.datacollection.labels = pageLabels;
+            this.datacollection.datasets[0].data = pageData;
+            this.renderChart(this.datacollection, this.options)
+					})
+      }
+    },
+    created() {
+      this.fetchData();
     },
     mounted () {
       //renderChart function renders the chart with the datacollection and options object.
