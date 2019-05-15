@@ -138,7 +138,8 @@ export default {
                 map: this.map,
                 title: point.Id
               });
-              this.marker.addListener('click', function () { //Adds an event listener to each point to reroute to pointDetails page
+              //Adds an event listener to each point to reroute to pointDetails page
+              this.marker.addListener('click', function () { 
                 this.$router.push({ path: 'pointdetails', query: { pointId: point.Id } });
               }.bind(this));
               this.markers.push(this.marker)
@@ -152,11 +153,12 @@ export default {
       });
     },
     createCluster(){
-      this.markerCluster = new MarkerClusterer(this.map, this.markers, //Creates a cluster object which clusters all markers on the map
+      //Creates a cluster object which clusters all markers on the map
+      this.markerCluster = new MarkerClusterer(this.map, this.markers, 
         {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
     },
     createPoint(){ //called when add point button is clicked
-	this.$router.push('pointeditor');
+	    this.$router.push('pointeditor');
     }
   }  
 };
