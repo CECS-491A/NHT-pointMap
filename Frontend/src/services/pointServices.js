@@ -98,10 +98,28 @@ function createPoint(point){
         })
     return null;
 };
+function deletePoint(pointId) {
+
+  let urlString = `${api_url}/api/point/` + pointId;
+  axios
+    .delete(urlString)
+    .then(response => {
+
+      return response.data;
+    })
+    .catch(err => {
+      console.log(err);
+      if (err.response.status == 401) {
+        deleteSession();
+      }
+    });
+  return null;
+};
 
 export{
     getPoints,
     getPoint,
     updatePoint,
-    createPoint
+    createPoint,
+    deletePoint
 }
