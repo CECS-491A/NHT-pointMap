@@ -53,13 +53,13 @@
                     <br />
                   
                 </v-card-text>
-            <v-layout justify-left>
+            
             <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
-            </v-layout>
-            <v-layout  justify-right>
+            <v-spacer></v-spacer>
+            
             <v-btn color="error" v-on:click="deleteThePoint"
                 @click="dialog=false">Delete Point</v-btn>
-            </v-layout>
+            
           </v-card>
         </v-dialog>
     </v-layout>
