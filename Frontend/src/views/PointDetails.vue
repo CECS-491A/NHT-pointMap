@@ -1,61 +1,76 @@
 <template>
+  <v-app id="inspire">
+    <v-layout row justify center>
+     
+      <v-dialog
+              v-model = "dialog"
+              max-width = "500">
+        <v-card>
+            <v-card-title class = "headline"> Point Details</v-card-title>
+            
+              <v-card-text>
+                    Created At:
+                    <strong>
+                        {{createdAt}}
+                    </strong>
+                    <br />
+                      Point Name:
+            
+                    <strong>
+                        {{name}}
+                    </strong>
 
-    <div id = "pointdisplay" class="component" >
-        <h1>Point Details</h1>
-        <br />
-        <v-form>
-            <tt>Created At:</tt>
-            <strong>
-                {{createdAt}}
-            </strong>
-            <br /><br />
-            <tt>Point Name:</tt>
-    
-            <strong>
-                {{name}}
-            </strong>
+                    <br />
+                    Point Description:
+                    <strong>
+                    {{description}}
+                    </strong>
 
-            <br /><br />
-            <tt>Point Description:</tt>
-            <input type ="text"  v-bind:placeholder= "description" >
-
-            <br />
-            <br />
-            <tt>Longitude:</tt>
-            <strong>
-                {{long}}
-            </strong>
-            <br />
-            <br />
-            <tt>Latitude:</tt>
-            <strong>
-                {{lat}}
-            </strong>
-            <br />
-            <br />
-            <tt>Last Modified At:</tt>
-            <strong>
-                {{lastModifiedAt}}
-            </strong>
-            <br />
-            <br />
-            <tt>Point Id:</tt>
-            <strong>
-                {{id}}
-            </strong>
-            <br />
-           
-        </v-form>
-
-        <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
-    </div>
-
+                    <br />
+                   
+                      Longitude:
+                    <strong>
+                        {{long}}
+                    </strong>
+                    <br />
+                    
+                    Latitude:
+                    <strong>
+                        {{lat}}
+                    </strong>
+                    <br />
+                    
+                    Last Modified At:
+                    <strong>
+                        {{lastModifiedAt}}
+                    </strong>
+                    <br />
+                    
+                      Point Id:
+                    <strong>
+                        {{id}}
+                    </strong>
+                    <br />
+                  
+                </v-card-text>
+            <v-card-actions>
+              <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
+              
+              <v-spacer></v-spacer>
+              <v-btn color="error" v-on:click="deleteThePoint"
+                  @click="dialog=false">Delete Point</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+    </v-layout>
+  </v-app>
 
 </template>
 
 <script>
 
 import {getPoint} from '../services/pointServices'
+import {deletePoint} from '../services/pointServices';
 import { checkSession } from '../services/authorizationService';
 import { LogWebpageUsage } from '@/services/loggingServices';
 
@@ -74,7 +89,14 @@ export default {
       logging: {
         webpage: '',
         webpageDurationStart: 0,
-      }
+      },
+      dialog:true
+    }
+  },
+  watch: {
+    dialog (val)
+    {
+      !val && this.$router.push('/mapview');  
     }
   },
   created() {
@@ -106,6 +128,13 @@ export default {
      },
      pointEditor: function() {
        this.$router.push({ path: 'pointeditor', query: { pointId: this.id } });
+
+     
+    },
+    deleteThePoint: function(){
+        deletePoint(this.id);
+        this.$router.push('/mapview');
+
     }
   },
    beforeMount: function() {

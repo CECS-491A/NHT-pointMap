@@ -16,9 +16,11 @@ module.exports.query = `query RootQueryType{
     },
     topFeaturesByPageVisits{
         topfeature
+        numUses
     },
     topFeaturesByPageTime{
         pageName
+        duration
     },
     averageUserLogin6Months{
         month

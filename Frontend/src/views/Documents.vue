@@ -16,13 +16,38 @@
                 <br>
                 
                 <h2 class="headline">User Manual</h2>
-                <p class="body-1">Visit our User Manual to learn more about Pointmap and to get help getting started with Pointmap's API.</p>
-                <a v-on:click="goToDocument(user_man)" class="link">User Manual</a>
+                <p class="body-1">Select a User Manual to learn more about how to operate Pointmap's features.</p>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Admin Dashboard - Analytics - User Manual.pdf" download>Admin Dashboard - Analytics</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Admin Dash - UM - User Manual Doc.pdf" download>Admin Dashboard - User Management</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Map View - User Manual.pdf" download>Map View</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/UserManuals/Point Editor_ User Manual.pdf" download>Point Editor</a>
+                </div>
                 <br>
-
+                
                 <h2 class="headline">Developer Documents</h2>
                 <p class="body-1">Visit our Developer Documents to learn detailed information about Pointmap.</p>
-                <a v-on:click="goToDocument(dev_docs)" class="link">Developer Documents</a>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Admin Dash - Analytics - Developer Doc.pdf" download>Admin Dashboard - Analytics</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Admin Dash - UM - Developer Doc.pdf" download>Admin Dashboard - User Management</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Logging Developer Document.pdf" download>Logging</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Map View_ Developer Docs.pdf" download>Map View</a>
+                </div>
+                <div  class="document-li-container">
+                    <img src="/static/images/pdf_icon.png" class="image-pdf-icon"><a class="document-link" href="/static/DeveloperDocs/Point Editor_ Developer Documents.pdf" download>Point Editor</a>
+                </div>
                 <br>
             </v-flex>
         </v-layout>
@@ -87,4 +112,19 @@ export default {
   margin-top: 50px;
 }
 
+.document-li-container{
+  display: flex;
+  align-items: center;
+}
+
+.document-link{
+    vertical-align: middle;
+    padding-left: 8px;
+    margin-bottom: 0;
+}
+
+.image-pdf-icon{
+    width: 15px;
+    height: 15px;
+}
 </style>
