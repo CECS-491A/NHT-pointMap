@@ -94,7 +94,7 @@ export default {
       }
       getUser().then((res) => {
         if(res.data.isAdmin){
-          this.ApplicationMenuItems.push({title: 'AdminDashboard', link: '/admindashboard', icon: 'info'})
+          this.ApplicationMenuItems.push({title: 'Admin Dashboard', link: '/admindashboard', icon: 'info'})
         }
       })
   },
