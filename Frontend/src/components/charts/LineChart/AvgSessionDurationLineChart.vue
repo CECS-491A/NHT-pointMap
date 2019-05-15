@@ -19,7 +19,7 @@
           labels: [],
           datasets: [
             {
-              label: 'Average Session Duration',
+              label: 'Average Session Duration (Seconds)',
               backgroundColor: "grey",
               //Data to be represented on y-axis
               data: []
@@ -69,7 +69,7 @@
             let monthLabels = [];
             let monthData = [];
             averageDurationData.map(month => {
-              monthLabels.push(months[month.date.getMonth()]);
+              monthLabels.push(`${months[month.date.getMonth()]} - ${month.date.getFullYear()}`);
               monthData.push(month.duration);
             })
             this.datacollection.labels = monthLabels;

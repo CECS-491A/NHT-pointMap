@@ -16,10 +16,10 @@
           labels: [],
           datasets: [
             {
-              label: "Top 5 Features by Page Visits",
+              label: "Top 5 Features by Page Visits (# of Uses)",
               backgroundColor: "grey",
               //Data to be represented on y-axis
-              data: [40, 20, 30, 50, 90]
+              data: []
             }
           ]
         },
@@ -59,7 +59,7 @@
             let pageData = [];
             data.map(page => {
               pageLabels.push(page.topfeature);
-              pageData.push(page.rank);
+              pageData.push(page.numUses);
             })
             this.datacollection.labels = pageLabels;
             this.datacollection.datasets[0].data = pageData;

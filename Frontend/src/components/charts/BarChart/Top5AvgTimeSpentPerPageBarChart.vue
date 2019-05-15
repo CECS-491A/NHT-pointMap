@@ -17,11 +17,8 @@
           labels: [],
           datasets: [
             {
-              label: 'Top 5 Webpages by User Time Spent',
+              label: 'Top 5 Webpages by User Time Spent (Seconds)',
               backgroundColor: "grey",
-              pointBackgroundColor: 'white',
-              borderWidth: 1,
-              pointBorderColor: '#249EBF',
               //Data to be represented on y-axis
               data: []
             }
@@ -63,7 +60,7 @@
             let pageData = [];
             data.map(page => {
               pageLabels.push(page.pageName);
-              pageData.push(page.rank);
+              pageData.push(page.duration);
             })
             this.datacollection.labels = pageLabels;
             this.datacollection.datasets[0].data = pageData;
