@@ -99,7 +99,11 @@ function createPoint(point){
     return null;
 };
 function deletePoint(pointId) {
-
+  let content = {
+    'headers': {
+      'token': localStorage.getItem('token')
+    },
+  }
   let urlString = `${api_url}/api/point/` + pointId;
   axios
     .delete(urlString)

@@ -53,10 +53,10 @@
                     <br />
                   
                 </v-card-text>
-            <v-layout align-end justify-begin>
+            <v-layout justify-left>
             <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
             </v-layout>
-            <v-layout align-end justify-end>
+            <v-layout  justify-right>
             <v-btn color="error" v-on:click="deleteThePoint"
                 @click="dialog=false">Delete Point</v-btn>
             </v-layout>
@@ -96,7 +96,7 @@ export default {
   watch: {
     dialog (val)
     {
-      !val && this.$router.push('/mapview');
+      !val && this.$router.push('/mapview');  
     }
   },
   created() {
