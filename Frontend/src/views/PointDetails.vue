@@ -4,7 +4,7 @@
      
           <v-dialog
               v-model = "dialog"
-              max-width = "750">
+              max-width = "500">
             <v-card>
               <v-card-title class = "headline"> Point Details</v-card-title>
             
@@ -53,8 +53,9 @@
                     <br />
                   
                 </v-card-text>
-
+            <v-layout align-end justify-begin>
             <v-btn color="success" v-on:click="pointEditor">Edit Point</v-btn>
+            </v-layout>
             <v-layout align-end justify-end>
             <v-btn color="error" v-on:click="deleteThePoint"
                 @click="dialog=false">Delete Point</v-btn>
@@ -90,6 +91,12 @@ export default {
         webpageDurationStart: 0,
       },
       dialog:true
+    }
+  },
+  watch: {
+    dialog (val)
+    {
+      !val && this.$router.push('/mapview');
     }
   },
   created() {
